@@ -5,10 +5,6 @@ import (
 
 	"github.com/oclaussen/dodo/pkg/config"
 	"github.com/oclaussen/dodo/pkg/container"
-	"github.com/oclaussen/dodo/pkg/stage"
-	"github.com/oclaussen/dodo/pkg/stages/defaultchain"
-	"github.com/oclaussen/dodo/pkg/types"
-	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -50,14 +46,12 @@ func NewCommand() *cobra.Command {
 
 			conf.Merge(optsConfig)
 
-			return withStage(conf.Stage, func(s stage.Stage) error {
-				c, err := container.NewContainer(conf, s, config.LoadAuthConfig(), false)
-				if err != nil {
-					return err
-				}
+			c, err := container.NewContainer(conf, config.LoadAuthConfig(), false)
+			if err != nil {
+				return err
+			}
 
-				return c.Run()
-			})
+			return c.Run()
 		},
 	}
 	opts.createFlags(cmd)
@@ -66,8 +60,6 @@ func NewCommand() *cobra.Command {
 	cmd.AddCommand(NewBuildCommand())
 	cmd.AddCommand(NewListCommand())
 	cmd.AddCommand(NewValidateCommand())
-	cmd.AddCommand(NewDaemonCommand())
-	cmd.AddCommand(NewStageCommand())
 	return cmd
 }
 
@@ -94,14 +86,12 @@ func NewRunCommand() *cobra.Command {
 
 			conf.Merge(optsConfig)
 
-			return withStage(conf.Stage, func(s stage.Stage) error {
-				c, err := container.NewContainer(conf, s, config.LoadAuthConfig(), false)
-				if err != nil {
-					return err
-				}
+			c, err := container.NewContainer(conf, config.LoadAuthConfig(), false)
+			if err != nil {
+				return err
+			}
 
-				return c.Run()
-			})
+			return c.Run()
 		},
 	}
 
@@ -123,14 +113,12 @@ func NewBuildCommand() *cobra.Command {
 				return err
 			}
 
-			return withStage(conf.Stage, func(s stage.Stage) error {
-				c, err := container.NewContainer(conf, s, config.LoadAuthConfig(), false)
-				if err != nil {
-					return err
-				}
+			c, err := container.NewContainer(conf, config.LoadAuthConfig(), false)
+			if err != nil {
+				return err
+			}
 
-				return c.Build()
-			})
+			return c.Build()
 		},
 	}
 }
@@ -170,24 +158,4 @@ func configureLogging() {
 		DisableTimestamp:       true,
 		DisableLevelTruncation: true,
 	})
-}
-
-func withStage(name string, thing func(stage.Stage) error) error {
-	var conf *types.Stage
-	var err error
-
-	if len(name) > 0 {
-		conf, err = config.LoadStage(name)
-		if err != nil {
-			return err
-		}
-	}
-
-	s := &defaultchain.Stage{}
-	defer s.Cleanup()
-	if err := s.Initialize(name, conf); err != nil {
-		return errors.Wrap(err, "initialization failed")
-	}
-
-	return thing(s)
 }
