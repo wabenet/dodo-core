@@ -87,8 +87,6 @@ func (d *decoder) DecodeImage(name string, config interface{}) (types.BuildInfo,
 					return result, err
 				}
 				result.Dependencies = decoded
-			default:
-				return result, &ConfigError{Name: name, UnsupportedKey: &key}
 			}
 		}
 	default:

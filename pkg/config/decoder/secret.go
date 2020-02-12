@@ -70,8 +70,6 @@ func (d *decoder) DecodeSecret(name string, config interface{}) (*types.Secret, 
 					return nil, err
 				}
 				result.Path = decoded
-			default:
-				return nil, &ConfigError{Name: name, UnsupportedKey: &key}
 			}
 		}
 		return &result, nil

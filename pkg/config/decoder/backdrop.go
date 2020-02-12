@@ -114,8 +114,6 @@ func (d *decoder) DecodeBackdrop(name string, config interface{}) (types.Backdro
 					return result, err
 				}
 				result.Entrypoint.Arguments = decoded
-			default:
-				return result, &ConfigError{Name: name, UnsupportedKey: &key}
 			}
 		}
 	default:

@@ -7,14 +7,10 @@ import (
 
 type ConfigError struct {
 	Name            string
-	UnsupportedKey  *string
 	UnsupportedType reflect.Kind
 }
 
 func (e *ConfigError) Error() string {
-	if e.UnsupportedKey != nil {
-		return fmt.Sprintf("unsupported option in '%s': '%s'", e.Name, *e.UnsupportedKey)
-	}
 	if e.UnsupportedType != reflect.Invalid {
 		return fmt.Sprintf("unsupported type of '%s': '%s'", e.Name, e.UnsupportedType.String())
 	}

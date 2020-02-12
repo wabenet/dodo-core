@@ -91,8 +91,6 @@ func (d *decoder) DecodePort(name string, config interface{}) (*types.Port, erro
 					return nil, err
 				}
 				result.HostIp = decoded
-			default:
-				return nil, &ConfigError{Name: name, UnsupportedKey: &key}
 			}
 		}
 		return &result, nil

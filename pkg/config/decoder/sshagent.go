@@ -61,8 +61,6 @@ func (d *decoder) DecodeSSHAgent(name string, config interface{}) (*types.SshAge
 					return nil, err
 				}
 				result.IdentityFile = decoded
-			default:
-				return nil, &ConfigError{Name: name, UnsupportedKey: &key}
 			}
 		}
 		return &result, nil

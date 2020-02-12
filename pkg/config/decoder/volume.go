@@ -81,8 +81,6 @@ func (d *decoder) DecodeVolume(name string, config interface{}) (*types.Volume, 
 					return nil, err
 				}
 				result.Readonly = decoded
-			default:
-				return nil, &ConfigError{Name: name, UnsupportedKey: &key}
 			}
 		}
 		return &result, nil

@@ -122,8 +122,6 @@ func (d *decoder) DecodeGroup(name string, config interface{}) (Group, error) {
 				for _, include := range decoded {
 					result.Merge(&include)
 				}
-			default:
-				return result, &ConfigError{Name: name, UnsupportedKey: &key}
 			}
 		}
 	default:
@@ -173,8 +171,6 @@ func (d *decoder) DecodeInclude(name string, config interface{}) (Group, error) 
 					return result, err
 				}
 				return d.includeText(name, []byte(decoded))
-			default:
-				return result, &ConfigError{Name: name, UnsupportedKey: &key}
 			}
 		}
 	default:

@@ -89,8 +89,6 @@ func (d *decoder) DecodeDevice(name string, config interface{}) (*types.Device, 
 				if decoded {
 					result.Permissions = "ro"
 				}
-			default:
-				return nil, &ConfigError{Name: name, UnsupportedKey: &key}
 			}
 		}
 		return &result, nil
