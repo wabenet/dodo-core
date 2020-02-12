@@ -1,8 +1,9 @@
-package types
+package decoder
 
 import (
 	"testing"
 
+	"github.com/oclaussen/dodo/pkg/types"
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/yaml.v2"
 )

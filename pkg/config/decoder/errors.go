@@ -1,4 +1,4 @@
-package types
+package decoder
 
 import (
 	"fmt"
@@ -19,13 +19,4 @@ func (e *ConfigError) Error() string {
 		return fmt.Sprintf("unsupported type of '%s': '%s'", e.Name, e.UnsupportedType.String())
 	}
 	return fmt.Sprintf("configuration error in '%s'", e.Name)
-}
-
-type ScriptError struct {
-	Message  string
-	ExitCode int
-}
-
-func (e *ScriptError) Error() string {
-	return e.Message
 }

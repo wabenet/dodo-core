@@ -1,14 +1,13 @@
 package command
 
 import (
+	"github.com/oclaussen/dodo/pkg/config/decoder"
 	"github.com/oclaussen/dodo/pkg/types"
 	"github.com/spf13/cobra"
 )
 
 type options struct {
 	interactive  bool
-	remove       bool
-	noRemove     bool
 	build        bool
 	noCache      bool
 	pull         bool
@@ -29,12 +28,6 @@ func (opts *options) createFlags(cmd *cobra.Command) {
 	flags.BoolVarP(
 		&opts.interactive, "interactive", "i", false,
 		"run an interactive session")
-	flags.BoolVarP(
-		&opts.remove, "rm", "", false,
-		"automatically remove the container when it exits")
-	flags.BoolVarP(
-		&opts.noRemove, "no-rm", "", false,
-		"keep the container after it exits")
 	flags.BoolVarP(
 		&opts.build, "build", "", false,
 		"always build an image, even if already exists")
@@ -72,33 +65,23 @@ func (opts *options) createFlags(cmd *cobra.Command) {
 
 func (opts *options) createConfig(command []string) (*types.Backdrop, error) {
 	config := &types.Backdrop{
-		Image: &types.Image{
+		Build: &types.BuildInfo{
 			ForceRebuild: opts.build,
 			NoCache:      opts.noCache,
 			ForcePull:    opts.pull,
 		},
-		Interactive:  opts.interactive,
-		Stage:        opts.stage,
-		ForwardStage: opts.forwardStage,
-		User:         opts.user,
-		WorkingDir:   opts.workdir,
-		VolumesFrom:  opts.volumesFrom,
-		Command:      command,
+		Entrypoint: &types.Entrypoint{
+			Interactive: opts.interactive,
+			Arguments:   command,
+		},
+		User:       opts.user,
+		WorkingDir: opts.workdir,
 	}
 
-	if opts.noRemove {
-		remove := false
-		config.Remove = &remove
-	}
-	if opts.remove {
-		remove := true
-		config.Remove = &remove
-	}
-
-	decoder := types.NewDecoder("cli")
+	d := decoder.NewDecoder("cli")
 
 	for _, volume := range opts.volumes {
-		decoded, err := decoder.DecodeVolume("cli", volume)
+		decoded, err := d.DecodeVolume("cli", volume)
 		if err != nil {
 			return nil, err
 		}
@@ -106,7 +89,7 @@ func (opts *options) createConfig(command []string) (*types.Backdrop, error) {
 	}
 
 	for _, env := range opts.environment {
-		decoded, err := decoder.DecodeKeyValue("cli", env)
+		decoded, err := d.DecodeEnvironment("cli", env)
 		if err != nil {
 			return nil, err
 		}
@@ -114,7 +97,7 @@ func (opts *options) createConfig(command []string) (*types.Backdrop, error) {
 	}
 
 	for _, port := range opts.publish {
-		decoded, err := decoder.DecodePort("cli", port)
+		decoded, err := d.DecodePort("cli", port)
 		if err != nil {
 			return nil, err
 		}

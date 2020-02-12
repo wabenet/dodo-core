@@ -1,42 +1,15 @@
-package types
+package decoder
 
 import (
 	"fmt"
 	"reflect"
 	"strings"
 
-	"github.com/docker/go-connections/nat"
+	"github.com/oclaussen/dodo/pkg/types"
 )
 
-type Ports []Port
-
-type Port struct {
-	Target    string
-	Published string
-	Protocol  string
-	HostIP    string
-}
-
-func (ports Ports) PortMap() nat.PortMap {
-	result := map[nat.Port][]nat.PortBinding{}
-	for _, port := range ports {
-		portSpec, _ := nat.NewPort(port.Protocol, port.Target)
-		result[portSpec] = append(result[portSpec], nat.PortBinding{HostPort: port.Published})
-	}
-	return result
-}
-
-func (ports Ports) PortSet() nat.PortSet {
-	result := map[nat.Port]struct{}{}
-	for _, port := range ports {
-		portSpec, _ := nat.NewPort(port.Protocol, port.Target)
-		result[portSpec] = struct{}{}
-	}
-	return result
-}
-
-func (d *decoder) DecodePorts(name string, config interface{}) (Ports, error) {
-	result := []Port{}
+func (d *decoder) DecodePorts(name string, config interface{}) ([]*types.Port, error) {
+	result := []*types.Port{}
 	switch t := reflect.ValueOf(config); t.Kind() {
 	case reflect.String, reflect.Map:
 		decoded, err := d.DecodePort(name, config)
@@ -58,28 +31,28 @@ func (d *decoder) DecodePorts(name string, config interface{}) (Ports, error) {
 	return result, nil
 }
 
-func (d *decoder) DecodePort(name string, config interface{}) (Port, error) {
-	result := Port{Protocol: "tcp"}
+func (d *decoder) DecodePort(name string, config interface{}) (*types.Port, error) {
+	result := types.Port{Protocol: "tcp"}
 	switch t := reflect.ValueOf(config); t.Kind() {
 	case reflect.String:
 		decoded, err := d.DecodeString(name, t.String())
 		if err != nil {
-			return result, err
+			return nil, err
 		}
 		switch values := strings.SplitN(decoded, ":", 3); len(values) {
 		case 0:
-			return result, fmt.Errorf("empty port definition in '%s'", name)
+			return nil, fmt.Errorf("empty port definition in '%s'", name)
 		case 1:
 			result.Target = values[0]
 		case 2:
 			result.Published = values[0]
 			result.Target = values[1]
 		case 3:
-			result.HostIP = values[0]
+			result.HostIp = values[0]
 			result.Published = values[1]
 			result.Target = values[2]
 		default:
-			return result, fmt.Errorf("too many values in '%s'", name)
+			return nil, fmt.Errorf("too many values in '%s'", name)
 		}
 		switch values := strings.SplitN(result.Target, "/", 2); len(values) {
 		case 1:
@@ -88,42 +61,42 @@ func (d *decoder) DecodePort(name string, config interface{}) (Port, error) {
 			result.Target = values[0]
 			result.Protocol = values[1]
 		default:
-			return result, fmt.Errorf("too many values in '%s'", name)
+			return nil, fmt.Errorf("too many values in '%s'", name)
 		}
-		return result, nil
+		return &result, nil
 	case reflect.Map:
 		for k, v := range t.Interface().(map[interface{}]interface{}) {
 			switch key := k.(string); key {
 			case "target":
 				decoded, err := d.DecodeString(key, v)
 				if err != nil {
-					return result, err
+					return nil, err
 				}
 				result.Target = decoded
 			case "published":
 				decoded, err := d.DecodeString(key, v)
 				if err != nil {
-					return result, err
+					return nil, err
 				}
 				result.Published = decoded
 			case "protocol":
 				decoded, err := d.DecodeString(key, v)
 				if err != nil {
-					return result, err
+					return nil, err
 				}
 				result.Protocol = decoded
 			case "host_ip":
 				decoded, err := d.DecodeString(key, v)
 				if err != nil {
-					return result, err
+					return nil, err
 				}
-				result.HostIP = decoded
+				result.HostIp = decoded
 			default:
-				return result, &ConfigError{Name: name, UnsupportedKey: &key}
+				return nil, &ConfigError{Name: name, UnsupportedKey: &key}
 			}
 		}
-		return result, nil
+		return &result, nil
 	default:
-		return result, &ConfigError{Name: name, UnsupportedType: t.Kind()}
+		return nil, &ConfigError{Name: name, UnsupportedType: t.Kind()}
 	}
 }

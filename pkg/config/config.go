@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 
+	"github.com/oclaussen/dodo/pkg/config/decoder"
 	"github.com/oclaussen/dodo/pkg/types"
 	"github.com/oclaussen/go-gimme/configfiles"
 	"github.com/sahilm/fuzzy"
@@ -23,22 +24,14 @@ func LoadBackdrop(backdrop string) (*types.Backdrop, error) {
 	return nil, fmt.Errorf("backdrop '%s' not found, did you mean '%s'?", backdrop, matches[0].Str)
 }
 
-func LoadImage(image string) (*types.Image, error) {
+func LoadImage(image string) (*types.BuildInfo, error) {
 	config := loadConfig()
 	for _, backdrop := range config.Backdrops {
-		if backdrop.Image != nil && backdrop.Image.Name == image {
-			return backdrop.Image, nil
+		if backdrop.Build != nil && backdrop.Build.ImageName == image {
+			return backdrop.Build, nil
 		}
 	}
 	return nil, fmt.Errorf("could not find any backdrop configuration that would produce image '%s'", image)
-}
-
-func LoadStage(name string) (*types.Stage, error) {
-	config := loadConfig()
-	if result, ok := config.Stages[name]; ok {
-		return &result, nil
-	}
-	return nil, fmt.Errorf("could not find any configuration for stage '%s'", name)
 }
 
 func ListBackdrops() []string {
@@ -59,7 +52,7 @@ func ValidateConfigs(files []string) error {
 				return false
 			}
 
-			decoder := types.NewDecoder(configFile.Path)
+			decoder := decoder.NewDecoder(configFile.Path)
 			if _, err := decoder.DecodeGroup(configFile.Path, mapType); err != nil {
 				log.WithFields(log.Fields{"file": configFile.Path, "reason": err}).Error("invalid config file")
 				errors = errors + 1
@@ -76,8 +69,8 @@ func ValidateConfigs(files []string) error {
 	return nil
 }
 
-func loadConfig() *types.Group {
-	var result types.Group
+func loadConfig() *decoder.Group {
+	var result decoder.Group
 	configfiles.GimmeConfigFiles(&configfiles.Options{
 		Name:                      "dodo",
 		Extensions:                []string{"yaml", "yml", "json"},
@@ -89,7 +82,7 @@ func loadConfig() *types.Group {
 				return false
 			}
 
-			decoder := types.NewDecoder(configFile.Path)
+			decoder := decoder.NewDecoder(configFile.Path)
 			config, err := decoder.DecodeGroup(configFile.Path, mapType)
 			if err != nil {
 				log.WithFields(log.Fields{"file": configFile.Path, "reason": err}).Warn("invalid config file")

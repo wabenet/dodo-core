@@ -1,4 +1,4 @@
-package types
+package decoder
 
 import (
 	"fmt"
@@ -7,15 +7,13 @@ import (
 	"path/filepath"
 	"reflect"
 
+	"github.com/oclaussen/dodo/pkg/types"
 	"gopkg.in/yaml.v2"
 )
 
-type Groups map[string]Group
-
 type Group struct {
-	Backdrops Backdrops
-	Stages    Stages
-	Groups    Groups
+	Backdrops map[string]types.Backdrop
+	Groups    map[string]Group
 }
 
 func (groups *Group) Names() []string {
@@ -36,13 +34,8 @@ func (groups *Group) Names() []string {
 func (groups *Group) Strings() []string {
 	var result []string
 	if groups.Backdrops != nil {
-		for name, backdrop := range groups.Backdrops {
-			result = append(result, fmt.Sprintf("backdrop/%s (%s)", name, backdrop.filename))
-		}
-	}
-	if groups.Stages != nil {
-		for name, stage := range groups.Stages {
-			result = append(result, fmt.Sprintf("stage/%s (%s)", name, stage.filename))
+		for name, _ := range groups.Backdrops {
+			result = append(result, fmt.Sprintf("backdrop/%s (%s)", name, "unknown")) // TODO backdrop.filename))
 		}
 	}
 	if groups.Groups != nil {
@@ -58,22 +51,11 @@ func (groups *Group) Strings() []string {
 func (target *Group) Merge(source *Group) {
 	if source.Backdrops != nil {
 		if target.Backdrops == nil {
-			target.Backdrops = map[string]Backdrop{}
+			target.Backdrops = map[string]types.Backdrop{}
 		}
 		for name, backdrop := range source.Backdrops {
 			if _, ok := target.Backdrops[name]; !ok {
 				target.Backdrops[name] = backdrop
-			}
-		}
-	}
-
-	if source.Stages != nil {
-		if target.Stages == nil {
-			target.Stages = map[string]Stage{}
-		}
-		for name, stage := range source.Stages {
-			if _, ok := target.Stages[name]; !ok {
-				target.Stages[name] = stage
 			}
 		}
 	}
@@ -92,7 +74,7 @@ func (target *Group) Merge(source *Group) {
 	}
 }
 
-func (d *decoder) DecodeGroups(name string, config interface{}) (Groups, error) {
+func (d *decoder) DecodeGroups(name string, config interface{}) (map[string]Group, error) {
 	result := map[string]Group{}
 	switch t := reflect.ValueOf(config); t.Kind() {
 	case reflect.Map:
@@ -111,7 +93,7 @@ func (d *decoder) DecodeGroups(name string, config interface{}) (Groups, error) 
 }
 
 func (d *decoder) DecodeGroup(name string, config interface{}) (Group, error) {
-	result := Group{Backdrops: Backdrops{}, Stages: Stages{}, Groups: Groups{}}
+	result := Group{Backdrops: map[string]types.Backdrop{}, Groups: map[string]Group{}}
 	switch t := reflect.ValueOf(config); t.Kind() {
 	case reflect.Map:
 		for k, v := range t.Interface().(map[interface{}]interface{}) {
@@ -131,14 +113,6 @@ func (d *decoder) DecodeGroup(name string, config interface{}) (Group, error) {
 				}
 				for name, backdrop := range decoded {
 					result.Backdrops[name] = backdrop
-				}
-			case "stages":
-				decoded, err := d.DecodeStages(key, v)
-				if err != nil {
-					return result, err
-				}
-				for name, stage := range decoded {
-					result.Stages[name] = stage
 				}
 			case "include":
 				decoded, err := d.DecodeIncludes(key, v)
