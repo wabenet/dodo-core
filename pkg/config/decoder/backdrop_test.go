@@ -14,8 +14,8 @@ image: testimage
 
 func TestSimplePull(t *testing.T) {
 	config := getExampleConfig(t, simplePull)
-	assert.NotNil(t, config.Image)
-	assert.Equal(t, "testimage", config.Image.Name)
+	assert.NotNil(t, config.Build)
+	assert.Equal(t, "testimage", config.Build.ImageName)
 }
 
 const contextOnly = `
@@ -25,8 +25,8 @@ image:
 
 func TestContextOnly(t *testing.T) {
 	config := getExampleConfig(t, contextOnly)
-	assert.NotNil(t, config.Image)
-	assert.Equal(t, "./path/to/context", config.Image.Context)
+	assert.NotNil(t, config.Build)
+	assert.Equal(t, "./path/to/context", config.Build.Context)
 }
 
 const environments = `
@@ -42,11 +42,11 @@ func TestEnvironments(t *testing.T) {
 	foobar := config.Environment[0]
 	assert.Equal(t, foobar.Key, "FOO")
 	assert.NotNil(t, foobar.Value)
-	assert.Equal(t, "BAR", *foobar.Value)
+	assert.Equal(t, "BAR", foobar.Value)
 
 	something := config.Environment[1]
 	assert.Equal(t, "SOMETHING", something.Key)
-	assert.Nil(t, something.Value)
+	assert.Equal(t, "", something.Value)
 }
 
 const simpleVolume = `
@@ -58,7 +58,7 @@ func TestSimpleVolume(t *testing.T) {
 	assert.Equal(t, 1, len(config.Volumes))
 	assert.Equal(t, "foo", config.Volumes[0].Source)
 	assert.Equal(t, "bar", config.Volumes[0].Target)
-	assert.True(t, config.Volumes[0].ReadOnly)
+	assert.True(t, config.Volumes[0].Readonly)
 }
 
 const mixedVolumes = `
@@ -77,17 +77,17 @@ func TestMixedVolumes(t *testing.T) {
 	sourceOnly := config.Volumes[0]
 	assert.Equal(t, "test", sourceOnly.Source)
 	assert.Equal(t, "", sourceOnly.Target)
-	assert.False(t, sourceOnly.ReadOnly)
+	assert.False(t, sourceOnly.Readonly)
 
 	fullSpec := config.Volumes[1]
 	assert.Equal(t, "from", fullSpec.Source)
 	assert.Equal(t, "to", fullSpec.Target)
-	assert.True(t, fullSpec.ReadOnly)
+	assert.True(t, fullSpec.Readonly)
 
 	readWrite := config.Volumes[2]
 	assert.Equal(t, "bar", readWrite.Source)
 	assert.Equal(t, "baz", readWrite.Target)
-	assert.False(t, readWrite.ReadOnly)
+	assert.False(t, readWrite.Readonly)
 }
 
 const fullExample = `
@@ -115,28 +115,25 @@ command: ['Hello', 'World']
 
 func TestFullExample(t *testing.T) {
 	config := getExampleConfig(t, fullExample)
-	assert.NotNil(t, config.Image)
-	assert.Equal(t, "testimage", config.Image.Name)
-	assert.Equal(t, ".", config.Image.Context)
-	assert.Equal(t, "Dockerfile", config.Image.Dockerfile)
-	assert.Equal(t, []string{"RUN hello", "RUN world"}, config.Image.Steps)
-	assert.Equal(t, 1, len(config.Image.Args))
-	assert.Equal(t, "FOO", config.Image.Args[0].Key)
-	assert.Equal(t, "BAR", *config.Image.Args[0].Value)
-	assert.True(t, config.Image.NoCache)
-	assert.True(t, config.Image.ForceRebuild)
-	assert.True(t, config.Image.ForcePull)
+	assert.NotNil(t, config.Build)
+	assert.Equal(t, "testimage", config.Build.ImageName)
+	assert.Equal(t, ".", config.Build.Context)
+	assert.Equal(t, "Dockerfile", config.Build.Dockerfile)
+	assert.Equal(t, []string{"RUN hello", "RUN world"}, config.Build.InlineDockerfile)
+	assert.Equal(t, 1, len(config.Build.Arguments))
+	assert.Equal(t, "FOO", config.Build.Arguments[0].Key)
+	assert.Equal(t, "BAR", config.Build.Arguments[0].Value)
+	assert.True(t, config.Build.NoCache)
+	assert.True(t, config.Build.ForceRebuild)
+	assert.True(t, config.Build.ForcePull)
 	assert.Equal(t, "testcontainer", config.ContainerName)
-	assert.NotNil(t, config.Remove)
-	assert.False(t, *config.Remove)
-	assert.True(t, config.Interactive)
-	assert.Contains(t, config.VolumesFrom, "somevolume")
-	assert.Contains(t, config.Interpreter, "/bin/sh")
-	assert.Equal(t, "echo \"$@\"\n", config.Script)
-	assert.Equal(t, []string{"Hello", "World"}, config.Command)
+	assert.True(t, config.Entrypoint.Interactive)
+	assert.Contains(t, config.Entrypoint.Interpreter, "/bin/sh")
+	assert.Equal(t, "echo \"$@\"\n", config.Entrypoint.Script)
+	assert.Equal(t, []string{"Hello", "World"}, config.Entrypoint.Arguments)
 }
 
-func getExampleConfig(t *testing.T, yamlConfig string) Backdrop {
+func getExampleConfig(t *testing.T, yamlConfig string) types.Backdrop {
 	var mapType map[interface{}]interface{}
 	err := yaml.Unmarshal([]byte(yamlConfig), &mapType)
 	assert.Nil(t, err)
