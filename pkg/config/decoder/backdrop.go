@@ -42,12 +42,12 @@ func (d *decoder) DecodeBackdrop(name string, config interface{}) (types.Backdro
 					return result, err
 				}
 				result.Aliases = decoded
-			case "build", "image":
-				decoded, err := d.DecodeImage(key, v)
+			case "image":
+				decoded, err := d.DecodeString(key, v)
 				if err != nil {
 					return result, err
 				}
-				result.Build = &decoded
+				result.ImageId = decoded
 			case "name", "container_name":
 				decoded, err := d.DecodeString(key, v)
 				if err != nil {

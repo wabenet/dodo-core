@@ -65,11 +65,6 @@ func (opts *options) createFlags(cmd *cobra.Command) {
 
 func (opts *options) createConfig(command []string) (*types.Backdrop, error) {
 	config := &types.Backdrop{
-		Build: &types.BuildInfo{
-			ForceRebuild: opts.build,
-			NoCache:      opts.noCache,
-			ForcePull:    opts.pull,
-		},
 		Entrypoint: &types.Entrypoint{
 			Interactive: opts.interactive,
 			Arguments:   command,

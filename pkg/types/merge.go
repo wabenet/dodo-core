@@ -8,9 +8,6 @@ func (target *Backdrop) Merge(source *Backdrop) {
 	if len(source.ImageId) > 0 {
 		target.ImageId = source.ImageId
 	}
-	if source.Build != nil {
-		target.Build.Merge(source.Build)
-	}
 	if source.Entrypoint != nil {
 		target.Entrypoint.Merge(source.Entrypoint)
 	}
@@ -42,32 +39,4 @@ func (target *Entrypoint) Merge(source *Entrypoint) {
 	if len(source.Arguments) > 0 {
 		target.Arguments = source.Arguments
 	}
-}
-
-func (target *BuildInfo) Merge(source *BuildInfo) {
-	if len(source.ImageName) > 0 {
-		target.ImageName = source.ImageName
-	}
-	if len(source.Context) > 0 {
-		target.Context = source.Context
-	}
-	if len(source.Dockerfile) > 0 {
-		target.Dockerfile = source.Dockerfile
-	}
-	if len(source.InlineDockerfile) > 0 {
-		target.InlineDockerfile = source.InlineDockerfile
-	}
-	target.Arguments = append(target.Arguments, source.Arguments...)
-	target.Secrets = append(target.Secrets, source.Secrets...)
-	target.SshAgents = append(target.SshAgents, source.SshAgents...)
-	if source.NoCache {
-		target.NoCache = true
-	}
-	if source.ForceRebuild {
-		target.ForceRebuild = true
-	}
-	if source.ForcePull {
-		target.ForcePull = true
-	}
-	target.Dependencies = append(target.Dependencies, source.Dependencies...)
 }

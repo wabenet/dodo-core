@@ -24,16 +24,6 @@ func LoadBackdrop(backdrop string) (*types.Backdrop, error) {
 	return nil, fmt.Errorf("backdrop '%s' not found, did you mean '%s'?", backdrop, matches[0].Str)
 }
 
-func LoadImage(image string) (*types.BuildInfo, error) {
-	config := loadConfig()
-	for _, backdrop := range config.Backdrops {
-		if backdrop.Build != nil && backdrop.Build.ImageName == image {
-			return backdrop.Build, nil
-		}
-	}
-	return nil, fmt.Errorf("could not find any backdrop configuration that would produce image '%s'", image)
-}
-
 func ListBackdrops() []string {
 	return loadConfig().Strings()
 }

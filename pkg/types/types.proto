@@ -7,19 +7,17 @@ message Backdrop {
   string container_name = 3;
 
   string image_id = 4;
-  BuildInfo build = 5;
+  Entrypoint entrypoint = 5;
 
-  Entrypoint entrypoint = 6;
+  repeated Environment environment = 6;
+  repeated Volume volumes = 7;
+  repeated Device devices = 8;
+  repeated Port ports = 9;
 
-  repeated Environment environment = 9;
-  repeated Volume volumes = 10;
-  repeated Device devices = 11;
-  repeated Port ports = 12;
+  string user = 10;
+  string working_dir = 11;
 
-  string user = 13;
-  string working_dir = 14;
-
-  bool attach = 15;
+  bool attach = 12;
 }
 
 message Entrypoint {
@@ -27,28 +25,6 @@ message Entrypoint {
   string script = 2;
   repeated string interpreter = 3;
   repeated string arguments = 4;
-}
-
-message BuildInfo {
-  string image_name = 1;
-  string context = 2;
-  string dockerfile = 3;
-  repeated string inline_dockerfile = 4;
-
-  repeated Argument arguments = 5;
-  repeated Secret secrets = 6;
-  repeated SshAgent ssh_agents = 7;
-
-  bool no_cache = 8;
-  bool force_rebuild = 9;
-  bool force_pull = 10;
-
-  repeated string dependencies = 11;
-}
-
-message Argument {
-  string key = 1;
-  string value = 2;
 }
 
 message Environment {
@@ -74,14 +50,4 @@ message Port {
   string published = 2;
   string protocol = 3;
   string host_ip = 4;
-}
-
-message Secret {
-  string id = 1;
-  string path = 2;
-}
-
-message SshAgent {
-  string id = 1;
-  string identity_file = 2;
 }

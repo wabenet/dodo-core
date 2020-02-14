@@ -14,19 +14,7 @@ image: testimage
 
 func TestSimplePull(t *testing.T) {
 	config := getExampleConfig(t, simplePull)
-	assert.NotNil(t, config.Build)
-	assert.Equal(t, "testimage", config.Build.ImageName)
-}
-
-const contextOnly = `
-image:
-  context: ./path/to/context
-`
-
-func TestContextOnly(t *testing.T) {
-	config := getExampleConfig(t, contextOnly)
-	assert.NotNil(t, config.Build)
-	assert.Equal(t, "./path/to/context", config.Build.Context)
+	assert.Equal(t, "testimage", config.ImageId)
 }
 
 const environments = `
@@ -91,18 +79,7 @@ func TestMixedVolumes(t *testing.T) {
 }
 
 const fullExample = `
-image:
-  name: testimage
-  context: .
-  dockerfile: Dockerfile
-  steps:
-    - RUN hello
-    - RUN world
-  args:
-    - FOO=BAR
-  no_cache: true
-  force_rebuild: true
-  force_pull: true
+image: testimage
 container_name: testcontainer
 remove: false
 interactive: true
@@ -115,17 +92,7 @@ command: ['Hello', 'World']
 
 func TestFullExample(t *testing.T) {
 	config := getExampleConfig(t, fullExample)
-	assert.NotNil(t, config.Build)
-	assert.Equal(t, "testimage", config.Build.ImageName)
-	assert.Equal(t, ".", config.Build.Context)
-	assert.Equal(t, "Dockerfile", config.Build.Dockerfile)
-	assert.Equal(t, []string{"RUN hello", "RUN world"}, config.Build.InlineDockerfile)
-	assert.Equal(t, 1, len(config.Build.Arguments))
-	assert.Equal(t, "FOO", config.Build.Arguments[0].Key)
-	assert.Equal(t, "BAR", config.Build.Arguments[0].Value)
-	assert.True(t, config.Build.NoCache)
-	assert.True(t, config.Build.ForceRebuild)
-	assert.True(t, config.Build.ForcePull)
+	assert.Equal(t, "testimage", config.ImageId)
 	assert.Equal(t, "testcontainer", config.ContainerName)
 	assert.True(t, config.Entrypoint.Interactive)
 	assert.Contains(t, config.Entrypoint.Interpreter, "/bin/sh")

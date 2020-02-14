@@ -57,7 +57,6 @@ func NewCommand() *cobra.Command {
 	opts.createFlags(cmd)
 
 	cmd.AddCommand(NewRunCommand())
-	cmd.AddCommand(NewBuildCommand())
 	cmd.AddCommand(NewListCommand())
 	cmd.AddCommand(NewValidateCommand())
 	return cmd
@@ -97,30 +96,6 @@ func NewRunCommand() *cobra.Command {
 
 	opts.createFlags(cmd)
 	return cmd
-}
-
-func NewBuildCommand() *cobra.Command {
-	return &cobra.Command{
-		Use:                   "build",
-		Short:                 "Build all required images for backdrop without running it",
-		DisableFlagsInUseLine: true,
-		SilenceUsage:          true,
-		Args:                  cobra.ExactArgs(1),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			configureLogging()
-			conf, err := config.LoadBackdrop(args[0])
-			if err != nil {
-				return err
-			}
-
-			c, err := container.NewContainer(conf, config.LoadAuthConfig(), false)
-			if err != nil {
-				return err
-			}
-
-			return c.Build()
-		},
-	}
 }
 
 func NewListCommand() *cobra.Command {
