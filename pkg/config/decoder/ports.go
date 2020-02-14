@@ -25,8 +25,6 @@ func (d *decoder) DecodePorts(name string, config interface{}) ([]*types.Port, e
 			}
 			result = append(result, decoded)
 		}
-	default:
-		return result, &ConfigError{Name: name, UnsupportedType: t.Kind()}
 	}
 	return result, nil
 }
@@ -93,8 +91,6 @@ func (d *decoder) DecodePort(name string, config interface{}) (*types.Port, erro
 				result.HostIp = decoded
 			}
 		}
-		return &result, nil
-	default:
-		return nil, &ConfigError{Name: name, UnsupportedType: t.Kind()}
 	}
+	return &result, nil
 }

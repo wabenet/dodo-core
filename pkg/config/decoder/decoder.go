@@ -29,8 +29,6 @@ func (d *decoder) DecodeBool(name string, config interface{}) (bool, error) {
 	switch t := reflect.ValueOf(config); t.Kind() {
 	case reflect.Bool:
 		result = t.Bool()
-	default:
-		return result, &ConfigError{Name: name, UnsupportedType: t.Kind()}
 	}
 	return result, nil
 }
@@ -40,8 +38,6 @@ func (d *decoder) DecodeInt(name string, config interface{}) (int64, error) {
 	switch t := reflect.ValueOf(config); t.Kind() {
 	case reflect.Int:
 		result = t.Int()
-	default:
-		return result, &ConfigError{Name: name, UnsupportedType: t.Kind()}
 	}
 	return result, nil
 }
@@ -51,9 +47,8 @@ func (d *decoder) DecodeString(name string, config interface{}) (string, error) 
 	switch t := reflect.ValueOf(config); t.Kind() {
 	case reflect.String:
 		return d.ApplyTemplate(t.String())
-	default:
-		return result, &ConfigError{Name: name, UnsupportedType: t.Kind()}
 	}
+	return result, nil
 }
 
 func (d *decoder) DecodeStringSlice(name string, config interface{}) ([]string, error) {
@@ -73,8 +68,6 @@ func (d *decoder) DecodeStringSlice(name string, config interface{}) ([]string, 
 			}
 			result = append(result, decoded)
 		}
-	default:
-		return result, &ConfigError{Name: name, UnsupportedType: t.Kind()}
 	}
 	return result, nil
 }

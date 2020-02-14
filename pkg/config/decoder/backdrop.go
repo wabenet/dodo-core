@@ -24,8 +24,6 @@ func (d *decoder) DecodeBackdrops(name string, config interface{}) (map[string]t
 				result[alias] = decoded
 			}
 		}
-	default:
-		return result, &ConfigError{Name: name, UnsupportedType: t.Kind()}
 	}
 	return result, nil
 }
@@ -116,8 +114,6 @@ func (d *decoder) DecodeBackdrop(name string, config interface{}) (types.Backdro
 				result.Entrypoint.Arguments = decoded
 			}
 		}
-	default:
-		return result, &ConfigError{Name: name, UnsupportedType: t.Kind()}
 	}
 	return result, nil
 }
@@ -151,13 +147,12 @@ func (d *decoder) DecodeEnvironments(name string, config interface{}) ([]*types.
 				Value: decoded,
 			})
 		}
-	default:
-		return result, &ConfigError{Name: name, UnsupportedType: t.Kind()}
 	}
 	return result, nil
 }
 
 func (d *decoder) DecodeEnvironment(name string, config interface{}) (*types.Environment, error) {
+	result := &types.Environment{}
 	switch t := reflect.ValueOf(config); t.Kind() {
 	case reflect.String:
 		decoded, err := d.DecodeString(name, t.String())
@@ -174,7 +169,6 @@ func (d *decoder) DecodeEnvironment(name string, config interface{}) (*types.Env
 		default:
 			return nil, fmt.Errorf("too many values in '%s'", name)
 		}
-	default:
-		return nil, &ConfigError{Name: name, UnsupportedType: t.Kind()}
 	}
+	return result, nil
 }

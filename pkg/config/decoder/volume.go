@@ -25,13 +25,12 @@ func (d *decoder) DecodeVolumes(name string, config interface{}) ([]*types.Volum
 			}
 			result = append(result, decoded)
 		}
-	default:
-		return result, &ConfigError{Name: name, UnsupportedType: t.Kind()}
 	}
 	return result, nil
 }
 
 func (d *decoder) DecodeVolume(name string, config interface{}) (*types.Volume, error) {
+	result := &types.Volume{}
 	switch t := reflect.ValueOf(config); t.Kind() {
 	case reflect.String:
 		decoded, err := d.DecodeString(name, t.String())
@@ -60,7 +59,6 @@ func (d *decoder) DecodeVolume(name string, config interface{}) (*types.Volume, 
 			return nil, fmt.Errorf("too many values in '%s'", name)
 		}
 	case reflect.Map:
-		var result types.Volume
 		for k, v := range t.Interface().(map[interface{}]interface{}) {
 			switch key := k.(string); key {
 			case "source":
@@ -83,8 +81,6 @@ func (d *decoder) DecodeVolume(name string, config interface{}) (*types.Volume, 
 				result.Readonly = decoded
 			}
 		}
-		return &result, nil
-	default:
-		return nil, &ConfigError{Name: name, UnsupportedType: t.Kind()}
 	}
+	return result, nil
 }

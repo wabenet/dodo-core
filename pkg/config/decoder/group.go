@@ -86,8 +86,6 @@ func (d *decoder) DecodeGroups(name string, config interface{}) (map[string]Grou
 			}
 			result[key] = decoded
 		}
-	default:
-		return result, &ConfigError{Name: name, UnsupportedType: t.Kind()}
 	}
 	return result, nil
 }
@@ -124,8 +122,6 @@ func (d *decoder) DecodeGroup(name string, config interface{}) (Group, error) {
 				}
 			}
 		}
-	default:
-		return result, &ConfigError{Name: name, UnsupportedType: t.Kind()}
 	}
 	return result, nil
 }
@@ -147,8 +143,6 @@ func (d *decoder) DecodeIncludes(name string, config interface{}) ([]Group, erro
 			}
 			result = append(result, decoded)
 		}
-	default:
-		return result, &ConfigError{Name: name, UnsupportedType: t.Kind()}
 	}
 	return result, nil
 }
@@ -173,8 +167,6 @@ func (d *decoder) DecodeInclude(name string, config interface{}) (Group, error) 
 				return d.includeText(name, []byte(decoded))
 			}
 		}
-	default:
-		return result, &ConfigError{Name: name, UnsupportedType: t.Kind()}
 	}
 	return result, nil
 }

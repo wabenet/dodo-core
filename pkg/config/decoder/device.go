@@ -25,13 +25,12 @@ func (d *decoder) DecodeDevices(name string, config interface{}) ([]*types.Devic
 			}
 			result = append(result, decoded)
 		}
-	default:
-		return result, &ConfigError{Name: name, UnsupportedType: t.Kind()}
 	}
 	return result, nil
 }
 
 func (d *decoder) DecodeDevice(name string, config interface{}) (*types.Device, error) {
+	result := &types.Device{}
 	switch t := reflect.ValueOf(config); t.Kind() {
 	case reflect.String:
 		decoded, err := d.DecodeString(name, t.String())
@@ -56,11 +55,8 @@ func (d *decoder) DecodeDevice(name string, config interface{}) (*types.Device, 
 				Target:      values[1],
 				Permissions: values[2],
 			}, nil
-		default:
-			return nil, fmt.Errorf("too many values in '%s'", name)
 		}
 	case reflect.Map:
-		var result types.Device
 		for k, v := range t.Interface().(map[interface{}]interface{}) {
 			switch key := k.(string); key {
 			case "cgroup_rule":
@@ -91,8 +87,6 @@ func (d *decoder) DecodeDevice(name string, config interface{}) (*types.Device, 
 				}
 			}
 		}
-		return &result, nil
-	default:
-		return nil, &ConfigError{Name: name, UnsupportedType: t.Kind()}
 	}
+	return result, nil
 }
