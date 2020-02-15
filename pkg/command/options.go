@@ -1,7 +1,6 @@
 package command
 
 import (
-	"github.com/oclaussen/dodo/pkg/config/decoder"
 	"github.com/oclaussen/dodo/pkg/types"
 	"github.com/spf13/cobra"
 )
@@ -63,8 +62,9 @@ func (opts *options) createFlags(cmd *cobra.Command) {
 		"publish a container's port(s) to the host")
 }
 
-func (opts *options) createConfig(command []string) (*types.Backdrop, error) {
+func (opts *options) createConfig(name string, command []string) (*types.Backdrop, error) {
 	config := &types.Backdrop{
+		Name: name,
 		Entrypoint: &types.Entrypoint{
 			Interactive: opts.interactive,
 			Arguments:   command,
@@ -73,31 +73,31 @@ func (opts *options) createConfig(command []string) (*types.Backdrop, error) {
 		WorkingDir: opts.workdir,
 	}
 
-	d := decoder.NewDecoder("cli")
+	//d := decoder.NewDecoder("cli")
 
-	for _, volume := range opts.volumes {
-		decoded, err := d.DecodeVolume("cli", volume)
-		if err != nil {
-			return nil, err
-		}
-		config.Volumes = append(config.Volumes, decoded)
-	}
+	//for _, volume := range opts.volumes {
+	//	decoded, err := d.DecodeVolume("cli", volume)
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//	config.Volumes = append(config.Volumes, decoded)
+	//}
 
-	for _, env := range opts.environment {
-		decoded, err := d.DecodeEnvironment("cli", env)
-		if err != nil {
-			return nil, err
-		}
-		config.Environment = append(config.Environment, decoded)
-	}
+	//for _, env := range opts.environment {
+	//	decoded, err := d.DecodeEnvironment("cli", env)
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//	config.Environment = append(config.Environment, decoded)
+	//}
 
-	for _, port := range opts.publish {
-		decoded, err := d.DecodePort("cli", port)
-		if err != nil {
-			return nil, err
-		}
-		config.Ports = append(config.Ports, decoded)
-	}
+	//for _, port := range opts.publish {
+	//	decoded, err := d.DecodePort("cli", port)
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//	config.Ports = append(config.Ports, decoded)
+	//}
 
 	return config, nil
 }

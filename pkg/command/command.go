@@ -1,8 +1,6 @@
 package command
 
 import (
-	"fmt"
-
 	"github.com/oclaussen/dodo/pkg/config"
 	"github.com/oclaussen/dodo/pkg/container"
 	log "github.com/sirupsen/logrus"
@@ -34,19 +32,12 @@ func NewCommand() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			configureLogging()
 
-			conf, err := config.LoadBackdrop(args[0])
+			backdrop, err := opts.createConfig(args[0], args[1:])
 			if err != nil {
 				return err
 			}
 
-			optsConfig, err := opts.createConfig(args[1:])
-			if err != nil {
-				return err
-			}
-
-			conf.Merge(optsConfig)
-
-			c, err := container.NewContainer(conf, config.LoadAuthConfig(), false)
+			c, err := container.NewContainer(backdrop, config.LoadAuthConfig(), false)
 			if err != nil {
 				return err
 			}
@@ -57,8 +48,6 @@ func NewCommand() *cobra.Command {
 	opts.createFlags(cmd)
 
 	cmd.AddCommand(NewRunCommand())
-	cmd.AddCommand(NewListCommand())
-	cmd.AddCommand(NewValidateCommand())
 	return cmd
 }
 
@@ -73,19 +62,12 @@ func NewRunCommand() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			configureLogging()
 
-			conf, err := config.LoadBackdrop(args[0])
+			backdrop, err := opts.createConfig(args[0], args[1:])
 			if err != nil {
 				return err
 			}
 
-			optsConfig, err := opts.createConfig(args[1:])
-			if err != nil {
-				return err
-			}
-
-			conf.Merge(optsConfig)
-
-			c, err := container.NewContainer(conf, config.LoadAuthConfig(), false)
+			c, err := container.NewContainer(backdrop, config.LoadAuthConfig(), false)
 			if err != nil {
 				return err
 			}
@@ -96,36 +78,6 @@ func NewRunCommand() *cobra.Command {
 
 	opts.createFlags(cmd)
 	return cmd
-}
-
-func NewListCommand() *cobra.Command {
-	return &cobra.Command{
-		Use:                   "list",
-		Short:                 "List available all backdrop configurations",
-		DisableFlagsInUseLine: true,
-		SilenceUsage:          true,
-		RunE: func(cmd *cobra.Command, args []string) error {
-			configureLogging()
-			for _, item := range config.ListBackdrops() {
-				fmt.Printf("%s\n", item)
-			}
-			return nil
-		},
-	}
-}
-
-func NewValidateCommand() *cobra.Command {
-	return &cobra.Command{
-		Use:                   "validate",
-		Short:                 "Validate configuration files for syntax errors",
-		DisableFlagsInUseLine: true,
-		SilenceUsage:          true,
-		Args:                  cobra.MinimumNArgs(1),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			configureLogging()
-			return config.ValidateConfigs(args)
-		},
-	}
 }
 
 func configureLogging() {

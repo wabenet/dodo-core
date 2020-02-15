@@ -1,0 +1,32 @@
+syntax = "proto3";
+package proto;
+
+message CommandQuery {}
+
+message CommandInfo {
+  string use = 1;
+  string short = 2;
+
+  bool traverseChildren = 3;
+  bool silenceUsage = 4;
+
+  repeated CommandInfo subcommands = 5;
+
+  repeated string executePath = 6;
+  bool argsFunc = 7;
+  bool runFunc = 8;
+}
+
+message Arguments {
+  repeated string path = 1;
+  repeated string args = 2;
+}
+
+message Result {}
+
+service Command {
+  rpc Describe(CommandQuery) returns (CommandInfo);
+
+  rpc Run(Arguments) returns (Result);
+  rpc Args(Arguments) returns (Result);
+}

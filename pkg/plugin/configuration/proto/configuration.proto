@@ -1,0 +1,28 @@
+syntax = "proto3";
+package proto;
+
+import "pkg/types/types.proto";
+
+message Empty {}
+
+message Container {
+  string id = 1;
+}
+
+message Backdrop {
+  string name = 1;
+}
+
+message ClientOptions {
+  string version   = 1;
+  string host      = 2;
+  string ca_file   = 3;
+  string cert_file = 4;
+  string key_file  = 5;
+}
+
+service Configuration {
+  rpc GetClientOptions(Backdrop) returns (ClientOptions);
+  rpc UpdateConfiguration(types.Backdrop) returns (types.Backdrop);
+  rpc Provision(Container) returns (Empty);
+}
