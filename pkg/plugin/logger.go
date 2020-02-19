@@ -26,24 +26,20 @@ func NewPluginLogger() hclog.Logger {
 	}
 }
 
-// TODO: implement these properly
-
-func (logger *PluginLogger) Name() string {
-	return logger.name
-}
-
 func (logger *PluginLogger) Log(level hclog.Level, msg string, args ...interface{}) {
-	logger.logger.WithFields(argsToFields(args)).Info(msg)
+	switch level {
+	case hclog.Debug:
+		logger.Debug(msg, args...)
+	case hclog.Info:
+		logger.Info(msg, args...)
+	case hclog.Warn:
+		logger.Warn(msg, args...)
+	case hclog.Error:
+		logger.Error(msg, args...)
+	}
 }
-
-func (logger *PluginLogger) ImpliedArgs() []interface{} {
-	return []interface{}{}
-}
-
-// end of TODO
 
 func (*PluginLogger) Trace(_ string, _ ...interface{}) {
-	return
 }
 
 func (logger *PluginLogger) IsTrace() bool {
@@ -90,6 +86,14 @@ func (logger *PluginLogger) SetLevel(_ hclog.Level) {}
 
 func (logger *PluginLogger) With(args ...interface{}) hclog.Logger {
 	return &PluginLogger{logger: logger.logger.WithFields(argsToFields(args))}
+}
+
+func (logger *PluginLogger) ImpliedArgs() []interface{} {
+	return []interface{}{}
+}
+
+func (logger *PluginLogger) Name() string {
+	return logger.name
 }
 
 func (logger *PluginLogger) Named(name string) hclog.Logger {
@@ -151,7 +155,7 @@ func argsToFields(args []interface{}) logrus.Fields {
 		args = append(args, "")
 	}
 	fields := make(logrus.Fields, len(args)/2)
-	for i := 0; i < len(args); i = i + 2 {
+	for i := 0; i < len(args); i += 2 {
 		if key, ok := args[i].(string); ok {
 			fields[key] = args[i+1]
 		}

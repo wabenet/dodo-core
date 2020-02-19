@@ -1,23 +1,21 @@
 package command
 
 import (
+	"fmt"
+	"os"
+	"strings"
+
 	"github.com/oclaussen/dodo/pkg/types"
 	"github.com/spf13/cobra"
 )
 
 type options struct {
-	interactive  bool
-	build        bool
-	noCache      bool
-	pull         bool
-	stage        string
-	forwardStage bool
-	user         string
-	workdir      string
-	volumes      []string
-	volumesFrom  []string
-	environment  []string
-	publish      []string
+	interactive bool
+	user        string
+	workdir     string
+	volumes     []string
+	environment []string
+	publish     []string
 }
 
 func (opts *options) createFlags(cmd *cobra.Command) {
@@ -27,21 +25,6 @@ func (opts *options) createFlags(cmd *cobra.Command) {
 	flags.BoolVarP(
 		&opts.interactive, "interactive", "i", false,
 		"run an interactive session")
-	flags.BoolVarP(
-		&opts.build, "build", "", false,
-		"always build an image, even if already exists")
-	flags.BoolVarP(
-		&opts.noCache, "no-cache", "", false,
-		"do not use cache when building the image")
-	flags.BoolVarP(
-		&opts.pull, "pull", "", false,
-		"always attempt to pull a newer version of the image")
-	flags.StringVarP(
-		&opts.stage, "stage", "s", "",
-		"stage to user for docker daemon")
-	flags.BoolVarP(
-		&opts.forwardStage, "forward-stage", "", false,
-		"forward stage information into container, so dodo can be used inside the container")
 	flags.StringVarP(
 		&opts.user, "user", "u", "",
 		"username or UID (format: <name|uid>[:<group|gid>])")
@@ -51,9 +34,6 @@ func (opts *options) createFlags(cmd *cobra.Command) {
 	flags.StringArrayVarP(
 		&opts.volumes, "volume", "v", []string{},
 		"bind mount a volume")
-	flags.StringArrayVarP(
-		&opts.volumesFrom, "volumes-from", "", []string{},
-		"mount volumes from the specified container(s)")
 	flags.StringArrayVarP(
 		&opts.environment, "env", "e", []string{},
 		"set environment variables")
@@ -73,31 +53,69 @@ func (opts *options) createConfig(name string, command []string) (*types.Backdro
 		WorkingDir: opts.workdir,
 	}
 
-	//d := decoder.NewDecoder("cli")
+	for _, volume := range opts.volumes {
+		var v *types.Volume
+		switch values := strings.SplitN(volume, ":", 3); len(values) {
+		case 1:
+			v = &types.Volume{Source: values[0]}
+		case 2:
+			v = &types.Volume{
+				Source: values[0],
+				Target: values[1],
+			}
+		case 3:
+			v = &types.Volume{
+				Source:   values[0],
+				Target:   values[1],
+				Readonly: values[2] == "ro",
+			}
+		default:
+			return nil, fmt.Errorf("invalid volume definition: %s", volume)
+		}
+		config.Volumes = append(config.Volumes, v)
+	}
 
-	//for _, volume := range opts.volumes {
-	//	decoded, err := d.DecodeVolume("cli", volume)
-	//	if err != nil {
-	//		return nil, err
-	//	}
-	//	config.Volumes = append(config.Volumes, decoded)
-	//}
+	for _, env := range opts.environment {
+		var e *types.Environment
+		switch values := strings.SplitN(env, "=", 2); len(values) {
+		case 1:
+			e = &types.Environment{Key: values[0], Value: os.Getenv(values[0])}
+		case 2:
+			e = &types.Environment{Key: values[0], Value: values[1]}
+		default:
+			return nil, fmt.Errorf("invalid environment definition: %s", env)
+		}
+		config.Environment = append(config.Environment, e)
+	}
 
-	//for _, env := range opts.environment {
-	//	decoded, err := d.DecodeEnvironment("cli", env)
-	//	if err != nil {
-	//		return nil, err
-	//	}
-	//	config.Environment = append(config.Environment, decoded)
-	//}
+	for _, port := range opts.publish {
+		var p *types.Port
+		switch values := strings.SplitN(port, ":", 3); len(values) {
+		case 1:
+			p.Target = values[0]
+		case 2:
+			p.Published = values[0]
+			p.Target = values[1]
+		case 3:
+			p.HostIp = values[0]
+			p.Published = values[1]
+			p.Target = values[2]
+		default:
+			return nil, fmt.Errorf("invalid publish definition: %s", port)
+		}
 
-	//for _, port := range opts.publish {
-	//	decoded, err := d.DecodePort("cli", port)
-	//	if err != nil {
-	//		return nil, err
-	//	}
-	//	config.Ports = append(config.Ports, decoded)
-	//}
+		switch values := strings.SplitN(p.Target, "/", 2); len(values) {
+		case 1:
+			p.Target = values[0]
+		case 2:
+			p.Target = values[0]
+			p.Protocol = values[1]
+		default:
+			return nil, fmt.Errorf("invalid publish definition: %s", port)
+		}
+
+		config.Ports = append(config.Ports, p)
+	}
 
 	return config, nil
 }

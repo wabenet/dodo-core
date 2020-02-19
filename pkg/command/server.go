@@ -3,7 +3,7 @@ package command
 import (
 	"strings"
 
-	"github.com/oclaussen/dodo/pkg/plugin/command/proto"
+	"github.com/oclaussen/dodo/pkg/types"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 )
@@ -12,7 +12,7 @@ type server struct {
 	impl Command
 }
 
-func (s *server) Describe(ctx context.Context, _ *proto.CommandQuery) (*proto.CommandInfo, error) {
+func (s *server) Describe(ctx context.Context, _ *types.Empty) (*types.CommandInfo, error) {
 	cmd, err := s.impl.GetCommand()
 	if err != nil {
 		return nil, err
@@ -20,7 +20,7 @@ func (s *server) Describe(ctx context.Context, _ *proto.CommandQuery) (*proto.Co
 	return s.cobraToProto(cmd), nil
 }
 
-func (s *server) Run(ctx context.Context, args *proto.Arguments) (*proto.Result, error) {
+func (s *server) Run(ctx context.Context, args *types.CommandArguments) (*types.Empty, error) {
 	cmd, err := s.impl.GetCommand()
 	if err != nil {
 		return nil, err
@@ -32,10 +32,10 @@ func (s *server) Run(ctx context.Context, args *proto.Arguments) (*proto.Result,
 	if err = subCmd.RunE(subCmd, args.Args); err != nil {
 		return nil, err
 	}
-	return &proto.Result{}, nil
+	return &types.Empty{}, nil
 }
 
-func (s *server) Args(ctx context.Context, args *proto.Arguments) (*proto.Result, error) {
+func (s *server) Args(ctx context.Context, args *types.CommandArguments) (*types.Empty, error) {
 	cmd, err := s.impl.GetCommand()
 	if err != nil {
 		return nil, err
@@ -47,15 +47,15 @@ func (s *server) Args(ctx context.Context, args *proto.Arguments) (*proto.Result
 	if err = subCmd.Args(subCmd, args.Args); err != nil {
 		return nil, err
 	}
-	return &proto.Result{}, nil
+	return &types.Empty{}, nil
 }
 
-func (s *server) cobraToProto(in *cobra.Command) *proto.CommandInfo {
-	subcommands := []*proto.CommandInfo{}
+func (s *server) cobraToProto(in *cobra.Command) *types.CommandInfo {
+	subcommands := []*types.CommandInfo{}
 	for _, sub := range in.Commands() {
 		subcommands = append(subcommands, s.cobraToProto(sub))
 	}
-	cmd := &proto.CommandInfo{
+	cmd := &types.CommandInfo{
 		Use:              in.Use,
 		Short:            in.Short,
 		TraverseChildren: in.TraverseChildren,

@@ -4,8 +4,12 @@
 package types
 
 import (
+	context "context"
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
+	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -19,6 +23,76 @@ var _ = math.Inf
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
+
+type Empty struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Empty) Reset()         { *m = Empty{} }
+func (m *Empty) String() string { return proto.CompactTextString(m) }
+func (*Empty) ProtoMessage()    {}
+func (*Empty) Descriptor() ([]byte, []int) {
+	return fileDescriptor_6579d14f41ea6320, []int{0}
+}
+
+func (m *Empty) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Empty.Unmarshal(m, b)
+}
+func (m *Empty) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Empty.Marshal(b, m, deterministic)
+}
+func (m *Empty) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Empty.Merge(m, src)
+}
+func (m *Empty) XXX_Size() int {
+	return xxx_messageInfo_Empty.Size(m)
+}
+func (m *Empty) XXX_DiscardUnknown() {
+	xxx_messageInfo_Empty.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Empty proto.InternalMessageInfo
+
+type ContainerId struct {
+	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ContainerId) Reset()         { *m = ContainerId{} }
+func (m *ContainerId) String() string { return proto.CompactTextString(m) }
+func (*ContainerId) ProtoMessage()    {}
+func (*ContainerId) Descriptor() ([]byte, []int) {
+	return fileDescriptor_6579d14f41ea6320, []int{1}
+}
+
+func (m *ContainerId) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ContainerId.Unmarshal(m, b)
+}
+func (m *ContainerId) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ContainerId.Marshal(b, m, deterministic)
+}
+func (m *ContainerId) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ContainerId.Merge(m, src)
+}
+func (m *ContainerId) XXX_Size() int {
+	return xxx_messageInfo_ContainerId.Size(m)
+}
+func (m *ContainerId) XXX_DiscardUnknown() {
+	xxx_messageInfo_ContainerId.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ContainerId proto.InternalMessageInfo
+
+func (m *ContainerId) GetId() string {
+	if m != nil {
+		return m.Id
+	}
+	return ""
+}
 
 type Backdrop struct {
 	Name                 string         `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
@@ -42,7 +116,7 @@ func (m *Backdrop) Reset()         { *m = Backdrop{} }
 func (m *Backdrop) String() string { return proto.CompactTextString(m) }
 func (*Backdrop) ProtoMessage()    {}
 func (*Backdrop) Descriptor() ([]byte, []int) {
-	return fileDescriptor_6579d14f41ea6320, []int{0}
+	return fileDescriptor_6579d14f41ea6320, []int{2}
 }
 
 func (m *Backdrop) XXX_Unmarshal(b []byte) error {
@@ -161,7 +235,7 @@ func (m *Entrypoint) Reset()         { *m = Entrypoint{} }
 func (m *Entrypoint) String() string { return proto.CompactTextString(m) }
 func (*Entrypoint) ProtoMessage()    {}
 func (*Entrypoint) Descriptor() ([]byte, []int) {
-	return fileDescriptor_6579d14f41ea6320, []int{1}
+	return fileDescriptor_6579d14f41ea6320, []int{3}
 }
 
 func (m *Entrypoint) XXX_Unmarshal(b []byte) error {
@@ -222,7 +296,7 @@ func (m *Environment) Reset()         { *m = Environment{} }
 func (m *Environment) String() string { return proto.CompactTextString(m) }
 func (*Environment) ProtoMessage()    {}
 func (*Environment) Descriptor() ([]byte, []int) {
-	return fileDescriptor_6579d14f41ea6320, []int{2}
+	return fileDescriptor_6579d14f41ea6320, []int{4}
 }
 
 func (m *Environment) XXX_Unmarshal(b []byte) error {
@@ -270,7 +344,7 @@ func (m *Volume) Reset()         { *m = Volume{} }
 func (m *Volume) String() string { return proto.CompactTextString(m) }
 func (*Volume) ProtoMessage()    {}
 func (*Volume) Descriptor() ([]byte, []int) {
-	return fileDescriptor_6579d14f41ea6320, []int{3}
+	return fileDescriptor_6579d14f41ea6320, []int{5}
 }
 
 func (m *Volume) XXX_Unmarshal(b []byte) error {
@@ -326,7 +400,7 @@ func (m *Device) Reset()         { *m = Device{} }
 func (m *Device) String() string { return proto.CompactTextString(m) }
 func (*Device) ProtoMessage()    {}
 func (*Device) Descriptor() ([]byte, []int) {
-	return fileDescriptor_6579d14f41ea6320, []int{4}
+	return fileDescriptor_6579d14f41ea6320, []int{6}
 }
 
 func (m *Device) XXX_Unmarshal(b []byte) error {
@@ -389,7 +463,7 @@ func (m *Port) Reset()         { *m = Port{} }
 func (m *Port) String() string { return proto.CompactTextString(m) }
 func (*Port) ProtoMessage()    {}
 func (*Port) Descriptor() ([]byte, []int) {
-	return fileDescriptor_6579d14f41ea6320, []int{5}
+	return fileDescriptor_6579d14f41ea6320, []int{7}
 }
 
 func (m *Port) XXX_Unmarshal(b []byte) error {
@@ -438,50 +512,586 @@ func (m *Port) GetHostIp() string {
 	return ""
 }
 
+type ClientOptions struct {
+	Version              string   `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
+	Host                 string   `protobuf:"bytes,2,opt,name=host,proto3" json:"host,omitempty"`
+	CaFile               string   `protobuf:"bytes,3,opt,name=ca_file,json=caFile,proto3" json:"ca_file,omitempty"`
+	CertFile             string   `protobuf:"bytes,4,opt,name=cert_file,json=certFile,proto3" json:"cert_file,omitempty"`
+	KeyFile              string   `protobuf:"bytes,5,opt,name=key_file,json=keyFile,proto3" json:"key_file,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ClientOptions) Reset()         { *m = ClientOptions{} }
+func (m *ClientOptions) String() string { return proto.CompactTextString(m) }
+func (*ClientOptions) ProtoMessage()    {}
+func (*ClientOptions) Descriptor() ([]byte, []int) {
+	return fileDescriptor_6579d14f41ea6320, []int{8}
+}
+
+func (m *ClientOptions) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ClientOptions.Unmarshal(m, b)
+}
+func (m *ClientOptions) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ClientOptions.Marshal(b, m, deterministic)
+}
+func (m *ClientOptions) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ClientOptions.Merge(m, src)
+}
+func (m *ClientOptions) XXX_Size() int {
+	return xxx_messageInfo_ClientOptions.Size(m)
+}
+func (m *ClientOptions) XXX_DiscardUnknown() {
+	xxx_messageInfo_ClientOptions.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ClientOptions proto.InternalMessageInfo
+
+func (m *ClientOptions) GetVersion() string {
+	if m != nil {
+		return m.Version
+	}
+	return ""
+}
+
+func (m *ClientOptions) GetHost() string {
+	if m != nil {
+		return m.Host
+	}
+	return ""
+}
+
+func (m *ClientOptions) GetCaFile() string {
+	if m != nil {
+		return m.CaFile
+	}
+	return ""
+}
+
+func (m *ClientOptions) GetCertFile() string {
+	if m != nil {
+		return m.CertFile
+	}
+	return ""
+}
+
+func (m *ClientOptions) GetKeyFile() string {
+	if m != nil {
+		return m.KeyFile
+	}
+	return ""
+}
+
+type CommandInfo struct {
+	Use                  string         `protobuf:"bytes,1,opt,name=use,proto3" json:"use,omitempty"`
+	Short                string         `protobuf:"bytes,2,opt,name=short,proto3" json:"short,omitempty"`
+	TraverseChildren     bool           `protobuf:"varint,3,opt,name=traverseChildren,proto3" json:"traverseChildren,omitempty"`
+	SilenceUsage         bool           `protobuf:"varint,4,opt,name=silenceUsage,proto3" json:"silenceUsage,omitempty"`
+	Subcommands          []*CommandInfo `protobuf:"bytes,5,rep,name=subcommands,proto3" json:"subcommands,omitempty"`
+	ExecutePath          []string       `protobuf:"bytes,6,rep,name=executePath,proto3" json:"executePath,omitempty"`
+	ArgsFunc             bool           `protobuf:"varint,7,opt,name=argsFunc,proto3" json:"argsFunc,omitempty"`
+	RunFunc              bool           `protobuf:"varint,8,opt,name=runFunc,proto3" json:"runFunc,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
+	XXX_unrecognized     []byte         `json:"-"`
+	XXX_sizecache        int32          `json:"-"`
+}
+
+func (m *CommandInfo) Reset()         { *m = CommandInfo{} }
+func (m *CommandInfo) String() string { return proto.CompactTextString(m) }
+func (*CommandInfo) ProtoMessage()    {}
+func (*CommandInfo) Descriptor() ([]byte, []int) {
+	return fileDescriptor_6579d14f41ea6320, []int{9}
+}
+
+func (m *CommandInfo) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CommandInfo.Unmarshal(m, b)
+}
+func (m *CommandInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CommandInfo.Marshal(b, m, deterministic)
+}
+func (m *CommandInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CommandInfo.Merge(m, src)
+}
+func (m *CommandInfo) XXX_Size() int {
+	return xxx_messageInfo_CommandInfo.Size(m)
+}
+func (m *CommandInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_CommandInfo.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CommandInfo proto.InternalMessageInfo
+
+func (m *CommandInfo) GetUse() string {
+	if m != nil {
+		return m.Use
+	}
+	return ""
+}
+
+func (m *CommandInfo) GetShort() string {
+	if m != nil {
+		return m.Short
+	}
+	return ""
+}
+
+func (m *CommandInfo) GetTraverseChildren() bool {
+	if m != nil {
+		return m.TraverseChildren
+	}
+	return false
+}
+
+func (m *CommandInfo) GetSilenceUsage() bool {
+	if m != nil {
+		return m.SilenceUsage
+	}
+	return false
+}
+
+func (m *CommandInfo) GetSubcommands() []*CommandInfo {
+	if m != nil {
+		return m.Subcommands
+	}
+	return nil
+}
+
+func (m *CommandInfo) GetExecutePath() []string {
+	if m != nil {
+		return m.ExecutePath
+	}
+	return nil
+}
+
+func (m *CommandInfo) GetArgsFunc() bool {
+	if m != nil {
+		return m.ArgsFunc
+	}
+	return false
+}
+
+func (m *CommandInfo) GetRunFunc() bool {
+	if m != nil {
+		return m.RunFunc
+	}
+	return false
+}
+
+type CommandArguments struct {
+	Path                 []string `protobuf:"bytes,1,rep,name=path,proto3" json:"path,omitempty"`
+	Args                 []string `protobuf:"bytes,2,rep,name=args,proto3" json:"args,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *CommandArguments) Reset()         { *m = CommandArguments{} }
+func (m *CommandArguments) String() string { return proto.CompactTextString(m) }
+func (*CommandArguments) ProtoMessage()    {}
+func (*CommandArguments) Descriptor() ([]byte, []int) {
+	return fileDescriptor_6579d14f41ea6320, []int{10}
+}
+
+func (m *CommandArguments) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CommandArguments.Unmarshal(m, b)
+}
+func (m *CommandArguments) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CommandArguments.Marshal(b, m, deterministic)
+}
+func (m *CommandArguments) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CommandArguments.Merge(m, src)
+}
+func (m *CommandArguments) XXX_Size() int {
+	return xxx_messageInfo_CommandArguments.Size(m)
+}
+func (m *CommandArguments) XXX_DiscardUnknown() {
+	xxx_messageInfo_CommandArguments.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CommandArguments proto.InternalMessageInfo
+
+func (m *CommandArguments) GetPath() []string {
+	if m != nil {
+		return m.Path
+	}
+	return nil
+}
+
+func (m *CommandArguments) GetArgs() []string {
+	if m != nil {
+		return m.Args
+	}
+	return nil
+}
+
 func init() {
+	proto.RegisterType((*Empty)(nil), "types.Empty")
+	proto.RegisterType((*ContainerId)(nil), "types.ContainerId")
 	proto.RegisterType((*Backdrop)(nil), "types.Backdrop")
 	proto.RegisterType((*Entrypoint)(nil), "types.Entrypoint")
 	proto.RegisterType((*Environment)(nil), "types.Environment")
 	proto.RegisterType((*Volume)(nil), "types.Volume")
 	proto.RegisterType((*Device)(nil), "types.Device")
 	proto.RegisterType((*Port)(nil), "types.Port")
+	proto.RegisterType((*ClientOptions)(nil), "types.ClientOptions")
+	proto.RegisterType((*CommandInfo)(nil), "types.CommandInfo")
+	proto.RegisterType((*CommandArguments)(nil), "types.CommandArguments")
 }
 
 func init() { proto.RegisterFile("pkg/types/types.proto", fileDescriptor_6579d14f41ea6320) }
 
 var fileDescriptor_6579d14f41ea6320 = []byte{
-	// 514 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x53, 0x4d, 0x8f, 0xd3, 0x30,
-	0x10, 0x55, 0x36, 0x6d, 0x9a, 0x4e, 0x58, 0x04, 0x16, 0x1f, 0x06, 0xad, 0x44, 0x88, 0x84, 0xe8,
-	0x69, 0x11, 0x0b, 0xfc, 0x01, 0xb4, 0x1c, 0xf6, 0x82, 0x90, 0x85, 0xb8, 0x56, 0xde, 0xc4, 0x4a,
-	0xad, 0xa6, 0xb6, 0x19, 0x3b, 0x45, 0x15, 0x77, 0xfe, 0x09, 0xff, 0x13, 0xd9, 0x71, 0xd3, 0xf4,
-	0xc0, 0xa5, 0xf2, 0x7b, 0xf3, 0x66, 0x9e, 0xfb, 0x3c, 0x81, 0xa7, 0x66, 0xdb, 0xbe, 0x73, 0x07,
-	0x23, 0xec, 0xf0, 0x7b, 0x6d, 0x50, 0x3b, 0x4d, 0xe6, 0x01, 0x54, 0x7f, 0x53, 0xc8, 0x3f, 0xf3,
-	0x7a, 0xdb, 0xa0, 0x36, 0x84, 0xc0, 0x4c, 0xf1, 0x9d, 0xa0, 0x49, 0x99, 0xac, 0x96, 0x2c, 0x9c,
-	0x09, 0x85, 0x05, 0xef, 0x24, 0xb7, 0xc2, 0xd2, 0x8b, 0x32, 0x5d, 0x2d, 0xd9, 0x11, 0x92, 0x37,
-	0xf0, 0xb0, 0xd6, 0xca, 0x71, 0xa9, 0x04, 0xae, 0x43, 0x5f, 0x1a, 0xfa, 0x2e, 0x47, 0xf6, 0xab,
-	0x1f, 0xf0, 0x02, 0x72, 0xb9, 0xe3, 0xad, 0x58, 0xcb, 0x86, 0xce, 0x82, 0x60, 0x11, 0xf0, 0x5d,
-	0x43, 0xde, 0x03, 0x08, 0xe5, 0xf0, 0x60, 0xb4, 0x54, 0x8e, 0xce, 0xcb, 0x64, 0x55, 0xdc, 0x3c,
-	0xbe, 0x1e, 0x6e, 0xf9, 0x65, 0x2c, 0xb0, 0x89, 0x88, 0x7c, 0x84, 0x42, 0xa8, 0xbd, 0x44, 0xad,
-	0x76, 0x42, 0x39, 0x9a, 0x95, 0xe9, 0xaa, 0xb8, 0x21, 0x63, 0xcf, 0x58, 0x61, 0x53, 0x19, 0x79,
-	0x0b, 0x8b, 0xbd, 0xee, 0xfa, 0x9d, 0xb0, 0x74, 0x11, 0x3a, 0x2e, 0x63, 0xc7, 0x8f, 0xc0, 0xb2,
-	0x63, 0xd5, 0x0b, 0x1b, 0xb1, 0x97, 0xb5, 0xb0, 0x34, 0x3f, 0x13, 0xde, 0x06, 0x96, 0x1d, 0xab,
-	0xe4, 0x35, 0xcc, 0x8d, 0x46, 0x67, 0xe9, 0x32, 0xc8, 0x8a, 0x28, 0xfb, 0xa6, 0xd1, 0xb1, 0xa1,
-	0xe2, 0xd3, 0xec, 0xad, 0x40, 0x0a, 0x43, 0x9a, 0xfe, 0x4c, 0x5e, 0x41, 0xf1, 0x4b, 0xe3, 0x56,
-	0xaa, 0x76, 0xdd, 0x48, 0xa4, 0x45, 0x28, 0x41, 0xa4, 0x6e, 0x25, 0x92, 0x67, 0x90, 0x71, 0xe7,
-	0x78, 0xbd, 0xa1, 0x0f, 0xca, 0x64, 0x95, 0xb3, 0x88, 0xaa, 0x3f, 0x09, 0xc0, 0x29, 0x12, 0x52,
-	0x42, 0x21, 0x95, 0x13, 0xc8, 0x6b, 0x27, 0xf7, 0xc3, 0x83, 0xe5, 0x6c, 0x4a, 0xf9, 0x41, 0xb6,
-	0x46, 0x69, 0x1c, 0xbd, 0x08, 0x26, 0x11, 0x8d, 0x9d, 0x06, 0x85, 0x13, 0x48, 0xd3, 0xf0, 0xa6,
-	0x53, 0x8a, 0x5c, 0xc1, 0x92, 0x63, 0xdb, 0xfb, 0xe0, 0x2c, 0x9d, 0x85, 0xfa, 0x89, 0xa8, 0x3e,
-	0x41, 0x31, 0x89, 0x99, 0x3c, 0x82, 0x74, 0x2b, 0x0e, 0x71, 0x63, 0xfc, 0x91, 0x3c, 0x81, 0xf9,
-	0x9e, 0x77, 0xbd, 0x88, 0xbe, 0x03, 0xa8, 0xbe, 0x43, 0x36, 0x64, 0x1d, 0x2e, 0xa6, 0x7b, 0xac,
-	0x8f, 0x6b, 0x16, 0x91, 0xe7, 0x1d, 0xc7, 0x56, 0x8c, 0x17, 0x1e, 0x10, 0x79, 0x09, 0x39, 0x0a,
-	0xde, 0x68, 0xd5, 0x1d, 0xc2, 0x82, 0xe5, 0x6c, 0xc4, 0xd5, 0x6f, 0xc8, 0x86, 0x87, 0xf1, 0xc1,
-	0xd6, 0x2d, 0xea, 0xde, 0xac, 0xb1, 0xef, 0x8e, 0xa3, 0x61, 0xa0, 0x58, 0xdf, 0x4d, 0x6d, 0x2f,
-	0xfe, 0x63, 0x9b, 0x9e, 0xd9, 0x96, 0x50, 0x18, 0x81, 0x3b, 0x69, 0xad, 0xd4, 0xca, 0xc6, 0xcd,
-	0x9d, 0x52, 0xd5, 0x4f, 0x98, 0xf9, 0xe7, 0x9e, 0x4c, 0x48, 0xce, 0x26, 0x5c, 0xc1, 0xd2, 0xf4,
-	0xf7, 0x9d, 0xb4, 0x1b, 0xd1, 0x44, 0xd3, 0x13, 0xe1, 0xff, 0x56, 0xf8, 0x10, 0x6b, 0xdd, 0x45,
-	0xe7, 0x11, 0x93, 0xe7, 0xb0, 0xd8, 0x68, 0xeb, 0xd6, 0xd2, 0x44, 0xdf, 0xcc, 0xc3, 0x3b, 0x73,
-	0x9f, 0x05, 0xc9, 0x87, 0x7f, 0x01, 0x00, 0x00, 0xff, 0xff, 0x01, 0x0d, 0x4b, 0x63, 0xd4, 0x03,
-	0x00, 0x00,
+	// 872 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x55, 0x5f, 0x8f, 0xdb, 0x44,
+	0x10, 0x57, 0x92, 0x4b, 0xe2, 0x8c, 0xef, 0xca, 0xb1, 0x14, 0xea, 0x1e, 0x45, 0x04, 0x4b, 0x88,
+	0x08, 0xb5, 0x45, 0x1c, 0x20, 0x04, 0x6f, 0xe5, 0xae, 0x45, 0xf7, 0x02, 0x27, 0x8b, 0xf2, 0x1a,
+	0xed, 0xd9, 0x73, 0xce, 0x2a, 0xce, 0xae, 0xd9, 0x5d, 0x07, 0x22, 0xde, 0x79, 0xe4, 0x05, 0xbe,
+	0x02, 0x5f, 0x80, 0x4f, 0x88, 0x66, 0x77, 0xed, 0xb3, 0x29, 0x48, 0x7d, 0xb1, 0x76, 0x7e, 0xf3,
+	0xe7, 0x37, 0x3b, 0x33, 0x3b, 0x86, 0xb7, 0xeb, 0x6d, 0xf9, 0x89, 0x3d, 0xd4, 0x68, 0xfc, 0xf7,
+	0x69, 0xad, 0x95, 0x55, 0x6c, 0xea, 0x84, 0x74, 0x0e, 0xd3, 0xe7, 0xbb, 0xda, 0x1e, 0xd2, 0xf7,
+	0x20, 0xbe, 0x50, 0xd2, 0x72, 0x21, 0x51, 0x5f, 0x15, 0xec, 0x1e, 0x8c, 0x45, 0x91, 0x8c, 0x96,
+	0xa3, 0xd5, 0x22, 0x1b, 0x8b, 0x22, 0xfd, 0x6b, 0x02, 0xd1, 0x37, 0x3c, 0xdf, 0x16, 0x5a, 0xd5,
+	0x8c, 0xc1, 0x91, 0xe4, 0x3b, 0x0c, 0x6a, 0x77, 0x66, 0x09, 0xcc, 0x79, 0x25, 0xb8, 0x41, 0x93,
+	0x8c, 0x97, 0x93, 0xd5, 0x22, 0x6b, 0x45, 0xf6, 0x21, 0xdc, 0xcb, 0xdb, 0xc8, 0x6b, 0xe7, 0x37,
+	0x71, 0x7e, 0x27, 0x1d, 0xfa, 0x1d, 0x05, 0x78, 0x08, 0x91, 0xd8, 0xf1, 0x12, 0xd7, 0xa2, 0x48,
+	0x8e, 0x9c, 0xc1, 0xdc, 0xc9, 0x57, 0x05, 0xfb, 0x14, 0x00, 0xa5, 0xd5, 0x87, 0x5a, 0x09, 0x69,
+	0x93, 0xe9, 0x72, 0xb4, 0x8a, 0xcf, 0xdf, 0x7c, 0xea, 0x6f, 0xf3, 0xbc, 0x53, 0x64, 0x3d, 0x23,
+	0xf6, 0x39, 0xc4, 0x28, 0xf7, 0x42, 0x2b, 0xb9, 0x43, 0x69, 0x93, 0xd9, 0x72, 0xb2, 0x8a, 0xcf,
+	0x59, 0xe7, 0xd3, 0x69, 0xb2, 0xbe, 0x19, 0xfb, 0x08, 0xe6, 0x7b, 0x55, 0x35, 0x3b, 0x34, 0xc9,
+	0xdc, 0x79, 0x9c, 0x04, 0x8f, 0x1f, 0x1d, 0x9a, 0xb5, 0x5a, 0x32, 0x2c, 0x70, 0x2f, 0x72, 0x34,
+	0x49, 0x34, 0x30, 0xbc, 0x74, 0x68, 0xd6, 0x6a, 0xd9, 0x07, 0x30, 0xad, 0x95, 0xb6, 0x26, 0x59,
+	0x38, 0xb3, 0x38, 0x98, 0x5d, 0x2b, 0x6d, 0x33, 0xaf, 0xa1, 0x6a, 0x36, 0x06, 0x75, 0x02, 0xbe,
+	0x9a, 0x74, 0x66, 0xef, 0x43, 0xfc, 0xb3, 0xd2, 0x5b, 0x21, 0xcb, 0x75, 0x21, 0x74, 0x12, 0x3b,
+	0x15, 0x04, 0xe8, 0x52, 0x68, 0xf6, 0x0e, 0xcc, 0xb8, 0xb5, 0x3c, 0xdf, 0x24, 0xc7, 0xcb, 0xd1,
+	0x2a, 0xca, 0x82, 0x94, 0xfe, 0x36, 0x02, 0xb8, 0x2b, 0x09, 0x5b, 0x42, 0x2c, 0xa4, 0x45, 0xcd,
+	0x73, 0x2b, 0xf6, 0xbe, 0x61, 0x51, 0xd6, 0x87, 0x28, 0x90, 0xc9, 0xb5, 0xa8, 0x6d, 0x32, 0x76,
+	0x24, 0x41, 0xea, 0x3c, 0x6b, 0x8d, 0x16, 0x75, 0x32, 0x71, 0x3d, 0xed, 0x43, 0xec, 0x11, 0x2c,
+	0xb8, 0x2e, 0x1b, 0x2a, 0x9c, 0x49, 0x8e, 0x9c, 0xfe, 0x0e, 0x48, 0xbf, 0x80, 0xb8, 0x57, 0x66,
+	0x76, 0x0a, 0x93, 0x2d, 0x1e, 0xc2, 0xc4, 0xd0, 0x91, 0xdd, 0x87, 0xe9, 0x9e, 0x57, 0x0d, 0x06,
+	0x5e, 0x2f, 0xa4, 0x3f, 0xc0, 0xcc, 0xd7, 0xda, 0x25, 0xa6, 0x1a, 0x9d, 0xb7, 0x63, 0x16, 0x24,
+	0xc2, 0x2d, 0xd7, 0x25, 0x76, 0x09, 0x7b, 0x89, 0x9d, 0x41, 0xa4, 0x91, 0x17, 0x4a, 0x56, 0x07,
+	0x37, 0x60, 0x51, 0xd6, 0xc9, 0xe9, 0xaf, 0x30, 0xf3, 0x8d, 0xa1, 0xc2, 0xe6, 0xa5, 0x56, 0x4d,
+	0xbd, 0xd6, 0x4d, 0xd5, 0x86, 0x06, 0x0f, 0x65, 0x4d, 0xd5, 0xa7, 0x1d, 0xff, 0x0f, 0xed, 0x64,
+	0x40, 0xbb, 0x84, 0xb8, 0x46, 0xbd, 0x13, 0xc6, 0x08, 0x25, 0x4d, 0x98, 0xdc, 0x3e, 0x94, 0xfe,
+	0x04, 0x47, 0xd4, 0xee, 0x5e, 0x84, 0xd1, 0x20, 0xc2, 0x23, 0x58, 0xd4, 0xcd, 0x4d, 0x25, 0xcc,
+	0x06, 0x8b, 0x40, 0x7a, 0x07, 0xd0, 0xb5, 0xdc, 0x83, 0xcd, 0x55, 0x15, 0x98, 0x3b, 0x99, 0x3d,
+	0x80, 0xf9, 0x46, 0x19, 0xbb, 0x16, 0x75, 0xe0, 0x9d, 0x91, 0x78, 0x55, 0xa7, 0xbf, 0x8f, 0xe0,
+	0xe4, 0xa2, 0x12, 0x28, 0xed, 0xf7, 0xb5, 0xa5, 0x24, 0xe8, 0x79, 0xee, 0x51, 0x53, 0x42, 0x81,
+	0xbd, 0x15, 0x69, 0xfc, 0xc8, 0x2b, 0x30, 0xbb, 0x33, 0x05, 0xce, 0xf9, 0xfa, 0x56, 0x54, 0xed,
+	0x5b, 0x9d, 0xe5, 0xfc, 0x85, 0xa8, 0x90, 0xbd, 0x0b, 0x8b, 0x1c, 0xb5, 0xf5, 0x2a, 0xcf, 0x19,
+	0x11, 0xe0, 0x94, 0x0f, 0x21, 0xda, 0xe2, 0xc1, 0xeb, 0xa6, 0x9e, 0x64, 0x8b, 0x07, 0x52, 0xa5,
+	0x7f, 0x8c, 0x69, 0xbd, 0xec, 0x76, 0x5c, 0x16, 0x57, 0xf2, 0x56, 0xd1, 0x38, 0x34, 0xa6, 0x2d,
+	0x3f, 0x1d, 0x69, 0x1c, 0xcc, 0x46, 0xe9, 0x36, 0x0f, 0x2f, 0xb0, 0x8f, 0xe1, 0xd4, 0x6a, 0x4e,
+	0xa9, 0xe2, 0xc5, 0x46, 0x54, 0x85, 0x46, 0x19, 0x9a, 0xfb, 0x0a, 0xce, 0x52, 0x38, 0x36, 0xa2,
+	0x42, 0x99, 0xe3, 0x4b, 0xc3, 0x4b, 0x9f, 0x5e, 0x94, 0x0d, 0x30, 0x5a, 0x0b, 0xa6, 0xb9, 0xc9,
+	0x7d, 0x26, 0x26, 0x99, 0x0e, 0xd6, 0x42, 0x2f, 0xc1, 0xac, 0x6f, 0x46, 0x3d, 0xc6, 0x5f, 0x30,
+	0x6f, 0x2c, 0x5e, 0x73, 0xbb, 0x71, 0xcb, 0x64, 0x91, 0xf5, 0x21, 0xea, 0x12, 0xd7, 0xa5, 0x79,
+	0xd1, 0xc8, 0x3c, 0x99, 0xfb, 0xe1, 0x6b, 0x65, 0x2a, 0xbd, 0x6e, 0xa4, 0x53, 0x45, 0x4e, 0xd5,
+	0x8a, 0xe9, 0xd7, 0x70, 0x1a, 0x38, 0x9f, 0xb5, 0xef, 0x86, 0xda, 0x51, 0x13, 0xc9, 0xc8, 0x91,
+	0xb8, 0x33, 0x61, 0x14, 0x2d, 0x2c, 0x56, 0x77, 0x3e, 0xff, 0x9b, 0x5a, 0xac, 0xe4, 0xad, 0x28,
+	0x1b, 0xcd, 0xa9, 0xc7, 0xec, 0x2b, 0x38, 0xfd, 0x16, 0xed, 0xb0, 0xed, 0x6f, 0x84, 0xab, 0xb5,
+	0xab, 0xfb, 0xec, 0x7e, 0x7b, 0xd7, 0x81, 0xd9, 0x97, 0xf0, 0xd6, 0xcb, 0xba, 0xe0, 0x16, 0x87,
+	0x11, 0x5f, 0xf1, 0xfe, 0x37, 0xc0, 0x9e, 0xc0, 0xe2, 0x5a, 0xab, 0xbd, 0xf0, 0x93, 0xd4, 0xd5,
+	0xb1, 0xfb, 0x8f, 0x9c, 0x1d, 0xb7, 0x2b, 0x97, 0x7e, 0x32, 0xe7, 0x7f, 0x8e, 0x60, 0x1e, 0x6e,
+	0xcc, 0x1e, 0x43, 0x74, 0x89, 0xb4, 0x6c, 0x6e, 0x90, 0x0d, 0xac, 0xce, 0xfe, 0xa3, 0x1f, 0xec,
+	0x31, 0x4c, 0xb2, 0x46, 0xb2, 0x07, 0x43, 0x55, 0x57, 0xb6, 0x21, 0x0f, 0x7b, 0x02, 0x47, 0xcf,
+	0x74, 0x69, 0x5e, 0xd3, 0xfc, 0x66, 0xe6, 0x5e, 0xd4, 0x67, 0xff, 0x04, 0x00, 0x00, 0xff, 0xff,
+	0x61, 0xdb, 0xf1, 0x29, 0x2b, 0x07, 0x00, 0x00,
+}
+
+// Reference imports to suppress errors if they are not otherwise used.
+var _ context.Context
+var _ grpc.ClientConnInterface
+
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the grpc package it is being compiled against.
+const _ = grpc.SupportPackageIsVersion6
+
+// ConfigurationClient is the client API for Configuration service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type ConfigurationClient interface {
+	GetClientOptions(ctx context.Context, in *Backdrop, opts ...grpc.CallOption) (*ClientOptions, error)
+	UpdateConfiguration(ctx context.Context, in *Backdrop, opts ...grpc.CallOption) (*Backdrop, error)
+	Provision(ctx context.Context, in *ContainerId, opts ...grpc.CallOption) (*Empty, error)
+}
+
+type configurationClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewConfigurationClient(cc grpc.ClientConnInterface) ConfigurationClient {
+	return &configurationClient{cc}
+}
+
+func (c *configurationClient) GetClientOptions(ctx context.Context, in *Backdrop, opts ...grpc.CallOption) (*ClientOptions, error) {
+	out := new(ClientOptions)
+	err := c.cc.Invoke(ctx, "/types.Configuration/GetClientOptions", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *configurationClient) UpdateConfiguration(ctx context.Context, in *Backdrop, opts ...grpc.CallOption) (*Backdrop, error) {
+	out := new(Backdrop)
+	err := c.cc.Invoke(ctx, "/types.Configuration/UpdateConfiguration", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *configurationClient) Provision(ctx context.Context, in *ContainerId, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, "/types.Configuration/Provision", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// ConfigurationServer is the server API for Configuration service.
+type ConfigurationServer interface {
+	GetClientOptions(context.Context, *Backdrop) (*ClientOptions, error)
+	UpdateConfiguration(context.Context, *Backdrop) (*Backdrop, error)
+	Provision(context.Context, *ContainerId) (*Empty, error)
+}
+
+// UnimplementedConfigurationServer can be embedded to have forward compatible implementations.
+type UnimplementedConfigurationServer struct {
+}
+
+func (*UnimplementedConfigurationServer) GetClientOptions(ctx context.Context, req *Backdrop) (*ClientOptions, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetClientOptions not implemented")
+}
+func (*UnimplementedConfigurationServer) UpdateConfiguration(ctx context.Context, req *Backdrop) (*Backdrop, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateConfiguration not implemented")
+}
+func (*UnimplementedConfigurationServer) Provision(ctx context.Context, req *ContainerId) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Provision not implemented")
+}
+
+func RegisterConfigurationServer(s *grpc.Server, srv ConfigurationServer) {
+	s.RegisterService(&_Configuration_serviceDesc, srv)
+}
+
+func _Configuration_GetClientOptions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Backdrop)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConfigurationServer).GetClientOptions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/types.Configuration/GetClientOptions",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConfigurationServer).GetClientOptions(ctx, req.(*Backdrop))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Configuration_UpdateConfiguration_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Backdrop)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConfigurationServer).UpdateConfiguration(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/types.Configuration/UpdateConfiguration",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConfigurationServer).UpdateConfiguration(ctx, req.(*Backdrop))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Configuration_Provision_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ContainerId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConfigurationServer).Provision(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/types.Configuration/Provision",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConfigurationServer).Provision(ctx, req.(*ContainerId))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _Configuration_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "types.Configuration",
+	HandlerType: (*ConfigurationServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetClientOptions",
+			Handler:    _Configuration_GetClientOptions_Handler,
+		},
+		{
+			MethodName: "UpdateConfiguration",
+			Handler:    _Configuration_UpdateConfiguration_Handler,
+		},
+		{
+			MethodName: "Provision",
+			Handler:    _Configuration_Provision_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "pkg/types/types.proto",
+}
+
+// CommandClient is the client API for Command service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type CommandClient interface {
+	Describe(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*CommandInfo, error)
+	Run(ctx context.Context, in *CommandArguments, opts ...grpc.CallOption) (*Empty, error)
+	Args(ctx context.Context, in *CommandArguments, opts ...grpc.CallOption) (*Empty, error)
+}
+
+type commandClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewCommandClient(cc grpc.ClientConnInterface) CommandClient {
+	return &commandClient{cc}
+}
+
+func (c *commandClient) Describe(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*CommandInfo, error) {
+	out := new(CommandInfo)
+	err := c.cc.Invoke(ctx, "/types.Command/Describe", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *commandClient) Run(ctx context.Context, in *CommandArguments, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, "/types.Command/Run", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *commandClient) Args(ctx context.Context, in *CommandArguments, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, "/types.Command/Args", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// CommandServer is the server API for Command service.
+type CommandServer interface {
+	Describe(context.Context, *Empty) (*CommandInfo, error)
+	Run(context.Context, *CommandArguments) (*Empty, error)
+	Args(context.Context, *CommandArguments) (*Empty, error)
+}
+
+// UnimplementedCommandServer can be embedded to have forward compatible implementations.
+type UnimplementedCommandServer struct {
+}
+
+func (*UnimplementedCommandServer) Describe(ctx context.Context, req *Empty) (*CommandInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Describe not implemented")
+}
+func (*UnimplementedCommandServer) Run(ctx context.Context, req *CommandArguments) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Run not implemented")
+}
+func (*UnimplementedCommandServer) Args(ctx context.Context, req *CommandArguments) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Args not implemented")
+}
+
+func RegisterCommandServer(s *grpc.Server, srv CommandServer) {
+	s.RegisterService(&_Command_serviceDesc, srv)
+}
+
+func _Command_Describe_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommandServer).Describe(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/types.Command/Describe",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommandServer).Describe(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Command_Run_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CommandArguments)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommandServer).Run(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/types.Command/Run",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommandServer).Run(ctx, req.(*CommandArguments))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Command_Args_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CommandArguments)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommandServer).Args(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/types.Command/Args",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommandServer).Args(ctx, req.(*CommandArguments))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _Command_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "types.Command",
+	HandlerType: (*CommandServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Describe",
+			Handler:    _Command_Describe_Handler,
+		},
+		{
+			MethodName: "Run",
+			Handler:    _Command_Run_Handler,
+		},
+		{
+			MethodName: "Args",
+			Handler:    _Command_Args_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "pkg/types/types.proto",
 }

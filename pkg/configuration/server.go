@@ -1,7 +1,6 @@
 package configuration
 
 import (
-	"github.com/oclaussen/dodo/pkg/plugin/configuration/proto"
 	"github.com/oclaussen/dodo/pkg/types"
 	"golang.org/x/net/context"
 )
@@ -10,12 +9,12 @@ type server struct {
 	impl Configuration
 }
 
-func (s *server) GetClientOptions(_ context.Context, request *proto.Backdrop) (*proto.ClientOptions, error) {
+func (s *server) GetClientOptions(_ context.Context, request *types.Backdrop) (*types.ClientOptions, error) {
 	opts, err := s.impl.GetClientOptions(request.Name)
 	if err != nil {
 		return nil, err
 	}
-	return &proto.ClientOptions{
+	return &types.ClientOptions{
 		Version:  opts.Version,
 		Host:     opts.Host,
 		CaFile:   opts.CAFile,
@@ -28,6 +27,6 @@ func (s *server) UpdateConfiguration(_ context.Context, backdrop *types.Backdrop
 	return s.impl.UpdateConfiguration(backdrop)
 }
 
-func (s *server) Provision(_ context.Context, request *proto.Container) (*proto.Empty, error) {
-	return &proto.Empty{}, s.impl.Provision(request.Id)
+func (s *server) Provision(_ context.Context, request *types.ContainerId) (*types.Empty, error) {
+	return &types.Empty{}, s.impl.Provision(request.Id)
 }

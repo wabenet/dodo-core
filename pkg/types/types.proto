@@ -1,6 +1,12 @@
 syntax = "proto3";
 package types;
 
+message Empty {}
+
+message ContainerId {
+  string id = 1;
+}
+
 message Backdrop {
   string name = 1;
   repeated string aliases = 2;
@@ -50,4 +56,43 @@ message Port {
   string published = 2;
   string protocol = 3;
   string host_ip = 4;
+}
+
+message ClientOptions {
+  string version   = 1;
+  string host      = 2;
+  string ca_file   = 3;
+  string cert_file = 4;
+  string key_file  = 5;
+}
+
+message CommandInfo {
+  string use = 1;
+  string short = 2;
+
+  bool traverseChildren = 3;
+  bool silenceUsage = 4;
+
+  repeated CommandInfo subcommands = 5;
+
+  repeated string executePath = 6;
+  bool argsFunc = 7;
+  bool runFunc = 8;
+}
+
+message CommandArguments {
+  repeated string path = 1;
+  repeated string args = 2;
+}
+
+service Configuration {
+  rpc GetClientOptions(Backdrop) returns (ClientOptions);
+  rpc UpdateConfiguration(Backdrop) returns (Backdrop);
+  rpc Provision(ContainerId) returns (Empty);
+}
+
+service Command {
+  rpc Describe(Empty) returns (CommandInfo);
+  rpc Run(CommandArguments) returns (Empty);
+  rpc Args(CommandArguments) returns (Empty);
 }

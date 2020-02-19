@@ -1,13 +1,9 @@
 package command
 
 import (
-	"github.com/oclaussen/dodo/pkg/config"
 	"github.com/oclaussen/dodo/pkg/container"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
-
-// TODO: clean up command structure and options
 
 const description = `Run commands in a Docker context.
 
@@ -29,20 +25,8 @@ func NewCommand() *cobra.Command {
 		DisableFlagsInUseLine: true,
 		SilenceUsage:          true,
 		Args:                  cobra.MinimumNArgs(1),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			configureLogging()
-
-			backdrop, err := opts.createConfig(args[0], args[1:])
-			if err != nil {
-				return err
-			}
-
-			c, err := container.NewContainer(backdrop, config.LoadAuthConfig(), false)
-			if err != nil {
-				return err
-			}
-
-			return c.Run()
+		RunE: func(_ *cobra.Command, args []string) error {
+			return run(&opts, args[0], args[1:])
 		},
 	}
 	opts.createFlags(cmd)
@@ -59,20 +43,8 @@ func NewRunCommand() *cobra.Command {
 		DisableFlagsInUseLine: true,
 		SilenceUsage:          true,
 		Args:                  cobra.MinimumNArgs(1),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			configureLogging()
-
-			backdrop, err := opts.createConfig(args[0], args[1:])
-			if err != nil {
-				return err
-			}
-
-			c, err := container.NewContainer(backdrop, config.LoadAuthConfig(), false)
-			if err != nil {
-				return err
-			}
-
-			return c.Run()
+		RunE: func(_ *cobra.Command, args []string) error {
+			return run(&opts, args[0], args[1:])
 		},
 	}
 
@@ -80,9 +52,16 @@ func NewRunCommand() *cobra.Command {
 	return cmd
 }
 
-func configureLogging() {
-	log.SetFormatter(&log.TextFormatter{
-		DisableTimestamp:       true,
-		DisableLevelTruncation: true,
-	})
+func run(opts *options, name string, command []string) error {
+	backdrop, err := opts.createConfig(name, command)
+	if err != nil {
+		return err
+	}
+
+	c, err := container.NewContainer(backdrop, false)
+	if err != nil {
+		return err
+	}
+
+	return c.Run()
 }
