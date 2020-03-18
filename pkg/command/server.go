@@ -12,19 +12,24 @@ type server struct {
 	impl Command
 }
 
-func (s *server) Describe(ctx context.Context, _ *types.Empty) (*types.CommandInfo, error) {
-	cmd, err := s.impl.GetCommand()
+func (s *server) Describe(ctx context.Context, _ *types.Empty) (*types.Commands, error) {
+	cmds, err := s.impl.GetCommands()
 	if err != nil {
 		return nil, err
 	}
-	return s.cobraToProto(cmd), nil
+	result := map[string]*types.CommandInfo{}
+	for name, cmd := range cmds {
+		result[name] = s.cobraToProto(cmd)
+	}
+	return &types.Commands{Commands: result}, nil
 }
 
 func (s *server) Run(ctx context.Context, args *types.CommandArguments) (*types.Empty, error) {
-	cmd, err := s.impl.GetCommand()
+	cmds, err := s.impl.GetCommands()
 	if err != nil {
 		return nil, err
 	}
+        cmd := cmds[args.Path[0]]
 	subCmd, _, err := cmd.Find(args.Path[1:])
 	if err != nil {
 		return nil, err
@@ -36,10 +41,11 @@ func (s *server) Run(ctx context.Context, args *types.CommandArguments) (*types.
 }
 
 func (s *server) Args(ctx context.Context, args *types.CommandArguments) (*types.Empty, error) {
-	cmd, err := s.impl.GetCommand()
+	cmds, err := s.impl.GetCommands()
 	if err != nil {
 		return nil, err
 	}
+        cmd := cmds[args.Path[0]]
 	subCmd, _, err := cmd.Find(args.Path[1:])
 	if err != nil {
 		return nil, err

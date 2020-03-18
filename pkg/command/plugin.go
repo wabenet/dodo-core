@@ -12,7 +12,7 @@ import (
 const PluginType = "command"
 
 type Command interface {
-	GetCommand() (*cobra.Command, error)
+	GetCommands() (map[string]*cobra.Command, error)
 }
 
 type Plugin struct {

@@ -10,12 +10,16 @@ type client struct {
 	cmdClient types.CommandClient
 }
 
-func (c *client) GetCommand() (*cobra.Command, error) {
-	cmd, err := c.cmdClient.Describe(context.Background(), &types.Empty{})
+func (c *client) GetCommands() (map[string]*cobra.Command, error) {
+	response, err := c.cmdClient.Describe(context.Background(), &types.Empty{})
 	if err != nil {
 		return nil, err
 	}
-	return c.protoToCobra(cmd), nil
+	cmds := map[string]*cobra.Command{}
+	for name, cmd := range response.Commands {
+		cmds[name] = c.protoToCobra(cmd)
+	}
+	return cmds, nil
 }
 
 func (c *client) protoToCobra(in *types.CommandInfo) *cobra.Command {

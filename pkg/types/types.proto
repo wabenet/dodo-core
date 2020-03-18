@@ -58,6 +58,10 @@ message Port {
   string host_ip = 4;
 }
 
+message Commands {
+  map<string, CommandInfo> commands = 1;
+}
+
 message ClientOptions {
   string version   = 1;
   string host      = 2;
@@ -81,8 +85,9 @@ message CommandInfo {
 }
 
 message CommandArguments {
-  repeated string path = 1;
-  repeated string args = 2;
+  string name = 1;
+  repeated string path = 2;
+  repeated string args = 3;
 }
 
 service Configuration {
@@ -92,7 +97,7 @@ service Configuration {
 }
 
 service Command {
-  rpc Describe(Empty) returns (CommandInfo);
+  rpc Describe(Empty) returns (Commands);
   rpc Run(CommandArguments) returns (Empty);
   rpc Args(CommandArguments) returns (Empty);
 }
