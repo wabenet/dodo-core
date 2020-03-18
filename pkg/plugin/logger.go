@@ -19,9 +19,12 @@ type PluginLogger struct {
 func NewPluginLogger() hclog.Logger {
 	return &PluginLogger{
 		logger: &logrus.Logger{
-			Out:       os.Stderr,
-			Level:     logrus.GetLevel(),
-			Formatter: new(logrus.TextFormatter),
+			Out:   os.Stderr,
+			Level: logrus.GetLevel(),
+			Formatter: &logrus.TextFormatter{
+				DisableTimestamp:       true,
+				DisableLevelTruncation: true,
+			},
 		},
 	}
 }
@@ -104,7 +107,7 @@ func (logger *PluginLogger) Named(name string) hclog.Logger {
 }
 
 func (logger *PluginLogger) ResetNamed(name string) hclog.Logger {
-	return &PluginLogger{name: name, logger: logger.logger.WithFields(logrus.Fields{"name": name})}
+	return &PluginLogger{name: name, logger: logger.logger}
 }
 
 func (logger *PluginLogger) StandardLogger(_ *hclog.StandardLoggerOptions) *log.Logger {
@@ -124,28 +127,38 @@ func (logger *PluginLogger) upgradePluginOutput(originalMsg string, args []inter
 		return false
 	}
 
-	msg, msgOk := output["msg"]
-	level, levelOk := output["level"]
-	if !msgOk || !levelOk {
-		return false
-	}
-
+	var msg, level string
 	fields := argsToFields(args)
 	for k, v := range output {
-		if k != "msg" && k != "level" {
+		switch k {
+		case "msg":
+			msg = v
+		case "level":
+			level = v
+		case "time":
+			// Time will be overridden by parent logger
+		default:
 			fields[k] = v
 		}
 	}
 
 	switch level {
+	case "trace":
+		logger.logger.WithFields(fields).Trace(msg)
 	case "debug":
 		logger.logger.WithFields(fields).Debug(msg)
 	case "info":
 		logger.logger.WithFields(fields).Info(msg)
-	case "warn":
+	case "warn", "warning":
 		logger.logger.WithFields(fields).Warn(msg)
 	case "error":
 		logger.logger.WithFields(fields).Error(msg)
+	case "fatal":
+		logger.logger.WithFields(fields).Fatal(msg)
+	case "panic":
+		logger.logger.WithFields(fields).Panic(msg)
+	default:
+		return false
 	}
 	return true
 }
