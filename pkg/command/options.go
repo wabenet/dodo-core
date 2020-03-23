@@ -9,6 +9,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// TODO: add options to plugin commands
+// TODO: set app config from options and env variables
+
 type options struct {
 	interactive bool
 	user        string
