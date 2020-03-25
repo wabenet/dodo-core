@@ -13,7 +13,7 @@ import (
 
 type PluginLogger struct {
 	name   string
-	logger logrus.FieldLogger
+	logger *logrus.Logger
 }
 
 func NewPluginLogger() hclog.Logger {
@@ -29,138 +29,145 @@ func NewPluginLogger() hclog.Logger {
 	}
 }
 
-func (logger *PluginLogger) Log(level hclog.Level, msg string, args ...interface{}) {
+func (l *PluginLogger) Trace(msg string, args ...interface{}) {
+	l.Log(hclog.Trace, msg, args...)
+}
+
+func (l *PluginLogger) IsTrace() bool {
+	return l.logger.Level <= logrus.TraceLevel
+}
+
+func (l *PluginLogger) Debug(msg string, args ...interface{}) {
+	l.Log(hclog.Debug, msg, args...)
+}
+
+func (l *PluginLogger) IsDebug() bool {
+	return l.logger.Level <= logrus.DebugLevel
+}
+
+func (l *PluginLogger) Info(msg string, args ...interface{}) {
+	l.Log(hclog.Info, msg, args...)
+}
+
+func (l *PluginLogger) IsInfo() bool {
+	return l.logger.Level <= logrus.InfoLevel
+}
+
+func (l *PluginLogger) Warn(msg string, args ...interface{}) {
+	l.Log(hclog.Warn, msg, args...)
+}
+
+func (l *PluginLogger) IsWarn() bool {
+	return l.logger.Level <= logrus.WarnLevel
+}
+
+func (l *PluginLogger) Error(msg string, args ...interface{}) {
+	l.Log(hclog.Error, msg, args...)
+}
+
+func (l *PluginLogger) IsError() bool {
+	return l.logger.Level <= logrus.ErrorLevel
+}
+
+func (l *PluginLogger) SetLevel(level hclog.Level) {
 	switch level {
+	case hclog.Trace:
+		l.logger.SetLevel(logrus.TraceLevel)
 	case hclog.Debug:
-		logger.Debug(msg, args...)
+		l.logger.SetLevel(logrus.DebugLevel)
 	case hclog.Info:
-		logger.Info(msg, args...)
+		l.logger.SetLevel(logrus.InfoLevel)
 	case hclog.Warn:
-		logger.Warn(msg, args...)
+		l.logger.SetLevel(logrus.WarnLevel)
 	case hclog.Error:
-		logger.Error(msg, args...)
+		l.logger.SetLevel(logrus.ErrorLevel)
 	}
 }
 
-func (*PluginLogger) Trace(_ string, _ ...interface{}) {
+func (l *PluginLogger) With(args ...interface{}) hclog.Logger {
+	return l // TODO
 }
 
-func (logger *PluginLogger) IsTrace() bool {
-	return false
+func (l *PluginLogger) ImpliedArgs() []interface{} {
+	return []interface{}{} // TODO
 }
 
-func (logger *PluginLogger) Debug(msg string, args ...interface{}) {
-	// All plugin output logs to debug
-	done := logger.upgradePluginOutput(msg, args)
-	if !done {
-		logger.logger.WithFields(argsToFields(args)).Debug(msg)
+func (l *PluginLogger) Name() string {
+	return l.name
+}
+
+func (l *PluginLogger) Named(name string) hclog.Logger {
+	if len(l.name) > 0 {
+		return l.ResetNamed(fmt.Sprintf("%s.%s", l.name, name))
 	}
+	return l.ResetNamed(name)
 }
 
-func (logger *PluginLogger) IsDebug() bool {
-	return logger.logger.WithFields(logrus.Fields{}).Level >= logrus.DebugLevel
+func (l *PluginLogger) ResetNamed(name string) hclog.Logger {
+	return &PluginLogger{name: name, logger: l.logger}
 }
 
-func (logger *PluginLogger) Info(msg string, args ...interface{}) {
-	logger.logger.WithFields(argsToFields(args)).Info(msg)
+func (l *PluginLogger) StandardLogger(opts *hclog.StandardLoggerOptions) *log.Logger {
+	return log.New(l.StandardWriter(opts), "", 0)
 }
 
-func (logger *PluginLogger) IsInfo() bool {
-	return logger.logger.WithFields(logrus.Fields{}).Level >= logrus.InfoLevel
+func (l *PluginLogger) StandardWriter(_ *hclog.StandardLoggerOptions) io.Writer {
+	return l.logger.Out
 }
 
-func (logger *PluginLogger) Warn(msg string, args ...interface{}) {
-	logger.logger.WithFields(argsToFields(args)).Warn(msg)
-}
-
-func (logger *PluginLogger) IsWarn() bool {
-	return logger.logger.WithFields(logrus.Fields{}).Level >= logrus.WarnLevel
-}
-
-func (logger *PluginLogger) Error(msg string, args ...interface{}) {
-	logger.logger.WithFields(argsToFields(args)).Error(msg)
-}
-
-func (logger *PluginLogger) IsError() bool {
-	return logger.logger.WithFields(logrus.Fields{}).Level >= logrus.ErrorLevel
-}
-
-func (logger *PluginLogger) SetLevel(_ hclog.Level) {}
-
-func (logger *PluginLogger) With(args ...interface{}) hclog.Logger {
-	return &PluginLogger{logger: logger.logger.WithFields(argsToFields(args))}
-}
-
-func (logger *PluginLogger) ImpliedArgs() []interface{} {
-	return []interface{}{}
-}
-
-func (logger *PluginLogger) Name() string {
-	return logger.name
-}
-
-func (logger *PluginLogger) Named(name string) hclog.Logger {
-	if len(logger.name) > 0 {
-		return logger.ResetNamed(fmt.Sprintf("%s.%s", logger.name, name))
-	}
-	return logger.ResetNamed(name)
-}
-
-func (logger *PluginLogger) ResetNamed(name string) hclog.Logger {
-	return &PluginLogger{name: name, logger: logger.logger}
-}
-
-func (logger *PluginLogger) StandardLogger(_ *hclog.StandardLoggerOptions) *log.Logger {
-	return log.New(logger.logger.WithFields(logrus.Fields{}).WriterLevel(logrus.InfoLevel), "", 0)
-}
-
-func (logger *PluginLogger) StandardWriter(_ *hclog.StandardLoggerOptions) io.Writer {
-	if l, ok := logger.logger.(*logrus.Logger); ok {
-		return l.Out
-	}
-	return os.Stderr
-}
-
-func (logger *PluginLogger) upgradePluginOutput(originalMsg string, args []interface{}) bool {
-	var output map[string]string
-	if err := json.Unmarshal([]byte(originalMsg), &output); err != nil {
-		return false
-	}
-
-	var msg, level string
+func (l *PluginLogger) Log(level hclog.Level, msg string, args ...interface{}) {
 	fields := argsToFields(args)
+	var output map[string]json.RawMessage
+	if err := json.Unmarshal([]byte(msg), &output); err != nil {
+		switch level {
+		case hclog.Trace:
+			l.logger.WithFields(fields).Trace(msg)
+		case hclog.Debug:
+			l.logger.WithFields(fields).Debug(msg)
+		case hclog.Info:
+			l.logger.WithFields(fields).Info(msg)
+		case hclog.Warn:
+			l.logger.WithFields(fields).Warn(msg)
+		case hclog.Error:
+			l.logger.WithFields(fields).Error(msg)
+		}
+		return
+	}
+
+	var newMsg, newLevel string
 	for k, v := range output {
 		switch k {
 		case "msg":
-			msg = v
+			json.Unmarshal(v, &newMsg)
 		case "level":
-			level = v
+			json.Unmarshal(v, &newLevel)
 		case "time":
 			// Time will be overridden by parent logger
 		default:
-			fields[k] = v
+			var data interface{}
+			json.Unmarshal(v, &data)
+			fields[k] = data
 		}
 	}
 
-	switch level {
+	switch newLevel {
 	case "trace":
-		logger.logger.WithFields(fields).Trace(msg)
+		l.logger.WithFields(fields).Trace(newMsg)
 	case "debug":
-		logger.logger.WithFields(fields).Debug(msg)
+		l.logger.WithFields(fields).Debug(newMsg)
 	case "info":
-		logger.logger.WithFields(fields).Info(msg)
+		l.logger.WithFields(fields).Info(newMsg)
 	case "warn", "warning":
-		logger.logger.WithFields(fields).Warn(msg)
+		l.logger.WithFields(fields).Warn(newMsg)
 	case "error":
-		logger.logger.WithFields(fields).Error(msg)
+		l.logger.WithFields(fields).Error(newMsg)
 	case "fatal":
-		logger.logger.WithFields(fields).Fatal(msg)
+		l.logger.WithFields(fields).Fatal(newMsg)
 	case "panic":
-		logger.logger.WithFields(fields).Panic(msg)
+		l.logger.WithFields(fields).Panic(newMsg)
 	default:
-		return false
+		l.logger.WithFields(fields).Debug(newMsg)
 	}
-	return true
 }
 
 func argsToFields(args []interface{}) logrus.Fields {

@@ -90,6 +90,7 @@ func LoadPlugins(pluginType string) *PluginManager {
 
 func (m *PluginManager) UnloadPlugins() {
 	for _, client := range m.clients {
+		log.Debug("killing client")
 		client.Kill()
 	}
 }
