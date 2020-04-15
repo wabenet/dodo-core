@@ -12,14 +12,19 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+const (
+	MagicCookieKey   = "DODO_PLUGIN"
+	MagicCookieValue = "69318785-d741-4150-ac91-8f03fa703530"
+)
+
 var (
 	serverPluginMap = map[string]plugin.Plugin{}
 	clientPluginMap = map[string]plugin.Plugin{}
-	executables     = []string{}
+	clients         = []plugin.ClientProtocol{}
 	HandshakeConfig = plugin.HandshakeConfig{
 		ProtocolVersion:  1,
-		MagicCookieKey:   "DODO_PLUGIN",
-		MagicCookieValue: "plugin",
+		MagicCookieKey:   MagicCookieKey,
+		MagicCookieValue: MagicCookieValue,
 	}
 )
 
@@ -31,11 +36,6 @@ func RegisterPluginClient(t string, p plugin.Plugin) {
 	clientPluginMap[t] = p
 }
 
-type PluginManager struct {
-	Plugins map[string]interface{}
-	clients []*plugin.Client
-}
-
 func ServePlugins() {
 	log.SetFormatter(new(log.JSONFormatter))
 	plugin.Serve(&plugin.ServeConfig{
@@ -45,20 +45,24 @@ func ServePlugins() {
 	})
 }
 
-func LoadPlugins(pluginType string) *PluginManager {
-	if len(executables) == 0 {
-		loadPluginExecutables()
+func GetPlugins(pluginType string) []interface{} {
+	result := []interface{}{}
+	for _, p := range clients {
+		raw, err := p.Dispense(pluginType)
+		if err != nil {
+			log.WithFields(log.Fields{"error": err}).Debug("error dispensing plugin")
+			continue
+		} else {
+			result = append(result, raw)
+		}
 	}
+	return result
+}
 
-	result := &PluginManager{
-		Plugins: map[string]interface{}{},
-		clients: []*plugin.Client{},
-	}
-
-	for _, path := range executables {
-		logger := log.WithFields(log.Fields{"path": path, "type": pluginType})
-
+func LoadPlugins() {
+	for _, path := range loadPluginExecutables() {
 		client := plugin.NewClient(&plugin.ClientConfig{
+			Managed:          true,
 			HandshakeConfig:  HandshakeConfig,
 			Plugins:          clientPluginMap,
 			Cmd:              exec.Command(path),
@@ -68,34 +72,20 @@ func LoadPlugins(pluginType string) *PluginManager {
 
 		conn, err := client.Client()
 		if err != nil {
-			logger.WithFields(log.Fields{"error": err}).Debug("error getting plugin client")
-			client.Kill()
-			continue
+			log.WithFields(log.Fields{"error": err}).Debug("error getting plugin client")
+		} else {
+			log.WithFields(log.Fields{"path": path}).Debug("found plugin")
+			clients = append(clients, conn)
 		}
-
-		raw, err := conn.Dispense(pluginType)
-		if err != nil {
-			logger.WithFields(log.Fields{"error": err}).Debug("error dispensing plugin")
-			client.Kill()
-			continue
-		}
-
-		logger.Debug("found plugin")
-		result.clients = append(result.clients, client)
-		result.Plugins[path] = raw
-	}
-
-	return result
-}
-
-func (m *PluginManager) UnloadPlugins() {
-	for _, client := range m.clients {
-		log.Debug("killing client")
-		client.Kill()
 	}
 }
 
-func loadPluginExecutables() {
+func UnloadPlugins() {
+	plugin.CleanupClients()
+}
+
+func loadPluginExecutables() []string {
+	executables := []string{}
 	if directories, err := configfiles.GimmeConfigDirectories(&configfiles.Options{Name: "dodo"}); err == nil {
 		for _, dir := range directories {
 			matches, err := filepath.Glob(fmt.Sprintf("%s/plugins/dodo-*_%s_%s", dir, runtime.GOOS, runtime.GOARCH))
@@ -109,4 +99,5 @@ func loadPluginExecutables() {
 			}
 		}
 	}
+	return executables
 }

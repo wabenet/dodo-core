@@ -29,7 +29,7 @@ func (s *server) Run(ctx context.Context, args *types.CommandArguments) (*types.
 	if err != nil {
 		return nil, err
 	}
-        cmd := cmds[args.Path[0]]
+	cmd := cmds[args.Path[0]]
 	subCmd, _, err := cmd.Find(args.Path[1:])
 	if err != nil {
 		return nil, err
@@ -45,7 +45,7 @@ func (s *server) Args(ctx context.Context, args *types.CommandArguments) (*types
 	if err != nil {
 		return nil, err
 	}
-        cmd := cmds[args.Path[0]]
+	cmd := cmds[args.Path[0]]
 	subCmd, _, err := cmd.Find(args.Path[1:])
 	if err != nil {
 		return nil, err
