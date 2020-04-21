@@ -18,3 +18,7 @@ func GetAppDir() string {
 	os.MkdirAll(dir, 0700)
 	return dir
 }
+
+func GetPluginDir() string {
+	return filepath.Join(GetAppDir(), "plugins")
+}

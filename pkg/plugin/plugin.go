@@ -8,7 +8,7 @@ import (
 	"runtime"
 
 	"github.com/hashicorp/go-plugin"
-	"github.com/oclaussen/go-gimme/configfiles"
+	"github.com/oclaussen/dodo/pkg/appconfig"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -60,7 +60,15 @@ func GetPlugins(pluginType string) []interface{} {
 }
 
 func LoadPlugins() {
-	for _, path := range loadPluginExecutables() {
+	matches, err := filepath.Glob(fmt.Sprintf("%s/dodo-*_%s_%s", appconfig.GetPluginDir(), runtime.GOOS, runtime.GOARCH))
+	if err != nil {
+		return
+	}
+	for _, path := range matches {
+		if stat, err := os.Stat(path); err != nil || stat.Mode().Perm()&0111 == 0 {
+			continue
+		}
+
 		client := plugin.NewClient(&plugin.ClientConfig{
 			Managed:          true,
 			HandshakeConfig:  HandshakeConfig,
@@ -82,22 +90,4 @@ func LoadPlugins() {
 
 func UnloadPlugins() {
 	plugin.CleanupClients()
-}
-
-func loadPluginExecutables() []string {
-	executables := []string{}
-	if directories, err := configfiles.GimmeConfigDirectories(&configfiles.Options{Name: "dodo"}); err == nil {
-		for _, dir := range directories {
-			matches, err := filepath.Glob(fmt.Sprintf("%s/plugins/dodo-*_%s_%s", dir, runtime.GOOS, runtime.GOARCH))
-			if err != nil {
-				continue
-			}
-			for _, path := range matches {
-				if stat, err := os.Stat(path); err == nil && stat.Mode().Perm()&0111 != 0 {
-					executables = append(executables, path)
-				}
-			}
-		}
-	}
-	return executables
 }

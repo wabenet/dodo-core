@@ -1,7 +1,16 @@
 package command
 
 import (
+	"fmt"
+	"os"
+	"os/exec"
+	"path/filepath"
+	"runtime"
+
+	"github.com/oclaussen/dodo/pkg/appconfig"
 	"github.com/oclaussen/dodo/pkg/container"
+	"github.com/oclaussen/dodo/pkg/plugin"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -16,20 +25,30 @@ CMD arguments to the first backdrop with NAME that is found. Additional FLAGS
 can be used to overwrite the backdrop configuration.
 `
 
+var builtinPlugins = map[string][]string{
+	"run": []string{"run"},
+}
+
 func NewCommand() *cobra.Command {
-	var opts options
 	cmd := &cobra.Command{
-		Use:                   "dodo [flags] [name] [cmd...]",
-		Short:                 "Run commands in a Docker context",
-		Long:                  description,
-		DisableFlagsInUseLine: true,
-		SilenceUsage:          true,
-		Args:                  cobra.MinimumNArgs(1),
+		Use:                "dodo",
+		Short:              "Run commands in a Docker context",
+		Long:               description,
+		SilenceUsage:       true,
+		DisableFlagParsing: true,
+		Args:               cobra.MinimumNArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
-			return run(&opts, args[0], args[1:])
+			executable, execArgs, err := findPluginExecutable(args[0])
+			if err == nil {
+				return runPlugin(executable, execArgs, args[1:])
+			}
+			executable, execArgs, err = findPluginExecutable("run")
+			if err == nil {
+				return runPlugin(executable, execArgs, args)
+			}
+			return err
 		},
 	}
-	opts.createFlags(cmd)
 
 	cmd.AddCommand(NewRunCommand())
 	return cmd
@@ -44,7 +63,27 @@ func NewRunCommand() *cobra.Command {
 		SilenceUsage:          true,
 		Args:                  cobra.MinimumNArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
-			return run(&opts, args[0], args[1:])
+			log.SetFormatter(&log.TextFormatter{
+				DisableTimestamp:       true,
+				DisableLevelTruncation: true,
+			})
+
+			// TODO: defaults from here should be overwritten by plugins,
+			// but cli args should overwrite plugins
+			backdrop, err := opts.createConfig(args[0], args[1:])
+			if err != nil {
+				return err
+			}
+
+			plugin.LoadPlugins()
+			defer plugin.UnloadPlugins()
+
+			c, err := container.NewContainer(backdrop, false)
+			if err != nil {
+				return err
+			}
+
+			return c.Run()
 		},
 	}
 
@@ -52,16 +91,36 @@ func NewRunCommand() *cobra.Command {
 	return cmd
 }
 
-func run(opts *options, name string, command []string) error {
-	backdrop, err := opts.createConfig(name, command)
-	if err != nil {
-		return err
+func runPlugin(executable string, execArgs []string, args []string) error {
+	cmd := exec.Command(executable, append(execArgs, args...)...)
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Run(); err != nil {
+		if exit, ok := err.(*exec.ExitError); ok {
+			return &container.ScriptError{
+				ExitCode: exit.ExitCode(),
+				Message:  string(exit.Stderr),
+			}
+			return err
+		}
 	}
+	return nil
+}
 
-	c, err := container.NewContainer(backdrop, false)
-	if err != nil {
-		return err
+func findPluginExecutable(name string) (string, []string, error) {
+	if execArgs, ok := builtinPlugins[name]; ok {
+		if self, err := os.Executable(); err == nil {
+			return self, execArgs, nil
+		}
 	}
-
-	return c.Run()
+	nameInPath := fmt.Sprintf("dodo-%s", name)
+	if plugin, err := exec.LookPath(nameInPath); err == nil {
+		return plugin, []string{}, nil
+	}
+	nameInPlugins := filepath.Join(appconfig.GetPluginDir(), fmt.Sprintf("dodo-%s_%s_%s", name, runtime.GOOS, runtime.GOARCH))
+	if stat, err := os.Stat(nameInPlugins); err == nil && stat.Mode().Perm()&0111 != 0 {
+		return nameInPlugins, []string{}, nil
+	}
+	return "", []string{}, fmt.Errorf("plugin not found: %s", name)
 }

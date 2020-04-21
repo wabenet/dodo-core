@@ -58,10 +58,6 @@ message Port {
   string host_ip = 4;
 }
 
-message Commands {
-  map<string, CommandInfo> commands = 1;
-}
-
 message ClientOptions {
   string version   = 1;
   string host      = 2;
@@ -70,34 +66,8 @@ message ClientOptions {
   string key_file  = 5;
 }
 
-message CommandInfo {
-  string use = 1;
-  string short = 2;
-
-  bool traverseChildren = 3;
-  bool silenceUsage = 4;
-
-  repeated CommandInfo subcommands = 5;
-
-  repeated string executePath = 6;
-  bool argsFunc = 7;
-  bool runFunc = 8;
-}
-
-message CommandArguments {
-  string name = 1;
-  repeated string path = 2;
-  repeated string args = 3;
-}
-
 service Configuration {
   rpc GetClientOptions(Backdrop) returns (ClientOptions);
   rpc UpdateConfiguration(Backdrop) returns (Backdrop);
   rpc Provision(ContainerId) returns (Empty);
-}
-
-service Command {
-  rpc Describe(Empty) returns (Commands);
-  rpc Run(CommandArguments) returns (Empty);
-  rpc Args(CommandArguments) returns (Empty);
 }
