@@ -9,8 +9,6 @@ import (
 
 	"github.com/oclaussen/dodo/pkg/appconfig"
 	"github.com/oclaussen/dodo/pkg/container"
-	"github.com/oclaussen/dodo/pkg/plugin"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -51,43 +49,6 @@ func NewCommand() *cobra.Command {
 	}
 
 	cmd.AddCommand(NewRunCommand())
-	return cmd
-}
-
-func NewRunCommand() *cobra.Command {
-	var opts options
-	cmd := &cobra.Command{
-		Use:                   "run [flags] [name] [cmd...]",
-		Short:                 "Same as running 'dodo [name]', can be used when a backdrop name collides with a top-level command",
-		DisableFlagsInUseLine: true,
-		SilenceUsage:          true,
-		Args:                  cobra.MinimumNArgs(1),
-		RunE: func(_ *cobra.Command, args []string) error {
-			log.SetFormatter(&log.TextFormatter{
-				DisableTimestamp:       true,
-				DisableLevelTruncation: true,
-			})
-
-			// TODO: defaults from here should be overwritten by plugins,
-			// but cli args should overwrite plugins
-			backdrop, err := opts.createConfig(args[0], args[1:])
-			if err != nil {
-				return err
-			}
-
-			plugin.LoadPlugins()
-			defer plugin.UnloadPlugins()
-
-			c, err := container.NewContainer(backdrop, false)
-			if err != nil {
-				return err
-			}
-
-			return c.Run()
-		},
-	}
-
-	opts.createFlags(cmd)
 	return cmd
 }
 
