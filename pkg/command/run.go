@@ -31,8 +31,6 @@ func NewRunCommand() *cobra.Command {
 				DisableLevelTruncation: true,
 			})
 
-			// TODO: defaults from here should be overwritten by plugins,
-			// but cli args should overwrite plugins
 			backdrop, err := opts.createConfig(args[0], args[1:])
 			if err != nil {
 				return err
