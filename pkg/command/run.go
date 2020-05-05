@@ -2,8 +2,8 @@ package command
 
 import (
 	"github.com/oclaussen/dodo/pkg/container"
-	"github.com/oclaussen/dodo/pkg/types"
 	"github.com/oclaussen/dodo/pkg/plugin"
+	"github.com/oclaussen/dodo/pkg/types"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -31,13 +31,13 @@ func NewRunCommand() *cobra.Command {
 				DisableLevelTruncation: true,
 			})
 
+			plugin.LoadPlugins()
+			defer plugin.UnloadPlugins()
+
 			backdrop, err := opts.createConfig(args[0], args[1:])
 			if err != nil {
 				return err
 			}
-
-			plugin.LoadPlugins()
-			defer plugin.UnloadPlugins()
 
 			c, err := container.NewContainer(backdrop, false)
 			if err != nil {

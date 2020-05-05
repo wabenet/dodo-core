@@ -12,7 +12,12 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+type Plugin interface {
+	Init() error
+}
+
 const (
+	ProtocolVersion  = 1
 	MagicCookieKey   = "DODO_PLUGIN"
 	MagicCookieValue = "69318785-d741-4150-ac91-8f03fa703530"
 )
@@ -20,12 +25,7 @@ const (
 var (
 	serverPluginMap = map[string]plugin.Plugin{}
 	clientPluginMap = map[string]plugin.Plugin{}
-	clients         = []plugin.ClientProtocol{}
-	HandshakeConfig = plugin.HandshakeConfig{
-		ProtocolVersion:  1,
-		MagicCookieKey:   MagicCookieKey,
-		MagicCookieValue: MagicCookieValue,
-	}
+	plugins         = map[string][]Plugin{}
 )
 
 func RegisterPluginServer(t string, p plugin.Plugin) {
@@ -39,24 +39,18 @@ func RegisterPluginClient(t string, p plugin.Plugin) {
 func ServePlugins() {
 	log.SetFormatter(new(log.JSONFormatter))
 	plugin.Serve(&plugin.ServeConfig{
-		GRPCServer:      plugin.DefaultGRPCServer,
-		HandshakeConfig: HandshakeConfig,
-		Plugins:         serverPluginMap,
+		GRPCServer: plugin.DefaultGRPCServer,
+		Plugins:    serverPluginMap,
+		HandshakeConfig: plugin.HandshakeConfig{
+			ProtocolVersion:  ProtocolVersion,
+			MagicCookieKey:   MagicCookieKey,
+			MagicCookieValue: MagicCookieValue,
+		},
 	})
 }
 
-func GetPlugins(pluginType string) []interface{} {
-	result := []interface{}{}
-	for _, p := range clients {
-		raw, err := p.Dispense(pluginType)
-		if err != nil {
-			log.WithFields(log.Fields{"error": err}).Debug("error dispensing plugin")
-			continue
-		} else {
-			result = append(result, raw)
-		}
-	}
-	return result
+func GetPlugins(pluginType string) []Plugin {
+	return plugins[pluginType]
 }
 
 func LoadPlugins() {
@@ -64,26 +58,49 @@ func LoadPlugins() {
 	if err != nil {
 		return
 	}
+
 	for _, path := range matches {
+		logger := log.WithFields(log.Fields{"path": path})
 		if stat, err := os.Stat(path); err != nil || stat.Mode().Perm()&0111 == 0 {
 			continue
 		}
 
 		client := plugin.NewClient(&plugin.ClientConfig{
 			Managed:          true,
-			HandshakeConfig:  HandshakeConfig,
 			Plugins:          clientPluginMap,
 			Cmd:              exec.Command(path),
 			AllowedProtocols: []plugin.Protocol{plugin.ProtocolNetRPC, plugin.ProtocolGRPC},
 			Logger:           NewPluginLogger(),
+			HandshakeConfig: plugin.HandshakeConfig{
+				ProtocolVersion:  ProtocolVersion,
+				MagicCookieKey:   MagicCookieKey,
+				MagicCookieValue: MagicCookieValue,
+			},
 		})
 
 		conn, err := client.Client()
 		if err != nil {
-			log.WithFields(log.Fields{"error": err}).Debug("error getting plugin client")
-		} else {
-			log.WithFields(log.Fields{"path": path}).Debug("found plugin")
-			clients = append(clients, conn)
+			logger.WithFields(log.Fields{"error": err}).Debug("error getting plugin client")
+			continue
+		}
+
+		for pluginType := range clientPluginMap {
+			raw, err := conn.Dispense(pluginType)
+			if err != nil {
+				logger.WithFields(log.Fields{"error": err}).Debug("error dispensing plugin")
+				continue
+			}
+			p, ok := raw.(Plugin)
+			if !ok {
+				logger.Debug("plugin does not implement init")
+				continue
+			}
+			if err := p.Init(); err != nil {
+				logger.WithFields(log.Fields{"error": err}).Debug("error initializing plugin")
+				continue
+			}
+                        logger.WithFields(log.Fields{"type": pluginType}).Debug("initialized plugin")
+			plugins[pluginType] = append(plugins[pluginType], p)
 		}
 	}
 }

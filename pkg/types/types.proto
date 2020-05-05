@@ -67,6 +67,7 @@ message ClientOptions {
 }
 
 service Configuration {
+  rpc Init(Empty) returns (Empty);
   rpc GetClientOptions(Backdrop) returns (ClientOptions);
   rpc UpdateConfiguration(Backdrop) returns (Backdrop);
   rpc Provision(ContainerId) returns (Empty);

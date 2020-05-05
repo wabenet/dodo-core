@@ -9,6 +9,11 @@ type client struct {
 	configClient types.ConfigurationClient
 }
 
+func (c *client) Init() error {
+	_, err := c.configClient.Init(context.Background(), &types.Empty{})
+	return err
+}
+
 func (c *client) GetClientOptions(backdrop string) (*ClientOptions, error) {
 	opts, err := c.configClient.GetClientOptions(context.Background(), &types.Backdrop{Name: backdrop})
 	if err != nil {
