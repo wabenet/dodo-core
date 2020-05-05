@@ -8,7 +8,7 @@ import (
 	"runtime"
 
 	"github.com/oclaussen/dodo/pkg/appconfig"
-	"github.com/oclaussen/dodo/pkg/container"
+	"github.com/oclaussen/dodo/pkg/types"
 	"github.com/spf13/cobra"
 )
 
@@ -59,12 +59,12 @@ func runPlugin(executable string, execArgs []string, args []string) error {
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
 		if exit, ok := err.(*exec.ExitError); ok {
-			return &container.ScriptError{
-				ExitCode: exit.ExitCode(),
+			return &types.Result{
+				ExitCode: int64(exit.ExitCode()),
 				Message:  string(exit.Stderr),
 			}
-			return err
 		}
+		return err
 	}
 	return nil
 }

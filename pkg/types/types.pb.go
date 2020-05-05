@@ -94,6 +94,61 @@ func (m *ContainerId) GetId() string {
 	return ""
 }
 
+type ContainerBox struct {
+	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Height               uint32   `protobuf:"varint,2,opt,name=height,proto3" json:"height,omitempty"`
+	Width                uint32   `protobuf:"varint,3,opt,name=width,proto3" json:"width,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ContainerBox) Reset()         { *m = ContainerBox{} }
+func (m *ContainerBox) String() string { return proto.CompactTextString(m) }
+func (*ContainerBox) ProtoMessage()    {}
+func (*ContainerBox) Descriptor() ([]byte, []int) {
+	return fileDescriptor_6579d14f41ea6320, []int{2}
+}
+
+func (m *ContainerBox) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ContainerBox.Unmarshal(m, b)
+}
+func (m *ContainerBox) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ContainerBox.Marshal(b, m, deterministic)
+}
+func (m *ContainerBox) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ContainerBox.Merge(m, src)
+}
+func (m *ContainerBox) XXX_Size() int {
+	return xxx_messageInfo_ContainerBox.Size(m)
+}
+func (m *ContainerBox) XXX_DiscardUnknown() {
+	xxx_messageInfo_ContainerBox.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ContainerBox proto.InternalMessageInfo
+
+func (m *ContainerBox) GetId() string {
+	if m != nil {
+		return m.Id
+	}
+	return ""
+}
+
+func (m *ContainerBox) GetHeight() uint32 {
+	if m != nil {
+		return m.Height
+	}
+	return 0
+}
+
+func (m *ContainerBox) GetWidth() uint32 {
+	if m != nil {
+		return m.Width
+	}
+	return 0
+}
+
 type Backdrop struct {
 	Name                 string         `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Aliases              []string       `protobuf:"bytes,2,rep,name=aliases,proto3" json:"aliases,omitempty"`
@@ -116,7 +171,7 @@ func (m *Backdrop) Reset()         { *m = Backdrop{} }
 func (m *Backdrop) String() string { return proto.CompactTextString(m) }
 func (*Backdrop) ProtoMessage()    {}
 func (*Backdrop) Descriptor() ([]byte, []int) {
-	return fileDescriptor_6579d14f41ea6320, []int{2}
+	return fileDescriptor_6579d14f41ea6320, []int{3}
 }
 
 func (m *Backdrop) XXX_Unmarshal(b []byte) error {
@@ -235,7 +290,7 @@ func (m *Entrypoint) Reset()         { *m = Entrypoint{} }
 func (m *Entrypoint) String() string { return proto.CompactTextString(m) }
 func (*Entrypoint) ProtoMessage()    {}
 func (*Entrypoint) Descriptor() ([]byte, []int) {
-	return fileDescriptor_6579d14f41ea6320, []int{3}
+	return fileDescriptor_6579d14f41ea6320, []int{4}
 }
 
 func (m *Entrypoint) XXX_Unmarshal(b []byte) error {
@@ -296,7 +351,7 @@ func (m *Environment) Reset()         { *m = Environment{} }
 func (m *Environment) String() string { return proto.CompactTextString(m) }
 func (*Environment) ProtoMessage()    {}
 func (*Environment) Descriptor() ([]byte, []int) {
-	return fileDescriptor_6579d14f41ea6320, []int{4}
+	return fileDescriptor_6579d14f41ea6320, []int{5}
 }
 
 func (m *Environment) XXX_Unmarshal(b []byte) error {
@@ -344,7 +399,7 @@ func (m *Volume) Reset()         { *m = Volume{} }
 func (m *Volume) String() string { return proto.CompactTextString(m) }
 func (*Volume) ProtoMessage()    {}
 func (*Volume) Descriptor() ([]byte, []int) {
-	return fileDescriptor_6579d14f41ea6320, []int{5}
+	return fileDescriptor_6579d14f41ea6320, []int{6}
 }
 
 func (m *Volume) XXX_Unmarshal(b []byte) error {
@@ -400,7 +455,7 @@ func (m *Device) Reset()         { *m = Device{} }
 func (m *Device) String() string { return proto.CompactTextString(m) }
 func (*Device) ProtoMessage()    {}
 func (*Device) Descriptor() ([]byte, []int) {
-	return fileDescriptor_6579d14f41ea6320, []int{6}
+	return fileDescriptor_6579d14f41ea6320, []int{7}
 }
 
 func (m *Device) XXX_Unmarshal(b []byte) error {
@@ -463,7 +518,7 @@ func (m *Port) Reset()         { *m = Port{} }
 func (m *Port) String() string { return proto.CompactTextString(m) }
 func (*Port) ProtoMessage()    {}
 func (*Port) Descriptor() ([]byte, []int) {
-	return fileDescriptor_6579d14f41ea6320, []int{7}
+	return fileDescriptor_6579d14f41ea6320, []int{8}
 }
 
 func (m *Port) XXX_Unmarshal(b []byte) error {
@@ -527,7 +582,7 @@ func (m *ClientOptions) Reset()         { *m = ClientOptions{} }
 func (m *ClientOptions) String() string { return proto.CompactTextString(m) }
 func (*ClientOptions) ProtoMessage()    {}
 func (*ClientOptions) Descriptor() ([]byte, []int) {
-	return fileDescriptor_6579d14f41ea6320, []int{8}
+	return fileDescriptor_6579d14f41ea6320, []int{9}
 }
 
 func (m *ClientOptions) XXX_Unmarshal(b []byte) error {
@@ -583,9 +638,143 @@ func (m *ClientOptions) GetKeyFile() string {
 	return ""
 }
 
+type Image struct {
+	Name                 string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Id                   string   `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Image) Reset()         { *m = Image{} }
+func (m *Image) String() string { return proto.CompactTextString(m) }
+func (*Image) ProtoMessage()    {}
+func (*Image) Descriptor() ([]byte, []int) {
+	return fileDescriptor_6579d14f41ea6320, []int{10}
+}
+
+func (m *Image) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Image.Unmarshal(m, b)
+}
+func (m *Image) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Image.Marshal(b, m, deterministic)
+}
+func (m *Image) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Image.Merge(m, src)
+}
+func (m *Image) XXX_Size() int {
+	return xxx_messageInfo_Image.Size(m)
+}
+func (m *Image) XXX_DiscardUnknown() {
+	xxx_messageInfo_Image.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Image proto.InternalMessageInfo
+
+func (m *Image) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+func (m *Image) GetId() string {
+	if m != nil {
+		return m.Id
+	}
+	return ""
+}
+
+type Result struct {
+	ExitCode             int64    `protobuf:"varint,1,opt,name=exitCode,proto3" json:"exitCode,omitempty"`
+	Message              string   `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Result) Reset()         { *m = Result{} }
+func (m *Result) String() string { return proto.CompactTextString(m) }
+func (*Result) ProtoMessage()    {}
+func (*Result) Descriptor() ([]byte, []int) {
+	return fileDescriptor_6579d14f41ea6320, []int{11}
+}
+
+func (m *Result) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Result.Unmarshal(m, b)
+}
+func (m *Result) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Result.Marshal(b, m, deterministic)
+}
+func (m *Result) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Result.Merge(m, src)
+}
+func (m *Result) XXX_Size() int {
+	return xxx_messageInfo_Result.Size(m)
+}
+func (m *Result) XXX_DiscardUnknown() {
+	xxx_messageInfo_Result.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Result proto.InternalMessageInfo
+
+func (m *Result) GetExitCode() int64 {
+	if m != nil {
+		return m.ExitCode
+	}
+	return 0
+}
+
+func (m *Result) GetMessage() string {
+	if m != nil {
+		return m.Message
+	}
+	return ""
+}
+
+type StreamingConnection struct {
+	Url                  string   `protobuf:"bytes,1,opt,name=url,proto3" json:"url,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *StreamingConnection) Reset()         { *m = StreamingConnection{} }
+func (m *StreamingConnection) String() string { return proto.CompactTextString(m) }
+func (*StreamingConnection) ProtoMessage()    {}
+func (*StreamingConnection) Descriptor() ([]byte, []int) {
+	return fileDescriptor_6579d14f41ea6320, []int{12}
+}
+
+func (m *StreamingConnection) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_StreamingConnection.Unmarshal(m, b)
+}
+func (m *StreamingConnection) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_StreamingConnection.Marshal(b, m, deterministic)
+}
+func (m *StreamingConnection) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StreamingConnection.Merge(m, src)
+}
+func (m *StreamingConnection) XXX_Size() int {
+	return xxx_messageInfo_StreamingConnection.Size(m)
+}
+func (m *StreamingConnection) XXX_DiscardUnknown() {
+	xxx_messageInfo_StreamingConnection.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StreamingConnection proto.InternalMessageInfo
+
+func (m *StreamingConnection) GetUrl() string {
+	if m != nil {
+		return m.Url
+	}
+	return ""
+}
+
 func init() {
 	proto.RegisterType((*Empty)(nil), "types.Empty")
 	proto.RegisterType((*ContainerId)(nil), "types.ContainerId")
+	proto.RegisterType((*ContainerBox)(nil), "types.ContainerBox")
 	proto.RegisterType((*Backdrop)(nil), "types.Backdrop")
 	proto.RegisterType((*Entrypoint)(nil), "types.Entrypoint")
 	proto.RegisterType((*Environment)(nil), "types.Environment")
@@ -593,6 +782,9 @@ func init() {
 	proto.RegisterType((*Device)(nil), "types.Device")
 	proto.RegisterType((*Port)(nil), "types.Port")
 	proto.RegisterType((*ClientOptions)(nil), "types.ClientOptions")
+	proto.RegisterType((*Image)(nil), "types.Image")
+	proto.RegisterType((*Result)(nil), "types.Result")
+	proto.RegisterType((*StreamingConnection)(nil), "types.StreamingConnection")
 }
 
 func init() {
@@ -600,50 +792,64 @@ func init() {
 }
 
 var fileDescriptor_6579d14f41ea6320 = []byte{
-	// 680 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x54, 0x4d, 0x6f, 0xd4, 0x48,
-	0x10, 0xd5, 0x7c, 0x7b, 0xca, 0x49, 0x36, 0xdb, 0x9b, 0xdd, 0xed, 0x84, 0x20, 0x06, 0x4b, 0x88,
-	0xb9, 0x10, 0x44, 0x00, 0x21, 0xae, 0x24, 0x01, 0xe5, 0x02, 0x91, 0x05, 0x5c, 0x47, 0x1d, 0xbb,
-	0x32, 0x69, 0x8d, 0xc7, 0xdd, 0x74, 0xb7, 0x07, 0x8d, 0xb8, 0x73, 0xe4, 0x5f, 0xf0, 0x07, 0xf8,
-	0x85, 0xa8, 0x3f, 0xec, 0xf1, 0x80, 0xb8, 0x58, 0xfd, 0xde, 0xab, 0xaa, 0x57, 0xae, 0xfe, 0x80,
-	0x7f, 0xe5, 0x62, 0xfe, 0xd8, 0xac, 0x25, 0x6a, 0xff, 0x3d, 0x91, 0x4a, 0x18, 0x41, 0x06, 0x0e,
-	0x24, 0x23, 0x18, 0x5c, 0x2c, 0xa5, 0x59, 0x27, 0x77, 0x21, 0x3e, 0x13, 0xa5, 0x61, 0xbc, 0x44,
-	0x75, 0x99, 0x93, 0x3d, 0xe8, 0xf2, 0x9c, 0x76, 0x26, 0x9d, 0xe9, 0x38, 0xed, 0xf2, 0x3c, 0xf9,
-	0xde, 0x83, 0xe8, 0x15, 0xcb, 0x16, 0xb9, 0x12, 0x92, 0x10, 0xe8, 0x97, 0x6c, 0x89, 0x41, 0x76,
-	0x6b, 0x42, 0x61, 0xc4, 0x0a, 0xce, 0x34, 0x6a, 0xda, 0x9d, 0xf4, 0xa6, 0xe3, 0xb4, 0x86, 0xe4,
-	0x01, 0xec, 0x65, 0x75, 0xe5, 0x99, 0xcb, 0xeb, 0xb9, 0xbc, 0xdd, 0x86, 0x7d, 0x6b, 0x0b, 0x1c,
-	0x42, 0xc4, 0x97, 0x6c, 0x8e, 0x33, 0x9e, 0xd3, 0xbe, 0x0b, 0x18, 0x39, 0x7c, 0x99, 0x93, 0x27,
-	0x00, 0x58, 0x1a, 0xb5, 0x96, 0x82, 0x97, 0x86, 0x0e, 0x26, 0x9d, 0x69, 0x7c, 0xfa, 0xf7, 0x89,
-	0xff, 0x9b, 0x8b, 0x46, 0x48, 0x5b, 0x41, 0xe4, 0x19, 0xc4, 0x58, 0xae, 0xb8, 0x12, 0xe5, 0x12,
-	0x4b, 0x43, 0x87, 0x93, 0xde, 0x34, 0x3e, 0x25, 0x4d, 0x4e, 0xa3, 0xa4, 0xed, 0x30, 0xf2, 0x10,
-	0x46, 0x2b, 0x51, 0x54, 0x4b, 0xd4, 0x74, 0xe4, 0x32, 0x76, 0x43, 0xc6, 0x47, 0xc7, 0xa6, 0xb5,
-	0x6a, 0x03, 0x73, 0x5c, 0xf1, 0x0c, 0x35, 0x8d, 0xb6, 0x02, 0xcf, 0x1d, 0x9b, 0xd6, 0x2a, 0xb9,
-	0x0f, 0x03, 0x29, 0x94, 0xd1, 0x74, 0xec, 0xc2, 0xe2, 0x10, 0x76, 0x25, 0x94, 0x49, 0xbd, 0x62,
-	0xa7, 0x59, 0x69, 0x54, 0x14, 0xfc, 0x34, 0xed, 0x9a, 0xdc, 0x83, 0xf8, 0xb3, 0x50, 0x0b, 0x5e,
-	0xce, 0x67, 0x39, 0x57, 0x34, 0x76, 0x12, 0x04, 0xea, 0x9c, 0x2b, 0xf2, 0x1f, 0x0c, 0x99, 0x31,
-	0x2c, 0xbb, 0xa5, 0x3b, 0x93, 0xce, 0x34, 0x4a, 0x03, 0x4a, 0xbe, 0x76, 0x00, 0x36, 0x23, 0x21,
-	0x13, 0x88, 0x79, 0x69, 0x50, 0xb1, 0xcc, 0xf0, 0x95, 0xdf, 0xb0, 0x28, 0x6d, 0x53, 0xb6, 0x90,
-	0xce, 0x14, 0x97, 0x86, 0x76, 0x9d, 0x49, 0x40, 0x4d, 0xa6, 0x54, 0x68, 0x50, 0xd1, 0x9e, 0xdb,
-	0xd3, 0x36, 0x45, 0x8e, 0x61, 0xcc, 0xd4, 0xbc, 0xb2, 0x83, 0xd3, 0xb4, 0xef, 0xf4, 0x0d, 0x91,
-	0x3c, 0x87, 0xb8, 0x35, 0x66, 0xb2, 0x0f, 0xbd, 0x05, 0xae, 0xc3, 0x89, 0xb1, 0x4b, 0x72, 0x00,
-	0x83, 0x15, 0x2b, 0x2a, 0x0c, 0xbe, 0x1e, 0x24, 0xef, 0x61, 0xe8, 0x67, 0xed, 0x1a, 0x13, 0x95,
-	0xca, 0xea, 0x63, 0x16, 0x90, 0xe5, 0x0d, 0x53, 0x73, 0x6c, 0x1a, 0xf6, 0x88, 0x1c, 0x41, 0xa4,
-	0x90, 0xe5, 0xa2, 0x2c, 0xd6, 0xee, 0x80, 0x45, 0x69, 0x83, 0x93, 0x2f, 0x30, 0xf4, 0x1b, 0x63,
-	0x07, 0x9b, 0xcd, 0x95, 0xa8, 0xe4, 0x4c, 0x55, 0x45, 0x5d, 0x1a, 0x3c, 0x95, 0x56, 0x45, 0xdb,
-	0xb6, 0xfb, 0x07, 0xdb, 0xde, 0x96, 0xed, 0x04, 0x62, 0x89, 0x6a, 0xc9, 0xb5, 0xe6, 0xa2, 0xd4,
-	0xe1, 0xe4, 0xb6, 0xa9, 0xe4, 0x13, 0xf4, 0xed, 0x76, 0xb7, 0x2a, 0x74, 0xb6, 0x2a, 0x1c, 0xc3,
-	0x58, 0x56, 0xd7, 0x05, 0xd7, 0xb7, 0x98, 0x07, 0xd3, 0x0d, 0x61, 0x7f, 0xcb, 0x5d, 0xd8, 0x4c,
-	0x14, 0xc1, 0xb9, 0xc1, 0xe4, 0x7f, 0x18, 0xdd, 0x0a, 0x6d, 0x66, 0x5c, 0x06, 0xdf, 0xa1, 0x85,
-	0x97, 0x32, 0xf9, 0xd6, 0x81, 0xdd, 0xb3, 0x82, 0x63, 0x69, 0xde, 0x49, 0x63, 0x9b, 0xb0, 0xd7,
-	0x73, 0x85, 0xca, 0x36, 0x14, 0xdc, 0x6b, 0x68, 0x8f, 0x9f, 0xcd, 0x0a, 0xce, 0x6e, 0x6d, 0x0b,
-	0x67, 0x6c, 0x76, 0xc3, 0x8b, 0xfa, 0xae, 0x0e, 0x33, 0xf6, 0x9a, 0x17, 0x48, 0xee, 0xc0, 0x38,
-	0x43, 0x65, 0xbc, 0xe4, 0x3d, 0x23, 0x4b, 0x38, 0xf1, 0x10, 0xa2, 0x05, 0xae, 0xbd, 0x36, 0xf0,
-	0x26, 0x0b, 0x5c, 0x5b, 0xe9, 0xf4, 0x87, 0x6d, 0x48, 0x94, 0x37, 0x7c, 0x5e, 0x29, 0x66, 0x3b,
-	0x22, 0x2f, 0x61, 0xff, 0x0d, 0x9a, 0xed, 0x26, 0xff, 0x0a, 0xb7, 0xa3, 0x7e, 0x68, 0x8e, 0x0e,
-	0x02, 0xb1, 0x1d, 0xf6, 0x02, 0xfe, 0xf9, 0x20, 0x73, 0x66, 0x70, 0xbb, 0xe2, 0x6f, 0xd9, 0xbf,
-	0x12, 0xe4, 0x11, 0x8c, 0xaf, 0x94, 0x58, 0x71, 0xff, 0xdf, 0x75, 0xed, 0xcd, 0xab, 0x77, 0xb4,
-	0x53, 0x3f, 0x10, 0xf6, 0x49, 0xbc, 0x1e, 0xba, 0x41, 0x3f, 0xfd, 0x19, 0x00, 0x00, 0xff, 0xff,
-	0x8f, 0xf1, 0xcd, 0x09, 0x42, 0x05, 0x00, 0x00,
+	// 907 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x55, 0xdb, 0x8e, 0xe3, 0x44,
+	0x10, 0x55, 0xe2, 0xc9, 0xad, 0x3c, 0x37, 0x7a, 0x16, 0xf0, 0x0e, 0x8b, 0x08, 0x96, 0xd0, 0x46,
+	0x20, 0x16, 0x91, 0x1d, 0x40, 0xbc, 0xf0, 0x30, 0xd9, 0x05, 0x05, 0x21, 0x58, 0x79, 0x80, 0xd7,
+	0xa8, 0xd7, 0xae, 0x75, 0x5a, 0xb1, 0xbb, 0x4d, 0x77, 0x3b, 0x3b, 0x81, 0x77, 0x1e, 0xf9, 0x0b,
+	0xbe, 0x82, 0xff, 0xe0, 0x7b, 0x50, 0x5f, 0xec, 0x24, 0xb3, 0xe1, 0xf6, 0x12, 0xf9, 0x9c, 0xaa,
+	0x53, 0x55, 0x5d, 0x55, 0xdd, 0x81, 0xd7, 0xab, 0x55, 0xfe, 0x91, 0xde, 0x54, 0xa8, 0xdc, 0xef,
+	0xa3, 0x4a, 0x0a, 0x2d, 0x48, 0xcf, 0x82, 0x78, 0x00, 0xbd, 0xa7, 0x65, 0xa5, 0x37, 0xf1, 0xdb,
+	0x10, 0xce, 0x04, 0xd7, 0x94, 0x71, 0x94, 0xf3, 0x8c, 0x9c, 0x42, 0x97, 0x65, 0x51, 0x67, 0xdc,
+	0x99, 0x8c, 0x92, 0x2e, 0xcb, 0xe2, 0x6f, 0xe0, 0xb8, 0x35, 0x5f, 0x8b, 0xdb, 0xbb, 0x76, 0xf2,
+	0x06, 0xf4, 0x97, 0xc8, 0xf2, 0xa5, 0x8e, 0xba, 0xe3, 0xce, 0xe4, 0x24, 0xf1, 0x88, 0xdc, 0x83,
+	0xde, 0x4b, 0x96, 0xe9, 0x65, 0x14, 0x58, 0xda, 0x81, 0xf8, 0xf7, 0x00, 0x86, 0xd7, 0x34, 0x5d,
+	0x65, 0x52, 0x54, 0x84, 0xc0, 0x11, 0xa7, 0x25, 0xfa, 0x60, 0xf6, 0x9b, 0x44, 0x30, 0xa0, 0x05,
+	0xa3, 0x0a, 0x55, 0xd4, 0x1d, 0x07, 0x93, 0x51, 0xd2, 0x40, 0xf2, 0x1e, 0x9c, 0xa6, 0x4d, 0x21,
+	0x0b, 0xab, 0x0b, 0xac, 0xee, 0xa4, 0x65, 0xbf, 0x35, 0x01, 0xee, 0xc3, 0x90, 0x95, 0x34, 0xc7,
+	0x05, 0xcb, 0xa2, 0x23, 0xeb, 0x30, 0xb0, 0x78, 0x9e, 0x91, 0x8f, 0x01, 0x90, 0x6b, 0xb9, 0xa9,
+	0x04, 0xe3, 0x3a, 0xea, 0x8d, 0x3b, 0x93, 0x70, 0xfa, 0xda, 0x23, 0xd7, 0x9b, 0xa7, 0xad, 0x21,
+	0xd9, 0x71, 0x22, 0x57, 0x10, 0x22, 0x5f, 0x33, 0x29, 0x78, 0x89, 0x5c, 0x47, 0xfd, 0x71, 0x30,
+	0x09, 0xa7, 0xa4, 0xd5, 0xb4, 0x96, 0x64, 0xd7, 0x8d, 0x3c, 0x84, 0xc1, 0x5a, 0x14, 0x75, 0x89,
+	0x2a, 0x1a, 0x58, 0xc5, 0x89, 0x57, 0xfc, 0x68, 0xd9, 0xa4, 0xb1, 0x1a, 0xc7, 0x0c, 0xd7, 0x2c,
+	0x45, 0x15, 0x0d, 0xf7, 0x1c, 0x9f, 0x58, 0x36, 0x69, 0xac, 0xe4, 0x5d, 0xe8, 0x55, 0x42, 0x6a,
+	0x15, 0x8d, 0xac, 0x5b, 0xe8, 0xdd, 0x9e, 0x09, 0xa9, 0x13, 0x67, 0x31, 0xdd, 0xac, 0x15, 0xca,
+	0x08, 0x5c, 0x37, 0xcd, 0x37, 0x79, 0x07, 0xc2, 0x97, 0x42, 0xae, 0x18, 0xcf, 0x17, 0x19, 0x93,
+	0x51, 0x68, 0x4d, 0xe0, 0xa9, 0x27, 0x4c, 0x9a, 0xe9, 0x51, 0xad, 0x69, 0xba, 0x8c, 0x8e, 0xc7,
+	0x9d, 0xc9, 0x30, 0xf1, 0x28, 0xfe, 0xb5, 0x03, 0xb0, 0x6d, 0x09, 0x19, 0x43, 0xc8, 0xb8, 0x46,
+	0x49, 0x53, 0xcd, 0xd6, 0x6e, 0x60, 0xc3, 0x64, 0x97, 0x32, 0x81, 0x54, 0x2a, 0x59, 0xe5, 0xd6,
+	0x60, 0x94, 0x78, 0xd4, 0x2a, 0x2b, 0x89, 0x1a, 0x65, 0x14, 0xd8, 0x99, 0xee, 0x52, 0xe4, 0x01,
+	0x8c, 0xa8, 0xcc, 0x6b, 0xd3, 0x38, 0x15, 0x1d, 0x59, 0xfb, 0x96, 0x88, 0x3f, 0x81, 0x70, 0xa7,
+	0xcd, 0xe4, 0x1c, 0x82, 0x15, 0x6e, 0xfc, 0xc6, 0x98, 0x4f, 0xb3, 0x67, 0x6b, 0x5a, 0xd4, 0xe8,
+	0xf3, 0x3a, 0x10, 0x7f, 0x0f, 0x7d, 0xd7, 0x6b, 0x5b, 0x98, 0xa8, 0x65, 0xda, 0xac, 0x99, 0x47,
+	0x86, 0xd7, 0x54, 0xe6, 0xd8, 0x16, 0xec, 0x10, 0xb9, 0x84, 0xa1, 0x44, 0x9a, 0x09, 0x5e, 0x6c,
+	0xec, 0x82, 0x0d, 0x93, 0x16, 0xc7, 0xbf, 0x40, 0xdf, 0x0d, 0xc6, 0x34, 0x36, 0xcd, 0xa5, 0xa8,
+	0xab, 0x85, 0xac, 0x8b, 0x26, 0x34, 0x38, 0x2a, 0xa9, 0x8b, 0xdd, 0xb4, 0xdd, 0xbf, 0x49, 0x1b,
+	0xec, 0xa5, 0x1d, 0x43, 0x58, 0xa1, 0x2c, 0x99, 0x52, 0x4c, 0x70, 0xe5, 0x37, 0x77, 0x97, 0x8a,
+	0x7f, 0x82, 0x23, 0x33, 0xee, 0x9d, 0x08, 0x9d, 0xbd, 0x08, 0x0f, 0x60, 0x54, 0xd5, 0xcf, 0x0b,
+	0xa6, 0x96, 0x98, 0xf9, 0xa4, 0x5b, 0xc2, 0x1c, 0xcb, 0x5e, 0xff, 0x54, 0x14, 0x3e, 0x73, 0x8b,
+	0xc9, 0x9b, 0x30, 0x58, 0x0a, 0xa5, 0x17, 0xac, 0xf2, 0x79, 0xfb, 0x06, 0xce, 0xab, 0xf8, 0xb7,
+	0x0e, 0x9c, 0xcc, 0x0a, 0x86, 0x5c, 0x7f, 0x57, 0x69, 0x53, 0x84, 0xb9, 0x9e, 0x6b, 0x94, 0xa6,
+	0x20, 0x9f, 0xbd, 0x81, 0x66, 0xfd, 0x8c, 0xca, 0x67, 0xb6, 0xdf, 0x26, 0x70, 0x4a, 0x17, 0x2f,
+	0x58, 0xd1, 0xdc, 0xd5, 0x7e, 0x4a, 0xbf, 0x64, 0x05, 0x92, 0xb7, 0x60, 0x94, 0xa2, 0xd4, 0xce,
+	0xe4, 0x72, 0x0e, 0x0d, 0x61, 0x8d, 0xf7, 0x61, 0xb8, 0xc2, 0x8d, 0xb3, 0xf5, 0x5c, 0x92, 0x15,
+	0x6e, 0x8c, 0x29, 0xfe, 0x00, 0x7a, 0x73, 0x73, 0x99, 0x0f, 0x3e, 0x1d, 0xee, 0x65, 0xea, 0xb6,
+	0x2f, 0xd7, 0x17, 0xd0, 0x4f, 0x50, 0xd5, 0x85, 0x9d, 0x29, 0xde, 0x32, 0x3d, 0x13, 0x99, 0x53,
+	0x04, 0x49, 0x8b, 0xcd, 0x89, 0x4a, 0x54, 0x8a, 0xe6, 0xcd, 0xa4, 0x1a, 0x18, 0x3f, 0x84, 0x8b,
+	0x1b, 0x2d, 0x91, 0x96, 0x8c, 0xe7, 0x33, 0xc1, 0x39, 0xa6, 0xa6, 0x07, 0x66, 0x05, 0x6b, 0x59,
+	0x34, 0x2b, 0x58, 0xcb, 0x62, 0xfa, 0xa7, 0x69, 0x93, 0xe0, 0x2f, 0x58, 0x5e, 0x4b, 0x6a, 0x7d,
+	0x62, 0x38, 0x9a, 0x73, 0xa6, 0xc9, 0x71, 0xf3, 0x52, 0x98, 0x97, 0xf6, 0x72, 0x0f, 0x91, 0xcf,
+	0xe1, 0xfc, 0x2b, 0xd4, 0xfb, 0xed, 0x3d, 0xf3, 0x1e, 0xcd, 0x13, 0x79, 0x79, 0xcf, 0x13, 0xfb,
+	0x6e, 0x9f, 0xc1, 0xc5, 0x0f, 0x55, 0x46, 0x35, 0xee, 0x67, 0x7d, 0x45, 0x7d, 0x97, 0x20, 0x1f,
+	0xc2, 0xe8, 0x99, 0x14, 0x6b, 0xe6, 0x26, 0xd6, 0xc4, 0xde, 0xbe, 0xfe, 0xfb, 0x25, 0x4e, 0xff,
+	0x08, 0xe0, 0xbc, 0xb5, 0x26, 0x35, 0xd7, 0xac, 0xc4, 0xff, 0x74, 0xb6, 0xf7, 0xe1, 0x38, 0x41,
+	0x25, 0x8a, 0x35, 0xba, 0x71, 0x35, 0x56, 0x8b, 0x2e, 0xf7, 0x10, 0xf9, 0x14, 0xce, 0x66, 0x12,
+	0xdd, 0x61, 0x5c, 0xa6, 0x57, 0x0f, 0x72, 0xa0, 0x54, 0x32, 0x85, 0xd3, 0x1b, 0x4d, 0xa5, 0xde,
+	0xca, 0xfe, 0xf5, 0x40, 0xe4, 0x31, 0x9c, 0x25, 0x58, 0x8a, 0x35, 0xfe, 0x1f, 0xd1, 0x95, 0x11,
+	0x29, 0xf6, 0xf3, 0x8e, 0xe8, 0xe2, 0xae, 0xe8, 0x5a, 0xdc, 0xde, 0x51, 0x7d, 0x0d, 0xd1, 0x0d,
+	0xea, 0xba, 0x3a, 0xb4, 0x42, 0x87, 0x72, 0x5e, 0x7a, 0xee, 0x90, 0xff, 0x15, 0x9c, 0x39, 0xfa,
+	0x9f, 0xcb, 0x6e, 0xfe, 0x3c, 0xdc, 0xd6, 0x3f, 0xef, 0xdb, 0x0b, 0xfe, 0xf8, 0xaf, 0x00, 0x00,
+	0x00, 0xff, 0xff, 0xe2, 0xb1, 0xaa, 0xca, 0x08, 0x08, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -658,6 +864,7 @@ const _ = grpc.SupportPackageIsVersion6
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type ConfigurationClient interface {
+	Init(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error)
 	GetClientOptions(ctx context.Context, in *Backdrop, opts ...grpc.CallOption) (*ClientOptions, error)
 	UpdateConfiguration(ctx context.Context, in *Backdrop, opts ...grpc.CallOption) (*Backdrop, error)
 	Provision(ctx context.Context, in *ContainerId, opts ...grpc.CallOption) (*Empty, error)
@@ -669,6 +876,15 @@ type configurationClient struct {
 
 func NewConfigurationClient(cc grpc.ClientConnInterface) ConfigurationClient {
 	return &configurationClient{cc}
+}
+
+func (c *configurationClient) Init(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, "/types.Configuration/Init", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *configurationClient) GetClientOptions(ctx context.Context, in *Backdrop, opts ...grpc.CallOption) (*ClientOptions, error) {
@@ -700,6 +916,7 @@ func (c *configurationClient) Provision(ctx context.Context, in *ContainerId, op
 
 // ConfigurationServer is the server API for Configuration service.
 type ConfigurationServer interface {
+	Init(context.Context, *Empty) (*Empty, error)
 	GetClientOptions(context.Context, *Backdrop) (*ClientOptions, error)
 	UpdateConfiguration(context.Context, *Backdrop) (*Backdrop, error)
 	Provision(context.Context, *ContainerId) (*Empty, error)
@@ -709,6 +926,9 @@ type ConfigurationServer interface {
 type UnimplementedConfigurationServer struct {
 }
 
+func (*UnimplementedConfigurationServer) Init(ctx context.Context, req *Empty) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Init not implemented")
+}
 func (*UnimplementedConfigurationServer) GetClientOptions(ctx context.Context, req *Backdrop) (*ClientOptions, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetClientOptions not implemented")
 }
@@ -721,6 +941,24 @@ func (*UnimplementedConfigurationServer) Provision(ctx context.Context, req *Con
 
 func RegisterConfigurationServer(s *grpc.Server, srv ConfigurationServer) {
 	s.RegisterService(&_Configuration_serviceDesc, srv)
+}
+
+func _Configuration_Init_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConfigurationServer).Init(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/types.Configuration/Init",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConfigurationServer).Init(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _Configuration_GetClientOptions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -782,6 +1020,10 @@ var _Configuration_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*ConfigurationServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
+			MethodName: "Init",
+			Handler:    _Configuration_Init_Handler,
+		},
+		{
 			MethodName: "GetClientOptions",
 			Handler:    _Configuration_GetClientOptions_Handler,
 		},
@@ -792,6 +1034,330 @@ var _Configuration_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Provision",
 			Handler:    _Configuration_Provision_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "pkg/types/types.proto",
+}
+
+// ContainerRuntimeClient is the client API for ContainerRuntime service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type ContainerRuntimeClient interface {
+	Init(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error)
+	ResolveImage(ctx context.Context, in *Image, opts ...grpc.CallOption) (*Image, error)
+	CreateContainer(ctx context.Context, in *Backdrop, opts ...grpc.CallOption) (*ContainerId, error)
+	StartContainer(ctx context.Context, in *ContainerId, opts ...grpc.CallOption) (*Empty, error)
+	RemoveContainer(ctx context.Context, in *ContainerId, opts ...grpc.CallOption) (*Empty, error)
+	ResizeContainer(ctx context.Context, in *ContainerBox, opts ...grpc.CallOption) (*Empty, error)
+	SetupStreamingConnection(ctx context.Context, in *ContainerId, opts ...grpc.CallOption) (*StreamingConnection, error)
+	StreamContainer(ctx context.Context, in *ContainerId, opts ...grpc.CallOption) (*Result, error)
+}
+
+type containerRuntimeClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewContainerRuntimeClient(cc grpc.ClientConnInterface) ContainerRuntimeClient {
+	return &containerRuntimeClient{cc}
+}
+
+func (c *containerRuntimeClient) Init(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, "/types.ContainerRuntime/Init", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *containerRuntimeClient) ResolveImage(ctx context.Context, in *Image, opts ...grpc.CallOption) (*Image, error) {
+	out := new(Image)
+	err := c.cc.Invoke(ctx, "/types.ContainerRuntime/ResolveImage", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *containerRuntimeClient) CreateContainer(ctx context.Context, in *Backdrop, opts ...grpc.CallOption) (*ContainerId, error) {
+	out := new(ContainerId)
+	err := c.cc.Invoke(ctx, "/types.ContainerRuntime/CreateContainer", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *containerRuntimeClient) StartContainer(ctx context.Context, in *ContainerId, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, "/types.ContainerRuntime/StartContainer", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *containerRuntimeClient) RemoveContainer(ctx context.Context, in *ContainerId, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, "/types.ContainerRuntime/RemoveContainer", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *containerRuntimeClient) ResizeContainer(ctx context.Context, in *ContainerBox, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, "/types.ContainerRuntime/ResizeContainer", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *containerRuntimeClient) SetupStreamingConnection(ctx context.Context, in *ContainerId, opts ...grpc.CallOption) (*StreamingConnection, error) {
+	out := new(StreamingConnection)
+	err := c.cc.Invoke(ctx, "/types.ContainerRuntime/SetupStreamingConnection", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *containerRuntimeClient) StreamContainer(ctx context.Context, in *ContainerId, opts ...grpc.CallOption) (*Result, error) {
+	out := new(Result)
+	err := c.cc.Invoke(ctx, "/types.ContainerRuntime/StreamContainer", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// ContainerRuntimeServer is the server API for ContainerRuntime service.
+type ContainerRuntimeServer interface {
+	Init(context.Context, *Empty) (*Empty, error)
+	ResolveImage(context.Context, *Image) (*Image, error)
+	CreateContainer(context.Context, *Backdrop) (*ContainerId, error)
+	StartContainer(context.Context, *ContainerId) (*Empty, error)
+	RemoveContainer(context.Context, *ContainerId) (*Empty, error)
+	ResizeContainer(context.Context, *ContainerBox) (*Empty, error)
+	SetupStreamingConnection(context.Context, *ContainerId) (*StreamingConnection, error)
+	StreamContainer(context.Context, *ContainerId) (*Result, error)
+}
+
+// UnimplementedContainerRuntimeServer can be embedded to have forward compatible implementations.
+type UnimplementedContainerRuntimeServer struct {
+}
+
+func (*UnimplementedContainerRuntimeServer) Init(ctx context.Context, req *Empty) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Init not implemented")
+}
+func (*UnimplementedContainerRuntimeServer) ResolveImage(ctx context.Context, req *Image) (*Image, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ResolveImage not implemented")
+}
+func (*UnimplementedContainerRuntimeServer) CreateContainer(ctx context.Context, req *Backdrop) (*ContainerId, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateContainer not implemented")
+}
+func (*UnimplementedContainerRuntimeServer) StartContainer(ctx context.Context, req *ContainerId) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method StartContainer not implemented")
+}
+func (*UnimplementedContainerRuntimeServer) RemoveContainer(ctx context.Context, req *ContainerId) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveContainer not implemented")
+}
+func (*UnimplementedContainerRuntimeServer) ResizeContainer(ctx context.Context, req *ContainerBox) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ResizeContainer not implemented")
+}
+func (*UnimplementedContainerRuntimeServer) SetupStreamingConnection(ctx context.Context, req *ContainerId) (*StreamingConnection, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetupStreamingConnection not implemented")
+}
+func (*UnimplementedContainerRuntimeServer) StreamContainer(ctx context.Context, req *ContainerId) (*Result, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method StreamContainer not implemented")
+}
+
+func RegisterContainerRuntimeServer(s *grpc.Server, srv ContainerRuntimeServer) {
+	s.RegisterService(&_ContainerRuntime_serviceDesc, srv)
+}
+
+func _ContainerRuntime_Init_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ContainerRuntimeServer).Init(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/types.ContainerRuntime/Init",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ContainerRuntimeServer).Init(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ContainerRuntime_ResolveImage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Image)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ContainerRuntimeServer).ResolveImage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/types.ContainerRuntime/ResolveImage",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ContainerRuntimeServer).ResolveImage(ctx, req.(*Image))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ContainerRuntime_CreateContainer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Backdrop)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ContainerRuntimeServer).CreateContainer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/types.ContainerRuntime/CreateContainer",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ContainerRuntimeServer).CreateContainer(ctx, req.(*Backdrop))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ContainerRuntime_StartContainer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ContainerId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ContainerRuntimeServer).StartContainer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/types.ContainerRuntime/StartContainer",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ContainerRuntimeServer).StartContainer(ctx, req.(*ContainerId))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ContainerRuntime_RemoveContainer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ContainerId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ContainerRuntimeServer).RemoveContainer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/types.ContainerRuntime/RemoveContainer",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ContainerRuntimeServer).RemoveContainer(ctx, req.(*ContainerId))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ContainerRuntime_ResizeContainer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ContainerBox)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ContainerRuntimeServer).ResizeContainer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/types.ContainerRuntime/ResizeContainer",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ContainerRuntimeServer).ResizeContainer(ctx, req.(*ContainerBox))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ContainerRuntime_SetupStreamingConnection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ContainerId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ContainerRuntimeServer).SetupStreamingConnection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/types.ContainerRuntime/SetupStreamingConnection",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ContainerRuntimeServer).SetupStreamingConnection(ctx, req.(*ContainerId))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ContainerRuntime_StreamContainer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ContainerId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ContainerRuntimeServer).StreamContainer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/types.ContainerRuntime/StreamContainer",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ContainerRuntimeServer).StreamContainer(ctx, req.(*ContainerId))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _ContainerRuntime_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "types.ContainerRuntime",
+	HandlerType: (*ContainerRuntimeServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Init",
+			Handler:    _ContainerRuntime_Init_Handler,
+		},
+		{
+			MethodName: "ResolveImage",
+			Handler:    _ContainerRuntime_ResolveImage_Handler,
+		},
+		{
+			MethodName: "CreateContainer",
+			Handler:    _ContainerRuntime_CreateContainer_Handler,
+		},
+		{
+			MethodName: "StartContainer",
+			Handler:    _ContainerRuntime_StartContainer_Handler,
+		},
+		{
+			MethodName: "RemoveContainer",
+			Handler:    _ContainerRuntime_RemoveContainer_Handler,
+		},
+		{
+			MethodName: "ResizeContainer",
+			Handler:    _ContainerRuntime_ResizeContainer_Handler,
+		},
+		{
+			MethodName: "SetupStreamingConnection",
+			Handler:    _ContainerRuntime_SetupStreamingConnection_Handler,
+		},
+		{
+			MethodName: "StreamContainer",
+			Handler:    _ContainerRuntime_StreamContainer_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

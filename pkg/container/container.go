@@ -3,12 +3,11 @@ package container
 import (
 	"fmt"
 	"os"
-	"path/filepath"
+	"os/signal"
+	"syscall"
 
-	dockerapi "github.com/docker/docker/api/types"
-	"github.com/docker/docker/client"
 	"github.com/docker/docker/pkg/stringid"
-	"github.com/docker/docker/pkg/term"
+	"github.com/moby/term"
 	"github.com/oclaussen/dodo/pkg/configuration"
 	"github.com/oclaussen/dodo/pkg/plugin"
 	"github.com/oclaussen/dodo/pkg/types"
@@ -16,26 +15,10 @@ import (
 	"golang.org/x/net/context"
 )
 
-const (
-	DefaultAPIVersion = "1.39"
-)
-
-type ScriptError struct {
-	Message  string
-	ExitCode int
-}
-
-func (e *ScriptError) Error() string {
-	return e.Message
-}
-
 type Container struct {
-	name    string
 	daemon  bool
 	config  *types.Backdrop
-	client  *client.Client
 	context context.Context
-	tmpPath string
 }
 
 func NewContainer(overrides *types.Backdrop, daemon bool) (*Container, error) {
@@ -46,13 +29,12 @@ func NewContainer(overrides *types.Backdrop, daemon bool) (*Container, error) {
 			Entrypoint: &types.Entrypoint{},
 		},
 		context: context.Background(),
-		tmpPath: fmt.Sprintf("/tmp/dodo-%s/", stringid.GenerateRandomID()[:20]),
 	}
 
 	for _, p := range plugin.GetPlugins(configuration.PluginType) {
 		conf, err := p.(configuration.Configuration).UpdateConfiguration(c.config)
 		if err != nil {
-			log.Warn(err)
+			log.WithFields(log.Fields{"error": err}).Warn("could not get config")
 			continue
 		}
 		c.config = conf
@@ -61,97 +43,93 @@ func NewContainer(overrides *types.Backdrop, daemon bool) (*Container, error) {
 
 	log.WithFields(log.Fields{"backdrop": c.config}).Debug("assembled configuration")
 
-	dockerClient, err := getDockerClient(c.config.Name)
-	if err != nil {
-		return nil, err
-	}
-	c.client = dockerClient
-
-	c.name = c.config.ContainerName
 	if c.daemon {
-		c.name = c.config.Name
-	} else if len(c.name) == 0 {
-		c.name = fmt.Sprintf("%s-%s", c.config.Name, stringid.GenerateRandomID()[:8])
+		c.config.ContainerName = c.config.Name
+	} else if len(c.config.ContainerName) == 0 {
+		c.config.ContainerName = fmt.Sprintf("%s-%s", c.config.Name, stringid.GenerateRandomID()[:8])
 	}
 
 	return c, nil
 }
 
 func (c *Container) Run() error {
-	imageId, err := c.GetImage()
+	rt, err := GetRuntime()
 	if err != nil {
 		return err
 	}
 
-	containerID, err := c.create(imageId)
+	imageId, err := rt.ResolveImage(c.config.ImageId)
 	if err != nil {
 		return err
 	}
+	c.config.ImageId = imageId
 
-	if c.daemon {
-		return c.client.ContainerStart(
-			c.context,
-			containerID,
-			dockerapi.ContainerStartOptions{},
-		)
-	} else {
-		return c.run(containerID, hasTTY())
-	}
-}
-
-func (c *Container) Stop() error {
-	if err := c.client.ContainerStop(c.context, c.name, nil); err != nil {
+	containerID, err := rt.CreateContainer(c.config)
+	if err != nil {
 		return err
-	}
-
-	if err := c.client.ContainerRemove(c.context, c.name, dockerapi.ContainerRemoveOptions{}); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func hasTTY() bool {
-	_, inTerm := term.GetFdInfo(os.Stdin)
-	_, outTerm := term.GetFdInfo(os.Stdout)
-	return inTerm && outTerm
-}
-
-func getDockerClient(name string) (*client.Client, error) {
-	opts := &configuration.ClientOptions{
-		Host: os.Getenv("DOCKER_HOST"),
-	}
-	if version := os.Getenv("DOCKER_API_VERSION"); len(version) > 0 {
-		opts.Version = version
-	}
-	if certPath := os.Getenv("DOCKER_CERT_PATH"); len(certPath) > 0 {
-		opts.CAFile = filepath.Join(certPath, "ca.pem")
-		opts.CertFile = filepath.Join(certPath, "cert.pem")
-		opts.KeyFile = filepath.Join(certPath, "key.pem")
 	}
 
 	for _, p := range plugin.GetPlugins(configuration.PluginType) {
-		o, err := p.(configuration.Configuration).GetClientOptions(name)
+		err := p.(configuration.Configuration).Provision(containerID)
 		if err != nil {
-			log.Warn(err)
-			continue
-		}
-		if len(o.Host) > 0 { // FIXME: why only check host?
-			opts = o
+			log.WithFields(log.Fields{"error": err}).Warn("could not provision")
 		}
 	}
 
-	mutators := []client.Opt{}
-	if len(opts.Version) > 0 {
-		mutators = append(mutators, client.WithVersion(opts.Version))
-	} else {
-		mutators = append(mutators, client.WithVersion(DefaultAPIVersion))
+	if c.daemon {
+		return rt.StartContainer(containerID)
 	}
-	if len(opts.Host) > 0 {
-		mutators = append(mutators, client.WithHost(opts.Host))
+
+	inFd, inTerm := term.GetFdInfo(os.Stdin)
+	outFd, outTerm := term.GetFdInfo(os.Stdout)
+
+	if inTerm && outTerm {
+		inState, err := term.SetRawTerminal(inFd)
+		if err != nil {
+			return err
+		}
+		defer term.RestoreTerminal(inFd, inState)
+
+		outState, err := term.SetRawTerminal(outFd)
+		if err != nil {
+			return err
+		}
+		defer term.RestoreTerminal(outFd, outState)
+
+		resize(rt, containerID)
+		resizeChannel := make(chan os.Signal, 1)
+		signal.Notify(resizeChannel, syscall.SIGWINCH)
+		go func() {
+			for range resizeChannel {
+				resize(rt, containerID)
+			}
+		}()
 	}
-	if len(opts.CAFile)+len(opts.CertFile)+len(opts.KeyFile) > 0 {
-		mutators = append(mutators, client.WithTLSClientConfig(opts.CAFile, opts.CertFile, opts.KeyFile))
+
+        return rt.StreamContainer(containerID, os.Stdout, os.Stdin)
+}
+
+func (c *Container) Stop() error {
+	rt, err := GetRuntime()
+	if err != nil {
+		return err
 	}
-	return client.NewClientWithOpts(mutators...)
+	return rt.RemoveContainer(c.config.ContainerName)
+}
+
+func resize(rt ContainerRuntime, containerID string) {
+	outFd, _ := term.GetFdInfo(os.Stdout)
+
+	ws, err := term.GetWinsize(outFd)
+	if err != nil {
+		return
+	}
+
+	height := uint32(ws.Height)
+	width := uint32(ws.Width)
+	if height == 0 && width == 0 {
+		return
+	}
+
+	rt.ResizeContainer(containerID, height, width)
 }

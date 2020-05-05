@@ -7,6 +7,12 @@ message ContainerId {
   string id = 1;
 }
 
+message ContainerBox {
+  string id = 1;
+  uint32 height = 2;
+  uint32 width = 3;
+}
+
 message Backdrop {
   string name = 1;
   repeated string aliases = 2;
@@ -66,9 +72,34 @@ message ClientOptions {
   string key_file  = 5;
 }
 
+message Image {
+  string name = 1;
+  string id = 2;
+}
+
+message Result {
+  int64 exitCode = 1;
+  string message = 2;
+}
+
+message StreamingConnection {
+  string url = 1;
+}
+
 service Configuration {
   rpc Init(Empty) returns (Empty);
   rpc GetClientOptions(Backdrop) returns (ClientOptions);
   rpc UpdateConfiguration(Backdrop) returns (Backdrop);
   rpc Provision(ContainerId) returns (Empty);
+}
+
+service ContainerRuntime {
+  rpc Init(Empty) returns (Empty);
+  rpc ResolveImage(Image) returns (Image);
+  rpc CreateContainer(Backdrop) returns (ContainerId);
+  rpc StartContainer(ContainerId) returns (Empty);
+  rpc RemoveContainer(ContainerId) returns (Empty);
+  rpc ResizeContainer(ContainerBox) returns (Empty);
+  rpc SetupStreamingConnection(ContainerId) returns (StreamingConnection);
+  rpc StreamContainer(ContainerId) returns (Result);
 }
