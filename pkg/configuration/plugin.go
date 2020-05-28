@@ -12,7 +12,6 @@ const PluginType = "configuration"
 
 type Configuration interface {
 	Init() error
-	GetClientOptions(string) (*ClientOptions, error)
 	UpdateConfiguration(*types.Backdrop) (*types.Backdrop, error)
 	Provision(string) error
 }

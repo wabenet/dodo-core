@@ -1,13 +1,14 @@
 package container
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
 
-	"github.com/docker/docker/pkg/stringid"
-	"github.com/moby/term"
+	"github.com/containerd/console"
 	"github.com/oclaussen/dodo/pkg/configuration"
 	"github.com/oclaussen/dodo/pkg/plugin"
 	"github.com/oclaussen/dodo/pkg/types"
@@ -46,7 +47,11 @@ func NewContainer(overrides *types.Backdrop, daemon bool) (*Container, error) {
 	if c.daemon {
 		c.config.ContainerName = c.config.Name
 	} else if len(c.config.ContainerName) == 0 {
-		c.config.ContainerName = fmt.Sprintf("%s-%s", c.config.Name, stringid.GenerateRandomID()[:8])
+		id := make([]byte, 8)
+		if _, err := rand.Read(id); err != nil {
+			panic(err)
+		}
+		c.config.ContainerName = fmt.Sprintf("%s-%s", c.config.Name, hex.EncodeToString(id))
 	}
 
 	return c, nil
@@ -80,33 +85,23 @@ func (c *Container) Run() error {
 		return rt.StartContainer(containerID)
 	}
 
-	inFd, inTerm := term.GetFdInfo(os.Stdin)
-	outFd, outTerm := term.GetFdInfo(os.Stdout)
-
-	if inTerm && outTerm {
-		inState, err := term.SetRawTerminal(inFd)
-		if err != nil {
-			return err
+	if c, err := console.ConsoleFromFile(os.Stdin); err == nil {
+		defer c.Reset()
+		if e := c.SetRaw(); e != nil {
+			return nil
 		}
-		defer term.RestoreTerminal(inFd, inState)
 
-		outState, err := term.SetRawTerminal(outFd)
-		if err != nil {
-			return err
-		}
-		defer term.RestoreTerminal(outFd, outState)
-
-		resize(rt, containerID)
+		resize(c, rt, containerID)
 		resizeChannel := make(chan os.Signal, 1)
 		signal.Notify(resizeChannel, syscall.SIGWINCH)
 		go func() {
 			for range resizeChannel {
-				resize(rt, containerID)
+				resize(c, rt, containerID)
 			}
 		}()
 	}
 
-        return rt.StreamContainer(containerID, os.Stdout, os.Stdin)
+	return rt.StreamContainer(containerID, os.Stdout, os.Stdin)
 }
 
 func (c *Container) Stop() error {
@@ -117,10 +112,8 @@ func (c *Container) Stop() error {
 	return rt.RemoveContainer(c.config.ContainerName)
 }
 
-func resize(rt ContainerRuntime, containerID string) {
-	outFd, _ := term.GetFdInfo(os.Stdout)
-
-	ws, err := term.GetWinsize(outFd)
+func resize(c console.Console, rt ContainerRuntime, containerID string) {
+	ws, err := c.Size()
 	if err != nil {
 		return
 	}

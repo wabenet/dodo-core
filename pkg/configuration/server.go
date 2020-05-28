@@ -13,20 +13,6 @@ func (s *server) Init(_ context.Context, _ *types.Empty) (*types.Empty, error) {
 	return &types.Empty{}, s.impl.Init()
 }
 
-func (s *server) GetClientOptions(_ context.Context, request *types.Backdrop) (*types.ClientOptions, error) {
-	opts, err := s.impl.GetClientOptions(request.Name)
-	if err != nil {
-		return nil, err
-	}
-	return &types.ClientOptions{
-		Version:  opts.Version,
-		Host:     opts.Host,
-		CaFile:   opts.CAFile,
-		CertFile: opts.CertFile,
-		KeyFile:  opts.KeyFile,
-	}, nil
-}
-
 func (s *server) UpdateConfiguration(_ context.Context, backdrop *types.Backdrop) (*types.Backdrop, error) {
 	return s.impl.UpdateConfiguration(backdrop)
 }
