@@ -22,6 +22,7 @@ func (c *client) ResolveImage(spec string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	return img.Id, nil
 }
 
@@ -30,6 +31,7 @@ func (c *client) CreateContainer(config *types.Backdrop) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	return resp.Id, nil
 }
 
@@ -50,6 +52,7 @@ func (c *client) ResizeContainer(id string, height uint32, width uint32) error {
 
 func (c *client) StreamContainer(id string, r io.Reader, w io.Writer) error {
 	ctx := context.Background()
+
 	connInfo, err := c.runtimeClient.SetupStreamingConnection(ctx, &types.ContainerId{Id: id})
 	if err != nil {
 		return err
@@ -64,6 +67,7 @@ func (c *client) StreamContainer(id string, r io.Reader, w io.Writer) error {
 	if err != nil {
 		return err
 	}
+
 	defer conn.CloseWrite()
 
 	go io.Copy(w, conn)
@@ -73,5 +77,6 @@ func (c *client) StreamContainer(id string, r io.Reader, w io.Writer) error {
 	if err != nil {
 		return err
 	}
+
 	return result
 }

@@ -73,6 +73,7 @@ func NewDevice(spec string) (*Device, error) {
 
 func NewPort(spec string) (*Port, error) {
 	var result *Port
+
 	switch values := strings.SplitN(spec, ":", 3); len(values) {
 	case 0:
 		return result, fmt.Errorf("empty publish definition: %s", spec)

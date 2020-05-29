@@ -100,6 +100,7 @@ func (l *PluginLogger) Named(name string) hclog.Logger {
 	if len(l.name) > 0 {
 		return l.ResetNamed(fmt.Sprintf("%s.%s", l.name, name))
 	}
+
 	return l.ResetNamed(name)
 }
 
@@ -117,6 +118,7 @@ func (l *PluginLogger) StandardWriter(_ *hclog.StandardLoggerOptions) io.Writer 
 
 func (l *PluginLogger) Log(level hclog.Level, msg string, args ...interface{}) {
 	fields := argsToFields(args)
+
 	var output map[string]json.RawMessage
 	if err := json.Unmarshal([]byte(msg), &output); err != nil {
 		switch level {
@@ -131,10 +133,12 @@ func (l *PluginLogger) Log(level hclog.Level, msg string, args ...interface{}) {
 		case hclog.Error:
 			l.logger.WithFields(fields).Error(msg)
 		}
+
 		return
 	}
 
 	var newMsg, newLevel string
+
 	for k, v := range output {
 		switch k {
 		case "msg":
@@ -145,6 +149,7 @@ func (l *PluginLogger) Log(level hclog.Level, msg string, args ...interface{}) {
 			// Time will be overridden by parent logger
 		default:
 			var data interface{}
+
 			json.Unmarshal(v, &data)
 			fields[k] = data
 		}
@@ -174,11 +179,14 @@ func argsToFields(args []interface{}) logrus.Fields {
 	if len(args)%2 != 0 {
 		args = append(args, "")
 	}
+
 	fields := make(logrus.Fields, len(args)/2)
+
 	for i := 0; i < len(args); i += 2 {
 		if key, ok := args[i].(string); ok {
 			fields[key] = args[i+1]
 		}
 	}
+
 	return fields
 }

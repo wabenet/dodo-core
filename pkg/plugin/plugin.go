@@ -61,6 +61,7 @@ func LoadPlugins() {
 
 	for _, path := range matches {
 		logger := log.WithFields(log.Fields{"path": path})
+
 		if stat, err := os.Stat(path); err != nil || stat.Mode().Perm()&0111 == 0 {
 			continue
 		}
@@ -90,16 +91,20 @@ func LoadPlugins() {
 				logger.WithFields(log.Fields{"error": err}).Debug("error dispensing plugin")
 				continue
 			}
+
 			p, ok := raw.(Plugin)
 			if !ok {
 				logger.Debug("plugin does not implement init")
 				continue
 			}
+
 			if err := p.Init(); err != nil {
 				logger.WithFields(log.Fields{"error": err}).Debug("error initializing plugin")
 				continue
 			}
-                        logger.WithFields(log.Fields{"type": pluginType}).Debug("initialized plugin")
+
+			logger.WithFields(log.Fields{"type": pluginType}).Debug("initialized plugin")
+
 			plugins[pluginType] = append(plugins[pluginType], p)
 		}
 	}

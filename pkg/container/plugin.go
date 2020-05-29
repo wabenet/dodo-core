@@ -32,13 +32,14 @@ type Plugin struct {
 func GetRuntime() (ContainerRuntime, error) {
 	for _, p := range dodoplugin.GetPlugins(PluginType) {
 		log.Debug("trying plugin")
+
 		if rt, ok := p.(ContainerRuntime); ok {
 			log.Debug("ok")
 			return rt, nil
 		}
 	}
-	return nil, errors.New("Could not find any container runtime")
 
+	return nil, errors.New("Could not find any container runtime")
 }
 
 func init() {

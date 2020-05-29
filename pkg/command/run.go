@@ -19,6 +19,7 @@ type options struct {
 
 func NewRunCommand() *cobra.Command {
 	var opts options
+
 	cmd := &cobra.Command{
 		Use:                   "run [flags] [name] [cmd...]",
 		Short:                 "Same as running 'dodo [name]', can be used when a backdrop name collides with a top-level command",
@@ -89,8 +90,8 @@ func (opts *options) createConfig(name string, command []string) (*types.Backdro
 		if err != nil {
 			return nil, err
 		}
-		config.Volumes = append(config.Volumes, volume)
 
+		config.Volumes = append(config.Volumes, volume)
 	}
 
 	for _, spec := range opts.environment {
@@ -98,6 +99,7 @@ func (opts *options) createConfig(name string, command []string) (*types.Backdro
 		if err != nil {
 			return nil, err
 		}
+
 		config.Environment = append(config.Environment, env)
 	}
 
@@ -106,6 +108,7 @@ func (opts *options) createConfig(name string, command []string) (*types.Backdro
 		if err != nil {
 			return nil, err
 		}
+
 		config.Ports = append(config.Ports, port)
 	}
 

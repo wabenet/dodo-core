@@ -38,10 +38,11 @@ func NewContainer(overrides *types.Backdrop, daemon bool) (*Container, error) {
 			log.WithFields(log.Fields{"error": err}).Warn("could not get config")
 			continue
 		}
+
 		c.config = conf
 	}
-	c.config.Merge(overrides)
 
+	c.config.Merge(overrides)
 	log.WithFields(log.Fields{"backdrop": c.config}).Debug("assembled configuration")
 
 	if c.daemon {
@@ -51,6 +52,7 @@ func NewContainer(overrides *types.Backdrop, daemon bool) (*Container, error) {
 		if _, err := rand.Read(id); err != nil {
 			panic(err)
 		}
+
 		c.config.ContainerName = fmt.Sprintf("%s-%s", c.config.Name, hex.EncodeToString(id))
 	}
 
@@ -67,6 +69,7 @@ func (c *Container) Run() error {
 	if err != nil {
 		return err
 	}
+
 	c.config.ImageId = imageId
 
 	containerID, err := rt.CreateContainer(c.config)
@@ -87,13 +90,16 @@ func (c *Container) Run() error {
 
 	if c, err := console.ConsoleFromFile(os.Stdin); err == nil {
 		defer c.Reset()
+
 		if e := c.SetRaw(); e != nil {
 			return nil
 		}
 
 		resize(c, rt, containerID)
+
 		resizeChannel := make(chan os.Signal, 1)
 		signal.Notify(resizeChannel, syscall.SIGWINCH)
+
 		go func() {
 			for range resizeChannel {
 				resize(c, rt, containerID)
@@ -109,6 +115,7 @@ func (c *Container) Stop() error {
 	if err != nil {
 		return err
 	}
+
 	return rt.RemoveContainer(c.config.ContainerName)
 }
 
@@ -120,6 +127,7 @@ func resize(c console.Console, rt ContainerRuntime, containerID string) {
 
 	height := uint32(ws.Height)
 	width := uint32(ws.Width)
+
 	if height == 0 && width == 0 {
 		return
 	}

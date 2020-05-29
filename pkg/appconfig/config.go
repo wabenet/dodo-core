@@ -15,7 +15,9 @@ func GetAppDir() string {
 	if user, err := user.Current(); err == nil && user.HomeDir != "" {
 		dir = filepath.Join(user.HomeDir, ".dodo")
 	}
+
 	os.MkdirAll(dir, 0700)
+
 	return dir
 }
 

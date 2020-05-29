@@ -19,7 +19,9 @@ func (c *client) UpdateConfiguration(backdrop *types.Backdrop) (*types.Backdrop,
 	if err != nil {
 		return nil, err
 	}
+
 	backdrop.Merge(update)
+
 	return backdrop, nil
 }
 

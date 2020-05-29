@@ -40,6 +40,7 @@ func NewCommand() *cobra.Command {
 			if err == nil {
 				return runPlugin(executable, execArgs, args[1:])
 			}
+
 			executable, execArgs, err = findPluginExecutable("run")
 			if err == nil {
 				return runPlugin(executable, execArgs, args)
@@ -49,14 +50,17 @@ func NewCommand() *cobra.Command {
 	}
 
 	cmd.AddCommand(NewRunCommand())
+
 	return cmd
 }
 
 func runPlugin(executable string, execArgs []string, args []string) error {
 	cmd := exec.Command(executable, append(execArgs, args...)...)
+
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
+
 	if err := cmd.Run(); err != nil {
 		if exit, ok := err.(*exec.ExitError); ok {
 			return &types.Result{
@@ -64,8 +68,10 @@ func runPlugin(executable string, execArgs []string, args []string) error {
 				Message:  string(exit.Stderr),
 			}
 		}
+
 		return err
 	}
+
 	return nil
 }
 
@@ -75,13 +81,16 @@ func findPluginExecutable(name string) (string, []string, error) {
 			return self, execArgs, nil
 		}
 	}
+
 	nameInPath := fmt.Sprintf("dodo-%s", name)
 	if plugin, err := exec.LookPath(nameInPath); err == nil {
 		return plugin, []string{}, nil
 	}
+
 	nameInPlugins := filepath.Join(appconfig.GetPluginDir(), fmt.Sprintf("dodo-%s_%s_%s", name, runtime.GOOS, runtime.GOARCH))
 	if stat, err := os.Stat(nameInPlugins); err == nil && stat.Mode().Perm()&0111 != 0 {
 		return nameInPlugins, []string{}, nil
 	}
+
 	return "", []string{}, fmt.Errorf("plugin not found: %s", name)
 }

@@ -26,6 +26,7 @@ func (s *server) ResolveImage(_ context.Context, request *types.Image) (*types.I
 	if err != nil {
 		return nil, err
 	}
+
 	return &types.Image{Name: request.Name, Id: id}, nil
 }
 
@@ -34,6 +35,7 @@ func (s *server) CreateContainer(_ context.Context, config *types.Backdrop) (*ty
 	if err != nil {
 		return nil, err
 	}
+
 	return &types.ContainerId{Id: id}, nil
 }
 
@@ -54,6 +56,7 @@ func (s *server) SetupStreamingConnection(_ context.Context, request *types.Cont
 	if err != nil {
 		return nil, err
 	}
+
 	s.streamListener = listener
 
 	go func() {
@@ -61,6 +64,7 @@ func (s *server) SetupStreamingConnection(_ context.Context, request *types.Cont
 		if err != nil {
 			log.WithError(err).Error("could not accept client connection")
 		}
+
 		s.streamConnection = conn
 	}()
 
@@ -71,10 +75,12 @@ func (s *server) StreamContainer(_ context.Context, request *types.ContainerId) 
 	if s.streamConnection == nil {
 		return nil, errors.New("no streaming connection established")
 	}
+
 	defer func() {
 		if err := s.streamConnection.Close(); err != nil {
 			log.WithError(err).Error("could not close client connection")
 		}
+
 		if err := s.streamListener.Close(); err != nil {
 			log.WithError(err).Error("could not close listener")
 		}
