@@ -11,13 +11,13 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type PluginLogger struct {
+type Logger struct {
 	name   string
 	logger *logrus.Logger
 }
 
-func NewPluginLogger() hclog.Logger {
-	return &PluginLogger{
+func NewLogger() hclog.Logger {
+	return &Logger{
 		logger: &logrus.Logger{
 			Out:   os.Stderr,
 			Level: logrus.GetLevel(),
@@ -29,47 +29,47 @@ func NewPluginLogger() hclog.Logger {
 	}
 }
 
-func (l *PluginLogger) Trace(msg string, args ...interface{}) {
+func (l *Logger) Trace(msg string, args ...interface{}) {
 	l.Log(hclog.Trace, msg, args...)
 }
 
-func (l *PluginLogger) IsTrace() bool {
+func (l *Logger) IsTrace() bool {
 	return l.logger.Level <= logrus.TraceLevel
 }
 
-func (l *PluginLogger) Debug(msg string, args ...interface{}) {
+func (l *Logger) Debug(msg string, args ...interface{}) {
 	l.Log(hclog.Debug, msg, args...)
 }
 
-func (l *PluginLogger) IsDebug() bool {
+func (l *Logger) IsDebug() bool {
 	return l.logger.Level <= logrus.DebugLevel
 }
 
-func (l *PluginLogger) Info(msg string, args ...interface{}) {
+func (l *Logger) Info(msg string, args ...interface{}) {
 	l.Log(hclog.Info, msg, args...)
 }
 
-func (l *PluginLogger) IsInfo() bool {
+func (l *Logger) IsInfo() bool {
 	return l.logger.Level <= logrus.InfoLevel
 }
 
-func (l *PluginLogger) Warn(msg string, args ...interface{}) {
+func (l *Logger) Warn(msg string, args ...interface{}) {
 	l.Log(hclog.Warn, msg, args...)
 }
 
-func (l *PluginLogger) IsWarn() bool {
+func (l *Logger) IsWarn() bool {
 	return l.logger.Level <= logrus.WarnLevel
 }
 
-func (l *PluginLogger) Error(msg string, args ...interface{}) {
+func (l *Logger) Error(msg string, args ...interface{}) {
 	l.Log(hclog.Error, msg, args...)
 }
 
-func (l *PluginLogger) IsError() bool {
+func (l *Logger) IsError() bool {
 	return l.logger.Level <= logrus.ErrorLevel
 }
 
-func (l *PluginLogger) SetLevel(level hclog.Level) {
+func (l *Logger) SetLevel(level hclog.Level) {
 	switch level {
 	case hclog.Trace:
 		l.logger.SetLevel(logrus.TraceLevel)
@@ -84,19 +84,19 @@ func (l *PluginLogger) SetLevel(level hclog.Level) {
 	}
 }
 
-func (l *PluginLogger) With(args ...interface{}) hclog.Logger {
+func (l *Logger) With(args ...interface{}) hclog.Logger {
 	return l // TODO
 }
 
-func (l *PluginLogger) ImpliedArgs() []interface{} {
+func (l *Logger) ImpliedArgs() []interface{} {
 	return []interface{}{} // TODO
 }
 
-func (l *PluginLogger) Name() string {
+func (l *Logger) Name() string {
 	return l.name
 }
 
-func (l *PluginLogger) Named(name string) hclog.Logger {
+func (l *Logger) Named(name string) hclog.Logger {
 	if len(l.name) > 0 {
 		return l.ResetNamed(fmt.Sprintf("%s.%s", l.name, name))
 	}
@@ -104,19 +104,19 @@ func (l *PluginLogger) Named(name string) hclog.Logger {
 	return l.ResetNamed(name)
 }
 
-func (l *PluginLogger) ResetNamed(name string) hclog.Logger {
-	return &PluginLogger{name: name, logger: l.logger}
+func (l *Logger) ResetNamed(name string) hclog.Logger {
+	return &Logger{name: name, logger: l.logger}
 }
 
-func (l *PluginLogger) StandardLogger(opts *hclog.StandardLoggerOptions) *log.Logger {
+func (l *Logger) StandardLogger(opts *hclog.StandardLoggerOptions) *log.Logger {
 	return log.New(l.StandardWriter(opts), "", 0)
 }
 
-func (l *PluginLogger) StandardWriter(_ *hclog.StandardLoggerOptions) io.Writer {
+func (l *Logger) StandardWriter(_ *hclog.StandardLoggerOptions) io.Writer {
 	return l.logger.Out
 }
 
-func (l *PluginLogger) Log(level hclog.Level, msg string, args ...interface{}) {
+func (l *Logger) Log(level hclog.Level, msg string, args ...interface{}) {
 	fields := argsToFields(args)
 
 	var output map[string]json.RawMessage

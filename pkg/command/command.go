@@ -24,7 +24,7 @@ can be used to overwrite the backdrop configuration.
 `
 
 var builtinPlugins = map[string][]string{
-	"run": []string{"run"},
+	"run": {"run"},
 }
 
 func NewCommand() *cobra.Command {
@@ -87,7 +87,10 @@ func findPluginExecutable(name string) (string, []string, error) {
 		return plugin, []string{}, nil
 	}
 
-	nameInPlugins := filepath.Join(appconfig.GetPluginDir(), fmt.Sprintf("dodo-%s_%s_%s", name, runtime.GOOS, runtime.GOARCH))
+	nameInPlugins := filepath.Join(
+		appconfig.GetPluginDir(),
+		fmt.Sprintf("dodo-%s_%s_%s", name, runtime.GOOS, runtime.GOARCH),
+	)
 	if stat, err := os.Stat(nameInPlugins); err == nil && stat.Mode().Perm()&0111 != 0 {
 		return nameInPlugins, []string{}, nil
 	}

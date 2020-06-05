@@ -65,12 +65,12 @@ func (c *Container) Run() error {
 		return err
 	}
 
-	imageId, err := rt.ResolveImage(c.config.ImageId)
+	imageID, err := rt.ResolveImage(c.config.ImageId)
 	if err != nil {
 		return err
 	}
 
-	c.config.ImageId = imageId
+	c.config.ImageId = imageID
 
 	containerID, err := rt.CreateContainer(c.config)
 	if err != nil {

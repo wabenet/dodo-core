@@ -4,7 +4,7 @@ import (
 	"io"
 
 	"github.com/hashicorp/go-plugin"
-	dodoplugin "github.com/oclaussen/dodo/pkg/plugin"
+	dodo "github.com/oclaussen/dodo/pkg/plugin"
 	"github.com/oclaussen/dodo/pkg/types"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -29,8 +29,12 @@ type Plugin struct {
 	Impl ContainerRuntime
 }
 
+func RegisterPlugin() {
+	dodo.RegisterPluginClient(PluginType, &Plugin{})
+}
+
 func GetRuntime() (ContainerRuntime, error) {
-	for _, p := range dodoplugin.GetPlugins(PluginType) {
+	for _, p := range dodo.GetPlugins(PluginType) {
 		log.Debug("trying plugin")
 
 		if rt, ok := p.(ContainerRuntime); ok {
@@ -40,10 +44,6 @@ func GetRuntime() (ContainerRuntime, error) {
 	}
 
 	return nil, errors.New("Could not find any container runtime")
-}
-
-func init() {
-	dodoplugin.RegisterPluginClient(PluginType, &Plugin{})
 }
 
 func (p *Plugin) GRPCClient(_ context.Context, _ *plugin.GRPCBroker, conn *grpc.ClientConn) (interface{}, error) {

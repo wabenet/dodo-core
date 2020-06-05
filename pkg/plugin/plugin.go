@@ -71,7 +71,7 @@ func LoadPlugins() {
 			Plugins:          clientPluginMap,
 			Cmd:              exec.Command(path),
 			AllowedProtocols: []plugin.Protocol{plugin.ProtocolNetRPC, plugin.ProtocolGRPC},
-			Logger:           NewPluginLogger(),
+			Logger:           NewLogger(),
 			HandshakeConfig: plugin.HandshakeConfig{
 				ProtocolVersion:  ProtocolVersion,
 				MagicCookieKey:   MagicCookieKey,

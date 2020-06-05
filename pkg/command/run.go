@@ -1,6 +1,7 @@
 package command
 
 import (
+	"github.com/oclaussen/dodo/pkg/configuration"
 	"github.com/oclaussen/dodo/pkg/container"
 	"github.com/oclaussen/dodo/pkg/plugin"
 	"github.com/oclaussen/dodo/pkg/types"
@@ -27,6 +28,9 @@ func NewRunCommand() *cobra.Command {
 		SilenceUsage:          true,
 		Args:                  cobra.MinimumNArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
+			container.RegisterPlugin()
+			configuration.RegisterPlugin()
+
 			log.SetFormatter(&log.TextFormatter{
 				DisableTimestamp:       true,
 				DisableLevelTruncation: true,

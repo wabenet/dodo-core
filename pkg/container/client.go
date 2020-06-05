@@ -46,7 +46,10 @@ func (c *client) RemoveContainer(id string) error {
 }
 
 func (c *client) ResizeContainer(id string, height uint32, width uint32) error {
-	_, err := c.runtimeClient.ResizeContainer(context.Background(), &types.ContainerBox{Id: id, Height: height, Width: width})
+	_, err := c.runtimeClient.ResizeContainer(
+		context.Background(),
+		&types.ContainerBox{Id: id, Height: height, Width: width},
+	)
 	return err
 }
 

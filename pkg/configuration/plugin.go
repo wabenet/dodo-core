@@ -2,7 +2,7 @@ package configuration
 
 import (
 	"github.com/hashicorp/go-plugin"
-	dodoplugin "github.com/oclaussen/dodo/pkg/plugin"
+	dodo "github.com/oclaussen/dodo/pkg/plugin"
 	"github.com/oclaussen/dodo/pkg/types"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
@@ -16,21 +16,13 @@ type Configuration interface {
 	Provision(string) error
 }
 
-type ClientOptions struct {
-	Version  string
-	Host     string
-	CAFile   string
-	CertFile string
-	KeyFile  string
-}
-
 type Plugin struct {
 	plugin.NetRPCUnsupportedPlugin
 	Impl Configuration
 }
 
-func init() {
-	dodoplugin.RegisterPluginClient(PluginType, &Plugin{})
+func RegisterPlugin() {
+	dodo.RegisterPluginClient(PluginType, &Plugin{})
 }
 
 func (p *Plugin) GRPCClient(_ context.Context, _ *plugin.GRPCBroker, conn *grpc.ClientConn) (interface{}, error) {
