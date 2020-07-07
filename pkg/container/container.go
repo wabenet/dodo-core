@@ -8,7 +8,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/containerd/console"
+	"github.com/moby/term"
 	"github.com/oclaussen/dodo/pkg/configuration"
 	"github.com/oclaussen/dodo/pkg/plugin"
 	"github.com/oclaussen/dodo/pkg/types"
@@ -72,7 +72,9 @@ func (c *Container) Run() error {
 
 	c.config.ImageId = imageID
 
-	containerID, err := rt.CreateContainer(c.config)
+	tty := term.IsTerminal(os.Stdin.Fd()) && term.IsTerminal(os.Stdout.Fd())
+
+	containerID, err := rt.CreateContainer(c.config, !c.daemon && tty, !c.daemon)
 	if err != nil {
 		return err
 	}
@@ -88,26 +90,27 @@ func (c *Container) Run() error {
 		return rt.StartContainer(containerID)
 	}
 
-	if c, err := console.ConsoleFromFile(os.Stdin); err == nil {
-		defer c.Reset()
-
-		if e := c.SetRaw(); e != nil {
-			return nil
+	fd := os.Stdin.Fd()
+	if term.IsTerminal(fd) {
+		state, err := term.SetRawTerminal(fd)
+		if err != nil {
+			return err
 		}
+		defer term.RestoreTerminal(fd, state)
 
-		resize(c, rt, containerID)
+		resize(fd, rt, containerID)
 
 		resizeChannel := make(chan os.Signal, 1)
 		signal.Notify(resizeChannel, syscall.SIGWINCH)
 
 		go func() {
 			for range resizeChannel {
-				resize(c, rt, containerID)
+				resize(fd, rt, containerID)
 			}
 		}()
 	}
 
-	return rt.StreamContainer(containerID, os.Stdout, os.Stdin)
+	return rt.StreamContainer(containerID, os.Stdin, os.Stdout)
 }
 
 func (c *Container) Stop() error {
@@ -119,8 +122,8 @@ func (c *Container) Stop() error {
 	return rt.RemoveContainer(c.config.ContainerName)
 }
 
-func resize(c console.Console, rt ContainerRuntime, containerID string) {
-	ws, err := c.Size()
+func resize(fd uintptr, rt ContainerRuntime, containerID string) {
+	ws, err := term.GetWinsize(fd)
 	if err != nil {
 		return
 	}

@@ -13,6 +13,12 @@ message ContainerBox {
   uint32 width = 3;
 }
 
+message ContainerConfig {
+  Backdrop config = 1;
+  bool tty = 2;
+  bool stdio = 3;
+}
+
 message Backdrop {
   string name = 1;
   repeated string aliases = 2;
@@ -28,8 +34,6 @@ message Backdrop {
 
   string user = 10;
   string working_dir = 11;
-
-  bool attach = 12;
 }
 
 message Entrypoint {
@@ -87,7 +91,7 @@ service Configuration {
 service ContainerRuntime {
   rpc Init(Empty) returns (Empty);
   rpc ResolveImage(Image) returns (Image);
-  rpc CreateContainer(Backdrop) returns (ContainerId);
+  rpc CreateContainer(ContainerConfig) returns (ContainerId);
   rpc StartContainer(ContainerId) returns (Empty);
   rpc RemoveContainer(ContainerId) returns (Empty);
   rpc ResizeContainer(ContainerBox) returns (Empty);

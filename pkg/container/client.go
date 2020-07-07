@@ -26,8 +26,12 @@ func (c *client) ResolveImage(spec string) (string, error) {
 	return img.Id, nil
 }
 
-func (c *client) CreateContainer(config *types.Backdrop) (string, error) {
-	resp, err := c.runtimeClient.CreateContainer(context.Background(), config)
+func (c *client) CreateContainer(config *types.Backdrop, tty bool, stdio bool) (string, error) {
+	resp, err := c.runtimeClient.CreateContainer(context.Background(), &types.ContainerConfig{
+		Config: config,
+		Tty:    tty,
+		Stdio:  stdio,
+	})
 	if err != nil {
 		return "", err
 	}
@@ -50,6 +54,7 @@ func (c *client) ResizeContainer(id string, height uint32, width uint32) error {
 		context.Background(),
 		&types.ContainerBox{Id: id, Height: height, Width: width},
 	)
+
 	return err
 }
 

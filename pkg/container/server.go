@@ -30,8 +30,8 @@ func (s *server) ResolveImage(_ context.Context, request *types.Image) (*types.I
 	return &types.Image{Name: request.Name, Id: id}, nil
 }
 
-func (s *server) CreateContainer(_ context.Context, config *types.Backdrop) (*types.ContainerId, error) {
-	id, err := s.impl.CreateContainer(config)
+func (s *server) CreateContainer(_ context.Context, config *types.ContainerConfig) (*types.ContainerId, error) {
+	id, err := s.impl.CreateContainer(config.Config, config.Tty, config.Stdio)
 	if err != nil {
 		return nil, err
 	}

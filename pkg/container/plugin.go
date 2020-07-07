@@ -17,7 +17,7 @@ const PluginType = "containerRuntime"
 type ContainerRuntime interface {
 	Init() error
 	ResolveImage(string) (string, error)
-	CreateContainer(*types.Backdrop) (string, error)
+	CreateContainer(*types.Backdrop, bool, bool) (string, error)
 	StartContainer(string) error
 	RemoveContainer(string) error
 	ResizeContainer(string, uint32, uint32) error
