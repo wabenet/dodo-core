@@ -5,7 +5,6 @@ import (
 	"github.com/oclaussen/dodo/pkg/container"
 	"github.com/oclaussen/dodo/pkg/plugin"
 	"github.com/oclaussen/dodo/pkg/types"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -30,11 +29,6 @@ func NewRunCommand() *cobra.Command {
 		RunE: func(_ *cobra.Command, args []string) error {
 			container.RegisterPlugin()
 			configuration.RegisterPlugin()
-
-			log.SetFormatter(&log.TextFormatter{
-				DisableTimestamp:       true,
-				DisableLevelTruncation: true,
-			})
 
 			plugin.LoadPlugins()
 			defer plugin.UnloadPlugins()

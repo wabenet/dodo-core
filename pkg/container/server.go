@@ -5,7 +5,7 @@ import (
 	"net"
 
 	"github.com/oclaussen/dodo/pkg/types"
-	log "github.com/sirupsen/logrus"
+	log "github.com/hashicorp/go-hclog"
 	"golang.org/x/net/context"
 )
 
@@ -62,7 +62,7 @@ func (s *server) SetupStreamingConnection(_ context.Context, request *types.Cont
 	go func() {
 		conn, err := s.streamListener.Accept()
 		if err != nil {
-			log.WithError(err).Error("could not accept client connection")
+			log.Default().Error("could not accept client connection", "error", err)
 		}
 
 		s.streamConnection = conn
@@ -78,11 +78,11 @@ func (s *server) StreamContainer(_ context.Context, request *types.ContainerId) 
 
 	defer func() {
 		if err := s.streamConnection.Close(); err != nil {
-			log.WithError(err).Error("could not close client connection")
+			log.Default().Error("could not close client connection", "error", err)
 		}
 
 		if err := s.streamListener.Close(); err != nil {
-			log.WithError(err).Error("could not close listener")
+			log.Default().Error("could not close listener", "error", err)
 		}
 	}()
 

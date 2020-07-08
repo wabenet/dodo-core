@@ -9,7 +9,7 @@ import (
 
 	"github.com/hashicorp/go-plugin"
 	"github.com/oclaussen/dodo/pkg/appconfig"
-	log "github.com/sirupsen/logrus"
+	log "github.com/hashicorp/go-hclog"
 )
 
 type Plugin interface {
@@ -37,7 +37,6 @@ func RegisterPluginClient(t string, p plugin.Plugin) {
 }
 
 func ServePlugins() {
-	log.SetFormatter(new(log.JSONFormatter))
 	plugin.Serve(&plugin.ServeConfig{
 		GRPCServer: plugin.DefaultGRPCServer,
 		Plugins:    serverPluginMap,
@@ -60,7 +59,7 @@ func LoadPlugins() {
 	}
 
 	for _, path := range matches {
-		logger := log.WithFields(log.Fields{"path": path})
+		logger := log.Default().With("path", path)
 
 		if stat, err := os.Stat(path); err != nil || stat.Mode().Perm()&0111 == 0 {
 			continue
@@ -71,7 +70,7 @@ func LoadPlugins() {
 			Plugins:          clientPluginMap,
 			Cmd:              exec.Command(path),
 			AllowedProtocols: []plugin.Protocol{plugin.ProtocolNetRPC, plugin.ProtocolGRPC},
-			Logger:           NewLogger(),
+			Logger:           log.Default(),
 			HandshakeConfig: plugin.HandshakeConfig{
 				ProtocolVersion:  ProtocolVersion,
 				MagicCookieKey:   MagicCookieKey,
@@ -81,14 +80,14 @@ func LoadPlugins() {
 
 		conn, err := client.Client()
 		if err != nil {
-			logger.WithFields(log.Fields{"error": err}).Debug("error getting plugin client")
+			logger.Debug("error getting plugin client", "error", err)
 			continue
 		}
 
 		for pluginType := range clientPluginMap {
 			raw, err := conn.Dispense(pluginType)
 			if err != nil {
-				logger.WithFields(log.Fields{"error": err}).Debug("error dispensing plugin")
+				logger.Debug("error dispensing plugin", "error", err)
 				continue
 			}
 
@@ -99,11 +98,11 @@ func LoadPlugins() {
 			}
 
 			if err := p.Init(); err != nil {
-				logger.WithFields(log.Fields{"error": err}).Debug("error initializing plugin")
+				logger.Debug("error initializing plugin", "error", err)
 				continue
 			}
 
-			logger.WithFields(log.Fields{"type": pluginType}).Debug("initialized plugin")
+			logger.Debug("initialized plugin", "type", pluginType)
 
 			plugins[pluginType] = append(plugins[pluginType], p)
 		}

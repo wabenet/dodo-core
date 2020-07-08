@@ -7,7 +7,6 @@ import (
 	dodo "github.com/oclaussen/dodo/pkg/plugin"
 	"github.com/oclaussen/dodo/pkg/types"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 )
@@ -35,10 +34,7 @@ func RegisterPlugin() {
 
 func GetRuntime() (ContainerRuntime, error) {
 	for _, p := range dodo.GetPlugins(PluginType) {
-		log.Debug("trying plugin")
-
 		if rt, ok := p.(ContainerRuntime); ok {
-			log.Debug("ok")
 			return rt, nil
 		}
 	}

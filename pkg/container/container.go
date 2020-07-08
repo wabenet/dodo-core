@@ -12,7 +12,7 @@ import (
 	"github.com/oclaussen/dodo/pkg/configuration"
 	"github.com/oclaussen/dodo/pkg/plugin"
 	"github.com/oclaussen/dodo/pkg/types"
-	log "github.com/sirupsen/logrus"
+	log "github.com/hashicorp/go-hclog"
 	"golang.org/x/net/context"
 )
 
@@ -35,7 +35,7 @@ func NewContainer(overrides *types.Backdrop, daemon bool) (*Container, error) {
 	for _, p := range plugin.GetPlugins(configuration.PluginType) {
 		conf, err := p.(configuration.Configuration).UpdateConfiguration(c.config)
 		if err != nil {
-			log.WithFields(log.Fields{"error": err}).Warn("could not get config")
+			log.Default().Warn("could not get config", "error", err)
 			continue
 		}
 
@@ -43,7 +43,7 @@ func NewContainer(overrides *types.Backdrop, daemon bool) (*Container, error) {
 	}
 
 	c.config.Merge(overrides)
-	log.WithFields(log.Fields{"backdrop": c.config}).Debug("assembled configuration")
+	log.Default().Debug("assembled configuration", "backdrop", c.config)
 
 	if c.daemon {
 		c.config.ContainerName = c.config.Name
@@ -82,7 +82,7 @@ func (c *Container) Run() error {
 	for _, p := range plugin.GetPlugins(configuration.PluginType) {
 		err := p.(configuration.Configuration).Provision(containerID)
 		if err != nil {
-			log.WithFields(log.Fields{"error": err}).Warn("could not provision")
+			log.Default().Warn("could not provision", "error", err)
 		}
 	}
 
