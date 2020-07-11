@@ -84,17 +84,17 @@ func (opts *options) createConfig(name string, command []string) (*types.Backdro
 	}
 
 	for _, spec := range opts.volumes {
-		volume, err := types.NewVolume(spec)
-		if err != nil {
+		vol := &types.Volume{}
+		if err := vol.FromString(spec); err != nil {
 			return nil, err
 		}
 
-		config.Volumes = append(config.Volumes, volume)
+		config.Volumes = append(config.Volumes, vol)
 	}
 
 	for _, spec := range opts.environment {
-		env, err := types.NewEnvironment(spec)
-		if err != nil {
+		env := &types.Environment{}
+		if err := env.FromString(spec); err != nil {
 			return nil, err
 		}
 
@@ -102,8 +102,8 @@ func (opts *options) createConfig(name string, command []string) (*types.Backdro
 	}
 
 	for _, spec := range opts.publish {
-		port, err := types.NewPort(spec)
-		if err != nil {
+		port := &types.Port{}
+		if err := port.FromString(spec); err != nil {
 			return nil, err
 		}
 
