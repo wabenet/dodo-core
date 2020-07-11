@@ -8,11 +8,11 @@ import (
 	"os/signal"
 	"syscall"
 
+	log "github.com/hashicorp/go-hclog"
 	"github.com/moby/term"
 	"github.com/oclaussen/dodo/pkg/configuration"
 	"github.com/oclaussen/dodo/pkg/plugin"
 	"github.com/oclaussen/dodo/pkg/types"
-	log "github.com/hashicorp/go-hclog"
 	"golang.org/x/net/context"
 )
 
@@ -96,7 +96,12 @@ func (c *Container) Run() error {
 		if err != nil {
 			return err
 		}
-		defer term.RestoreTerminal(fd, state)
+
+		defer func() {
+			if err := term.RestoreTerminal(fd, state); err != nil {
+				log.L().Error("could not restore terminal", "error", err)
+			}
+		}()
 
 		resize(fd, rt, containerID)
 
@@ -135,5 +140,7 @@ func resize(fd uintptr, rt ContainerRuntime, containerID string) {
 		return
 	}
 
-	rt.ResizeContainer(containerID, height, width)
+	if err := rt.ResizeContainer(containerID, height, width); err != nil {
+		log.L().Warn("could not resize terminar", "error", err)
+	}
 }

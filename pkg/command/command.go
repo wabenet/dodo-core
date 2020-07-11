@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"runtime"
 
+	log "github.com/hashicorp/go-hclog"
 	"github.com/oclaussen/dodo/pkg/appconfig"
 	"github.com/oclaussen/dodo/pkg/types"
 	"github.com/spf13/cobra"
@@ -25,6 +26,20 @@ can be used to overwrite the backdrop configuration.
 
 var builtinPlugins = map[string][]string{
 	"run": {"run"},
+}
+
+func Execute() int {
+	log.SetDefault(log.New(appconfig.GetLoggerOptions()))
+
+	if err := NewCommand().Execute(); err != nil {
+		if err, ok := err.(*types.Result); ok {
+			return int(err.ExitCode)
+		}
+
+		return 1
+	}
+
+	return 0
 }
 
 func NewCommand() *cobra.Command {

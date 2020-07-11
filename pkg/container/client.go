@@ -4,6 +4,7 @@ import (
 	"io"
 	"net"
 
+	log "github.com/hashicorp/go-hclog"
 	"github.com/oclaussen/dodo/pkg/types"
 	"golang.org/x/net/context"
 )
@@ -76,10 +77,23 @@ func (c *client) StreamContainer(id string, r io.Reader, w io.Writer) error {
 		return err
 	}
 
-	defer conn.CloseWrite()
+	defer func() {
+		if err := conn.CloseWrite(); err != nil {
+			log.L().Warn("could not close streaming connection", "error", err)
+		}
+	}()
 
-	go io.Copy(w, conn)
-	go io.Copy(conn, r)
+	go func() {
+		if _, err := io.Copy(w, conn); err != nil {
+			log.L().Warn("error reading from streaming connection", "error", err)
+		}
+	}()
+
+	go func() {
+		if _, err := io.Copy(conn, r); err != nil {
+			log.L().Warn("error writing to streaming connection", "error", err)
+		}
+	}()
 
 	result, err := c.runtimeClient.StreamContainer(ctx, &types.ContainerId{Id: id})
 	if err != nil {
