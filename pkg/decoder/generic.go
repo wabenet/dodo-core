@@ -5,13 +5,24 @@ import (
 	"strconv"
 )
 
+type ConfigError string
+
+const (
+	ErrUnexpectedType ConfigError = "unexpected type"
+	ErrUnexpectedKey  ConfigError = "unexpected key"
+)
+
+func (e ConfigError) Error() string {
+	return string(e)
+}
+
 func Kinds(lookup map[reflect.Kind]Decoding) Decoding {
 	return func(d *Decoder, config interface{}) {
 		kind := reflect.ValueOf(config).Kind()
 		if decode, ok := lookup[kind]; ok {
 			decode(d, config)
 		} else {
-			d.Error("invalid type")
+			d.Error(ErrUnexpectedType)
 		}
 	}
 }
@@ -20,15 +31,16 @@ func Keys(lookup map[string]Decoding) Decoding {
 	return func(d *Decoder, config interface{}) {
 		decoded, ok := reflect.ValueOf(config).Interface().(map[interface{}]interface{})
 		if !ok {
-			d.Error("not a map")
+			d.Error(ErrUnexpectedType)
 			return
 		}
+
 		for k, v := range decoded {
 			key := k.(string)
 			if decode, ok := lookup[key]; ok {
 				d.Run(key, decode, v)
 			} else {
-				d.Error("unexpected key")
+				d.Error(ErrUnexpectedKey)
 			}
 		}
 	}
@@ -38,10 +50,12 @@ func Slice(produce Producer, target interface{}) Decoding {
 	return func(d *Decoder, config interface{}) {
 		decoded, ok := reflect.ValueOf(config).Interface().([]interface{})
 		if !ok {
-			d.Error("not a slice")
+			d.Error(ErrUnexpectedType)
 			return
 		}
+
 		items := reflect.ValueOf(target).Elem()
+
 		for i, item := range decoded {
 			ptr, decode := produce()
 			d.Run(strconv.Itoa(i), decode, item)
@@ -63,10 +77,12 @@ func Map(produce Producer, target interface{}) Decoding {
 	return func(d *Decoder, config interface{}) {
 		decoded, ok := reflect.ValueOf(config).Interface().(map[interface{}]interface{})
 		if !ok {
-			d.Error("not a map")
+			d.Error(ErrUnexpectedType)
 			return
 		}
+
 		items := reflect.ValueOf(target).Elem()
+
 		for key, value := range decoded {
 			ptr, decode := produce()
 			d.Run(key.(string), decode, value)
@@ -79,14 +95,16 @@ func String(target interface{}) Decoding {
 	return func(d *Decoder, config interface{}) {
 		decoded, ok := config.(string)
 		if !ok {
-			d.Error("not a string")
+			d.Error(ErrUnexpectedType)
 			return
 		}
+
 		templated, err := ApplyTemplate(d, decoded)
 		if err != nil {
-			d.Error("invalid templating")
+			d.Error(err)
 			return
 		}
+
 		reflect.ValueOf(target).Elem().SetString(templated)
 	}
 }
@@ -102,9 +120,10 @@ func Bool(target interface{}) Decoding {
 	return func(d *Decoder, config interface{}) {
 		decoded, ok := config.(bool)
 		if !ok {
-			d.Error("not a boolean")
+			d.Error(ErrUnexpectedType)
 			return
 		}
+
 		reflect.ValueOf(target).Elem().SetBool(decoded)
 	}
 }
@@ -120,9 +139,10 @@ func Int(target interface{}) Decoding {
 	return func(d *Decoder, config interface{}) {
 		decoded, ok := config.(int64)
 		if !ok {
-			d.Error("not an integer")
+			d.Error(ErrUnexpectedType)
 			return
 		}
+
 		reflect.ValueOf(target).Elem().SetInt(decoded)
 	}
 }

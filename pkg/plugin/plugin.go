@@ -7,19 +7,24 @@ import (
 	"path/filepath"
 	"runtime"
 
+	log "github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"github.com/oclaussen/dodo/pkg/appconfig"
-	log "github.com/hashicorp/go-hclog"
 )
 
 type Plugin interface {
 	Init() error
 }
 
+type PluginError string
+
 const (
 	ProtocolVersion  = 1
 	MagicCookieKey   = "DODO_PLUGIN"
 	MagicCookieValue = "69318785-d741-4150-ac91-8f03fa703530"
+
+	ErrPluginNotFound     PluginError = "plugin not found"
+	ErrNoValidPluginFound PluginError = "no valid plugin found"
 )
 
 var (
@@ -27,6 +32,10 @@ var (
 	clientPluginMap = map[string]plugin.Plugin{}
 	plugins         = map[string][]Plugin{}
 )
+
+func (e PluginError) Error() string {
+	return string(e)
+}
 
 func RegisterPluginServer(t string, p plugin.Plugin) {
 	serverPluginMap[t] = p

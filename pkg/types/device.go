@@ -8,10 +8,12 @@ import (
 	"github.com/oclaussen/dodo/pkg/decoder"
 )
 
+const ErrDeviceFormat FormatError = "invalid device format"
+
 func (dev *Device) FromString(spec string) error {
 	switch values := strings.SplitN(spec, ":", 3); len(values) {
 	case 0:
-		return fmt.Errorf("empty device definition: %s", spec)
+		return fmt.Errorf("%s: %w", spec, ErrDeviceFormat)
 	case 1:
 		dev.Source = values[0]
 	case 2:
@@ -22,7 +24,7 @@ func (dev *Device) FromString(spec string) error {
 		dev.Target = values[1]
 		dev.Permissions = values[2]
 	default:
-		return fmt.Errorf("too many values in device definition: %s", spec)
+		return fmt.Errorf("%s: %w", spec, ErrDeviceFormat)
 	}
 
 	return nil
@@ -38,6 +40,7 @@ func NewDevice() decoder.Producer {
 func DecodeDevice(target interface{}) decoder.Decoding {
 	// TODO: wtf this cast
 	dev := *(target.(**Device))
+
 	return decoder.Kinds(map[reflect.Kind]decoder.Decoding{
 		reflect.Map: decoder.Keys(map[string]decoder.Decoding{
 			"cgroup_rule": decoder.String(&dev.CgroupRule),
@@ -49,7 +52,7 @@ func DecodeDevice(target interface{}) decoder.Decoding {
 			var decoded string
 			decoder.String(&decoded)(d, config)
 			if err := dev.FromString(decoded); err != nil {
-				d.Error("invalid device")
+				d.Error(err)
 			}
 		},
 	})

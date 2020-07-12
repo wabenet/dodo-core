@@ -16,6 +16,7 @@ func NewBackdrop() decoder.Producer {
 func DecodeBackdrop(target interface{}) decoder.Decoding {
 	// TODO: wtf this cast
 	backdrop := *(target.(**Backdrop))
+
 	return decoder.Kinds(map[reflect.Kind]decoder.Decoding{
 		reflect.Map: decoder.Keys(map[string]decoder.Decoding{
 			"name":           decoder.String(&backdrop.ContainerName),

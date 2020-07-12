@@ -8,10 +8,12 @@ import (
 	"github.com/oclaussen/dodo/pkg/decoder"
 )
 
+const ErrVolumeFormat FormatError = "invalid volume format"
+
 func (vol *Volume) FromString(spec string) error {
 	switch values := strings.SplitN(spec, ":", 3); len(values) {
 	case 0:
-		return fmt.Errorf("empty volume definition: %s", spec)
+		return fmt.Errorf("%s: %w", spec, ErrVolumeFormat)
 	case 1:
 		vol.Source = values[0]
 	case 2:
@@ -22,7 +24,7 @@ func (vol *Volume) FromString(spec string) error {
 		vol.Target = values[1]
 		vol.Readonly = (values[2] == "ro")
 	default:
-		return fmt.Errorf("too many values in volume definition: %s", spec)
+		return fmt.Errorf("%s: %w", spec, ErrVolumeFormat)
 	}
 
 	return nil
@@ -38,6 +40,7 @@ func NewVolume() decoder.Producer {
 func DecodeVolume(target interface{}) decoder.Decoding {
 	// TODO: wtf this cast
 	vol := *(target.(**Volume))
+
 	return decoder.Kinds(map[reflect.Kind]decoder.Decoding{
 		reflect.Map: decoder.Keys(map[string]decoder.Decoding{
 			"source":    decoder.String(&vol.Source),
@@ -48,7 +51,7 @@ func DecodeVolume(target interface{}) decoder.Decoding {
 			var decoded string
 			decoder.String(&decoded)(d, config)
 			if err := vol.FromString(decoded); err != nil {
-				d.Error("invalid volume")
+				d.Error(err)
 			}
 		},
 	})

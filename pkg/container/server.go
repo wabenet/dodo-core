@@ -1,15 +1,24 @@
 package container
 
 import (
-	"errors"
 	"net"
 
-	"github.com/oclaussen/dodo/pkg/types"
 	log "github.com/hashicorp/go-hclog"
+	"github.com/oclaussen/dodo/pkg/types"
 	"golang.org/x/net/context"
 )
 
-const streamListenAddress = "127.0.0.1:"
+const (
+	streamListenAddress = "127.0.0.1:"
+
+	ErrNoStreamingConnection StreamingError = "no streaming connection established"
+)
+
+type StreamingError string
+
+func (e StreamingError) Error() string {
+	return string(e)
+}
 
 type server struct {
 	impl             ContainerRuntime
@@ -73,7 +82,7 @@ func (s *server) SetupStreamingConnection(_ context.Context, request *types.Cont
 
 func (s *server) StreamContainer(_ context.Context, request *types.ContainerId) (*types.Result, error) {
 	if s.streamConnection == nil {
-		return nil, errors.New("no streaming connection established")
+		return nil, ErrNoStreamingConnection
 	}
 
 	defer func() {

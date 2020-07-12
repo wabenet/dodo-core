@@ -9,6 +9,7 @@ import (
 
 	log "github.com/hashicorp/go-hclog"
 	"github.com/oclaussen/dodo/pkg/appconfig"
+	"github.com/oclaussen/dodo/pkg/plugin"
 	"github.com/oclaussen/dodo/pkg/types"
 	"github.com/spf13/cobra"
 )
@@ -110,5 +111,5 @@ func findPluginExecutable(name string) (string, []string, error) {
 		return nameInPlugins, []string{}, nil
 	}
 
-	return "", []string{}, fmt.Errorf("plugin not found: %s", name)
+	return "", []string{}, fmt.Errorf("%s: %w", name, plugin.ErrPluginNotFound)
 }

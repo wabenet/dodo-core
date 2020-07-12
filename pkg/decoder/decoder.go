@@ -1,17 +1,17 @@
 package decoder
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"reflect"
 
-	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
 )
 
 type (
-	Decoding  func(*Decoder, interface{})
+	Decoding func(*Decoder, interface{})
 	Producer func() (interface{}, Decoding)
 
 	Decoder struct {
@@ -29,9 +29,9 @@ func New(filename string) *Decoder {
 	}
 }
 
-func (d *Decoder) Error(msg string) {
+func (d *Decoder) Error(err error) {
 	// TODO add file and path to error messages
-	d.errors = append(d.errors, errors.New(msg))
+	d.errors = append(d.errors, err)
 }
 
 func (d *Decoder) Errors() []error {
@@ -47,11 +47,10 @@ func (d *Decoder) Run(name string, decode Decoding, value interface{}) {
 func (d *Decoder) DecodeYaml(content []byte, target interface{}, lookup map[string]Decoding) {
 	var mapType map[interface{}]interface{}
 	if err := yaml.Unmarshal(content, &mapType); err != nil {
-		d.Error("invalid yaml")
+		d.Error(fmt.Errorf("invalid yaml: %w", err))
 		return
 	}
 
-	var dummySlice []struct{}
 	var dummyItem struct{}
 
 	includeHelper := func() (interface{}, Decoding) {
@@ -67,7 +66,7 @@ func (d *Decoder) DecodeYaml(content []byte, target interface{}, lookup map[stri
 
 				bytes, err := readFile(decoded)
 				if err != nil {
-					d.Error("could not read file")
+					d.Error(err)
 					return
 				}
 
@@ -77,6 +76,8 @@ func (d *Decoder) DecodeYaml(content []byte, target interface{}, lookup map[stri
 			},
 		})
 	}
+
+	var dummySlice []struct{}
 
 	lookup["include"] = Kinds(map[reflect.Kind]Decoding{
 		reflect.Map:   Singleton(includeHelper, &dummySlice),
@@ -92,10 +93,12 @@ func readFile(filename string) ([]byte, error) {
 		if err != nil {
 			return []byte{}, err
 		}
+
 		filename, err = filepath.Abs(filepath.Join(directory, filename))
 		if err != nil {
 			return []byte{}, err
 		}
 	}
+
 	return ioutil.ReadFile(filename)
 }

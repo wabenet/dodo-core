@@ -18,8 +18,8 @@ func ApplyTemplate(d *Decoder, input string) (string, error) {
 	}
 
 	var buffer bytes.Buffer
-	err = templ.Execute(&buffer, nil)
-	if err != nil {
+
+	if err := templ.Execute(&buffer, nil); err != nil {
 		return "", err
 	}
 
@@ -51,13 +51,16 @@ func FuncMap(d *Decoder) template.FuncMap {
 
 func runShell(command string) (string, error) {
 	// TODO: what to do on windows?
-	cmd := exec.Command("/bin/sh", "-c", command)
 	var out bytes.Buffer
+
+	cmd := exec.Command("/bin/sh", "-c", command)
 	cmd.Stdout = &out
+
 	err := cmd.Run()
 	if err != nil {
 		return "", err
 	}
+
 	return out.String(), nil
 }
 
@@ -66,14 +69,17 @@ func findProjectRoot() (string, string, error) {
 	if err != nil {
 		return "", "", err
 	}
+
 	for dir := cwd; dir != "/"; dir = filepath.Dir(dir) {
 		if info, err := os.Stat(filepath.Join(dir, ".git")); err == nil && info.IsDir() {
 			path, err2 := filepath.Rel(dir, cwd)
 			if err2 != nil {
 				return "", "", err
 			}
+
 			return dir, path, nil
 		}
 	}
+
 	return cwd, ".", nil
 }

@@ -1,12 +1,12 @@
 package container
 
 import (
+	"fmt"
 	"io"
 
 	"github.com/hashicorp/go-plugin"
 	dodo "github.com/oclaussen/dodo/pkg/plugin"
 	"github.com/oclaussen/dodo/pkg/types"
-	"github.com/pkg/errors"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 )
@@ -39,7 +39,7 @@ func GetRuntime() (ContainerRuntime, error) {
 		}
 	}
 
-	return nil, errors.New("Could not find any container runtime")
+	return nil, fmt.Errorf("could not find container runtime: %w", dodo.ErrNoValidPluginFound)
 }
 
 func (p *Plugin) GRPCClient(_ context.Context, _ *plugin.GRPCBroker, conn *grpc.ClientConn) (interface{}, error) {
