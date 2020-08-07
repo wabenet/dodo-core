@@ -1,6 +1,7 @@
 package decoder
 
 import (
+	"fmt"
 	"reflect"
 	"strconv"
 )
@@ -22,7 +23,7 @@ func Kinds(lookup map[reflect.Kind]Decoding) Decoding {
 		if decode, ok := lookup[kind]; ok {
 			decode(d, config)
 		} else {
-			d.Error(ErrUnexpectedType)
+			d.Error(fmt.Errorf("could not decode type %v: %w", kind, ErrUnexpectedType))
 		}
 	}
 }
@@ -31,7 +32,7 @@ func Keys(lookup map[string]Decoding) Decoding {
 	return func(d *Decoder, config interface{}) {
 		decoded, ok := reflect.ValueOf(config).Interface().(map[interface{}]interface{})
 		if !ok {
-			d.Error(ErrUnexpectedType)
+			d.Error(fmt.Errorf("could not decode map: %w", ErrUnexpectedType))
 			return
 		}
 
@@ -40,7 +41,7 @@ func Keys(lookup map[string]Decoding) Decoding {
 			if decode, ok := lookup[key]; ok {
 				d.Run(key, decode, v)
 			} else {
-				d.Error(ErrUnexpectedKey)
+				d.Error(fmt.Errorf("could not decode map: %w", ErrUnexpectedKey))
 			}
 		}
 	}
@@ -50,7 +51,7 @@ func Slice(produce Producer, target interface{}) Decoding {
 	return func(d *Decoder, config interface{}) {
 		decoded, ok := reflect.ValueOf(config).Interface().([]interface{})
 		if !ok {
-			d.Error(ErrUnexpectedType)
+			d.Error(fmt.Errorf("could not decode list: %w", ErrUnexpectedType))
 			return
 		}
 
@@ -77,7 +78,7 @@ func Map(produce Producer, target interface{}) Decoding {
 	return func(d *Decoder, config interface{}) {
 		decoded, ok := reflect.ValueOf(config).Interface().(map[interface{}]interface{})
 		if !ok {
-			d.Error(ErrUnexpectedType)
+			d.Error(fmt.Errorf("could not decode map: %w", ErrUnexpectedType))
 			return
 		}
 
@@ -95,7 +96,7 @@ func String(target interface{}) Decoding {
 	return func(d *Decoder, config interface{}) {
 		decoded, ok := config.(string)
 		if !ok {
-			d.Error(ErrUnexpectedType)
+			d.Error(fmt.Errorf("could not decode string: %w", ErrUnexpectedType))
 			return
 		}
 
@@ -120,7 +121,7 @@ func Bool(target interface{}) Decoding {
 	return func(d *Decoder, config interface{}) {
 		decoded, ok := config.(bool)
 		if !ok {
-			d.Error(ErrUnexpectedType)
+			d.Error(fmt.Errorf("could not decode boolean: %w", ErrUnexpectedType))
 			return
 		}
 
@@ -139,7 +140,7 @@ func Int(target interface{}) Decoding {
 	return func(d *Decoder, config interface{}) {
 		decoded, ok := config.(int64)
 		if !ok {
-			d.Error(ErrUnexpectedType)
+			d.Error(fmt.Errorf("could not decode number: %w", ErrUnexpectedType))
 			return
 		}
 

@@ -1,5 +1,7 @@
 syntax = "proto3";
-package types;
+package com.github.oclaussen.dodo.types;
+
+option go_package = "github.com/oclaussen/dodo/pkg/types";
 
 message Empty {}
 
