@@ -1,7 +1,6 @@
-package container
+package runtime
 
 import (
-	"fmt"
 	"io"
 
 	"github.com/hashicorp/go-plugin"
@@ -11,7 +10,25 @@ import (
 	"google.golang.org/grpc"
 )
 
-const PluginType = "containerRuntime"
+const Type pluginType = "runtime"
+
+type pluginType string
+
+func (t pluginType) String() string {
+	return string(t)
+}
+
+func (t pluginType) GRPCClient() plugin.Plugin {
+	return &grpcPlugin{}
+}
+
+func (t pluginType) GRPCServer(p dodo.Plugin) (plugin.Plugin, error) {
+	rt, ok := p.(ContainerRuntime)
+	if !ok {
+		return nil, dodo.ErrPluginInvalid
+	}
+	return &grpcPlugin{Impl: rt}, nil
+}
 
 type ContainerRuntime interface {
 	Init() error
@@ -23,30 +40,16 @@ type ContainerRuntime interface {
 	StreamContainer(string, io.Reader, io.Writer) error
 }
 
-type Plugin struct {
+type grpcPlugin struct {
 	plugin.NetRPCUnsupportedPlugin
 	Impl ContainerRuntime
 }
 
-func RegisterPlugin() {
-	dodo.RegisterPluginClient(PluginType, &Plugin{})
-}
-
-func GetRuntime() (ContainerRuntime, error) {
-	for _, p := range dodo.GetPlugins(PluginType) {
-		if rt, ok := p.(ContainerRuntime); ok {
-			return rt, nil
-		}
-	}
-
-	return nil, fmt.Errorf("could not find container runtime: %w", dodo.ErrNoValidPluginFound)
-}
-
-func (p *Plugin) GRPCClient(_ context.Context, _ *plugin.GRPCBroker, conn *grpc.ClientConn) (interface{}, error) {
+func (p *grpcPlugin) GRPCClient(_ context.Context, _ *plugin.GRPCBroker, conn *grpc.ClientConn) (interface{}, error) {
 	return &client{runtimeClient: types.NewContainerRuntimeClient(conn)}, nil
 }
 
-func (p *Plugin) GRPCServer(_ *plugin.GRPCBroker, s *grpc.Server) error {
+func (p *grpcPlugin) GRPCServer(_ *plugin.GRPCBroker, s *grpc.Server) error {
 	types.RegisterContainerRuntimeServer(s, &server{impl: p.Impl})
 	return nil
 }

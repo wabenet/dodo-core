@@ -10,8 +10,9 @@ import (
 
 	log "github.com/hashicorp/go-hclog"
 	"github.com/moby/term"
-	"github.com/oclaussen/dodo/pkg/configuration"
 	"github.com/oclaussen/dodo/pkg/plugin"
+	"github.com/oclaussen/dodo/pkg/plugin/configuration"
+	"github.com/oclaussen/dodo/pkg/plugin/runtime"
 	"github.com/oclaussen/dodo/pkg/types"
 	"golang.org/x/net/context"
 )
@@ -20,6 +21,16 @@ type Container struct {
 	daemon  bool
 	config  *types.Backdrop
 	context context.Context
+}
+
+func GetRuntime() (runtime.ContainerRuntime, error) {
+	for _, p := range plugin.GetPlugins(runtime.Type.String()) {
+		if rt, ok := p.(runtime.ContainerRuntime); ok {
+			return rt, nil
+		}
+	}
+
+	return nil, fmt.Errorf("could not find container runtime: %w", plugin.ErrNoValidPluginFound)
 }
 
 func NewContainer(overrides *types.Backdrop, daemon bool) (*Container, error) {
@@ -32,14 +43,14 @@ func NewContainer(overrides *types.Backdrop, daemon bool) (*Container, error) {
 		context: context.Background(),
 	}
 
-	for _, p := range plugin.GetPlugins(configuration.PluginType) {
+	for _, p := range plugin.GetPlugins(configuration.Type.String()) {
 		conf, err := p.(configuration.Configuration).UpdateConfiguration(c.config)
 		if err != nil {
 			log.Default().Warn("could not get config", "error", err)
 			continue
 		}
 
-		c.config = conf
+		c.config.Merge(conf)
 	}
 
 	c.config.Merge(overrides)
@@ -79,7 +90,7 @@ func (c *Container) Run() error {
 		return err
 	}
 
-	for _, p := range plugin.GetPlugins(configuration.PluginType) {
+	for _, p := range plugin.GetPlugins(configuration.Type.String()) {
 		err := p.(configuration.Configuration).Provision(containerID)
 		if err != nil {
 			log.Default().Warn("could not provision", "error", err)
@@ -127,7 +138,7 @@ func (c *Container) Stop() error {
 	return rt.RemoveContainer(c.config.ContainerName)
 }
 
-func resize(fd uintptr, rt ContainerRuntime, containerID string) {
+func resize(fd uintptr, rt runtime.ContainerRuntime, containerID string) {
 	ws, err := term.GetWinsize(fd)
 	if err != nil {
 		return

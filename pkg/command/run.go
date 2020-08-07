@@ -1,9 +1,10 @@
 package command
 
 import (
-	"github.com/oclaussen/dodo/pkg/configuration"
 	"github.com/oclaussen/dodo/pkg/container"
 	"github.com/oclaussen/dodo/pkg/plugin"
+	"github.com/oclaussen/dodo/pkg/plugin/configuration"
+	"github.com/oclaussen/dodo/pkg/plugin/runtime"
 	"github.com/oclaussen/dodo/pkg/types"
 	"github.com/spf13/cobra"
 )
@@ -27,10 +28,10 @@ func NewRunCommand() *cobra.Command {
 		SilenceUsage:          true,
 		Args:                  cobra.MinimumNArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
-			container.RegisterPlugin()
-			configuration.RegisterPlugin()
-
-			plugin.LoadPlugins()
+			plugin.LoadPlugins(
+				configuration.Type,
+				runtime.Type,
+			)
 			defer plugin.UnloadPlugins()
 
 			backdrop, err := opts.createConfig(args[0], args[1:])

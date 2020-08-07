@@ -1,16 +1,21 @@
-package container
+package runtime
 
 import (
 	"io"
 	"net"
 
 	log "github.com/hashicorp/go-hclog"
+	"github.com/oclaussen/dodo/pkg/plugin"
 	"github.com/oclaussen/dodo/pkg/types"
 	"golang.org/x/net/context"
 )
 
 type client struct {
 	runtimeClient types.ContainerRuntimeClient
+}
+
+func (t *client) Type() plugin.Type {
+	return Type
 }
 
 func (c *client) Init() error {
