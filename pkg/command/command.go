@@ -10,6 +10,9 @@ import (
 	log "github.com/hashicorp/go-hclog"
 	"github.com/oclaussen/dodo/pkg/appconfig"
 	"github.com/oclaussen/dodo/pkg/plugin"
+	configplugin "github.com/oclaussen/dodo/pkg/plugin/configuration"
+	runtimeplugin "github.com/oclaussen/dodo/pkg/plugin/runtime"
+	"github.com/oclaussen/dodo/pkg/run"
 	"github.com/oclaussen/dodo/pkg/types"
 	"github.com/spf13/cobra"
 )
@@ -25,12 +28,18 @@ CMD arguments to the first backdrop with NAME that is found. Additional FLAGS
 can be used to overwrite the backdrop configuration.
 `
 
-var builtinPlugins = map[string][]string{
-	"run": {"run"},
-}
+var builtinPlugins = map[string]*cobra.Command{}
 
 func Execute() int {
 	log.SetDefault(log.New(appconfig.GetLoggerOptions()))
+
+	plugin.LoadPlugins(
+		configplugin.Type,
+		runtimeplugin.Type,
+	)
+	defer plugin.UnloadPlugins()
+
+	Register("run", run.NewCommand())
 
 	if err := NewCommand().Execute(); err != nil {
 		if err, ok := err.(*types.Result); ok {
@@ -41,6 +50,10 @@ func Execute() int {
 	}
 
 	return 0
+}
+
+func Register(name string, cmd *cobra.Command) {
+	builtinPlugins[name] = cmd
 }
 
 func NewCommand() *cobra.Command {
@@ -65,7 +78,9 @@ func NewCommand() *cobra.Command {
 		},
 	}
 
-	cmd.AddCommand(NewRunCommand())
+	for _, subCmd := range builtinPlugins {
+		cmd.AddCommand(subCmd)
+	}
 
 	return cmd
 }
@@ -92,9 +107,9 @@ func runPlugin(executable string, execArgs []string, args []string) error {
 }
 
 func findPluginExecutable(name string) (string, []string, error) {
-	if execArgs, ok := builtinPlugins[name]; ok {
+	if _, ok := builtinPlugins[name]; ok {
 		if self, err := os.Executable(); err == nil {
-			return self, execArgs, nil
+			return self, []string{name}, nil
 		}
 	}
 
