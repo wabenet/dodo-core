@@ -16,8 +16,8 @@ func (t pluginType) String() string {
 	return string(t)
 }
 
-func (t pluginType) GRPCClient() plugin.Plugin {
-	return &grpcPlugin{}
+func (t pluginType) GRPCClient() (plugin.Plugin, error) {
+	return &grpcPlugin{}, nil
 }
 
 func (t pluginType) GRPCServer(p dodo.Plugin) (plugin.Plugin, error) {

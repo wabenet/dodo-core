@@ -17,9 +17,10 @@ const (
 	MagicCookieKey   = "DODO_PLUGIN"
 	MagicCookieValue = "69318785-d741-4150-ac91-8f03fa703530"
 
-	ErrPluginInvalid      PluginError = "invalid plugin"
-	ErrPluginNotFound     PluginError = "plugin not found"
-	ErrNoValidPluginFound PluginError = "no valid plugin found"
+	ErrPluginInvalid        PluginError = "invalid plugin"
+	ErrPluginNotImplemented PluginError = "not implemented"
+	ErrPluginNotFound       PluginError = "plugin not found"
+	ErrNoValidPluginFound   PluginError = "no valid plugin found"
 )
 
 var plugins = map[string][]Plugin{}
@@ -37,7 +38,7 @@ type Plugin interface {
 
 type Type interface {
 	String() string
-	GRPCClient() plugin.Plugin
+	GRPCClient() (plugin.Plugin, error)
 	GRPCServer(Plugin) (plugin.Plugin, error)
 }
 
@@ -76,8 +77,15 @@ func GetPlugins(pluginType string) []Plugin {
 	return plugins[pluginType]
 }
 
+func PathByName(name string) string {
+	return filepath.Join(
+		appconfig.GetPluginDir(),
+		fmt.Sprintf("dodo-%s_%s_%s", name, runtime.GOOS, runtime.GOARCH),
+	)
+}
+
 func LoadPlugins(types ...Type) {
-	matches, err := filepath.Glob(fmt.Sprintf("%s/dodo-*_%s_%s", appconfig.GetPluginDir(), runtime.GOOS, runtime.GOARCH))
+	matches, err := filepath.Glob(PathByName("*"))
 	if err != nil {
 		return
 	}
@@ -89,40 +97,16 @@ func LoadPlugins(types ...Type) {
 			continue
 		}
 
-		pluginMap := map[string]plugin.Plugin{}
 		for _, t := range types {
-			pluginMap[t.String()] = t.GRPCClient()
-		}
-
-		client := plugin.NewClient(&plugin.ClientConfig{
-			Managed:          true,
-			Plugins:          pluginMap,
-			Cmd:              exec.Command(path),
-			AllowedProtocols: []plugin.Protocol{plugin.ProtocolNetRPC, plugin.ProtocolGRPC},
-			Logger:           log.Default(),
-			HandshakeConfig: plugin.HandshakeConfig{
-				ProtocolVersion:  ProtocolVersion,
-				MagicCookieKey:   MagicCookieKey,
-				MagicCookieValue: MagicCookieValue,
-			},
-		})
-
-		conn, err := client.Client()
-		if err != nil {
-			logger.Debug("error getting plugin client", "error", err)
-			continue
-		}
-
-		for _, t := range types {
-			raw, err := conn.Dispense(t.String())
+			grpcClient, err := t.GRPCClient()
 			if err != nil {
-				logger.Debug("error dispensing plugin", "error", err)
+				logger.Debug("error loading plugin", "error", err)
 				continue
 			}
 
-			p, ok := raw.(Plugin)
-			if !ok {
-				logger.Debug("plugin does not implement init")
+			p, err := loadGRPCPlugin(path, t.String(), grpcClient)
+			if err != nil {
+				logger.Debug("could not load plugin over grpc", "error", err)
 				continue
 			}
 
@@ -136,6 +120,37 @@ func LoadPlugins(types ...Type) {
 			plugins[t.String()] = append(plugins[t.String()], p)
 		}
 	}
+}
+
+func loadGRPCPlugin(path string, pluginType string, grpcPlugin plugin.Plugin) (Plugin, error) {
+	client := plugin.NewClient(&plugin.ClientConfig{
+		Managed:          true,
+		Plugins:          map[string]plugin.Plugin{pluginType: grpcPlugin},
+		Cmd:              exec.Command(path),
+		AllowedProtocols: []plugin.Protocol{plugin.ProtocolNetRPC, plugin.ProtocolGRPC},
+		Logger:           log.Default(),
+		HandshakeConfig: plugin.HandshakeConfig{
+			ProtocolVersion:  ProtocolVersion,
+			MagicCookieKey:   MagicCookieKey,
+			MagicCookieValue: MagicCookieValue,
+		},
+	})
+
+	conn, err := client.Client()
+	if err != nil {
+		return nil, fmt.Errorf("error getting plugin client: %w", err)
+	}
+
+	raw, err := conn.Dispense(pluginType)
+	if err != nil {
+		return nil, fmt.Errorf("error dispensing plugin: %w", err)
+	}
+
+	p, ok := raw.(Plugin)
+	if !ok {
+		return nil, ErrPluginInvalid
+	}
+	return p, nil
 }
 
 func UnloadPlugins() {

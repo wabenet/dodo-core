@@ -18,7 +18,7 @@ func NewCommand() *cobra.Command {
 	var opts options
 
 	cmd := &cobra.Command{
-		Use:                   "run [flags] [name] [cmd...]",
+		Use:                   name,
 		Short:                 "Same as running 'dodo [name]', can be used when a backdrop name collides with a top-level command",
 		DisableFlagsInUseLine: true,
 		SilenceUsage:          true,

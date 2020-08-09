@@ -4,14 +4,13 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"path/filepath"
-	"runtime"
 
 	log "github.com/hashicorp/go-hclog"
 	"github.com/oclaussen/dodo/pkg/appconfig"
 	"github.com/oclaussen/dodo/pkg/plugin"
-	configplugin "github.com/oclaussen/dodo/pkg/plugin/configuration"
-	runtimeplugin "github.com/oclaussen/dodo/pkg/plugin/runtime"
+	"github.com/oclaussen/dodo/pkg/plugin/command"
+	"github.com/oclaussen/dodo/pkg/plugin/configuration"
+	"github.com/oclaussen/dodo/pkg/plugin/runtime"
 	"github.com/oclaussen/dodo/pkg/run"
 	"github.com/oclaussen/dodo/pkg/types"
 	"github.com/spf13/cobra"
@@ -28,18 +27,17 @@ CMD arguments to the first backdrop with NAME that is found. Additional FLAGS
 can be used to overwrite the backdrop configuration.
 `
 
-var builtinPlugins = map[string]*cobra.Command{}
-
 func Execute() int {
 	log.SetDefault(log.New(appconfig.GetLoggerOptions()))
 
+	plugin.RegisterBuiltin(&run.Command{})
+
 	plugin.LoadPlugins(
-		configplugin.Type,
-		runtimeplugin.Type,
+		command.Type,
+		configuration.Type,
+		runtime.Type,
 	)
 	defer plugin.UnloadPlugins()
-
-	Register("run", run.NewCommand())
 
 	if err := NewCommand().Execute(); err != nil {
 		if err, ok := err.(*types.Result); ok {
@@ -52,10 +50,6 @@ func Execute() int {
 	return 0
 }
 
-func Register(name string, cmd *cobra.Command) {
-	builtinPlugins[name] = cmd
-}
-
 func NewCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                "dodo",
@@ -65,28 +59,32 @@ func NewCommand() *cobra.Command {
 		DisableFlagParsing: true,
 		Args:               cobra.MinimumNArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
-			executable, execArgs, err := findPluginExecutable(args[0])
-			if err == nil {
-				return runPlugin(executable, execArgs, args[1:])
+			if path, err := exec.LookPath(fmt.Sprintf("dodo-%s", args[0])); err == nil {
+				return runProxy(path, args[1:])
 			}
 
-			executable, execArgs, err = findPluginExecutable("run")
-			if err == nil {
-				return runPlugin(executable, execArgs, args)
+			path := plugin.PathByName(args[0])
+			if stat, err := os.Stat(path); err == nil && stat.Mode().Perm()&0111 != 0 {
+				return runProxy(path, args[1:])
 			}
-			return err
+
+			if self, err := os.Executable(); err == nil {
+				return runProxy(self, append([]string{"run"}, args...))
+			}
+
+			return fmt.Errorf("could not run: %w", plugin.ErrPluginNotFound)
 		},
 	}
 
-	for _, subCmd := range builtinPlugins {
-		cmd.AddCommand(subCmd)
+	for _, p := range plugin.GetPlugins(command.Type.String()) {
+		cmd.AddCommand(p.(command.Command).GetCobraCommand())
 	}
 
 	return cmd
 }
 
-func runPlugin(executable string, execArgs []string, args []string) error {
-	cmd := exec.Command(executable, append(execArgs, args...)...)
+func runProxy(executable string, args []string) error {
+	cmd := exec.Command(executable, args...)
 
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
@@ -104,27 +102,4 @@ func runPlugin(executable string, execArgs []string, args []string) error {
 	}
 
 	return nil
-}
-
-func findPluginExecutable(name string) (string, []string, error) {
-	if _, ok := builtinPlugins[name]; ok {
-		if self, err := os.Executable(); err == nil {
-			return self, []string{name}, nil
-		}
-	}
-
-	nameInPath := fmt.Sprintf("dodo-%s", name)
-	if plugin, err := exec.LookPath(nameInPath); err == nil {
-		return plugin, []string{}, nil
-	}
-
-	nameInPlugins := filepath.Join(
-		appconfig.GetPluginDir(),
-		fmt.Sprintf("dodo-%s_%s_%s", name, runtime.GOOS, runtime.GOARCH),
-	)
-	if stat, err := os.Stat(nameInPlugins); err == nil && stat.Mode().Perm()&0111 != 0 {
-		return nameInPlugins, []string{}, nil
-	}
-
-	return "", []string{}, fmt.Errorf("%s: %w", name, plugin.ErrPluginNotFound)
 }
