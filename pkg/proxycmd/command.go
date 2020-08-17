@@ -5,9 +5,9 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/oclaussen/dodo/pkg/plugin"
-	"github.com/oclaussen/dodo/pkg/plugin/command"
-	"github.com/oclaussen/dodo/pkg/types"
+	"github.com/dodo/dodo-core/pkg/plugin"
+	"github.com/dodo/dodo-core/pkg/plugin/command"
+	"github.com/dodo/dodo-core/pkg/types"
 	"github.com/spf13/cobra"
 )
 

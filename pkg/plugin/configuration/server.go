@@ -1,7 +1,7 @@
 package configuration
 
 import (
-	"github.com/oclaussen/dodo/pkg/types"
+	"github.com/dodo/dodo-core/pkg/types"
 	"golang.org/x/net/context"
 )
 

@@ -7,9 +7,9 @@ import (
 	"path/filepath"
 	"runtime"
 
+	"github.com/dodo/dodo-core/pkg/appconfig"
 	log "github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
-	"github.com/oclaussen/dodo/pkg/appconfig"
 )
 
 const (

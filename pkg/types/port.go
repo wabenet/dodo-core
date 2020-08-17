@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/oclaussen/dodo/pkg/decoder"
+	"github.com/dodo/dodo-core/pkg/decoder"
 )
 
 const ErrPortFormat FormatError = "invalid publish format"

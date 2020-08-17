@@ -2,7 +2,7 @@ package command
 
 import (
 	"github.com/hashicorp/go-plugin"
-	dodo "github.com/oclaussen/dodo/pkg/plugin"
+	dodo "github.com/dodo/dodo-core/pkg/plugin"
 	"github.com/spf13/cobra"
 )
 

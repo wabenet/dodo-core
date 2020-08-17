@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/oclaussen/dodo/pkg/decoder"
+	"github.com/dodo/dodo-core/pkg/decoder"
 )
 
 const ErrDeviceFormat FormatError = "invalid device format"

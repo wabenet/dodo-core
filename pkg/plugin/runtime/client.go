@@ -4,9 +4,9 @@ import (
 	"io"
 	"net"
 
+	"github.com/dodo/dodo-core/pkg/plugin"
+	"github.com/dodo/dodo-core/pkg/types"
 	log "github.com/hashicorp/go-hclog"
-	"github.com/oclaussen/dodo/pkg/plugin"
-	"github.com/oclaussen/dodo/pkg/types"
 	"golang.org/x/net/context"
 )
 
