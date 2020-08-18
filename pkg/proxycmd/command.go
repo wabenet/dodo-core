@@ -13,8 +13,10 @@ import (
 
 func Execute(defaultCmd string) int {
 	cmd := &cobra.Command{
+		Use:                "dodo",
 		SilenceUsage:       true,
 		DisableFlagParsing: true,
+		Args:               cobra.ArbitraryArgs,
 		RunE: func(_ *cobra.Command, args []string) error {
 			if len(args) == 0 {
 				if self, err := os.Executable(); err == nil {
