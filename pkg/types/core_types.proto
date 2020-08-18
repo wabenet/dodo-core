@@ -1,5 +1,5 @@
 syntax = "proto3";
-package com.github.oclaussen.dodo.types;
+package com.github.dodo.dodo_core.types;
 
 option go_package = "github.com/dodo/dodo-core/pkg/types";
 
