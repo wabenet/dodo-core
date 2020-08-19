@@ -1,8 +1,8 @@
 package run
 
 import (
-	"github.com/dodo/dodo-core/pkg/plugin"
-	"github.com/dodo/dodo-core/pkg/plugin/command"
+	"github.com/dodo-cli/dodo-core/pkg/plugin"
+	"github.com/dodo-cli/dodo-core/pkg/plugin/command"
 	"github.com/spf13/cobra"
 )
 

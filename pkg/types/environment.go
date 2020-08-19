@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/dodo/dodo-core/pkg/decoder"
+	"github.com/dodo-cli/dodo-core/pkg/decoder"
 )
 
 const ErrEnvironmentFormat FormatError = "invalid environment format"

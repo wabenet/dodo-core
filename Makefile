@@ -20,4 +20,4 @@ test:
 proto: pkg/types/core_types.pb.go
 
 %.pb.go: %.proto
-	protoc --go_out=plugins=grpc:. --go_opt=module=github.com/dodo/dodo-core $<
+	protoc --go_out=plugins=grpc:. --go_opt=module=github.com/dodo-cli/dodo-core $<

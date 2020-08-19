@@ -1,4 +1,4 @@
-module github.com/dodo/dodo-core
+module github.com/dodo-cli/dodo-core
 
 go 1.14
 

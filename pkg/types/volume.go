@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/dodo/dodo-core/pkg/decoder"
+	"github.com/dodo-cli/dodo-core/pkg/decoder"
 )
 
 const ErrVolumeFormat FormatError = "invalid volume format"

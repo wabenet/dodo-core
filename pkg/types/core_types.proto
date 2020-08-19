@@ -1,7 +1,7 @@
 syntax = "proto3";
-package com.github.dodo.dodo_core.types;
+package com.github.dodo_cli.dodo_core.types;
 
-option go_package = "github.com/dodo/dodo-core/pkg/types";
+option go_package = "github.com/dodo-cli/dodo-core/pkg/types";
 
 message Empty {}
 

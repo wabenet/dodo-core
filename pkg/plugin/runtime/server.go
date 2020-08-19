@@ -3,7 +3,7 @@ package runtime
 import (
 	"net"
 
-	"github.com/dodo/dodo-core/pkg/types"
+	"github.com/dodo-cli/dodo-core/pkg/types"
 	log "github.com/hashicorp/go-hclog"
 	"golang.org/x/net/context"
 )

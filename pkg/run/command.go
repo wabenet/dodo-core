@@ -1,7 +1,7 @@
 package run
 
 import (
-	"github.com/dodo/dodo-core/pkg/types"
+	"github.com/dodo-cli/dodo-core/pkg/types"
 	"github.com/spf13/cobra"
 )
 

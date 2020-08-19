@@ -3,7 +3,7 @@ package types
 import (
 	"reflect"
 
-	"github.com/dodo/dodo-core/pkg/decoder"
+	"github.com/dodo-cli/dodo-core/pkg/decoder"
 )
 
 func NewBackdrop() decoder.Producer {

@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/dodo/dodo-core/pkg/appconfig"
+	"github.com/dodo-cli/dodo-core/pkg/appconfig"
 	log "github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 )
