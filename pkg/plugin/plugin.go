@@ -42,12 +42,14 @@ type Type interface {
 	GRPCServer(Plugin) (plugin.Plugin, error)
 }
 
-func RegisterBuiltin(p Plugin) {
-	if err := p.Init(); err != nil {
-		log.L().Debug("error initializing plugin", "error", err)
-		return
+func IncludePlugins(ps ...Plugin) {
+	for _, p := range ps {
+		if err := p.Init(); err != nil {
+			log.L().Debug("error initializing plugin", "error", err)
+			continue
+		}
+		plugins[p.Type().String()] = append(plugins[p.Type().String()], p)
 	}
-	plugins[p.Type().String()] = append(plugins[p.Type().String()], p)
 }
 
 func ServePlugins(plugins ...Plugin) error {
