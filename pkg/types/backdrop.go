@@ -71,6 +71,10 @@ func DecodeBackdrop(target interface{}) decoder.Decoding {
 				reflect.Map:    decoder.Singleton(NewPort(), &backdrop.Ports),
 				reflect.Slice:  decoder.Slice(NewPort(), &backdrop.Ports),
 			}),
+			"capabilities": decoder.Kinds(map[reflect.Kind]decoder.Decoding{
+				reflect.String: decoder.Singleton(decoder.NewString(), &backdrop.Capabilities),
+				reflect.Slice:  decoder.Slice(decoder.NewString(), &backdrop.Capabilities),
+			}),
 			"user":        decoder.String(&backdrop.User),
 			"workdir":     decoder.String(&backdrop.WorkingDir),
 			"working_dir": decoder.String(&backdrop.WorkingDir),
@@ -120,6 +124,7 @@ func (target *Backdrop) Merge(source *Backdrop) {
 	target.Volumes = append(target.Volumes, source.Volumes...)
 	target.Devices = append(target.Devices, source.Devices...)
 	target.Ports = append(target.Ports, source.Ports...)
+	target.Capabilities = append(target.Capabilities, source.Capabilities...)
 
 	if len(source.WorkingDir) > 0 {
 		target.WorkingDir = source.WorkingDir

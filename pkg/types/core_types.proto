@@ -34,8 +34,10 @@ message Backdrop {
   repeated Device devices = 8;
   repeated Port ports = 9;
 
-  string user = 10;
-  string working_dir = 11;
+  repeated string capabilities = 10;
+
+  string user = 11;
+  string working_dir = 12;
 }
 
 message Entrypoint {
