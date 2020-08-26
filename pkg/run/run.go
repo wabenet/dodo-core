@@ -14,78 +14,35 @@ import (
 	"github.com/dodo-cli/dodo-core/pkg/types"
 	log "github.com/hashicorp/go-hclog"
 	"github.com/moby/term"
-	"golang.org/x/net/context"
 )
 
-type Container struct {
-	daemon  bool
-	config  *types.Backdrop
-	context context.Context
-}
+func RunContainer(overrides *types.Backdrop) error {
+	config := GetConfig(overrides)
 
-func GetRuntime() (runtime.ContainerRuntime, error) {
-	for _, p := range plugin.GetPlugins(runtime.Type.String()) {
-		if rt, ok := p.(runtime.ContainerRuntime); ok {
-			return rt, nil
-		}
-	}
-
-	return nil, fmt.Errorf("could not find container runtime: %w", plugin.ErrNoValidPluginFound)
-}
-
-func NewContainer(overrides *types.Backdrop, daemon bool) (*Container, error) {
-	c := &Container{
-		daemon: daemon,
-		config: &types.Backdrop{
-			Name:       overrides.Name,
-			Entrypoint: &types.Entrypoint{},
-		},
-		context: context.Background(),
-	}
-
-	for _, p := range plugin.GetPlugins(configuration.Type.String()) {
-		conf, err := p.(configuration.Configuration).UpdateConfiguration(c.config)
-		if err != nil {
-			log.Default().Warn("could not get config", "error", err)
-			continue
-		}
-
-		c.config.Merge(conf)
-	}
-
-	c.config.Merge(overrides)
-	log.Default().Debug("assembled configuration", "backdrop", c.config)
-
-	if c.daemon {
-		c.config.ContainerName = c.config.Name
-	} else if len(c.config.ContainerName) == 0 {
+	if len(config.ContainerName) == 0 {
 		id := make([]byte, 8)
 		if _, err := rand.Read(id); err != nil {
 			panic(err)
 		}
 
-		c.config.ContainerName = fmt.Sprintf("%s-%s", c.config.Name, hex.EncodeToString(id))
+		config.ContainerName = fmt.Sprintf("%s-%s", config.Name, hex.EncodeToString(id))
 	}
 
-	return c, nil
-}
-
-func (c *Container) Run() error {
 	rt, err := GetRuntime()
 	if err != nil {
 		return err
 	}
 
-	imageID, err := rt.ResolveImage(c.config.ImageId)
+	imageID, err := rt.ResolveImage(config.ImageId)
 	if err != nil {
 		return err
 	}
 
-	c.config.ImageId = imageID
+	config.ImageId = imageID
 
 	tty := term.IsTerminal(os.Stdin.Fd()) && term.IsTerminal(os.Stdout.Fd())
 
-	containerID, err := rt.CreateContainer(c.config, !c.daemon && tty, !c.daemon)
+	containerID, err := rt.CreateContainer(config, tty, true)
 	if err != nil {
 		return err
 	}
@@ -95,10 +52,6 @@ func (c *Container) Run() error {
 		if err != nil {
 			log.Default().Warn("could not provision", "error", err)
 		}
-	}
-
-	if c.daemon {
-		return rt.StartContainer(containerID)
 	}
 
 	fd := os.Stdin.Fd()
@@ -129,13 +82,32 @@ func (c *Container) Run() error {
 	return rt.StreamContainer(containerID, os.Stdin, os.Stdout)
 }
 
-func (c *Container) Stop() error {
-	rt, err := GetRuntime()
-	if err != nil {
-		return err
+func GetRuntime() (runtime.ContainerRuntime, error) {
+	for _, p := range plugin.GetPlugins(runtime.Type.String()) {
+		if rt, ok := p.(runtime.ContainerRuntime); ok {
+			return rt, nil
+		}
 	}
 
-	return rt.RemoveContainer(c.config.ContainerName)
+	return nil, fmt.Errorf("could not find container runtime: %w", plugin.ErrNoValidPluginFound)
+}
+
+func GetConfig(overrides *types.Backdrop) *types.Backdrop {
+	config := &types.Backdrop{Name: overrides.Name, Entrypoint: &types.Entrypoint{}}
+
+	for _, p := range plugin.GetPlugins(configuration.Type.String()) {
+		conf, err := p.(configuration.Configuration).UpdateConfiguration(config)
+		if err != nil {
+			log.L().Warn("could not get config", "error", err)
+			continue
+		}
+
+		config.Merge(conf)
+	}
+
+	config.Merge(overrides)
+	log.L().Debug("assembled configuration", "backdrop", config)
+	return config
 }
 
 func resize(fd uintptr, rt runtime.ContainerRuntime, containerID string) {

@@ -41,12 +41,7 @@ func NewCommand() *cobra.Command {
 				return err
 			}
 
-			c, err := NewContainer(backdrop, false)
-			if err != nil {
-				return err
-			}
-
-			return c.Run()
+			return RunContainer(backdrop)
 		},
 	}
 
