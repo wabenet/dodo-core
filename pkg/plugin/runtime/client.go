@@ -64,7 +64,7 @@ func (c *client) ResizeContainer(id string, height uint32, width uint32) error {
 	return err
 }
 
-func (c *client) StreamContainer(id string, r io.Reader, w io.Writer) error {
+func (c *client) StreamContainer(id string, r io.Reader, w io.Writer, height uint32, width uint32) error {
 	ctx := context.Background()
 
 	connInfo, err := c.runtimeClient.SetupStreamingConnection(ctx, &types.ContainerId{Id: id})
@@ -92,6 +92,10 @@ func (c *client) StreamContainer(id string, r io.Reader, w io.Writer) error {
 		if _, err := io.Copy(w, conn); err != nil {
 			log.L().Warn("error reading from streaming connection", "error", err)
 		}
+
+		if err := conn.CloseWrite(); err != nil {
+			log.L().Warn("could not close streaming connection", "error", err)
+		}
 	}()
 
 	go func() {
@@ -100,7 +104,7 @@ func (c *client) StreamContainer(id string, r io.Reader, w io.Writer) error {
 		}
 	}()
 
-	result, err := c.runtimeClient.StreamContainer(ctx, &types.ContainerId{Id: id})
+	result, err := c.runtimeClient.StreamContainer(ctx, &types.ContainerBox{Id: id, Height: height, Width: width})
 	if err != nil {
 		return err
 	}

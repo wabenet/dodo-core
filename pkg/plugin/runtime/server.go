@@ -80,7 +80,7 @@ func (s *server) SetupStreamingConnection(_ context.Context, request *types.Cont
 	return &types.StreamingConnection{Url: s.streamListener.Addr().String()}, nil
 }
 
-func (s *server) StreamContainer(_ context.Context, request *types.ContainerId) (*types.Result, error) {
+func (s *server) StreamContainer(_ context.Context, request *types.ContainerBox) (*types.Result, error) {
 	if s.streamConnection == nil {
 		return nil, ErrNoStreamingConnection
 	}
@@ -95,7 +95,7 @@ func (s *server) StreamContainer(_ context.Context, request *types.ContainerId) 
 		}
 	}()
 
-	err := s.impl.StreamContainer(request.Id, s.streamConnection, s.streamConnection)
+	err := s.impl.StreamContainer(request.Id, s.streamConnection, s.streamConnection, request.Height, request.Width)
 	if result, ok := err.(types.Result); ok {
 		return &result, nil
 	} else if err != nil {

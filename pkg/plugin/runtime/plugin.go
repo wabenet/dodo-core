@@ -37,7 +37,7 @@ type ContainerRuntime interface {
 	StartContainer(string) error
 	RemoveContainer(string) error
 	ResizeContainer(string, uint32, uint32) error
-	StreamContainer(string, io.Reader, io.Writer) error
+	StreamContainer(string, io.Reader, io.Writer, uint32, uint32) error
 }
 
 type grpcPlugin struct {

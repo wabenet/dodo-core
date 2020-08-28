@@ -54,6 +54,8 @@ func RunContainer(overrides *types.Backdrop) error {
 		}
 	}
 
+	var height, width uint32
+
 	fd := os.Stdin.Fd()
 	if term.IsTerminal(fd) {
 		state, err := term.SetRawTerminal(fd)
@@ -67,7 +69,13 @@ func RunContainer(overrides *types.Backdrop) error {
 			}
 		}()
 
-		resize(fd, rt, containerID)
+		ws, err := term.GetWinsize(fd)
+		if err != nil {
+			return err
+		}
+
+		height = uint32(ws.Height)
+		width = uint32(ws.Width)
 
 		resizeChannel := make(chan os.Signal, 1)
 		signal.Notify(resizeChannel, syscall.SIGWINCH)
@@ -79,7 +87,7 @@ func RunContainer(overrides *types.Backdrop) error {
 		}()
 	}
 
-	return rt.StreamContainer(containerID, os.Stdin, os.Stdout)
+	return rt.StreamContainer(containerID, os.Stdin, os.Stdout, height, width)
 }
 
 func GetRuntime() (runtime.ContainerRuntime, error) {
@@ -124,6 +132,6 @@ func resize(fd uintptr, rt runtime.ContainerRuntime, containerID string) {
 	}
 
 	if err := rt.ResizeContainer(containerID, height, width); err != nil {
-		log.L().Warn("could not resize terminar", "error", err)
+		log.L().Warn("could not resize terminal", "error", err)
 	}
 }

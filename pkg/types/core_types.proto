@@ -100,5 +100,5 @@ service ContainerRuntime {
   rpc RemoveContainer(ContainerId) returns (Empty);
   rpc ResizeContainer(ContainerBox) returns (Empty);
   rpc SetupStreamingConnection(ContainerId) returns (StreamingConnection);
-  rpc StreamContainer(ContainerId) returns (Result);
+  rpc StreamContainer(ContainerBox) returns (Result);
 }
