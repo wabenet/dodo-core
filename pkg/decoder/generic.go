@@ -138,13 +138,12 @@ func NewBool() Producer {
 
 func Int(target interface{}) Decoding {
 	return func(d *Decoder, config interface{}) {
-		decoded, ok := config.(int64)
-		if !ok {
+		switch t := reflect.ValueOf(config); t.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			reflect.ValueOf(target).Elem().SetInt(t.Int())
+		default:
 			d.Error(fmt.Errorf("could not decode number: %w", ErrUnexpectedType))
-			return
 		}
-
-		reflect.ValueOf(target).Elem().SetInt(decoded)
 	}
 }
 
