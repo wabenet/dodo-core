@@ -50,12 +50,14 @@ func IncludePlugins(ps ...Plugin) {
 			log.L().Debug("error initializing plugin", "error", err)
 			continue
 		}
+
 		plugins[p.Type().String()][info.Name] = p
 	}
 }
 
 func ServePlugins(plugins ...Plugin) error {
 	pluginMap := map[string]plugin.Plugin{}
+
 	for _, p := range plugins {
 		s, err := p.Type().GRPCServer(p)
 		if err != nil {
@@ -74,6 +76,7 @@ func ServePlugins(plugins ...Plugin) error {
 			MagicCookieValue: MagicCookieValue,
 		},
 	})
+
 	return nil
 }
 
@@ -155,6 +158,7 @@ func loadGRPCPlugin(path string, pluginType string, grpcPlugin plugin.Plugin) (P
 	if !ok {
 		return nil, ErrPluginInvalid
 	}
+
 	return p, nil
 }
 

@@ -27,6 +27,7 @@ func (t pluginType) GRPCServer(p dodo.Plugin) (plugin.Plugin, error) {
 	if !ok {
 		return nil, dodo.ErrPluginInvalid
 	}
+
 	return &grpcPlugin{Impl: rt}, nil
 }
 

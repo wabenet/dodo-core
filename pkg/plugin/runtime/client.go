@@ -16,7 +16,7 @@ type client struct {
 	runtimeClient types.ContainerRuntimeClient
 }
 
-func (t *client) Type() plugin.Type {
+func (c *client) Type() plugin.Type {
 	return Type
 }
 

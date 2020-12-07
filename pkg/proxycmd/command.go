@@ -21,9 +21,9 @@ func Execute(defaultCmd string) int {
 			if len(args) == 0 {
 				if self, err := os.Executable(); err == nil {
 					return runProxy(self, []string{defaultCmd})
-				} else {
-					return fmt.Errorf("could not run plugin '%s': %w", defaultCmd, plugin.ErrPluginNotFound)
 				}
+
+				return fmt.Errorf("could not run plugin '%s': %w", defaultCmd, plugin.ErrPluginNotFound)
 			}
 
 			if path, err := exec.LookPath(fmt.Sprintf("dodo-%s", args[0])); err == nil {

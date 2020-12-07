@@ -12,7 +12,7 @@ type client struct {
 	configClient types.ConfigurationClient
 }
 
-func (t *client) Type() plugin.Type {
+func (c *client) Type() plugin.Type {
 	return Type
 }
 

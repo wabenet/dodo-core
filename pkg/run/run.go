@@ -119,6 +119,7 @@ func GetConfig(overrides *types.Backdrop) *types.Backdrop {
 
 	config.Merge(overrides)
 	log.L().Debug("assembled configuration", "backdrop", config)
+
 	return config
 }
 
