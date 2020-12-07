@@ -23,6 +23,7 @@ type options struct {
 	volumes     []string
 	environment []string
 	publish     []string
+	runtime     string
 }
 
 func NewCommand() *cobra.Command {
@@ -66,6 +67,9 @@ func NewCommand() *cobra.Command {
 	flags.StringArrayVarP(
 		&opts.publish, "publish", "p", []string{},
 		"publish a container's port(s) to the host")
+	flags.StringVarP(
+		&opts.runtime, "runtime", "r", "",
+		"select runtime plugin")
 
 	return cmd
 }

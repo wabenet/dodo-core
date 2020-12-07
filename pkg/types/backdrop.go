@@ -24,6 +24,7 @@ func DecodeBackdrop(target interface{}) decoder.Decoding {
 			"aliases":        decoder.Slice(decoder.NewString(), &backdrop.Aliases),
 			"container_name": decoder.String(&backdrop.ContainerName),
 			"image":          decoder.String(&backdrop.ImageId),
+			"runtime":        decoder.String(&backdrop.Runtime),
 			"interactive":    decoder.Bool(&backdrop.Entrypoint.Interactive),
 			"script":         decoder.String(&backdrop.Entrypoint.Script),
 			"interpreter": decoder.Kinds(map[reflect.Kind]decoder.Decoding{

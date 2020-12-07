@@ -28,7 +28,7 @@ func RunContainer(overrides *types.Backdrop) error {
 		config.ContainerName = fmt.Sprintf("%s-%s", config.Name, hex.EncodeToString(id))
 	}
 
-	rt, err := GetRuntime()
+	rt, err := GetRuntime(config.Runtime)
 	if err != nil {
 		return err
 	}
@@ -90,8 +90,12 @@ func RunContainer(overrides *types.Backdrop) error {
 	return rt.StreamContainer(containerID, os.Stdin, os.Stdout, height, width)
 }
 
-func GetRuntime() (runtime.ContainerRuntime, error) {
-	for _, p := range plugin.GetPlugins(runtime.Type.String()) {
+func GetRuntime(name string) (runtime.ContainerRuntime, error) {
+	for n, p := range plugin.GetPlugins(runtime.Type.String()) {
+		if name != "" && name != n {
+			continue
+		}
+
 		if rt, ok := p.(runtime.ContainerRuntime); ok {
 			return rt, nil
 		}
