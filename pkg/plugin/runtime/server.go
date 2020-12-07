@@ -26,8 +26,8 @@ type server struct {
 	streamConnection net.Conn
 }
 
-func (s *server) Init(_ context.Context, _ *types.Empty) (*types.Empty, error) {
-	return &types.Empty{}, s.impl.Init()
+func (s *server) Init(_ context.Context, _ *types.Empty) (*types.PluginInfo, error) {
+	return s.impl.Init()
 }
 
 func (s *server) ResolveImage(_ context.Context, request *types.Image) (*types.Image, error) {

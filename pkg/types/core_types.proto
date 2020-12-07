@@ -5,6 +5,11 @@ option go_package = "github.com/dodo-cli/dodo-core/pkg/types";
 
 message Empty {}
 
+message PluginInfo {
+  string name = 1;
+  string version = 2;
+}
+
 message ContainerId {
   string id = 1;
 }
@@ -87,13 +92,13 @@ message StreamingConnection {
 }
 
 service Configuration {
-  rpc Init(Empty) returns (Empty);
+  rpc Init(Empty) returns (PluginInfo);
   rpc UpdateConfiguration(Backdrop) returns (Backdrop);
   rpc Provision(ContainerId) returns (Empty);
 }
 
 service ContainerRuntime {
-  rpc Init(Empty) returns (Empty);
+  rpc Init(Empty) returns (PluginInfo);
   rpc ResolveImage(Image) returns (Image);
   rpc CreateContainer(ContainerConfig) returns (ContainerId);
   rpc StartContainer(ContainerId) returns (Empty);

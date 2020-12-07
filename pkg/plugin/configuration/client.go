@@ -6,6 +6,8 @@ import (
 	"golang.org/x/net/context"
 )
 
+var _ Configuration = &client{}
+
 type client struct {
 	configClient types.ConfigurationClient
 }
@@ -14,9 +16,8 @@ func (t *client) Type() plugin.Type {
 	return Type
 }
 
-func (c *client) Init() error {
-	_, err := c.configClient.Init(context.Background(), &types.Empty{})
-	return err
+func (c *client) Init() (*types.PluginInfo, error) {
+	return c.configClient.Init(context.Background(), &types.Empty{})
 }
 
 func (c *client) UpdateConfiguration(backdrop *types.Backdrop) (*types.Backdrop, error) {

@@ -29,7 +29,7 @@ func (t pluginType) GRPCServer(p dodo.Plugin) (plugin.Plugin, error) {
 }
 
 type Configuration interface {
-	Init() error
+	Init() (*types.PluginInfo, error)
 	UpdateConfiguration(*types.Backdrop) (*types.Backdrop, error)
 	Provision(string) error
 }

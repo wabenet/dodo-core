@@ -10,6 +10,8 @@ import (
 	"golang.org/x/net/context"
 )
 
+var _ ContainerRuntime = &client{}
+
 type client struct {
 	runtimeClient types.ContainerRuntimeClient
 }
@@ -18,9 +20,8 @@ func (t *client) Type() plugin.Type {
 	return Type
 }
 
-func (c *client) Init() error {
-	_, err := c.runtimeClient.Init(context.Background(), &types.Empty{})
-	return err
+func (c *client) Init() (*types.PluginInfo, error) {
+	return c.runtimeClient.Init(context.Background(), &types.Empty{})
 }
 
 func (c *client) ResolveImage(spec string) (string, error) {

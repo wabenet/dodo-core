@@ -31,7 +31,7 @@ func (t pluginType) GRPCServer(p dodo.Plugin) (plugin.Plugin, error) {
 }
 
 type ContainerRuntime interface {
-	Init() error
+	Init() (*types.PluginInfo, error)
 	ResolveImage(string) (string, error)
 	CreateContainer(*types.Backdrop, bool, bool) (string, error)
 	StartContainer(string) error

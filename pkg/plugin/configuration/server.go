@@ -9,8 +9,8 @@ type server struct {
 	impl Configuration
 }
 
-func (s *server) Init(_ context.Context, _ *types.Empty) (*types.Empty, error) {
-	return &types.Empty{}, s.impl.Init()
+func (s *server) Init(_ context.Context, _ *types.Empty) (*types.PluginInfo, error) {
+	return s.impl.Init()
 }
 
 func (s *server) UpdateConfiguration(_ context.Context, backdrop *types.Backdrop) (*types.Backdrop, error) {
