@@ -96,11 +96,14 @@ func (s *server) StreamContainer(_ context.Context, request *types.ContainerBox)
 	}()
 
 	err := s.impl.StreamContainer(request.Id, s.streamConnection, s.streamConnection, request.Height, request.Width)
+
 	if result, ok := err.(types.Result); ok {
 		return &result, nil
-	} else if err != nil {
-		return nil, err
-	} else {
-		return &types.Result{ExitCode: 0}, nil
 	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.Result{ExitCode: 0}, nil
 }

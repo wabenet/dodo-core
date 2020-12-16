@@ -24,7 +24,10 @@ const (
 	ErrNoValidPluginFound   PluginError = "no valid plugin found"
 )
 
-var plugins = map[string]map[string]Plugin{}
+var (
+	pluginTypes = map[string]Type{}
+	plugins     = map[string]map[string]Plugin{}
+)
 
 type PluginError string
 
@@ -41,6 +44,12 @@ type Type interface {
 	String() string
 	GRPCClient() (plugin.Plugin, error)
 	GRPCServer(Plugin) (plugin.Plugin, error)
+}
+
+func RegisterPluginTypes(ts ...Type) {
+	for _, t := range ts {
+		pluginTypes[t.String()] = t
+	}
 }
 
 func IncludePlugins(ps ...Plugin) {
@@ -91,7 +100,7 @@ func PathByName(name string) string {
 	)
 }
 
-func LoadPlugins(types ...Type) {
+func LoadPlugins() {
 	matches, err := filepath.Glob(PathByName("*"))
 	if err != nil {
 		return
@@ -104,7 +113,7 @@ func LoadPlugins(types ...Type) {
 			continue
 		}
 
-		for _, t := range types {
+		for _, t := range pluginTypes {
 			grpcClient, err := t.GRPCClient()
 			if err != nil {
 				logger.Debug("error loading plugin", "error", err)
