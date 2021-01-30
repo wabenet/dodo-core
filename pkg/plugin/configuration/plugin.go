@@ -1,8 +1,8 @@
 package configuration
 
 import (
+	api "github.com/dodo-cli/dodo-core/api/v1alpha1"
 	dodo "github.com/dodo-cli/dodo-core/pkg/plugin"
-	"github.com/dodo-cli/dodo-core/pkg/types"
 	"github.com/hashicorp/go-plugin"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
@@ -30,9 +30,10 @@ func (t pluginType) GRPCServer(p dodo.Plugin) (plugin.Plugin, error) {
 }
 
 type Configuration interface {
-	Init() (*types.PluginInfo, error)
-	UpdateConfiguration(*types.Backdrop) (*types.Backdrop, error)
-	Provision(string) error
+	dodo.Plugin
+
+	ListBackdrops() ([]*api.Backdrop, error)
+	GetBackdrop(string) (*api.Backdrop, error)
 }
 
 type grpcPlugin struct {
@@ -41,10 +42,10 @@ type grpcPlugin struct {
 }
 
 func (p *grpcPlugin) GRPCClient(_ context.Context, _ *plugin.GRPCBroker, conn *grpc.ClientConn) (interface{}, error) {
-	return &client{configClient: types.NewConfigurationClient(conn)}, nil
+	return &client{configClient: api.NewConfigurationPluginClient(conn)}, nil
 }
 
 func (p *grpcPlugin) GRPCServer(_ *plugin.GRPCBroker, s *grpc.Server) error {
-	types.RegisterConfigurationServer(s, &server{impl: p.Impl})
+	api.RegisterConfigurationPluginServer(s, &server{impl: p.Impl})
 	return nil
 }

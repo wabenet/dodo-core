@@ -3,19 +3,20 @@ package types
 import (
 	"reflect"
 
+	api "github.com/dodo-cli/dodo-core/api/v1alpha1"
 	"github.com/dodo-cli/dodo-core/pkg/decoder"
 )
 
 func NewBackdrop() decoder.Producer {
 	return func() (interface{}, decoder.Decoding) {
-		target := &Backdrop{Entrypoint: &Entrypoint{}}
+		target := &api.Backdrop{Entrypoint: &api.Entrypoint{}}
 		return &target, DecodeBackdrop(&target)
 	}
 }
 
 func DecodeBackdrop(target interface{}) decoder.Decoding {
 	// TODO: wtf this cast
-	backdrop := *(target.(**Backdrop))
+	backdrop := *(target.(**api.Backdrop))
 
 	return decoder.Kinds(map[reflect.Kind]decoder.Decoding{
 		reflect.Map: decoder.Keys(map[string]decoder.Decoding{
@@ -83,7 +84,7 @@ func DecodeBackdrop(target interface{}) decoder.Decoding {
 	})
 }
 
-func (target *Backdrop) Merge(source *Backdrop) {
+func Merge(target *api.Backdrop, source *api.Backdrop) {
 	if len(source.Name) > 0 {
 		target.Name = source.Name
 	}

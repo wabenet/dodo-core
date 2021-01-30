@@ -3,7 +3,8 @@ package runtime
 import (
 	"net"
 
-	"github.com/dodo-cli/dodo-core/pkg/types"
+	api "github.com/dodo-cli/dodo-core/api/v1alpha1"
+	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/hashicorp/go-hclog"
 	"golang.org/x/net/context"
 )
@@ -26,41 +27,45 @@ type server struct {
 	streamConnection net.Conn
 }
 
-func (s *server) Init(_ context.Context, _ *types.Empty) (*types.PluginInfo, error) {
-	return s.impl.Init()
+func (s *server) Init(_ context.Context, _ *empty.Empty) (*empty.Empty, error) {
+	return &empty.Empty{}, s.impl.Init()
 }
 
-func (s *server) ResolveImage(_ context.Context, request *types.Image) (*types.Image, error) {
-	id, err := s.impl.ResolveImage(request.Name)
+func (s *server) GetPluginInfo(_ context.Context, _ *empty.Empty) (*api.PluginInfo, error) {
+	return s.impl.PluginInfo()
+}
+
+func (s *server) GetImage(_ context.Context, request *api.GetImageRequest) (*api.GetImageResponse, error) {
+	id, err := s.impl.ResolveImage(request.ImageSpec)
 	if err != nil {
 		return nil, err
 	}
 
-	return &types.Image{Name: request.Name, Id: id}, nil
+	return &api.GetImageResponse{ImageId: id}, nil
 }
 
-func (s *server) CreateContainer(_ context.Context, config *types.ContainerConfig) (*types.ContainerId, error) {
+func (s *server) CreateContainer(_ context.Context, config *api.CreateContainerRequest) (*api.CreateContainerResponse, error) {
 	id, err := s.impl.CreateContainer(config.Config, config.Tty, config.Stdio)
 	if err != nil {
 		return nil, err
 	}
 
-	return &types.ContainerId{Id: id}, nil
+	return &api.CreateContainerResponse{ContainerId: id}, nil
 }
 
-func (s *server) StartContainer(_ context.Context, request *types.ContainerId) (*types.Empty, error) {
-	return &types.Empty{}, s.impl.StartContainer(request.Id)
+func (s *server) StartContainer(_ context.Context, request *api.StartContainerRequest) (*empty.Empty, error) {
+	return &empty.Empty{}, s.impl.StartContainer(request.ContainerId)
 }
 
-func (s *server) RemoveContainer(_ context.Context, request *types.ContainerId) (*types.Empty, error) {
-	return &types.Empty{}, s.impl.RemoveContainer(request.Id)
+func (s *server) DeleteContainer(_ context.Context, request *api.DeleteContainerRequest) (*empty.Empty, error) {
+	return &empty.Empty{}, s.impl.DeleteContainer(request.ContainerId)
 }
 
-func (s *server) ResizeContainer(_ context.Context, request *types.ContainerBox) (*types.Empty, error) {
-	return &types.Empty{}, s.impl.ResizeContainer(request.Id, request.Height, request.Width)
+func (s *server) ResizeContainer(_ context.Context, request *api.ResizeContainerRequest) (*empty.Empty, error) {
+	return &empty.Empty{}, s.impl.ResizeContainer(request.ContainerId, request.Height, request.Width)
 }
 
-func (s *server) SetupStreamingConnection(_ context.Context, request *types.ContainerId) (*types.StreamingConnection, error) {
+func (s *server) GetStreamingConnection(_ context.Context, request *api.GetStreamingConnectionRequest) (*api.GetStreamingConnectionResponse, error) {
 	listener, err := net.Listen("tcp", streamListenAddress)
 	if err != nil {
 		return nil, err
@@ -77,10 +82,10 @@ func (s *server) SetupStreamingConnection(_ context.Context, request *types.Cont
 		s.streamConnection = conn
 	}()
 
-	return &types.StreamingConnection{Url: s.streamListener.Addr().String()}, nil
+	return &api.GetStreamingConnectionResponse{Url: s.streamListener.Addr().String()}, nil
 }
 
-func (s *server) StreamContainer(_ context.Context, request *types.ContainerBox) (*types.Result, error) {
+func (s *server) StreamContainer(_ context.Context, request *api.StreamContainerRequest) (*api.StreamContainerResponse, error) {
 	if s.streamConnection == nil {
 		return nil, ErrNoStreamingConnection
 	}
@@ -95,15 +100,18 @@ func (s *server) StreamContainer(_ context.Context, request *types.ContainerBox)
 		}
 	}()
 
-	err := s.impl.StreamContainer(request.Id, s.streamConnection, s.streamConnection, request.Height, request.Width)
+	err := s.impl.StreamContainer(request.ContainerId, s.streamConnection, s.streamConnection, request.Height, request.Width)
 
-	if result, ok := err.(types.Result); ok {
-		return &result, nil
+	if result, ok := err.(Result); ok {
+		return &api.StreamContainerResponse{
+			ExitCode: result.ExitCode,
+			Message:  result.Message,
+		}, nil
 	}
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &types.Result{ExitCode: 0}, nil
+	return &api.StreamContainerResponse{ExitCode: 0}, nil
 }

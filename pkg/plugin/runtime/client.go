@@ -4,8 +4,9 @@ import (
 	"io"
 	"net"
 
+	api "github.com/dodo-cli/dodo-core/api/v1alpha1"
 	"github.com/dodo-cli/dodo-core/pkg/plugin"
-	"github.com/dodo-cli/dodo-core/pkg/types"
+	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/hashicorp/go-hclog"
 	"golang.org/x/net/context"
 )
@@ -13,28 +14,33 @@ import (
 var _ ContainerRuntime = &client{}
 
 type client struct {
-	runtimeClient types.ContainerRuntimeClient
+	runtimeClient api.RuntimePluginClient
 }
 
 func (c *client) Type() plugin.Type {
 	return Type
 }
 
-func (c *client) Init() (*types.PluginInfo, error) {
-	return c.runtimeClient.Init(context.Background(), &types.Empty{})
+func (c *client) Init() error {
+	_, err := c.runtimeClient.Init(context.Background(), &empty.Empty{})
+	return err
+}
+
+func (c *client) PluginInfo() (*api.PluginInfo, error) {
+	return c.runtimeClient.GetPluginInfo(context.Background(), &empty.Empty{})
 }
 
 func (c *client) ResolveImage(spec string) (string, error) {
-	img, err := c.runtimeClient.ResolveImage(context.Background(), &types.Image{Name: spec})
+	img, err := c.runtimeClient.GetImage(context.Background(), &api.GetImageRequest{ImageSpec: spec})
 	if err != nil {
 		return "", err
 	}
 
-	return img.Id, nil
+	return img.ImageId, nil
 }
 
-func (c *client) CreateContainer(config *types.Backdrop, tty bool, stdio bool) (string, error) {
-	resp, err := c.runtimeClient.CreateContainer(context.Background(), &types.ContainerConfig{
+func (c *client) CreateContainer(config *api.Backdrop, tty bool, stdio bool) (string, error) {
+	resp, err := c.runtimeClient.CreateContainer(context.Background(), &api.CreateContainerRequest{
 		Config: config,
 		Tty:    tty,
 		Stdio:  stdio,
@@ -43,23 +49,23 @@ func (c *client) CreateContainer(config *types.Backdrop, tty bool, stdio bool) (
 		return "", err
 	}
 
-	return resp.Id, nil
+	return resp.ContainerId, nil
 }
 
 func (c *client) StartContainer(id string) error {
-	_, err := c.runtimeClient.StartContainer(context.Background(), &types.ContainerId{Id: id})
+	_, err := c.runtimeClient.StartContainer(context.Background(), &api.StartContainerRequest{ContainerId: id})
 	return err
 }
 
-func (c *client) RemoveContainer(id string) error {
-	_, err := c.runtimeClient.RemoveContainer(context.Background(), &types.ContainerId{Id: id})
+func (c *client) DeleteContainer(id string) error {
+	_, err := c.runtimeClient.DeleteContainer(context.Background(), &api.DeleteContainerRequest{ContainerId: id})
 	return err
 }
 
 func (c *client) ResizeContainer(id string, height uint32, width uint32) error {
 	_, err := c.runtimeClient.ResizeContainer(
 		context.Background(),
-		&types.ContainerBox{Id: id, Height: height, Width: width},
+		&api.ResizeContainerRequest{ContainerId: id, Height: height, Width: width},
 	)
 
 	return err
@@ -68,7 +74,7 @@ func (c *client) ResizeContainer(id string, height uint32, width uint32) error {
 func (c *client) StreamContainer(id string, r io.Reader, w io.Writer, height uint32, width uint32) error {
 	ctx := context.Background()
 
-	connInfo, err := c.runtimeClient.SetupStreamingConnection(ctx, &types.ContainerId{Id: id})
+	connInfo, err := c.runtimeClient.GetStreamingConnection(ctx, &api.GetStreamingConnectionRequest{ContainerId: id})
 	if err != nil {
 		return err
 	}
@@ -105,10 +111,13 @@ func (c *client) StreamContainer(id string, r io.Reader, w io.Writer, height uin
 		}
 	}()
 
-	result, err := c.runtimeClient.StreamContainer(ctx, &types.ContainerBox{Id: id, Height: height, Width: width})
+	result, err := c.runtimeClient.StreamContainer(ctx, &api.StreamContainerRequest{ContainerId: id, Height: height, Width: width})
 	if err != nil {
 		return err
 	}
 
-	return result
+	return &Result{
+		ExitCode: result.ExitCode,
+		Message:  result.Message,
+	}
 }

@@ -8,6 +8,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	api "github.com/dodo-cli/dodo-core/api/v1alpha1"
 	"github.com/dodo-cli/dodo-core/pkg/plugin"
 	"github.com/dodo-cli/dodo-core/pkg/plugin/configuration"
 	"github.com/dodo-cli/dodo-core/pkg/plugin/runtime"
@@ -16,7 +17,7 @@ import (
 	"github.com/moby/term"
 )
 
-func RunContainer(overrides *types.Backdrop) error {
+func RunContainer(overrides *api.Backdrop) error {
 	config := GetConfig(overrides)
 
 	if len(config.ContainerName) == 0 {
@@ -45,13 +46,6 @@ func RunContainer(overrides *types.Backdrop) error {
 	containerID, err := rt.CreateContainer(config, tty, true)
 	if err != nil {
 		return err
-	}
-
-	for _, p := range plugin.GetPlugins(configuration.Type.String()) {
-		err := p.(configuration.Configuration).Provision(containerID)
-		if err != nil {
-			log.Default().Warn("could not provision", "error", err)
-		}
 	}
 
 	var height, width uint32
@@ -104,20 +98,28 @@ func GetRuntime(name string) (runtime.ContainerRuntime, error) {
 	return nil, fmt.Errorf("could not find container runtime: %w", plugin.ErrNoValidPluginFound)
 }
 
-func GetConfig(overrides *types.Backdrop) *types.Backdrop {
-	config := &types.Backdrop{Name: overrides.Name, Entrypoint: &types.Entrypoint{}}
+func GetConfig(overrides *api.Backdrop) *api.Backdrop {
+	config := &api.Backdrop{Name: overrides.Name, Entrypoint: &api.Entrypoint{}}
 
 	for _, p := range plugin.GetPlugins(configuration.Type.String()) {
-		conf, err := p.(configuration.Configuration).UpdateConfiguration(config)
+		info, err := p.PluginInfo()
+		if err != nil {
+			log.L().Warn("could not read plugin info")
+			continue
+		}
+
+		log.L().Debug("Fetching configuration from plugin", "name", info.Name)
+
+		conf, err := p.(configuration.Configuration).GetBackdrop(config.Name)
 		if err != nil {
 			log.L().Warn("could not get config", "error", err)
 			continue
 		}
 
-		config.Merge(conf)
+		types.Merge(config, conf)
 	}
 
-	config.Merge(overrides)
+	types.Merge(config, overrides)
 	log.L().Debug("assembled configuration", "backdrop", config)
 
 	return config

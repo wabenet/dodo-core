@@ -5,15 +5,18 @@ import (
 	"reflect"
 	"strings"
 
+	api "github.com/dodo-cli/dodo-core/api/v1alpha1"
 	"github.com/dodo-cli/dodo-core/pkg/decoder"
 )
 
 const ErrPortFormat FormatError = "invalid publish format"
 
-func (port *Port) FromString(spec string) error {
+func ParsePort(spec string) (*api.Port, error) {
+	port := &api.Port{}
+
 	switch values := strings.SplitN(spec, ":", 3); len(values) {
 	case 0:
-		return fmt.Errorf("%s: %w", spec, ErrPortFormat)
+		return nil, fmt.Errorf("%s: %w", spec, ErrPortFormat)
 	case 1:
 		port.Target = values[0]
 	case 2:
@@ -24,7 +27,7 @@ func (port *Port) FromString(spec string) error {
 		port.Published = values[1]
 		port.Target = values[2]
 	default:
-		return fmt.Errorf("%s: %w", spec, ErrPortFormat)
+		return nil, fmt.Errorf("%s: %w", spec, ErrPortFormat)
 	}
 
 	switch values := strings.SplitN(port.Target, "/", 2); len(values) {
@@ -34,22 +37,22 @@ func (port *Port) FromString(spec string) error {
 		port.Target = values[0]
 		port.Protocol = values[1]
 	default:
-		return fmt.Errorf("%s: %w", spec, ErrPortFormat)
+		return nil, fmt.Errorf("%s: %w", spec, ErrPortFormat)
 	}
 
-	return nil
+	return port, nil
 }
 
 func NewPort() decoder.Producer {
 	return func() (interface{}, decoder.Decoding) {
-		target := &Port{}
+		target := &api.Port{}
 		return &target, DecodePort(&target)
 	}
 }
 
 func DecodePort(target interface{}) decoder.Decoding {
 	// TODO: wtf this cast
-	port := *(target.(**Port))
+	port := *(target.(**api.Port))
 
 	return decoder.Kinds(map[reflect.Kind]decoder.Decoding{
 		reflect.Map: decoder.Keys(map[string]decoder.Decoding{
@@ -61,8 +64,13 @@ func DecodePort(target interface{}) decoder.Decoding {
 		reflect.String: func(d *decoder.Decoder, config interface{}) {
 			var decoded string
 			decoder.String(&decoded)(d, config)
-			if err := port.FromString(decoded); err != nil {
+			if p, err := ParsePort(decoded); err != nil {
 				d.Error(err)
+			} else {
+				port.Target = p.Target
+				port.Published = p.Published
+				port.Protocol = p.Protocol
+				port.HostIp = p.HostIp
 			}
 		},
 	})

@@ -7,7 +7,7 @@ import (
 
 	"github.com/dodo-cli/dodo-core/pkg/plugin"
 	"github.com/dodo-cli/dodo-core/pkg/plugin/command"
-	"github.com/dodo-cli/dodo-core/pkg/types"
+	"github.com/dodo-cli/dodo-core/pkg/plugin/runtime"
 	"github.com/spf13/cobra"
 )
 
@@ -48,7 +48,7 @@ func Execute(defaultCmd string) int {
 	}
 
 	if err := cmd.Execute(); err != nil {
-		if err, ok := err.(*types.Result); ok {
+		if err, ok := err.(*runtime.Result); ok {
 			return int(err.ExitCode)
 		}
 
@@ -67,7 +67,7 @@ func runProxy(executable string, args []string) error {
 
 	if err := cmd.Run(); err != nil {
 		if exit, ok := err.(*exec.ExitError); ok {
-			return &types.Result{
+			return &runtime.Result{
 				ExitCode: int64(exit.ExitCode()),
 				Message:  string(exit.Stderr),
 			}

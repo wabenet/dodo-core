@@ -2,7 +2,6 @@ package command
 
 import (
 	dodo "github.com/dodo-cli/dodo-core/pkg/plugin"
-	"github.com/dodo-cli/dodo-core/pkg/types"
 	"github.com/hashicorp/go-plugin"
 	"github.com/spf13/cobra"
 )
@@ -26,6 +25,7 @@ func (t pluginType) GRPCServer(p dodo.Plugin) (plugin.Plugin, error) {
 }
 
 type Command interface {
-	Init() (*types.PluginInfo, error)
+	dodo.Plugin
+
 	GetCobraCommand() *cobra.Command
 }

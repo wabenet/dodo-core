@@ -5,15 +5,18 @@ import (
 	"reflect"
 	"strings"
 
+	api "github.com/dodo-cli/dodo-core/api/v1alpha1"
 	"github.com/dodo-cli/dodo-core/pkg/decoder"
 )
 
 const ErrDeviceFormat FormatError = "invalid device format"
 
-func (dev *Device) FromString(spec string) error {
+func ParseDevice(spec string) (*api.Device, error) {
+	dev := &api.Device{}
+
 	switch values := strings.SplitN(spec, ":", 3); len(values) {
 	case 0:
-		return fmt.Errorf("%s: %w", spec, ErrDeviceFormat)
+		return nil, fmt.Errorf("%s: %w", spec, ErrDeviceFormat)
 	case 1:
 		dev.Source = values[0]
 	case 2:
@@ -24,22 +27,22 @@ func (dev *Device) FromString(spec string) error {
 		dev.Target = values[1]
 		dev.Permissions = values[2]
 	default:
-		return fmt.Errorf("%s: %w", spec, ErrDeviceFormat)
+		return nil, fmt.Errorf("%s: %w", spec, ErrDeviceFormat)
 	}
 
-	return nil
+	return dev, nil
 }
 
 func NewDevice() decoder.Producer {
 	return func() (interface{}, decoder.Decoding) {
-		target := &Device{}
+		target := &api.Device{}
 		return &target, DecodeDevice(&target)
 	}
 }
 
 func DecodeDevice(target interface{}) decoder.Decoding {
 	// TODO: wtf this cast
-	dev := *(target.(**Device))
+	dev := *(target.(**api.Device))
 
 	return decoder.Kinds(map[reflect.Kind]decoder.Decoding{
 		reflect.Map: decoder.Keys(map[string]decoder.Decoding{
@@ -51,8 +54,14 @@ func DecodeDevice(target interface{}) decoder.Decoding {
 		reflect.String: func(d *decoder.Decoder, config interface{}) {
 			var decoded string
 			decoder.String(&decoded)(d, config)
-			if err := dev.FromString(decoded); err != nil {
+
+			if dv, err := ParseDevice(decoded); err != nil {
 				d.Error(err)
+			} else {
+				dev.CgroupRule = dv.CgroupRule
+				dev.Source = dv.Source
+				dev.Target = dv.Target
+				dev.Permissions = dv.Permissions
 			}
 		},
 	})

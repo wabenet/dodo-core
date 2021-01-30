@@ -1,30 +1,40 @@
 package configuration
 
 import (
+	api "github.com/dodo-cli/dodo-core/api/v1alpha1"
 	"github.com/dodo-cli/dodo-core/pkg/plugin"
-	"github.com/dodo-cli/dodo-core/pkg/types"
+	"github.com/golang/protobuf/ptypes/empty"
 	"golang.org/x/net/context"
 )
 
 var _ Configuration = &client{}
 
 type client struct {
-	configClient types.ConfigurationClient
+	configClient api.ConfigurationPluginClient
 }
 
 func (c *client) Type() plugin.Type {
 	return Type
 }
 
-func (c *client) Init() (*types.PluginInfo, error) {
-	return c.configClient.Init(context.Background(), &types.Empty{})
-}
-
-func (c *client) UpdateConfiguration(backdrop *types.Backdrop) (*types.Backdrop, error) {
-	return c.configClient.UpdateConfiguration(context.Background(), backdrop)
-}
-
-func (c *client) Provision(containerID string) error {
-	_, err := c.configClient.Provision(context.Background(), &types.ContainerId{Id: containerID})
+func (c *client) Init() error {
+	_, err := c.configClient.Init(context.Background(), &empty.Empty{})
 	return err
+}
+
+func (c *client) PluginInfo() (*api.PluginInfo, error) {
+	return c.configClient.GetPluginInfo(context.Background(), &empty.Empty{})
+}
+
+func (c *client) ListBackdrops() ([]*api.Backdrop, error) {
+	response, err := c.configClient.ListBackdrops(context.Background(), &empty.Empty{})
+	if err != nil {
+		return []*api.Backdrop{}, err
+	}
+
+	return response.Backdrops, nil
+}
+
+func (c *client) GetBackdrop(alias string) (*api.Backdrop, error) {
+	return c.configClient.GetBackdrop(context.Background(), &api.GetBackdropRequest{Alias: alias})
 }

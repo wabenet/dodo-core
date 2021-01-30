@@ -5,15 +5,18 @@ import (
 	"reflect"
 	"strings"
 
+	api "github.com/dodo-cli/dodo-core/api/v1alpha1"
 	"github.com/dodo-cli/dodo-core/pkg/decoder"
 )
 
 const ErrVolumeFormat FormatError = "invalid volume format"
 
-func (vol *Volume) FromString(spec string) error {
+func ParseVolume(spec string) (*api.Volume, error) {
+	vol := &api.Volume{}
+
 	switch values := strings.SplitN(spec, ":", 3); len(values) {
 	case 0:
-		return fmt.Errorf("%s: %w", spec, ErrVolumeFormat)
+		return nil, fmt.Errorf("%s: %w", spec, ErrVolumeFormat)
 	case 1:
 		vol.Source = values[0]
 	case 2:
@@ -24,22 +27,22 @@ func (vol *Volume) FromString(spec string) error {
 		vol.Target = values[1]
 		vol.Readonly = (values[2] == "ro")
 	default:
-		return fmt.Errorf("%s: %w", spec, ErrVolumeFormat)
+		return nil, fmt.Errorf("%s: %w", spec, ErrVolumeFormat)
 	}
 
-	return nil
+	return vol, nil
 }
 
 func NewVolume() decoder.Producer {
 	return func() (interface{}, decoder.Decoding) {
-		target := &Volume{}
+		target := &api.Volume{}
 		return &target, DecodeVolume(&target)
 	}
 }
 
 func DecodeVolume(target interface{}) decoder.Decoding {
 	// TODO: wtf this cast
-	vol := *(target.(**Volume))
+	vol := *(target.(**api.Volume))
 
 	return decoder.Kinds(map[reflect.Kind]decoder.Decoding{
 		reflect.Map: decoder.Keys(map[string]decoder.Decoding{
@@ -50,8 +53,13 @@ func DecodeVolume(target interface{}) decoder.Decoding {
 		reflect.String: func(d *decoder.Decoder, config interface{}) {
 			var decoded string
 			decoder.String(&decoded)(d, config)
-			if err := vol.FromString(decoded); err != nil {
+
+			if v, err := ParseVolume(decoded); err != nil {
 				d.Error(err)
+			} else {
+				vol.Source = v.Source
+				vol.Target = v.Target
+				vol.Readonly = v.Readonly
 			}
 		},
 	})

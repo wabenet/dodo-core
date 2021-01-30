@@ -3,8 +3,8 @@ package runtime
 import (
 	"io"
 
+	api "github.com/dodo-cli/dodo-core/api/v1alpha1"
 	dodo "github.com/dodo-cli/dodo-core/pkg/plugin"
-	"github.com/dodo-cli/dodo-core/pkg/types"
 	"github.com/hashicorp/go-plugin"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
@@ -32,13 +32,23 @@ func (t pluginType) GRPCServer(p dodo.Plugin) (plugin.Plugin, error) {
 }
 
 type ContainerRuntime interface {
-	Init() (*types.PluginInfo, error)
+	dodo.Plugin
+
 	ResolveImage(string) (string, error)
-	CreateContainer(*types.Backdrop, bool, bool) (string, error)
+	CreateContainer(*api.Backdrop, bool, bool) (string, error)
 	StartContainer(string) error
-	RemoveContainer(string) error
+	DeleteContainer(string) error
 	ResizeContainer(string, uint32, uint32) error
 	StreamContainer(string, io.Reader, io.Writer, uint32, uint32) error
+}
+
+type Result struct {
+	ExitCode int64
+	Message  string
+}
+
+func (e Result) Error() string {
+	return e.Message
 }
 
 type grpcPlugin struct {
@@ -47,10 +57,10 @@ type grpcPlugin struct {
 }
 
 func (p *grpcPlugin) GRPCClient(_ context.Context, _ *plugin.GRPCBroker, conn *grpc.ClientConn) (interface{}, error) {
-	return &client{runtimeClient: types.NewContainerRuntimeClient(conn)}, nil
+	return &client{runtimeClient: api.NewRuntimePluginClient(conn)}, nil
 }
 
 func (p *grpcPlugin) GRPCServer(_ *plugin.GRPCBroker, s *grpc.Server) error {
-	types.RegisterContainerRuntimeServer(s, &server{impl: p.Impl})
+	api.RegisterRuntimePluginServer(s, &server{impl: p.Impl})
 	return nil
 }

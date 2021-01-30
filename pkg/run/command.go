@@ -1,6 +1,7 @@
 package run
 
 import (
+	api "github.com/dodo-cli/dodo-core/api/v1alpha1"
 	"github.com/dodo-cli/dodo-core/pkg/types"
 	"github.com/spf13/cobra"
 )
@@ -74,10 +75,10 @@ func NewCommand() *cobra.Command {
 	return cmd
 }
 
-func (opts *options) createConfig(name string, command []string) (*types.Backdrop, error) {
-	config := &types.Backdrop{
+func (opts *options) createConfig(name string, command []string) (*api.Backdrop, error) {
+	config := &api.Backdrop{
 		Name: name,
-		Entrypoint: &types.Entrypoint{
+		Entrypoint: &api.Entrypoint{
 			Interactive: opts.interactive,
 			Arguments:   command,
 		},
@@ -86,8 +87,8 @@ func (opts *options) createConfig(name string, command []string) (*types.Backdro
 	}
 
 	for _, spec := range opts.volumes {
-		vol := &types.Volume{}
-		if err := vol.FromString(spec); err != nil {
+		vol, err := types.ParseVolume(spec)
+		if err != nil {
 			return nil, err
 		}
 
@@ -95,8 +96,8 @@ func (opts *options) createConfig(name string, command []string) (*types.Backdro
 	}
 
 	for _, spec := range opts.environment {
-		env := &types.Environment{}
-		if err := env.FromString(spec); err != nil {
+		env, err := types.ParseEnvironment(spec)
+		if err != nil {
 			return nil, err
 		}
 
@@ -104,8 +105,8 @@ func (opts *options) createConfig(name string, command []string) (*types.Backdro
 	}
 
 	for _, spec := range opts.publish {
-		port := &types.Port{}
-		if err := port.FromString(spec); err != nil {
+		port, err := types.ParsePort(spec)
+		if err != nil {
 			return nil, err
 		}
 

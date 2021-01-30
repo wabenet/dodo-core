@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 	"runtime"
 
+	api "github.com/dodo-cli/dodo-core/api/v1alpha1"
 	"github.com/dodo-cli/dodo-core/pkg/appconfig"
-	"github.com/dodo-cli/dodo-core/pkg/types"
 	log "github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 )
@@ -37,7 +37,8 @@ func (e PluginError) Error() string {
 
 type Plugin interface {
 	Type() Type
-	Init() (*types.PluginInfo, error)
+	Init() error
+	PluginInfo() (*api.PluginInfo, error)
 }
 
 type Type interface {
@@ -54,13 +55,26 @@ func RegisterPluginTypes(ts ...Type) {
 
 func IncludePlugins(ps ...Plugin) {
 	for _, p := range ps {
-		info, err := p.Init()
-		if err != nil {
+		if err := p.Init(); err != nil {
 			log.L().Debug("error initializing plugin", "error", err)
 			continue
 		}
 
+		info, err := p.PluginInfo()
+		if err != nil {
+			log.L().Debug("plugin does not provide plugin info", "error", err)
+			continue
+		}
+
+		t := p.Type().String()
+
+		if plugins[t] == nil {
+			plugins[t] = map[string]Plugin{}
+		}
+
 		plugins[p.Type().String()][info.Name] = p
+
+		log.L().Debug("loaded plugin", "type", t, "name", info.Name)
 	}
 }
 
@@ -126,9 +140,14 @@ func LoadPlugins() {
 				continue
 			}
 
-			info, err := p.Init()
-			if err != nil {
+			if err := p.Init(); err != nil {
 				logger.Debug("error initializing plugin", "error", err)
+				continue
+			}
+
+			info, err := p.PluginInfo()
+			if err != nil {
+				log.L().Debug("plugin does not provide plugin info", "error", err)
 				continue
 			}
 

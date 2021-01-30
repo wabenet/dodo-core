@@ -17,7 +17,7 @@ test:
 	go test -cover ./...
 
 .PHONY: proto
-proto: pkg/types/core_types.pb.go
+proto: api/v1alpha1/plugin.pb.go api/v1alpha1/backdrop.pb.go api/v1alpha1/configuration.pb.go api/v1alpha1/runtime.pb.go
 
 %.pb.go: %.proto
-	protoc --go_out=plugins=grpc:. --go_opt=module=github.com/dodo-cli/dodo-core $<
+	protoc -I . --go_out=plugins=grpc:. --go_opt=module=github.com/dodo-cli/dodo-core $<
