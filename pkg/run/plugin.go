@@ -15,13 +15,12 @@ type Command struct {
 	cmd *cobra.Command
 }
 
-func (p *Command) Type() plugin.Type {
-	return command.Type
+func New() *Command {
+	return &Command{cmd: NewCommand()}
 }
 
-func (p *Command) Init() error {
-	p.cmd = NewCommand()
-	return nil
+func (p *Command) Type() plugin.Type {
+	return command.Type
 }
 
 func (p *Command) PluginInfo() (*api.PluginInfo, error) {

@@ -10,10 +10,6 @@ type server struct {
 	impl Configuration
 }
 
-func (s *server) Init(_ context.Context, _ *empty.Empty) (*empty.Empty, error) {
-	return &empty.Empty{}, s.impl.Init()
-}
-
 func (s *server) GetPluginInfo(_ context.Context, _ *empty.Empty) (*api.PluginInfo, error) {
 	return s.impl.PluginInfo()
 }

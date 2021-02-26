@@ -17,11 +17,6 @@ func (c *client) Type() plugin.Type {
 	return Type
 }
 
-func (c *client) Init() error {
-	_, err := c.configClient.Init(context.Background(), &empty.Empty{})
-	return err
-}
-
 func (c *client) PluginInfo() (*api.PluginInfo, error) {
 	return c.configClient.GetPluginInfo(context.Background(), &empty.Empty{})
 }

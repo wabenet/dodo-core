@@ -37,7 +37,6 @@ func (e PluginError) Error() string {
 
 type Plugin interface {
 	Type() Type
-	Init() error
 	PluginInfo() (*api.PluginInfo, error)
 }
 
@@ -55,11 +54,6 @@ func RegisterPluginTypes(ts ...Type) {
 
 func IncludePlugins(ps ...Plugin) {
 	for _, p := range ps {
-		if err := p.Init(); err != nil {
-			log.L().Debug("error initializing plugin", "error", err)
-			continue
-		}
-
 		info, err := p.PluginInfo()
 		if err != nil {
 			log.L().Debug("plugin does not provide plugin info", "error", err)
@@ -137,11 +131,6 @@ func LoadPlugins() {
 			p, err := loadGRPCPlugin(path, t.String(), grpcClient)
 			if err != nil {
 				logger.Debug("could not load plugin over grpc", "error", err)
-				continue
-			}
-
-			if err := p.Init(); err != nil {
-				logger.Debug("error initializing plugin", "error", err)
 				continue
 			}
 
