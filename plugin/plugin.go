@@ -9,5 +9,5 @@ import (
 
 func IncludeMe() {
 	dodo.RegisterPluginTypes(command.Type, configuration.Type)
-	dodo.IncludePlugins(&run.Command{})
+	dodo.IncludePlugins(run.New())
 }
