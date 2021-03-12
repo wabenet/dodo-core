@@ -77,7 +77,8 @@ func NewCommand() *cobra.Command {
 
 func (opts *options) createConfig(name string, command []string) (*api.Backdrop, error) {
 	config := &api.Backdrop{
-		Name: name,
+		Name:    name,
+		Runtime: opts.runtime,
 		Entrypoint: &api.Entrypoint{
 			Interactive: opts.interactive,
 			Arguments:   command,

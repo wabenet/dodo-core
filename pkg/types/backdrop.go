@@ -95,6 +95,10 @@ func Merge(target *api.Backdrop, source *api.Backdrop) {
 		target.ImageId = source.ImageId
 	}
 
+	if len(source.Runtime) > 0 {
+		target.Runtime = source.Runtime
+	}
+
 	if source.Entrypoint != nil {
 		if source.Entrypoint.Interactive {
 			target.Entrypoint.Interactive = true
