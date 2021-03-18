@@ -2,6 +2,7 @@ package run
 
 import (
 	api "github.com/dodo-cli/dodo-core/api/v1alpha1"
+	"github.com/dodo-cli/dodo-core/pkg/core"
 	"github.com/dodo-cli/dodo-core/pkg/types"
 	"github.com/spf13/cobra"
 )
@@ -43,7 +44,7 @@ func NewCommand() *cobra.Command {
 				return err
 			}
 
-			return RunContainer(backdrop)
+			return core.RunByName(backdrop)
 		},
 	}
 

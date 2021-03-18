@@ -1,34 +1,17 @@
-package run
+package core
 
 import (
-	"crypto/rand"
-	"encoding/hex"
-	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
 
 	api "github.com/dodo-cli/dodo-core/api/v1alpha1"
-	"github.com/dodo-cli/dodo-core/pkg/plugin"
-	"github.com/dodo-cli/dodo-core/pkg/plugin/configuration"
 	"github.com/dodo-cli/dodo-core/pkg/plugin/runtime"
-	"github.com/dodo-cli/dodo-core/pkg/types"
 	log "github.com/hashicorp/go-hclog"
 	"github.com/moby/term"
 )
 
-func RunContainer(overrides *api.Backdrop) error {
-	config := GetConfig(overrides)
-
-	if len(config.ContainerName) == 0 {
-		id := make([]byte, 8)
-		if _, err := rand.Read(id); err != nil {
-			panic(err)
-		}
-
-		config.ContainerName = fmt.Sprintf("%s-%s", config.Name, hex.EncodeToString(id))
-	}
-
+func RunBackdrop(config *api.Backdrop) error {
 	rt, err := GetRuntime(config.Runtime)
 	if err != nil {
 		return err
@@ -82,47 +65,6 @@ func RunContainer(overrides *api.Backdrop) error {
 	}
 
 	return rt.StreamContainer(containerID, os.Stdin, os.Stdout, height, width)
-}
-
-func GetRuntime(name string) (runtime.ContainerRuntime, error) {
-	for n, p := range plugin.GetPlugins(runtime.Type.String()) {
-		if name != "" && name != n {
-			continue
-		}
-
-		if rt, ok := p.(runtime.ContainerRuntime); ok {
-			return rt, nil
-		}
-	}
-
-	return nil, fmt.Errorf("could not find container runtime: %w", plugin.ErrNoValidPluginFound)
-}
-
-func GetConfig(overrides *api.Backdrop) *api.Backdrop {
-	config := &api.Backdrop{Name: overrides.Name, Entrypoint: &api.Entrypoint{}}
-
-	for _, p := range plugin.GetPlugins(configuration.Type.String()) {
-		info, err := p.PluginInfo()
-		if err != nil {
-			log.L().Warn("could not read plugin info")
-			continue
-		}
-
-		log.L().Debug("Fetching configuration from plugin", "name", info.Name)
-
-		conf, err := p.(configuration.Configuration).GetBackdrop(config.Name)
-		if err != nil {
-			log.L().Warn("could not get config", "error", err)
-			continue
-		}
-
-		types.Merge(config, conf)
-	}
-
-	types.Merge(config, overrides)
-	log.L().Debug("assembled configuration", "backdrop", config)
-
-	return config
 }
 
 func resize(fd uintptr, rt runtime.ContainerRuntime, containerID string) {

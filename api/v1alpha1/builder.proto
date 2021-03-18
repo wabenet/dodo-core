@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package com.github.dodo_cli.dodo_core.api.v1alpha1;
+
+option go_package = "github.com/dodo-cli/dodo-core/api/v1alpha1";
+
+import "google/protobuf/empty.proto";
+import "api/v1alpha1/plugin.proto";
+import "api/v1alpha1/build.proto";
+
+service BuilderPlugin {
+  rpc GetPluginInfo(google.protobuf.Empty) returns (com.github.dodo_cli.dodo_core.api.v1alpha1.PluginInfo);
+
+  rpc CreateImage(CreateImageRequest) returns (CreateImageResponse);
+}
+
+message CreateImageRequest {
+  com.github.dodo_cli.dodo_core.api.v1alpha1.BuildInfo config = 1;
+}
+
+message CreateImageResponse {
+  string image_id = 1;
+}

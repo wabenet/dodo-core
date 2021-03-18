@@ -4,6 +4,8 @@ package com.github.dodo_cli.dodo_core.api.v1alpha1;
 
 option go_package = "github.com/dodo-cli/dodo-core/api/v1alpha1";
 
+import "api/v1alpha1/build.proto";
+
 message Backdrop {
   string name = 1;
   repeated string aliases = 2;
@@ -22,6 +24,8 @@ message Backdrop {
 
   string user = 12;
   string working_dir = 13;
+
+  com.github.dodo_cli.dodo_core.api.v1alpha1.BuildInfo build_info = 14;
 }
 
 message Entrypoint {
