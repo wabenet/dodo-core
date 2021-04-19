@@ -21,7 +21,13 @@ func RunByName(overrides *api.Backdrop) error {
 	}
 
 	if len(config.ImageId) == 0 {
-		imageID, err := BuildByName(config.BuildInfo)
+		for _, dep := range config.BuildInfo.Dependencies {
+			if _, err := BuildByName(&api.BuildInfo{ImageName: dep}); err != nil {
+				return err
+			}
+		}
+
+		imageID, err := BuildImage(config.BuildInfo)
 		if err != nil {
 			return err
 		}

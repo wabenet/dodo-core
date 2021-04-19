@@ -91,8 +91,6 @@ func FindBuildConfig(name string, overrides *api.BuildInfo) (*api.BuildInfo, err
 }
 
 func mergeBackdrop(target *api.Backdrop, source *api.Backdrop) {
-	// TODO: merge build info
-
 	if len(source.Name) > 0 {
 		target.Name = source.Name
 	}
@@ -143,4 +141,52 @@ func mergeBackdrop(target *api.Backdrop, source *api.Backdrop) {
 	if len(source.WorkingDir) > 0 {
 		target.WorkingDir = source.WorkingDir
 	}
+
+	if source.BuildInfo != nil {
+		if target.BuildInfo == nil {
+			target.BuildInfo = source.BuildInfo
+		} else {
+			mergeBuildInfo(target.BuildInfo, source.BuildInfo)
+		}
+	}
+}
+
+func mergeBuildInfo(target *api.BuildInfo, source *api.BuildInfo) {
+	if len(source.Builder) > 0 {
+		target.Builder = source.Builder
+	}
+
+	if len(source.ImageName) > 0 {
+		target.ImageName = source.ImageName
+	}
+
+	if len(source.Context) > 0 {
+		target.Context = source.Context
+	}
+
+	if len(source.Dockerfile) > 0 {
+		target.Dockerfile = source.Dockerfile
+	}
+
+	if len(source.InlineDockerfile) > 0 {
+		target.InlineDockerfile = source.InlineDockerfile
+	}
+
+	target.Arguments = append(target.Arguments, source.Arguments...)
+	target.Secrets = append(target.Secrets, source.Secrets...)
+	target.SshAgents = append(target.SshAgents, source.SshAgents...)
+
+	if source.NoCache {
+		target.NoCache = true
+	}
+
+	if source.ForceRebuild {
+		target.ForceRebuild = true
+	}
+
+	if source.ForcePull {
+		target.ForcePull = true
+	}
+
+	target.Dependencies = append(target.Dependencies, source.Dependencies...)
 }
