@@ -76,14 +76,16 @@ func FindBuildConfig(name string, overrides *api.BuildInfo) (*api.BuildInfo, err
 
 		log.L().Debug("Fetching configuration from plugin", "name", info.Name)
 
-		conf, err := p.(configuration.Configuration).GetBackdrop(name)
+		confs, err := p.(configuration.Configuration).ListBackdrops()
 		if err != nil {
 			log.L().Warn("could not get config", "error", err)
 			continue
 		}
 
-		if conf.BuildInfo != nil && conf.BuildInfo.ImageName == name {
-			return conf.BuildInfo, nil
+		for _, conf := range confs {
+			if conf.BuildInfo != nil && conf.BuildInfo.ImageName == name {
+				return conf.BuildInfo, nil
+			}
 		}
 	}
 
