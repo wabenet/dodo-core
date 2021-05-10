@@ -84,7 +84,11 @@ func FindBuildConfig(name string, overrides *api.BuildInfo) (*api.BuildInfo, err
 
 		for _, conf := range confs {
 			if conf.BuildInfo != nil && conf.BuildInfo.ImageName == name {
-				return conf.BuildInfo, nil
+				config := &api.BuildInfo{}
+				mergeBuildInfo(config, conf.BuildInfo)
+				mergeBuildInfo(config, overrides)
+
+				return config, nil
 			}
 		}
 	}

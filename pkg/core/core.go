@@ -45,7 +45,11 @@ func BuildByName(overrides *api.BuildInfo) (string, error) {
 	}
 
 	for _, dep := range config.Dependencies {
-		if _, err := BuildByName(&api.BuildInfo{ImageName: dep}); err != nil {
+		conf := &api.BuildInfo{}
+		mergeBuildInfo(conf, overrides)
+                conf.ImageName = dep
+
+		if _, err := BuildByName(conf); err != nil {
 			return "", err
 		}
 	}
