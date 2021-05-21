@@ -37,7 +37,10 @@ func NewCommand() *cobra.Command {
 		Long:                  description,
 		DisableFlagsInUseLine: true,
 		SilenceUsage:          true,
-		Args:                  cobra.MinimumNArgs(1),
+		// Because exec results are not really errors
+		// TODO: is there a more elegant way to handle this?
+		SilenceErrors: true,
+		Args:          cobra.MinimumNArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
 			backdrop, err := opts.createConfig(args[0], args[1:])
 			if err != nil {

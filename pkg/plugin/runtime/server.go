@@ -1,30 +1,18 @@
 package runtime
 
 import (
-	"net"
+	"context"
+	"io"
 
 	api "github.com/dodo-cli/dodo-core/api/v1alpha1"
+	"github.com/dodo-cli/dodo-core/pkg/plugin"
 	"github.com/golang/protobuf/ptypes/empty"
-	log "github.com/hashicorp/go-hclog"
-	"golang.org/x/net/context"
+	"golang.org/x/sync/errgroup"
 )
-
-const (
-	streamListenAddress = "127.0.0.1:"
-
-	ErrNoStreamingConnection StreamingError = "no streaming connection established"
-)
-
-type StreamingError string
-
-func (e StreamingError) Error() string {
-	return string(e)
-}
 
 type server struct {
-	impl             ContainerRuntime
-	streamListener   net.Listener
-	streamConnection net.Conn
+	impl  ContainerRuntime
+	stdio *plugin.StdioServer
 }
 
 func (s *server) GetPluginInfo(_ context.Context, _ *empty.Empty) (*api.PluginInfo, error) {
@@ -62,41 +50,38 @@ func (s *server) ResizeContainer(_ context.Context, request *api.ResizeContainer
 }
 
 func (s *server) GetStreamingConnection(_ context.Context, request *api.GetStreamingConnectionRequest) (*api.GetStreamingConnectionResponse, error) {
-	listener, err := net.Listen("tcp", streamListenAddress)
+	stdio, err := plugin.NewStdioServer()
 	if err != nil {
 		return nil, err
 	}
 
-	s.streamListener = listener
+	s.stdio = stdio
 
-	go func() {
-		conn, err := s.streamListener.Accept()
-		if err != nil {
-			log.Default().Error("could not accept client connection", "error", err)
-		}
-
-		s.streamConnection = conn
-	}()
-
-	return &api.GetStreamingConnectionResponse{Url: s.streamListener.Addr().String()}, nil
+	return &api.GetStreamingConnectionResponse{Url: stdio.Endpoint()}, nil
 }
 
 func (s *server) StreamContainer(_ context.Context, request *api.StreamContainerRequest) (*api.StreamContainerResponse, error) {
-	if s.streamConnection == nil {
-		return nil, ErrNoStreamingConnection
-	}
+	inReader, inWriter := io.Pipe()
+	outReader, outWriter := io.Pipe()
+	errReader, errWriter := io.Pipe()
 
-	defer func() {
-		if err := s.streamConnection.Close(); err != nil {
-			log.Default().Error("could not close client connection", "error", err)
-		}
+	eg, _ := errgroup.WithContext(context.Background())
 
-		if err := s.streamListener.Close(); err != nil {
-			log.Default().Error("could not close listener", "error", err)
-		}
-	}()
+	eg.Go(func() error {
+		return s.stdio.Copy(inWriter, outReader, errReader)
+	})
 
-	err := s.impl.StreamContainer(request.ContainerId, s.streamConnection, s.streamConnection, request.Height, request.Width)
+	eg.Go(func() error {
+		defer func() {
+			inWriter.Close()
+			outWriter.Close()
+			errWriter.Close()
+		}()
+
+		return s.impl.StreamContainer(request.ContainerId, inReader, outWriter, errWriter, request.Height, request.Width)
+	})
+
+	err := eg.Wait()
 
 	if result, ok := err.(Result); ok {
 		return &api.StreamContainerResponse{

@@ -1,6 +1,7 @@
 package core
 
 import (
+	"context"
 	"os"
 	"os/signal"
 	"syscall"
@@ -9,6 +10,7 @@ import (
 	"github.com/dodo-cli/dodo-core/pkg/plugin/runtime"
 	log "github.com/hashicorp/go-hclog"
 	"github.com/moby/term"
+	"golang.org/x/sync/errgroup"
 )
 
 func RunBackdrop(config *api.Backdrop) error {
@@ -31,7 +33,12 @@ func RunBackdrop(config *api.Backdrop) error {
 		return err
 	}
 
+	eg, _ := errgroup.WithContext(context.Background())
+
+	// TODO: this part needs cleaning up
+
 	var height, width uint32
+	resizeChannel := make(chan os.Signal, 1)
 
 	fd := os.Stdin.Fd()
 	if term.IsTerminal(fd) {
@@ -54,17 +61,22 @@ func RunBackdrop(config *api.Backdrop) error {
 		height = uint32(ws.Height)
 		width = uint32(ws.Width)
 
-		resizeChannel := make(chan os.Signal, 1)
 		signal.Notify(resizeChannel, syscall.SIGWINCH)
 
-		go func() {
+		eg.Go(func() error {
 			for range resizeChannel {
 				resize(fd, rt, containerID)
 			}
-		}()
+			return nil
+		})
 	}
 
-	return rt.StreamContainer(containerID, os.Stdin, os.Stdout, height, width)
+	eg.Go(func() error {
+		defer close(resizeChannel)
+		return rt.StreamContainer(containerID, os.Stdin, os.Stdout, os.Stderr, height, width)
+	})
+
+	return eg.Wait()
 }
 
 func resize(fd uintptr, rt runtime.ContainerRuntime, containerID string) {

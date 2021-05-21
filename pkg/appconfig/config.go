@@ -56,10 +56,38 @@ func GetLoggerOptions() *log.LoggerOptions {
 		}
 	}
 
+	output = os.Stderr
+
 	return &log.LoggerOptions{
 		Name:       "dodo",
 		Level:      level,
 		Output:     output,
+		JSONFormat: true,
+	}
+}
+
+func GetPluginLoggerOptions() *log.LoggerOptions {
+	level := log.Info
+
+	if levelName := os.Getenv("DODO_LOG_LEVEL"); levelName != "" {
+		switch levelName {
+		case "ERROR":
+			level = log.Error
+		case "WARN":
+			level = log.Warn
+		case "INFO":
+			level = log.Info
+		case "DEBUG":
+			level = log.Debug
+		case "TRACE":
+			level = log.Trace
+		}
+	}
+
+	return &log.LoggerOptions{
+		Name:       "dodo",
+		Level:      level,
+		Output:     os.Stderr,
 		JSONFormat: true,
 	}
 }

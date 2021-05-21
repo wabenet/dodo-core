@@ -73,6 +73,8 @@ func IncludePlugins(ps ...Plugin) {
 }
 
 func ServePlugins(plugins ...Plugin) error {
+	log.SetDefault(log.New(appconfig.GetPluginLoggerOptions()))
+
 	pluginMap := map[string]plugin.Plugin{}
 
 	for _, p := range plugins {
@@ -122,27 +124,23 @@ func LoadPlugins() {
 		}
 
 		for _, t := range pluginTypes {
+			logger.Debug("attempt loading plugin", "type", t.String())
+
 			grpcClient, err := t.GRPCClient()
 			if err != nil {
 				logger.Debug("error loading plugin", "error", err)
+
 				continue
 			}
 
 			p, err := loadGRPCPlugin(path, t.String(), grpcClient)
 			if err != nil {
 				logger.Debug("could not load plugin over grpc", "error", err)
+
 				continue
 			}
 
-			info, err := p.PluginInfo()
-			if err != nil {
-				log.L().Debug("plugin does not provide plugin info", "error", err)
-				continue
-			}
-
-			logger.Debug("initialized plugin", "type", t.String(), "name", info.Name)
-
-			plugins[t.String()][info.Name] = p
+			IncludePlugins(p)
 		}
 	}
 }
@@ -153,7 +151,7 @@ func loadGRPCPlugin(path string, pluginType string, grpcPlugin plugin.Plugin) (P
 		Plugins:          map[string]plugin.Plugin{pluginType: grpcPlugin},
 		Cmd:              exec.Command(path),
 		AllowedProtocols: []plugin.Protocol{plugin.ProtocolNetRPC, plugin.ProtocolGRPC},
-		Logger:           log.Default(),
+		Logger:           log.New(appconfig.GetLoggerOptions()),
 		HandshakeConfig: plugin.HandshakeConfig{
 			ProtocolVersion:  ProtocolVersion,
 			MagicCookieKey:   MagicCookieKey,
@@ -163,20 +161,25 @@ func loadGRPCPlugin(path string, pluginType string, grpcPlugin plugin.Plugin) (P
 
 	conn, err := client.Client()
 	if err != nil {
+		client.Kill()
+
 		return nil, fmt.Errorf("error getting plugin client: %w", err)
 	}
 
 	raw, err := conn.Dispense(pluginType)
 	if err != nil {
+		client.Kill()
+
 		return nil, fmt.Errorf("error dispensing plugin: %w", err)
 	}
 
-	p, ok := raw.(Plugin)
-	if !ok {
-		return nil, ErrPluginInvalid
+	if p, ok := raw.(Plugin); ok {
+		return p, nil
 	}
 
-	return p, nil
+	client.Kill()
+
+	return nil, ErrPluginInvalid
 }
 
 func UnloadPlugins() {

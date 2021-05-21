@@ -1,14 +1,13 @@
 package runtime
 
 import (
+	"context"
 	"io"
-	"net"
 
 	api "github.com/dodo-cli/dodo-core/api/v1alpha1"
 	"github.com/dodo-cli/dodo-core/pkg/plugin"
 	"github.com/golang/protobuf/ptypes/empty"
-	log "github.com/hashicorp/go-hclog"
-	"golang.org/x/net/context"
+	"golang.org/x/sync/errgroup"
 )
 
 var _ ContainerRuntime = &client{}
@@ -66,7 +65,7 @@ func (c *client) ResizeContainer(id string, height uint32, width uint32) error {
 	return err
 }
 
-func (c *client) StreamContainer(id string, r io.Reader, w io.Writer, height uint32, width uint32) error {
+func (c *client) StreamContainer(id string, stdin io.Reader, stdout io.Writer, stderr io.Writer, height uint32, width uint32) error {
 	ctx := context.Background()
 
 	connInfo, err := c.runtimeClient.GetStreamingConnection(ctx, &api.GetStreamingConnectionRequest{ContainerId: id})
@@ -74,45 +73,28 @@ func (c *client) StreamContainer(id string, r io.Reader, w io.Writer, height uin
 		return err
 	}
 
-	addr, err := net.ResolveTCPAddr("tcp", connInfo.Url)
+	stdio, err := plugin.NewStdioClient(connInfo.Url)
 	if err != nil {
 		return err
 	}
 
-	conn, err := net.DialTCP("tcp", nil, addr)
-	if err != nil {
-		return err
-	}
+	eg, _ := errgroup.WithContext(ctx)
 
-	defer func() {
-		if err := conn.CloseWrite(); err != nil {
-			log.L().Warn("could not close streaming connection", "error", err)
-		}
-	}()
+	eg.Go(func() error {
+		return stdio.Copy(stdin, stdout, stderr)
+	})
 
-	go func() {
-		if _, err := io.Copy(w, conn); err != nil {
-			log.L().Warn("error reading from streaming connection", "error", err)
+	eg.Go(func() error {
+		result, err := c.runtimeClient.StreamContainer(ctx, &api.StreamContainerRequest{ContainerId: id, Height: height, Width: width})
+		if err != nil {
+			return err
 		}
 
-		if err := conn.CloseWrite(); err != nil {
-			log.L().Warn("could not close streaming connection", "error", err)
+		return &Result{
+			ExitCode: result.ExitCode,
+			Message:  result.Message,
 		}
-	}()
+	})
 
-	go func() {
-		if _, err := io.Copy(conn, r); err != nil {
-			log.L().Warn("error writing to streaming connection", "error", err)
-		}
-	}()
-
-	result, err := c.runtimeClient.StreamContainer(ctx, &api.StreamContainerRequest{ContainerId: id, Height: height, Width: width})
-	if err != nil {
-		return err
-	}
-
-	return &Result{
-		ExitCode: result.ExitCode,
-		Message:  result.Message,
-	}
+	return eg.Wait()
 }
