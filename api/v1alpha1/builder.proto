@@ -12,10 +12,13 @@ service BuilderPlugin {
   rpc GetPluginInfo(google.protobuf.Empty) returns (com.github.dodo_cli.dodo_core.api.v1alpha1.PluginInfo);
 
   rpc CreateImage(CreateImageRequest) returns (CreateImageResponse);
+  rpc GetStreamingConnection(com.github.dodo_cli.dodo_core.api.v1alpha1.GetStreamingConnectionRequest) returns (com.github.dodo_cli.dodo_core.api.v1alpha1.GetStreamingConnectionResponse);
 }
 
 message CreateImageRequest {
   com.github.dodo_cli.dodo_core.api.v1alpha1.BuildInfo config = 1;
+  uint32 height = 2;
+  uint32 width = 3;
 }
 
 message CreateImageResponse {

@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	ErrNoStreamingConnection StdioError = "no streaming connection established"
+	ErrNoStreamingConnection PluginError = "no streaming connection established"
 
 	stdout muxStream = iota
 	stderr
@@ -27,12 +27,6 @@ const (
 	fdIndex    = 0
 	sizeIndex  = 4
 )
-
-type StdioError string
-
-func (e StdioError) Error() string {
-	return string(e)
-}
 
 type muxStream byte
 

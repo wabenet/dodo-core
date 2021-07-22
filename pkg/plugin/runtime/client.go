@@ -2,7 +2,6 @@ package runtime
 
 import (
 	"context"
-	"io"
 
 	api "github.com/dodo-cli/dodo-core/api/v1alpha1"
 	"github.com/dodo-cli/dodo-core/pkg/plugin"
@@ -65,10 +64,10 @@ func (c *client) ResizeContainer(id string, height uint32, width uint32) error {
 	return err
 }
 
-func (c *client) StreamContainer(id string, stdin io.Reader, stdout io.Writer, stderr io.Writer, height uint32, width uint32) error {
+func (c *client) StreamContainer(id string, stream *plugin.StreamConfig) error {
 	ctx := context.Background()
 
-	connInfo, err := c.runtimeClient.GetStreamingConnection(ctx, &api.GetStreamingConnectionRequest{ContainerId: id})
+	connInfo, err := c.runtimeClient.GetStreamingConnection(ctx, &api.GetStreamingConnectionRequest{})
 	if err != nil {
 		return err
 	}
@@ -81,11 +80,11 @@ func (c *client) StreamContainer(id string, stdin io.Reader, stdout io.Writer, s
 	eg, _ := errgroup.WithContext(ctx)
 
 	eg.Go(func() error {
-		return stdio.Copy(stdin, stdout, stderr)
+		return stdio.Copy(stream.Stdin, stream.Stdout, stream.Stderr)
 	})
 
 	eg.Go(func() error {
-		result, err := c.runtimeClient.StreamContainer(ctx, &api.StreamContainerRequest{ContainerId: id, Height: height, Width: width})
+		result, err := c.runtimeClient.StreamContainer(ctx, &api.StreamContainerRequest{ContainerId: id, Height: stream.TerminalHeight, Width: stream.TerminalWidth})
 		if err != nil {
 			return err
 		}

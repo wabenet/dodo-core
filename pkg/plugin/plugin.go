@@ -2,6 +2,7 @@ package plugin
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -44,6 +45,14 @@ type Type interface {
 	String() string
 	GRPCClient() (plugin.Plugin, error)
 	GRPCServer(Plugin) (plugin.Plugin, error)
+}
+
+type StreamConfig struct {
+	Stdin          io.Reader
+	Stdout         io.Writer
+	Stderr         io.Writer
+	TerminalHeight uint32
+	TerminalWidth  uint32
 }
 
 func RegisterPluginTypes(ts ...Type) {

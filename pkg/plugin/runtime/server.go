@@ -49,7 +49,7 @@ func (s *server) ResizeContainer(_ context.Context, request *api.ResizeContainer
 	return &empty.Empty{}, s.impl.ResizeContainer(request.ContainerId, request.Height, request.Width)
 }
 
-func (s *server) GetStreamingConnection(_ context.Context, request *api.GetStreamingConnectionRequest) (*api.GetStreamingConnectionResponse, error) {
+func (s *server) GetStreamingConnection(_ context.Context, _ *api.GetStreamingConnectionRequest) (*api.GetStreamingConnectionResponse, error) {
 	stdio, err := plugin.NewStdioServer()
 	if err != nil {
 		return nil, err
@@ -78,7 +78,13 @@ func (s *server) StreamContainer(_ context.Context, request *api.StreamContainer
 			errWriter.Close()
 		}()
 
-		return s.impl.StreamContainer(request.ContainerId, inReader, outWriter, errWriter, request.Height, request.Width)
+		return s.impl.StreamContainer(request.ContainerId, &plugin.StreamConfig{
+			Stdin:          inReader,
+			Stdout:         outWriter,
+			Stderr:         errWriter,
+			TerminalHeight: request.Height,
+			TerminalWidth:  request.Width,
+		})
 	})
 
 	err := eg.Wait()

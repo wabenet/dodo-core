@@ -7,6 +7,7 @@ import (
 	"syscall"
 
 	api "github.com/dodo-cli/dodo-core/api/v1alpha1"
+	"github.com/dodo-cli/dodo-core/pkg/plugin"
 	"github.com/dodo-cli/dodo-core/pkg/plugin/runtime"
 	log "github.com/hashicorp/go-hclog"
 	"github.com/moby/term"
@@ -73,7 +74,13 @@ func RunBackdrop(config *api.Backdrop) error {
 
 	eg.Go(func() error {
 		defer close(resizeChannel)
-		return rt.StreamContainer(containerID, os.Stdin, os.Stdout, os.Stderr, height, width)
+		return rt.StreamContainer(containerID, &plugin.StreamConfig{
+			Stdin:          os.Stdin,
+			Stdout:         os.Stdout,
+			Stderr:         os.Stderr,
+			TerminalHeight: height,
+			TerminalWidth:  width,
+		})
 	})
 
 	return eg.Wait()

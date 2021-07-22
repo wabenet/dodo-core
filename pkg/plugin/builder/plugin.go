@@ -32,7 +32,7 @@ func (t pluginType) GRPCServer(p dodo.Plugin) (plugin.Plugin, error) {
 type ImageBuilder interface {
 	dodo.Plugin
 
-	CreateImage(*api.BuildInfo) (string, error)
+	CreateImage(*api.BuildInfo, *dodo.StreamConfig) (string, error)
 }
 
 type grpcPlugin struct {

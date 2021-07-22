@@ -8,3 +8,10 @@ message PluginInfo {
   string name = 1;
   string version = 2;
 }
+
+message GetStreamingConnectionRequest {
+}
+
+message GetStreamingConnectionResponse {
+  string url = 1;
+}

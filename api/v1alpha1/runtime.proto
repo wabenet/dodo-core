@@ -18,7 +18,7 @@ service RuntimePlugin {
   rpc ResizeContainer(ResizeContainerRequest) returns (google.protobuf.Empty);
 
   rpc GetImage(GetImageRequest) returns (GetImageResponse);
-  rpc GetStreamingConnection(GetStreamingConnectionRequest) returns (GetStreamingConnectionResponse);
+  rpc GetStreamingConnection(com.github.dodo_cli.dodo_core.api.v1alpha1.GetStreamingConnectionRequest) returns (com.github.dodo_cli.dodo_core.api.v1alpha1.GetStreamingConnectionResponse);
 }
 
 message CreateContainerResponse {
@@ -62,12 +62,4 @@ message StreamContainerResponse {
 
 message GetImageResponse {
   string image_id = 1;
-}
-
-message GetStreamingConnectionRequest {
-  string container_id = 1;
-}
-
-message GetStreamingConnectionResponse {
-  string url = 1;
 }

@@ -1,8 +1,6 @@
 package runtime
 
 import (
-	"io"
-
 	api "github.com/dodo-cli/dodo-core/api/v1alpha1"
 	dodo "github.com/dodo-cli/dodo-core/pkg/plugin"
 	"github.com/hashicorp/go-plugin"
@@ -39,7 +37,7 @@ type ContainerRuntime interface {
 	StartContainer(string) error
 	DeleteContainer(string) error
 	ResizeContainer(string, uint32, uint32) error
-	StreamContainer(string, io.Reader, io.Writer, io.Writer, uint32, uint32) error
+	StreamContainer(string, *dodo.StreamConfig) error
 }
 
 type Result struct {
