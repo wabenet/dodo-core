@@ -56,8 +56,6 @@ func GetLoggerOptions() *log.LoggerOptions {
 		}
 	}
 
-	output = os.Stderr
-
 	return &log.LoggerOptions{
 		Name:       "dodo",
 		Level:      level,
