@@ -3,7 +3,7 @@ package builder
 import (
 	"context"
 
-	api "github.com/dodo-cli/dodo-core/api/v1alpha1"
+	api "github.com/dodo-cli/dodo-core/api/v1alpha2"
 	"github.com/dodo-cli/dodo-core/pkg/plugin"
 	"github.com/golang/protobuf/ptypes/empty"
 	"golang.org/x/sync/errgroup"

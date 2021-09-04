@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	api "github.com/dodo-cli/dodo-core/api/v1alpha1"
+	api "github.com/dodo-cli/dodo-core/api/v1alpha2"
 	"github.com/dodo-cli/dodo-core/pkg/decoder"
 )
 

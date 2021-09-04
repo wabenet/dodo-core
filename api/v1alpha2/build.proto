@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package com.github.dodo_cli.dodo_core.api.v1alpha2;
+
+option go_package = "github.com/dodo-cli/dodo-core/api/v1alpha2";
+
+message BuildInfo {
+  string builder = 1;
+
+  string image_name = 2;
+  string context = 3;
+  string dockerfile = 4;
+  repeated string inline_dockerfile = 5;
+
+  repeated Argument arguments = 6;
+  repeated Secret secrets = 7;
+  repeated SshAgent ssh_agents = 8;
+
+  bool no_cache = 9;
+  bool force_rebuild = 10;
+  bool force_pull = 11;
+
+  repeated string dependencies = 12;
+}
+
+message Argument {
+  string key = 1;
+  string value = 2;
+}
+
+message Secret {
+  string id = 1;
+  string path = 2;
+}
+
+message SshAgent {
+  string id = 1;
+  string identity_file = 2;
+}

@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"runtime"
 
-	api "github.com/dodo-cli/dodo-core/api/v1alpha1"
+	api "github.com/dodo-cli/dodo-core/api/v1alpha2"
 	"github.com/dodo-cli/dodo-core/pkg/appconfig"
 	log "github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"

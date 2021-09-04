@@ -3,7 +3,7 @@ package core
 import (
 	"os"
 
-	api "github.com/dodo-cli/dodo-core/api/v1alpha1"
+	api "github.com/dodo-cli/dodo-core/api/v1alpha2"
 	"github.com/dodo-cli/dodo-core/pkg/plugin"
 	log "github.com/hashicorp/go-hclog"
 	"github.com/moby/term"
