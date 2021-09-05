@@ -1,47 +1,12 @@
 package types
 
 import (
-	"fmt"
 	"reflect"
-	"strings"
 
 	api "github.com/dodo-cli/dodo-core/api/v1alpha2"
+	"github.com/dodo-cli/dodo-core/pkg/appconfig"
 	"github.com/dodo-cli/dodo-core/pkg/decoder"
 )
-
-const ErrPortFormat FormatError = "invalid publish format"
-
-func ParsePort(spec string) (*api.Port, error) {
-	port := &api.Port{}
-
-	switch values := strings.SplitN(spec, ":", 3); len(values) {
-	case 0:
-		return nil, fmt.Errorf("%s: %w", spec, ErrPortFormat)
-	case 1:
-		port.Target = values[0]
-	case 2:
-		port.Published = values[0]
-		port.Target = values[1]
-	case 3:
-		port.HostIp = values[0]
-		port.Published = values[1]
-		port.Target = values[2]
-	default:
-		return nil, fmt.Errorf("%s: %w", spec, ErrPortFormat)
-	}
-
-	switch values := strings.SplitN(port.Target, "/", 2); len(values) {
-	case 1:
-		port.Target = values[0]
-	case 2:
-		port.Target = values[0]
-		port.Protocol = values[1]
-	default:
-		return nil, fmt.Errorf("%s: %w", spec, ErrPortFormat)
-	}
-
-	return port, nil
-}
 
 func NewPort() decoder.Producer {
 	return func() (interface{}, decoder.Decoding) {
@@ -64,7 +29,7 @@ func DecodePort(target interface{}) decoder.Decoding {
 		reflect.String: func(d *decoder.Decoder, config interface{}) {
 			var decoded string
 			decoder.String(&decoded)(d, config)
-			if p, err := ParsePort(decoded); err != nil {
+			if p, err := appconfig.ParsePort(decoded); err != nil {
 				d.Error(err)
 			} else {
 				port.Target = p.Target

@@ -1,29 +1,12 @@
 package types
 
 import (
-	"fmt"
 	"reflect"
-	"strings"
 
 	api "github.com/dodo-cli/dodo-core/api/v1alpha2"
+	"github.com/dodo-cli/dodo-core/pkg/appconfig"
 	"github.com/dodo-cli/dodo-core/pkg/decoder"
 )
-
-const ErrSSHAgentFormat FormatError = "invalid ssh agent format"
-
-func ParseSSHAgent(spec string) (*api.SshAgent, error) {
-	agent := &api.SshAgent{}
-
-	switch values := strings.SplitN(spec, "=", 2); len(values) {
-	case 2:
-		agent.Id = values[0]
-		agent.IdentityFile = values[1]
-	default:
-		return nil, fmt.Errorf("%s: %w", spec, ErrSSHAgentFormat)
-	}
-
-	return agent, nil
-}
 
 func NewSSHAgent() decoder.Producer {
 	return func() (interface{}, decoder.Decoding) {
@@ -46,7 +29,7 @@ func DecodeSSHAgent(target interface{}) decoder.Decoding {
 
 			decoder.String(&decoded)(d, config)
 
-			if a, err := ParseSSHAgent(decoded); err != nil {
+			if a, err := appconfig.ParseSSHAgent(decoded); err != nil {
 				d.Error(err)
 			} else {
 				agent.Id = a.Id

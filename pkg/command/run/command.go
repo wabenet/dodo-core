@@ -2,8 +2,8 @@ package run
 
 import (
 	api "github.com/dodo-cli/dodo-core/api/v1alpha2"
+	"github.com/dodo-cli/dodo-core/pkg/appconfig"
 	"github.com/dodo-cli/dodo-core/pkg/core"
-	"github.com/dodo-cli/dodo-core/pkg/types"
 	"github.com/spf13/cobra"
 )
 
@@ -92,7 +92,7 @@ func (opts *options) createConfig(name string, command []string) (*api.Backdrop,
 	}
 
 	for _, spec := range opts.volumes {
-		vol, err := types.ParseVolume(spec)
+		vol, err := appconfig.ParseVolume(spec)
 		if err != nil {
 			return nil, err
 		}
@@ -101,7 +101,7 @@ func (opts *options) createConfig(name string, command []string) (*api.Backdrop,
 	}
 
 	for _, spec := range opts.environment {
-		env, err := types.ParseEnvironment(spec)
+		env, err := appconfig.ParseEnvironment(spec)
 		if err != nil {
 			return nil, err
 		}
@@ -110,7 +110,7 @@ func (opts *options) createConfig(name string, command []string) (*api.Backdrop,
 	}
 
 	for _, spec := range opts.publish {
-		port, err := types.ParsePort(spec)
+		port, err := appconfig.ParsePort(spec)
 		if err != nil {
 			return nil, err
 		}
