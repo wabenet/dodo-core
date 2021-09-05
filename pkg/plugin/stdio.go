@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/binary"
+	"errors"
 	"fmt"
 	"io"
 	"net"
@@ -215,7 +216,7 @@ func (c *MuxCopier) copyFrom(src io.Reader, stream muxStream) error {
 			}
 		}
 
-		if readErr == io.EOF {
+		if errors.Is(readErr, io.EOF) {
 			return nil
 		}
 
@@ -228,6 +229,7 @@ func (c *MuxCopier) copyFrom(src io.Reader, stream muxStream) error {
 func (c *MuxCopier) writeHeader(w io.Writer, stream muxStream, size int) (int, error) {
 	header := [headerSize]byte{fdIndex: byte(stream)}
 	binary.BigEndian.PutUint32(header[sizeIndex:], uint32(size))
+
 	return w.Write(header[:])
 }
 
@@ -253,7 +255,7 @@ func NewDemuxCopier(src io.Reader, dstOut io.Writer, dstErr io.Writer) *DemuxCop
 func (c *DemuxCopier) Copy() error {
 	for {
 		out, size, err := c.readHeader()
-		if err == io.EOF {
+		if errors.Is(err, io.EOF) {
 			return nil
 		} else if err != nil {
 			return err

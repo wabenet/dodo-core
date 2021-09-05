@@ -2,6 +2,7 @@ package builder
 
 import (
 	"context"
+	"fmt"
 	"io"
 
 	api "github.com/dodo-cli/dodo-core/api/v1alpha2"
@@ -22,7 +23,7 @@ func (s *server) GetPluginInfo(_ context.Context, _ *empty.Empty) (*api.PluginIn
 func (s *server) GetStreamingConnection(_ context.Context, _ *api.GetStreamingConnectionRequest) (*api.GetStreamingConnectionResponse, error) {
 	stdio, err := plugin.NewStdioServer()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("could not get stdio server: %w", err)
 	}
 
 	s.stdio = stdio
@@ -59,17 +60,18 @@ func (s *server) CreateImage(_ context.Context, request *api.CreateImageRequest)
 		})
 
 		if err != nil {
-			return err
+			return fmt.Errorf("could not build image: %w", err)
 		}
 
 		resp.ImageId = imageID
+
 		return nil
 	})
 
 	err := eg.Wait()
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error during image build: %w", err)
 	}
 
 	return resp, nil

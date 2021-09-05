@@ -1,4 +1,4 @@
-package plugin
+package plugin_test
 
 import (
 	"bytes"
@@ -6,6 +6,7 @@ import (
 	"io"
 	"testing"
 
+	"github.com/dodo-cli/dodo-core/pkg/plugin"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/sync/errgroup"
 )
@@ -19,10 +20,10 @@ const (
 func TestStdio(t *testing.T) {
 	t.Parallel()
 
-	server, err := NewStdioServer()
+	server, err := plugin.NewStdioServer()
 	assert.Nil(t, err)
 
-	client, err := NewStdioClient(server.Endpoint())
+	client, err := plugin.NewStdioClient(server.Endpoint())
 	assert.Nil(t, err)
 
 	stdin := new(bytes.Buffer)
@@ -58,10 +59,10 @@ func TestStdio(t *testing.T) {
 func TestOutputOnly(t *testing.T) {
 	t.Parallel()
 
-	server, err := NewStdioServer()
+	server, err := plugin.NewStdioServer()
 	assert.Nil(t, err)
 
-	client, err := NewStdioClient(server.Endpoint())
+	client, err := plugin.NewStdioClient(server.Endpoint())
 	assert.Nil(t, err)
 
 	stdin := new(bytes.Buffer)
@@ -101,13 +102,13 @@ func TestMuxDemux(t *testing.T) {
 	stdout := new(bytes.Buffer)
 	stderr := new(bytes.Buffer)
 
-	muxer := NewMuxCopier(
+	muxer := plugin.NewMuxCopier(
 		bytes.NewBuffer([]byte(outMessage)),
 		bytes.NewBuffer([]byte(errMessage)),
 		writer,
 	)
 
-	demuxer := NewDemuxCopier(
+	demuxer := plugin.NewDemuxCopier(
 		reader,
 		stdout,
 		stderr,

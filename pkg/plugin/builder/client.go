@@ -2,6 +2,7 @@ package builder
 
 import (
 	"context"
+	"fmt"
 
 	api "github.com/dodo-cli/dodo-core/api/v1alpha2"
 	"github.com/dodo-cli/dodo-core/pkg/plugin"
@@ -25,16 +26,16 @@ func (c *client) PluginInfo() (*api.PluginInfo, error) {
 
 func (c *client) CreateImage(config *api.BuildInfo, stream *plugin.StreamConfig) (string, error) {
 	ctx := context.Background()
-	imageId := ""
+	imageID := ""
 
 	connInfo, err := c.builderClient.GetStreamingConnection(ctx, &api.GetStreamingConnectionRequest{})
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("could not get streaming connection: %w", err)
 	}
 
 	stdio, err := plugin.NewStdioClient(connInfo.Url)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("could not get stdio client: %w", err)
 	}
 
 	eg, _ := errgroup.WithContext(ctx)
@@ -46,12 +47,13 @@ func (c *client) CreateImage(config *api.BuildInfo, stream *plugin.StreamConfig)
 	eg.Go(func() error {
 		result, err := c.builderClient.CreateImage(ctx, &api.CreateImageRequest{Config: config, Height: stream.TerminalHeight, Width: stream.TerminalWidth})
 		if err != nil {
-			return err
+			return fmt.Errorf("could not build image: %w", err)
 		}
 
-		imageId = result.ImageId
+		imageID = result.ImageId
+
 		return nil
 	})
 
-	return imageId, eg.Wait()
+	return imageID, eg.Wait()
 }

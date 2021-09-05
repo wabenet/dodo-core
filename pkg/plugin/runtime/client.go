@@ -2,6 +2,7 @@ package runtime
 
 import (
 	"context"
+	"fmt"
 
 	api "github.com/dodo-cli/dodo-core/api/v1alpha2"
 	"github.com/dodo-cli/dodo-core/pkg/plugin"
@@ -26,7 +27,7 @@ func (c *client) PluginInfo() (*api.PluginInfo, error) {
 func (c *client) ResolveImage(spec string) (string, error) {
 	img, err := c.runtimeClient.GetImage(context.Background(), &api.GetImageRequest{ImageSpec: spec})
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("could not resolve image: %w", err)
 	}
 
 	return img.ImageId, nil
@@ -39,7 +40,7 @@ func (c *client) CreateContainer(config *api.Backdrop, tty bool, stdio bool) (st
 		Stdio:  stdio,
 	})
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("could not create container: %w", err)
 	}
 
 	return resp.ContainerId, nil
@@ -47,12 +48,14 @@ func (c *client) CreateContainer(config *api.Backdrop, tty bool, stdio bool) (st
 
 func (c *client) StartContainer(id string) error {
 	_, err := c.runtimeClient.StartContainer(context.Background(), &api.StartContainerRequest{ContainerId: id})
-	return err
+
+	return fmt.Errorf("could not start container: %w", err)
 }
 
 func (c *client) DeleteContainer(id string) error {
 	_, err := c.runtimeClient.DeleteContainer(context.Background(), &api.DeleteContainerRequest{ContainerId: id})
-	return err
+
+	return fmt.Errorf("could not delete container: %w", err)
 }
 
 func (c *client) ResizeContainer(id string, height uint32, width uint32) error {
@@ -61,7 +64,7 @@ func (c *client) ResizeContainer(id string, height uint32, width uint32) error {
 		&api.ResizeContainerRequest{ContainerId: id, Height: height, Width: width},
 	)
 
-	return err
+	return fmt.Errorf("could not resize container: %w", err)
 }
 
 func (c *client) StreamContainer(id string, stream *plugin.StreamConfig) error {
@@ -69,12 +72,12 @@ func (c *client) StreamContainer(id string, stream *plugin.StreamConfig) error {
 
 	connInfo, err := c.runtimeClient.GetStreamingConnection(ctx, &api.GetStreamingConnectionRequest{})
 	if err != nil {
-		return err
+		return fmt.Errorf("could not get streaming connection: %w", err)
 	}
 
 	stdio, err := plugin.NewStdioClient(connInfo.Url)
 	if err != nil {
-		return err
+		return fmt.Errorf("could not get stdio server: %w", err)
 	}
 
 	eg, _ := errgroup.WithContext(ctx)
@@ -86,7 +89,7 @@ func (c *client) StreamContainer(id string, stream *plugin.StreamConfig) error {
 	eg.Go(func() error {
 		result, err := c.runtimeClient.StreamContainer(ctx, &api.StreamContainerRequest{ContainerId: id, Height: stream.TerminalHeight, Width: stream.TerminalWidth})
 		if err != nil {
-			return err
+			return fmt.Errorf("could not stream container: %w", err)
 		}
 
 		return &Result{

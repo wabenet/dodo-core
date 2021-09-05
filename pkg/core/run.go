@@ -2,6 +2,7 @@ package core
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -34,18 +35,15 @@ func RunBackdrop(config *api.Backdrop) error {
 		return err
 	}
 
-	eg, _ := errgroup.WithContext(context.Background())
-
-	// TODO: this part needs cleaning up
-
 	var height, width uint32
+
+	eg, _ := errgroup.WithContext(context.Background())
 	resizeChannel := make(chan os.Signal, 1)
 
-	fd := os.Stdin.Fd()
-	if term.IsTerminal(fd) {
+	if fd := os.Stdin.Fd(); term.IsTerminal(fd) {
 		state, err := term.SetRawTerminal(fd)
 		if err != nil {
-			return err
+			return fmt.Errorf("could not set raw terminal: %w", err)
 		}
 
 		defer func() {
@@ -56,7 +54,7 @@ func RunBackdrop(config *api.Backdrop) error {
 
 		ws, err := term.GetWinsize(fd)
 		if err != nil {
-			return err
+			return fmt.Errorf("could not get terminal size: %w", err)
 		}
 
 		height = uint32(ws.Height)
@@ -68,12 +66,14 @@ func RunBackdrop(config *api.Backdrop) error {
 			for range resizeChannel {
 				resize(fd, rt, containerID)
 			}
+
 			return nil
 		})
 	}
 
 	eg.Go(func() error {
 		defer close(resizeChannel)
+
 		return rt.StreamContainer(containerID, &plugin.StreamConfig{
 			Stdin:          os.Stdin,
 			Stdout:         os.Stdout,

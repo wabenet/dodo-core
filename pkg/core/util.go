@@ -19,6 +19,7 @@ func GetRuntime(name string) (runtime.ContainerRuntime, error) {
 
 		if rt, ok := p.(runtime.ContainerRuntime); ok {
 			log.L().Info("using runtime", "name", n)
+
 			return rt, nil
 		}
 	}
@@ -34,6 +35,7 @@ func GetBuilder(name string) (builder.ImageBuilder, error) {
 
 		if rt, ok := p.(builder.ImageBuilder); ok {
 			log.L().Info("using builder", "name", n)
+
 			return rt, nil
 		}
 	}
@@ -48,6 +50,7 @@ func AssembleBackdropConfig(name string, overrides *api.Backdrop) *api.Backdrop 
 		info, err := p.PluginInfo()
 		if err != nil {
 			log.L().Warn("could not read plugin info")
+
 			continue
 		}
 
@@ -56,6 +59,7 @@ func AssembleBackdropConfig(name string, overrides *api.Backdrop) *api.Backdrop 
 		conf, err := p.(configuration.Configuration).GetBackdrop(name)
 		if err != nil {
 			log.L().Warn("could not get config", "error", err)
+
 			continue
 		}
 
@@ -73,6 +77,7 @@ func FindBuildConfig(name string, overrides *api.BuildInfo) (*api.BuildInfo, err
 		info, err := p.PluginInfo()
 		if err != nil {
 			log.L().Warn("could not read plugin info")
+
 			continue
 		}
 
@@ -81,6 +86,7 @@ func FindBuildConfig(name string, overrides *api.BuildInfo) (*api.BuildInfo, err
 		confs, err := p.(configuration.Configuration).ListBackdrops()
 		if err != nil {
 			log.L().Warn("could not get config", "error", err)
+
 			continue
 		}
 

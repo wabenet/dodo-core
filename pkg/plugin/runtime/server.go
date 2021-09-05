@@ -2,6 +2,8 @@ package runtime
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"io"
 
 	api "github.com/dodo-cli/dodo-core/api/v1alpha2"
@@ -22,7 +24,7 @@ func (s *server) GetPluginInfo(_ context.Context, _ *empty.Empty) (*api.PluginIn
 func (s *server) GetImage(_ context.Context, request *api.GetImageRequest) (*api.GetImageResponse, error) {
 	id, err := s.impl.ResolveImage(request.ImageSpec)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("could not resolve image: %w", err)
 	}
 
 	return &api.GetImageResponse{ImageId: id}, nil
@@ -31,7 +33,7 @@ func (s *server) GetImage(_ context.Context, request *api.GetImageRequest) (*api
 func (s *server) CreateContainer(_ context.Context, config *api.CreateContainerRequest) (*api.CreateContainerResponse, error) {
 	id, err := s.impl.CreateContainer(config.Config, config.Tty, config.Stdio)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("could not create container: %w", err)
 	}
 
 	return &api.CreateContainerResponse{ContainerId: id}, nil
@@ -52,7 +54,7 @@ func (s *server) ResizeContainer(_ context.Context, request *api.ResizeContainer
 func (s *server) GetStreamingConnection(_ context.Context, _ *api.GetStreamingConnectionRequest) (*api.GetStreamingConnectionResponse, error) {
 	stdio, err := plugin.NewStdioServer()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("could not get stdio server: %w", err)
 	}
 
 	s.stdio = stdio
@@ -89,7 +91,8 @@ func (s *server) StreamContainer(_ context.Context, request *api.StreamContainer
 
 	err := eg.Wait()
 
-	if result, ok := err.(Result); ok {
+	result := &Result{}
+	if ok := errors.As(err, result); ok {
 		return &api.StreamContainerResponse{
 			ExitCode: result.ExitCode,
 			Message:  result.Message,
@@ -97,7 +100,7 @@ func (s *server) StreamContainer(_ context.Context, request *api.StreamContainer
 	}
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error during container stream: %w", err)
 	}
 
 	return &api.StreamContainerResponse{ExitCode: 0}, nil

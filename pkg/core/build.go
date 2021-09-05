@@ -1,6 +1,7 @@
 package core
 
 import (
+	"fmt"
 	"os"
 
 	api "github.com/dodo-cli/dodo-core/api/v1alpha2"
@@ -17,11 +18,10 @@ func BuildImage(config *api.BuildInfo) (string, error) {
 
 	var height, width uint32
 
-	fd := os.Stdin.Fd()
-	if term.IsTerminal(fd) {
+	if fd := os.Stdin.Fd(); term.IsTerminal(fd) {
 		state, err := term.SetRawTerminal(fd)
 		if err != nil {
-			return "", err
+			return "", fmt.Errorf("could not set raw terminal: %w", err)
 		}
 
 		defer func() {
@@ -32,7 +32,7 @@ func BuildImage(config *api.BuildInfo) (string, error) {
 
 		ws, err := term.GetWinsize(fd)
 		if err != nil {
-			return "", err
+			return "", fmt.Errorf("could not get terminal size: %w", err)
 		}
 
 		height = uint32(ws.Height)

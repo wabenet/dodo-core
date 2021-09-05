@@ -1,6 +1,8 @@
 package configuration
 
 import (
+	"fmt"
+
 	api "github.com/dodo-cli/dodo-core/api/v1alpha2"
 	"github.com/dodo-cli/dodo-core/pkg/plugin"
 	"github.com/golang/protobuf/ptypes/empty"
@@ -24,7 +26,7 @@ func (c *client) PluginInfo() (*api.PluginInfo, error) {
 func (c *client) ListBackdrops() ([]*api.Backdrop, error) {
 	response, err := c.configClient.ListBackdrops(context.Background(), &empty.Empty{})
 	if err != nil {
-		return []*api.Backdrop{}, err
+		return []*api.Backdrop{}, fmt.Errorf("could not list backdrops: %w", err)
 	}
 
 	return response.Backdrops, nil
