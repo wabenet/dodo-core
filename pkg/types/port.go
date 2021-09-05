@@ -10,14 +10,14 @@ import (
 
 func NewPort() decoder.Producer {
 	return func() (interface{}, decoder.Decoding) {
-		target := &api.Port{}
+		target := &api.PortBinding{}
 		return &target, DecodePort(&target)
 	}
 }
 
 func DecodePort(target interface{}) decoder.Decoding {
 	// TODO: wtf this cast
-	port := *(target.(**api.Port))
+	port := *(target.(**api.PortBinding))
 
 	return decoder.Kinds(map[reflect.Kind]decoder.Decoding{
 		reflect.Map: decoder.Keys(map[string]decoder.Decoding{
@@ -29,7 +29,7 @@ func DecodePort(target interface{}) decoder.Decoding {
 		reflect.String: func(d *decoder.Decoder, config interface{}) {
 			var decoded string
 			decoder.String(&decoded)(d, config)
-			if p, err := appconfig.ParsePort(decoded); err != nil {
+			if p, err := appconfig.ParsePortBinding(decoded); err != nil {
 				d.Error(err)
 			} else {
 				port.Target = p.Target

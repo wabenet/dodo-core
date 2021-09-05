@@ -8,21 +8,21 @@ import (
 
 func NewEnvironment() decoder.Producer {
 	return func() (interface{}, decoder.Decoding) {
-		target := &api.Environment{}
+		target := &api.EnvironmentVariable{}
 		return &target, DecodeEnvironment(&target)
 	}
 }
 
 func DecodeEnvironment(target interface{}) decoder.Decoding {
 	// TODO: wtf this cast
-	env := *(target.(**api.Environment))
+	env := *(target.(**api.EnvironmentVariable))
 
 	return func(d *decoder.Decoder, config interface{}) {
 		var decoded string
 
 		decoder.String(&decoded)(d, config)
 
-		if e, err := appconfig.ParseEnvironment(decoded); err != nil {
+		if e, err := appconfig.ParseEnvironmentVariable(decoded); err != nil {
 			d.Error(err)
 		} else {
 			env.Key = e.Key

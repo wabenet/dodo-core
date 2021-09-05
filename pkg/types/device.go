@@ -10,14 +10,14 @@ import (
 
 func NewDevice() decoder.Producer {
 	return func() (interface{}, decoder.Decoding) {
-		target := &api.Device{}
+		target := &api.DeviceMapping{}
 		return &target, DecodeDevice(&target)
 	}
 }
 
 func DecodeDevice(target interface{}) decoder.Decoding {
 	// TODO: wtf this cast
-	dev := *(target.(**api.Device))
+	dev := *(target.(**api.DeviceMapping))
 
 	return decoder.Kinds(map[reflect.Kind]decoder.Decoding{
 		reflect.Map: decoder.Keys(map[string]decoder.Decoding{
@@ -30,7 +30,7 @@ func DecodeDevice(target interface{}) decoder.Decoding {
 			var decoded string
 			decoder.String(&decoded)(d, config)
 
-			if dv, err := appconfig.ParseDevice(decoded); err != nil {
+			if dv, err := appconfig.ParseDeviceMapping(decoded); err != nil {
 				d.Error(err)
 			} else {
 				dev.CgroupRule = dv.CgroupRule

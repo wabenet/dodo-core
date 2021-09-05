@@ -9,14 +9,14 @@ import (
 
 func NewSecret() decoder.Producer {
 	return func() (interface{}, decoder.Decoding) {
-		target := &api.Secret{}
+		target := &api.BuildSecret{}
 		return &target, DecodeSecret(&target)
 	}
 }
 
 func DecodeSecret(target interface{}) decoder.Decoding {
 	// TODO: wtf this cast
-	secret := *(target.(**api.Secret))
+	secret := *(target.(**api.BuildSecret))
 
 	return decoder.Kinds(map[reflect.Kind]decoder.Decoding{
 		reflect.Map: decoder.Keys(map[string]decoder.Decoding{

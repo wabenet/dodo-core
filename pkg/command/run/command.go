@@ -92,7 +92,7 @@ func (opts *options) createConfig(name string, command []string) (*api.Backdrop,
 	}
 
 	for _, spec := range opts.volumes {
-		vol, err := appconfig.ParseVolume(spec)
+		vol, err := appconfig.ParseVolumeMount(spec)
 		if err != nil {
 			return nil, err
 		}
@@ -101,7 +101,7 @@ func (opts *options) createConfig(name string, command []string) (*api.Backdrop,
 	}
 
 	for _, spec := range opts.environment {
-		env, err := appconfig.ParseEnvironment(spec)
+		env, err := appconfig.ParseEnvironmentVariable(spec)
 		if err != nil {
 			return nil, err
 		}
@@ -110,7 +110,7 @@ func (opts *options) createConfig(name string, command []string) (*api.Backdrop,
 	}
 
 	for _, spec := range opts.publish {
-		port, err := appconfig.ParsePort(spec)
+		port, err := appconfig.ParsePortBinding(spec)
 		if err != nil {
 			return nil, err
 		}

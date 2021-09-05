@@ -23,8 +23,8 @@ const (
 	ErrSSHAgentFormat    FormatError = "invalid ssh agent format"
 )
 
-func ParseArgument(spec string) (*api.Argument, error) {
-	arg := &api.Argument{}
+func ParseBuildArgument(spec string) (*api.BuildArgument, error) {
+	arg := &api.BuildArgument{}
 
 	switch values := strings.SplitN(spec, "=", 2); len(values) {
 	case 0:
@@ -42,8 +42,8 @@ func ParseArgument(spec string) (*api.Argument, error) {
 	return arg, nil
 }
 
-func ParseDevice(spec string) (*api.Device, error) {
-	dev := &api.Device{}
+func ParseDeviceMapping(spec string) (*api.DeviceMapping, error) {
+	dev := &api.DeviceMapping{}
 
 	switch values := strings.SplitN(spec, ":", 3); len(values) {
 	case 0:
@@ -64,8 +64,8 @@ func ParseDevice(spec string) (*api.Device, error) {
 	return dev, nil
 }
 
-func ParseVolume(spec string) (*api.Volume, error) {
-	vol := &api.Volume{}
+func ParseVolumeMount(spec string) (*api.VolumeMount, error) {
+	vol := &api.VolumeMount{}
 
 	switch values := strings.SplitN(spec, ":", 3); len(values) {
 	case 0:
@@ -86,8 +86,8 @@ func ParseVolume(spec string) (*api.Volume, error) {
 	return vol, nil
 }
 
-func ParseEnvironment(spec string) (*api.Environment, error) {
-	env := &api.Environment{}
+func ParseEnvironmentVariable(spec string) (*api.EnvironmentVariable, error) {
+	env := &api.EnvironmentVariable{}
 
 	switch values := strings.SplitN(spec, "=", 2); len(values) {
 	case 0:
@@ -105,8 +105,8 @@ func ParseEnvironment(spec string) (*api.Environment, error) {
 	return env, nil
 }
 
-func ParsePort(spec string) (*api.Port, error) {
-	port := &api.Port{}
+func ParsePortBinding(spec string) (*api.PortBinding, error) {
+	port := &api.PortBinding{}
 
 	switch values := strings.SplitN(spec, ":", 3); len(values) {
 	case 0:

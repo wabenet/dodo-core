@@ -10,14 +10,14 @@ import (
 
 func NewVolume() decoder.Producer {
 	return func() (interface{}, decoder.Decoding) {
-		target := &api.Volume{}
+		target := &api.VolumeMount{}
 		return &target, DecodeVolume(&target)
 	}
 }
 
 func DecodeVolume(target interface{}) decoder.Decoding {
 	// TODO: wtf this cast
-	vol := *(target.(**api.Volume))
+	vol := *(target.(**api.VolumeMount))
 
 	return decoder.Kinds(map[reflect.Kind]decoder.Decoding{
 		reflect.Map: decoder.Keys(map[string]decoder.Decoding{
@@ -29,7 +29,7 @@ func DecodeVolume(target interface{}) decoder.Decoding {
 			var decoded string
 			decoder.String(&decoded)(d, config)
 
-			if v, err := appconfig.ParseVolume(decoded); err != nil {
+			if v, err := appconfig.ParseVolumeMount(decoded); err != nil {
 				d.Error(err)
 			} else {
 				vol.Source = v.Source
