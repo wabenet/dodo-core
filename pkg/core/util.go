@@ -18,6 +18,7 @@ func GetRuntime(name string) (runtime.ContainerRuntime, error) {
 		}
 
 		if rt, ok := p.(runtime.ContainerRuntime); ok {
+			log.L().Info("using runtime", "name", n)
 			return rt, nil
 		}
 	}
@@ -32,6 +33,7 @@ func GetBuilder(name string) (builder.ImageBuilder, error) {
 		}
 
 		if rt, ok := p.(builder.ImageBuilder); ok {
+			log.L().Info("using builder", "name", n)
 			return rt, nil
 		}
 	}

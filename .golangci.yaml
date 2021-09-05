@@ -7,8 +7,6 @@ linters:
 linters-settings:
   gofumpt:
     extra-rules: true
-  unused:
-    check-exported: true
 
 issues:
   exclude-rules:

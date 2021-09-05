@@ -65,7 +65,12 @@ func IncludePlugins(ps ...Plugin) {
 	for _, p := range ps {
 		info, err := p.PluginInfo()
 		if err != nil {
-			log.L().Debug("plugin does not provide plugin info", "error", err)
+			if info == nil {
+				log.L().Warn("plugin does not provide plugin info", "error", err)
+			} else {
+				log.L().Warn("could not load plugin", append(pluginFields(info), "error", err)...)
+			}
+
 			continue
 		}
 
@@ -77,8 +82,18 @@ func IncludePlugins(ps ...Plugin) {
 
 		plugins[p.Type().String()][info.Name] = p
 
-		log.L().Debug("loaded plugin", "type", t, "name", info.Name)
+		log.L().Info("loaded plugin", append(pluginFields(info), "type", t)...)
 	}
+}
+
+func pluginFields(p *api.PluginInfo) []interface{} {
+	fields := []interface{}{"name", p.Name}
+
+	for k, v := range p.Fields {
+		fields = append(fields, k, v)
+	}
+
+	return fields
 }
 
 func ServePlugins(plugins ...Plugin) error {
