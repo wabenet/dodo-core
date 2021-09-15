@@ -10,6 +10,7 @@ import "api/v1alpha2/build.proto";
 
 service BuilderPlugin {
   rpc GetPluginInfo(google.protobuf.Empty) returns (com.github.dodo_cli.dodo_core.api.v1alpha2.PluginInfo);
+  rpc InitPlugin(google.protobuf.Empty) returns (com.github.dodo_cli.dodo_core.api.v1alpha2.InitPluginResponse);
 
   rpc CreateImage(CreateImageRequest) returns (CreateImageResponse);
   rpc GetStreamingConnection(com.github.dodo_cli.dodo_core.api.v1alpha2.GetStreamingConnectionRequest) returns (com.github.dodo_cli.dodo_core.api.v1alpha2.GetStreamingConnectionResponse);

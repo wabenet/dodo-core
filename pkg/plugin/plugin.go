@@ -19,10 +19,13 @@ const (
 	MagicCookieKey   = "DODO_PLUGIN"
 	MagicCookieValue = "69318785-d741-4150-ac91-8f03fa703530"
 
+	FailedPlugin = "error"
+
 	ErrPluginInvalid        PluginError = "invalid plugin"
 	ErrPluginNotImplemented PluginError = "not implemented"
 	ErrPluginNotFound       PluginError = "plugin not found"
 	ErrNoValidPluginFound   PluginError = "no valid plugin found"
+	ErrCircularDependency   PluginError = "circular plugin dependency"
 )
 
 var (
@@ -37,9 +40,13 @@ func (e PluginError) Error() string {
 }
 
 type Plugin interface {
+	PluginInfo() *api.PluginInfo
+	Init() (PluginConfig, error)
+
 	Type() Type
-	PluginInfo() (*api.PluginInfo, error)
 }
+
+type PluginConfig map[string]string
 
 type Type interface {
 	String() string
@@ -63,37 +70,14 @@ func RegisterPluginTypes(ts ...Type) {
 
 func IncludePlugins(ps ...Plugin) {
 	for _, p := range ps {
-		info, err := p.PluginInfo()
-		if err != nil {
-			if info == nil {
-				log.L().Warn("plugin does not provide plugin info", "error", err)
-			} else {
-				log.L().Warn("could not load plugin", append(pluginFields(info), "error", err)...)
-			}
+		name := p.PluginInfo().Name
 
-			continue
+		if plugins[name.Type] == nil {
+			plugins[name.Type] = map[string]Plugin{}
 		}
 
-		t := p.Type().String()
-
-		if plugins[t] == nil {
-			plugins[t] = map[string]Plugin{}
-		}
-
-		plugins[p.Type().String()][info.Name] = p
-
-		log.L().Info("loaded plugin", append(pluginFields(info), "type", t)...)
+		plugins[name.Type][name.Name] = p
 	}
-}
-
-func pluginFields(p *api.PluginInfo) []interface{} {
-	fields := []interface{}{"name", p.Name}
-
-	for k, v := range p.Fields {
-		fields = append(fields, k, v)
-	}
-
-	return fields
 }
 
 func ServePlugins(plugins ...Plugin) error {
@@ -104,10 +88,10 @@ func ServePlugins(plugins ...Plugin) error {
 	for _, p := range plugins {
 		s, err := p.Type().GRPCServer(p)
 		if err != nil {
-			return err
+			return fmt.Errorf("could not instantiate GRPC Server: %w", err)
 		}
 
-		pluginMap[p.Type().String()] = s
+		pluginMap[p.PluginInfo().Name.Type] = s
 	}
 
 	plugin.Serve(&plugin.ServeConfig{
@@ -135,6 +119,25 @@ func PathByName(name string) string {
 }
 
 func LoadPlugins() {
+	findPlugins()
+
+	ps, err := ResolveDependencies(plugins)
+	if err != nil {
+		log.L().Error("could not resolve plugin dependencies", "error", err)
+
+		return
+	}
+
+	for _, p := range ps {
+		initPlugin(p)
+	}
+}
+
+func UnloadPlugins() {
+	plugin.CleanupClients()
+}
+
+func findPlugins() {
 	matches, err := filepath.Glob(PathByName("*"))
 	if err != nil {
 		return
@@ -147,8 +150,8 @@ func LoadPlugins() {
 			continue
 		}
 
-		for _, t := range pluginTypes {
-			logger.Debug("attempt loading plugin", "type", t.String())
+		for n, t := range pluginTypes {
+			logger.Debug("attempt loading plugin", "type", n)
 
 			grpcClient, err := t.GRPCClient()
 			if err != nil {
@@ -157,15 +160,34 @@ func LoadPlugins() {
 				continue
 			}
 
-			p, err := loadGRPCPlugin(path, t.String(), grpcClient)
+			p, err := loadGRPCPlugin(path, n, grpcClient)
 			if err != nil {
 				logger.Debug("could not load plugin over grpc", "error", err)
 
 				continue
 			}
 
-			IncludePlugins(p)
+			name := p.PluginInfo().Name
+
+			if plugins[name.Type] == nil {
+				plugins[name.Type] = map[string]Plugin{}
+			}
+
+			plugins[name.Type][name.Name] = p
 		}
+	}
+}
+
+func initPlugin(p Plugin) {
+	info := p.PluginInfo()
+	logger := log.L().With("name", info.Name.Name, "type", info.Name.Type)
+	logger = augmentLogger(logger, info.Fields)
+
+	if config, err := p.Init(); err != nil {
+		logger.Warn("could not load plugin", "error", err)
+		delete(plugins[info.Name.Type], info.Name.Name)
+	} else {
+		augmentLogger(logger, config).Info("loaded plugin")
 	}
 }
 
@@ -206,6 +228,12 @@ func loadGRPCPlugin(path string, pluginType string, grpcPlugin plugin.Plugin) (P
 	return nil, ErrPluginInvalid
 }
 
-func UnloadPlugins() {
-	plugin.CleanupClients()
+func augmentLogger(logger log.Logger, fields map[string]string) log.Logger {
+	fs := []interface{}{}
+
+	for k, v := range fields {
+		fs = append(fs, k, v)
+	}
+
+	return logger.With(fs...)
 }

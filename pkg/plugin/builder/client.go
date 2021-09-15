@@ -20,8 +20,25 @@ func (c *client) Type() plugin.Type {
 	return Type
 }
 
-func (c *client) PluginInfo() (*api.PluginInfo, error) {
-	return c.builderClient.GetPluginInfo(context.Background(), &empty.Empty{})
+func (c *client) PluginInfo() *api.PluginInfo {
+	info, err := c.builderClient.GetPluginInfo(context.Background(), &empty.Empty{})
+	if err != nil {
+		return &api.PluginInfo{
+			Name:   &api.PluginName{Type: Type.String(), Name: plugin.FailedPlugin},
+			Fields: map[string]string{"error": err.Error()},
+		}
+	}
+
+	return info
+}
+
+func (c *client) Init() (plugin.PluginConfig, error) {
+	resp, err := c.builderClient.InitPlugin(context.Background(), &empty.Empty{})
+	if err != nil {
+		return nil, fmt.Errorf("could not initialize plugin: %w", err)
+	}
+
+	return resp.Config, nil
 }
 
 func (c *client) CreateImage(config *api.BuildInfo, stream *plugin.StreamConfig) (string, error) {

@@ -4,9 +4,19 @@ package com.github.dodo_cli.dodo_core.api.v1alpha2;
 
 option go_package = "github.com/dodo-cli/dodo-core/api/v1alpha2";
 
+message PluginName {
+  string type = 1;
+  string name = 2;
+}
+
 message PluginInfo {
-  string name = 1;
-  map<string, string> fields = 2;
+  PluginName name = 1;
+  repeated PluginName dependencies = 2;
+  map<string, string> fields = 3;
+}
+
+message InitPluginResponse {
+  map<string, string> config = 1;
 }
 
 message GetStreamingConnectionRequest {

@@ -23,8 +23,14 @@ func (p *Command) Type() plugin.Type {
 	return command.Type
 }
 
-func (p *Command) PluginInfo() (*api.PluginInfo, error) {
-	return &api.PluginInfo{Name: name}, nil
+func (p *Command) PluginInfo() *api.PluginInfo {
+	return &api.PluginInfo{
+		Name: &api.PluginName{Name: name, Type: command.Type.String()},
+	}
+}
+
+func (*Command) Init() (plugin.PluginConfig, error) {
+	return map[string]string{}, nil
 }
 
 func (p *Command) GetCobraCommand() *cobra.Command {

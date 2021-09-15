@@ -46,15 +46,8 @@ func GetBuilder(name string) (builder.ImageBuilder, error) {
 func AssembleBackdropConfig(name string, overrides *api.Backdrop) *api.Backdrop {
 	config := &api.Backdrop{Entrypoint: &api.Entrypoint{}}
 
-	for _, p := range plugin.GetPlugins(configuration.Type.String()) {
-		info, err := p.PluginInfo()
-		if err != nil {
-			log.L().Warn("could not read plugin info")
-
-			continue
-		}
-
-		log.L().Debug("Fetching configuration from plugin", "name", info.Name)
+	for n, p := range plugin.GetPlugins(configuration.Type.String()) {
+		log.L().Debug("Fetching configuration from plugin", "name", n)
 
 		conf, err := p.(configuration.Configuration).GetBackdrop(name)
 		if err != nil {
@@ -73,15 +66,8 @@ func AssembleBackdropConfig(name string, overrides *api.Backdrop) *api.Backdrop 
 }
 
 func FindBuildConfig(name string, overrides *api.BuildInfo) (*api.BuildInfo, error) {
-	for _, p := range plugin.GetPlugins(configuration.Type.String()) {
-		info, err := p.PluginInfo()
-		if err != nil {
-			log.L().Warn("could not read plugin info")
-
-			continue
-		}
-
-		log.L().Debug("Fetching configuration from plugin", "name", info.Name)
+	for n, p := range plugin.GetPlugins(configuration.Type.String()) {
+		log.L().Debug("Fetching configuration from plugin", "name", n)
 
 		confs, err := p.(configuration.Configuration).ListBackdrops()
 		if err != nil {

@@ -18,7 +18,16 @@ type server struct {
 }
 
 func (s *server) GetPluginInfo(_ context.Context, _ *empty.Empty) (*api.PluginInfo, error) {
-	return s.impl.PluginInfo()
+	return s.impl.PluginInfo(), nil
+}
+
+func (s *server) InitPlugin(_ context.Context, _ *empty.Empty) (*api.InitPluginResponse, error) {
+	config, err := s.impl.Init()
+	if err != nil {
+		return nil, fmt.Errorf("could not initialize plugin: %w", err)
+	}
+
+	return &api.InitPluginResponse{Config: config}, nil
 }
 
 func (s *server) GetImage(_ context.Context, request *api.GetImageRequest) (*api.GetImageResponse, error) {
