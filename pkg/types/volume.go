@@ -4,7 +4,7 @@ import (
 	"reflect"
 
 	api "github.com/dodo-cli/dodo-core/api/v1alpha2"
-	"github.com/dodo-cli/dodo-core/pkg/appconfig"
+	"github.com/dodo-cli/dodo-core/pkg/config"
 	"github.com/dodo-cli/dodo-core/pkg/decoder"
 )
 
@@ -25,11 +25,11 @@ func DecodeVolume(target interface{}) decoder.Decoding {
 			"target":    decoder.String(&vol.Target),
 			"read_only": decoder.Bool(&vol.Readonly),
 		}),
-		reflect.String: func(d *decoder.Decoder, config interface{}) {
+		reflect.String: func(d *decoder.Decoder, c interface{}) {
 			var decoded string
-			decoder.String(&decoded)(d, config)
+			decoder.String(&decoded)(d, c)
 
-			if v, err := appconfig.ParseVolumeMount(decoded); err != nil {
+			if v, err := config.ParseVolumeMount(decoded); err != nil {
 				d.Error(err)
 			} else {
 				vol.Source = v.Source

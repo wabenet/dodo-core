@@ -4,7 +4,7 @@ import (
 	"reflect"
 
 	api "github.com/dodo-cli/dodo-core/api/v1alpha2"
-	"github.com/dodo-cli/dodo-core/pkg/appconfig"
+	"github.com/dodo-cli/dodo-core/pkg/config"
 	"github.com/dodo-cli/dodo-core/pkg/decoder"
 )
 
@@ -24,12 +24,12 @@ func DecodeSSHAgent(target interface{}) decoder.Decoding {
 			"id":   decoder.String(&agent.Id),
 			"file": decoder.String(&agent.IdentityFile),
 		}),
-		reflect.String: func(d *decoder.Decoder, config interface{}) {
+		reflect.String: func(d *decoder.Decoder, c interface{}) {
 			var decoded string
 
-			decoder.String(&decoded)(d, config)
+			decoder.String(&decoded)(d, c)
 
-			if a, err := appconfig.ParseSSHAgent(decoded); err != nil {
+			if a, err := config.ParseSSHAgent(decoded); err != nil {
 				d.Error(err)
 			} else {
 				agent.Id = a.Id

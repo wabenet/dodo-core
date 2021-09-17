@@ -4,7 +4,7 @@ import (
 	"reflect"
 
 	api "github.com/dodo-cli/dodo-core/api/v1alpha2"
-	"github.com/dodo-cli/dodo-core/pkg/appconfig"
+	"github.com/dodo-cli/dodo-core/pkg/config"
 	"github.com/dodo-cli/dodo-core/pkg/decoder"
 )
 
@@ -26,11 +26,11 @@ func DecodeDevice(target interface{}) decoder.Decoding {
 			"target":      decoder.String(&dev.Target),
 			"permissions": decoder.String(&dev.Permissions),
 		}),
-		reflect.String: func(d *decoder.Decoder, config interface{}) {
+		reflect.String: func(d *decoder.Decoder, c interface{}) {
 			var decoded string
-			decoder.String(&decoded)(d, config)
+			decoder.String(&decoded)(d, c)
 
-			if dv, err := appconfig.ParseDeviceMapping(decoded); err != nil {
+			if dv, err := config.ParseDeviceMapping(decoded); err != nil {
 				d.Error(err)
 			} else {
 				dev.CgroupRule = dv.CgroupRule

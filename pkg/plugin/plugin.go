@@ -9,7 +9,7 @@ import (
 	"runtime"
 
 	api "github.com/dodo-cli/dodo-core/api/v1alpha2"
-	"github.com/dodo-cli/dodo-core/pkg/appconfig"
+	"github.com/dodo-cli/dodo-core/pkg/config"
 	log "github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 )
@@ -81,7 +81,7 @@ func IncludePlugins(ps ...Plugin) {
 }
 
 func ServePlugins(plugins ...Plugin) error {
-	log.SetDefault(log.New(appconfig.GetPluginLoggerOptions()))
+	log.SetDefault(log.New(config.GetPluginLoggerOptions()))
 
 	pluginMap := map[string]plugin.Plugin{}
 
@@ -113,7 +113,7 @@ func GetPlugins(pluginType string) map[string]Plugin {
 
 func PathByName(name string) string {
 	return filepath.Join(
-		appconfig.GetPluginDir(),
+		config.GetPluginDir(),
 		fmt.Sprintf("dodo-%s_%s_%s", name, runtime.GOOS, runtime.GOARCH),
 	)
 }
@@ -197,7 +197,7 @@ func loadGRPCPlugin(path string, pluginType string, grpcPlugin plugin.Plugin) (P
 		Plugins:          map[string]plugin.Plugin{pluginType: grpcPlugin},
 		Cmd:              exec.Command(path),
 		AllowedProtocols: []plugin.Protocol{plugin.ProtocolNetRPC, plugin.ProtocolGRPC},
-		Logger:           log.New(appconfig.GetLoggerOptions()),
+		Logger:           log.New(config.GetLoggerOptions()),
 		HandshakeConfig: plugin.HandshakeConfig{
 			ProtocolVersion:  ProtocolVersion,
 			MagicCookieKey:   MagicCookieKey,

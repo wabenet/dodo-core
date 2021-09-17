@@ -2,7 +2,7 @@ package run
 
 import (
 	api "github.com/dodo-cli/dodo-core/api/v1alpha2"
-	"github.com/dodo-cli/dodo-core/pkg/appconfig"
+	"github.com/dodo-cli/dodo-core/pkg/config"
 	"github.com/dodo-cli/dodo-core/pkg/core"
 	"github.com/spf13/cobra"
 )
@@ -80,7 +80,7 @@ func NewCommand() *cobra.Command {
 }
 
 func (opts *options) createConfig(name string, command []string) (*api.Backdrop, error) {
-	config := &api.Backdrop{
+	c := &api.Backdrop{
 		Name:    name,
 		Runtime: opts.runtime,
 		Entrypoint: &api.Entrypoint{
@@ -92,31 +92,31 @@ func (opts *options) createConfig(name string, command []string) (*api.Backdrop,
 	}
 
 	for _, spec := range opts.volumes {
-		vol, err := appconfig.ParseVolumeMount(spec)
+		vol, err := config.ParseVolumeMount(spec)
 		if err != nil {
 			return nil, err
 		}
 
-		config.Volumes = append(config.Volumes, vol)
+		c.Volumes = append(c.Volumes, vol)
 	}
 
 	for _, spec := range opts.environment {
-		env, err := appconfig.ParseEnvironmentVariable(spec)
+		env, err := config.ParseEnvironmentVariable(spec)
 		if err != nil {
 			return nil, err
 		}
 
-		config.Environment = append(config.Environment, env)
+		c.Environment = append(c.Environment, env)
 	}
 
 	for _, spec := range opts.publish {
-		port, err := appconfig.ParsePortBinding(spec)
+		port, err := config.ParsePortBinding(spec)
 		if err != nil {
 			return nil, err
 		}
 
-		config.Ports = append(config.Ports, port)
+		c.Ports = append(c.Ports, port)
 	}
 
-	return config, nil
+	return c, nil
 }

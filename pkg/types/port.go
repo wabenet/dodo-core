@@ -4,7 +4,7 @@ import (
 	"reflect"
 
 	api "github.com/dodo-cli/dodo-core/api/v1alpha2"
-	"github.com/dodo-cli/dodo-core/pkg/appconfig"
+	"github.com/dodo-cli/dodo-core/pkg/config"
 	"github.com/dodo-cli/dodo-core/pkg/decoder"
 )
 
@@ -26,10 +26,10 @@ func DecodePort(target interface{}) decoder.Decoding {
 			"protocol":  decoder.String(&port.Protocol),
 			"host_ip":   decoder.String(&port.HostIp),
 		}),
-		reflect.String: func(d *decoder.Decoder, config interface{}) {
+		reflect.String: func(d *decoder.Decoder, c interface{}) {
 			var decoded string
-			decoder.String(&decoded)(d, config)
-			if p, err := appconfig.ParsePortBinding(decoded); err != nil {
+			decoder.String(&decoded)(d, c)
+			if p, err := config.ParsePortBinding(decoded); err != nil {
 				d.Error(err)
 			} else {
 				port.Target = p.Target
