@@ -3,6 +3,7 @@ package build
 import (
 	api "github.com/dodo-cli/dodo-core/api/v1alpha2"
 	"github.com/dodo-cli/dodo-core/pkg/core"
+	"github.com/dodo-cli/dodo-core/pkg/plugin"
 	"github.com/spf13/cobra"
 )
 
@@ -12,7 +13,7 @@ type options struct {
 	forcePull    bool
 }
 
-func NewCommand() *cobra.Command {
+func New(m plugin.Manager) *Command {
 	var opts options
 
 	cmd := &cobra.Command{
@@ -29,7 +30,7 @@ func NewCommand() *cobra.Command {
 				ForcePull:    opts.forcePull,
 			}
 
-			_, err := core.BuildByName(config)
+			_, err := core.BuildByName(m, config)
 
 			return err
 		},
@@ -48,5 +49,5 @@ func NewCommand() *cobra.Command {
 		&opts.forcePull, "pull", false,
 		"always attempt to pull base images")
 
-	return cmd
+	return &Command{cmd: cmd}
 }

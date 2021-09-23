@@ -1,4 +1,4 @@
-package run
+package proxycmd
 
 import (
 	api "github.com/dodo-cli/dodo-core/api/v1alpha2"
@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const name = "run"
+const name = "dodo"
 
 var _ command.Command = &Command{}
 

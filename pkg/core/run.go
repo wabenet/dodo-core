@@ -15,8 +15,8 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-func RunBackdrop(config *api.Backdrop) error {
-	rt, err := GetRuntime(config.Runtime)
+func RunBackdrop(m plugin.Manager, config *api.Backdrop) error {
+	rt, err := runtime.GetByName(m, config.Runtime)
 	if err != nil {
 		return err
 	}

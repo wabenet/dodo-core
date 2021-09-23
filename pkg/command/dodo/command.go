@@ -11,9 +11,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func Execute(defaultCmd string) int {
+func New(m plugin.Manager, defaultCmd string) *Command {
 	cmd := &cobra.Command{
-		Use:                "dodo",
+		Use:                name,
 		SilenceUsage:       true,
 		DisableFlagParsing: true,
 		Args:               cobra.ArbitraryArgs,
@@ -43,19 +43,11 @@ func Execute(defaultCmd string) int {
 		},
 	}
 
-	for _, p := range plugin.GetPlugins(command.Type.String()) {
+	for _, p := range m.GetPlugins(command.Type.String()) {
 		cmd.AddCommand(p.(command.Command).GetCobraCommand())
 	}
 
-	if err := cmd.Execute(); err != nil {
-		if err, ok := err.(*runtime.Result); ok {
-			return int(err.ExitCode)
-		}
-
-		return 1
-	}
-
-	return 0
+	return &Command{cmd: cmd}
 }
 
 func runProxy(executable string, args []string) error {

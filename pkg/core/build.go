@@ -6,12 +6,13 @@ import (
 
 	api "github.com/dodo-cli/dodo-core/api/v1alpha2"
 	"github.com/dodo-cli/dodo-core/pkg/plugin"
+	"github.com/dodo-cli/dodo-core/pkg/plugin/builder"
 	log "github.com/hashicorp/go-hclog"
 	"github.com/moby/term"
 )
 
-func BuildImage(config *api.BuildInfo) (string, error) {
-	b, err := GetBuilder(config.Builder)
+func BuildImage(m plugin.Manager, config *api.BuildInfo) (string, error) {
+	b, err := builder.GetByName(m, config.Builder)
 	if err != nil {
 		return "", err
 	}

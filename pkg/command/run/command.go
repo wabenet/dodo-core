@@ -4,6 +4,7 @@ import (
 	api "github.com/dodo-cli/dodo-core/api/v1alpha2"
 	"github.com/dodo-cli/dodo-core/pkg/config"
 	"github.com/dodo-cli/dodo-core/pkg/core"
+	"github.com/dodo-cli/dodo-core/pkg/plugin"
 	"github.com/spf13/cobra"
 )
 
@@ -28,7 +29,7 @@ type options struct {
 	runtime     string
 }
 
-func NewCommand() *cobra.Command {
+func New(m plugin.Manager) *Command {
 	var opts options
 
 	cmd := &cobra.Command{
@@ -47,7 +48,7 @@ func NewCommand() *cobra.Command {
 				return err
 			}
 
-			return core.RunByName(backdrop)
+			return core.RunByName(m, backdrop)
 		},
 	}
 
@@ -76,7 +77,7 @@ func NewCommand() *cobra.Command {
 		&opts.runtime, "runtime", "r", "",
 		"select runtime plugin")
 
-	return cmd
+	return &Command{cmd: cmd}
 }
 
 func (opts *options) createConfig(name string, command []string) (*api.Backdrop, error) {

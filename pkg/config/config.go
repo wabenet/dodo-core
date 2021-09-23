@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/user"
 	"path/filepath"
+	"strings"
 	"syscall"
 
 	log "github.com/hashicorp/go-hclog"
@@ -24,33 +25,39 @@ const (
 	DefaultAppDir   = "/var/lib/dodo"
 )
 
-func Configure() error {
+func Configure() {
 	viper.SetConfigName(Name)
 	viper.SetConfigType("yaml")
+
+        viper.AutomaticEnv()
 	viper.SetEnvPrefix(Name)
+	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
 
 	viper.AddConfigPath(fmt.Sprintf("/etc/%s", Name))
 
 	viper.SetDefault(ConfKeyLogLevel, DefaultLogLevel)
-	viper.SetDefault(ConfKeyAppDir, DefaultAppDir)
 
 	if user, err := user.Current(); err == nil && user.HomeDir != "" {
 		dotDir := filepath.Join(user.HomeDir, fmt.Sprintf(".%s", Name))
 
 		viper.AddConfigPath(dotDir)
 		viper.SetDefault(ConfKeyAppDir, dotDir)
+	} else {
+		viper.SetDefault(ConfKeyAppDir, DefaultAppDir)
 	}
+
+	// Init logger with the default values, so the following log lines
+	// already use our logging config.
+	log.SetDefault(log.New(GetLoggerOptions()))
 
 	if err := viper.ReadInConfig(); err != nil {
 		var e *viper.ConfigFileNotFoundError
 		if errors.As(err, &e) {
-			log.L().Warn("no configuration file found: %w")
+			log.L().Warn("no configuration file found", "error", err)
 		} else {
-			return fmt.Errorf("could not read config file: %w", err)
+			log.L().Warn("could not read config file", "error", err)
 		}
 	}
-
-	return nil
 }
 
 func GetAppDir() string {

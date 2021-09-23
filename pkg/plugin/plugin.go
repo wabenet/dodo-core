@@ -28,11 +28,6 @@ const (
 	ErrCircularDependency   PluginError = "circular plugin dependency"
 )
 
-var (
-	pluginTypes = map[string]Type{}
-	plugins     = map[string]map[string]Plugin{}
-)
-
 type PluginError string
 
 func (e PluginError) Error() string {
@@ -62,27 +57,45 @@ type StreamConfig struct {
 	TerminalWidth  uint32
 }
 
-func RegisterPluginTypes(ts ...Type) {
-	for _, t := range ts {
-		pluginTypes[t.String()] = t
+type Manager struct {
+	pluginTypes map[string]Type
+	plugins     map[string]map[string]Plugin
+}
+
+func Init() Manager {
+	config.Configure()
+
+	if os.Getenv(MagicCookieKey) == MagicCookieValue {
+		log.SetDefault(log.New(config.GetPluginLoggerOptions()))
+	} else {
+		log.SetDefault(log.New(config.GetLoggerOptions()))
+	}
+
+	return Manager{
+		pluginTypes: map[string]Type{},
+		plugins:     map[string]map[string]Plugin{},
 	}
 }
 
-func IncludePlugins(ps ...Plugin) {
+func (m Manager) RegisterPluginTypes(ts ...Type) {
+	for _, t := range ts {
+		m.pluginTypes[t.String()] = t
+	}
+}
+
+func (m Manager) IncludePlugins(ps ...Plugin) {
 	for _, p := range ps {
 		name := p.PluginInfo().Name
 
-		if plugins[name.Type] == nil {
-			plugins[name.Type] = map[string]Plugin{}
+		if m.plugins[name.Type] == nil {
+			m.plugins[name.Type] = map[string]Plugin{}
 		}
 
-		plugins[name.Type][name.Name] = p
+		m.plugins[name.Type][name.Name] = p
 	}
 }
 
-func ServePlugins(plugins ...Plugin) error {
-	log.SetDefault(log.New(config.GetPluginLoggerOptions()))
-
+func (m Manager) ServePlugins(plugins ...Plugin) error {
 	pluginMap := map[string]plugin.Plugin{}
 
 	for _, p := range plugins {
@@ -107,8 +120,8 @@ func ServePlugins(plugins ...Plugin) error {
 	return nil
 }
 
-func GetPlugins(pluginType string) map[string]Plugin {
-	return plugins[pluginType]
+func (m Manager) GetPlugins(pluginType string) map[string]Plugin {
+	return m.plugins[pluginType]
 }
 
 func PathByName(name string) string {
@@ -118,10 +131,10 @@ func PathByName(name string) string {
 	)
 }
 
-func LoadPlugins() {
-	findPlugins()
+func (m Manager) LoadPlugins() {
+	m.findPlugins()
 
-	ps, err := ResolveDependencies(plugins)
+	ps, err := ResolveDependencies(m.plugins)
 	if err != nil {
 		log.L().Error("could not resolve plugin dependencies", "error", err)
 
@@ -129,15 +142,15 @@ func LoadPlugins() {
 	}
 
 	for _, p := range ps {
-		initPlugin(p)
+		m.initPlugin(p)
 	}
 }
 
-func UnloadPlugins() {
+func (Manager) UnloadPlugins() {
 	plugin.CleanupClients()
 }
 
-func findPlugins() {
+func (m Manager) findPlugins() {
 	matches, err := filepath.Glob(PathByName("*"))
 	if err != nil {
 		return
@@ -150,7 +163,7 @@ func findPlugins() {
 			continue
 		}
 
-		for n, t := range pluginTypes {
+		for n, t := range m.pluginTypes {
 			logger.Debug("attempt loading plugin", "type", n)
 
 			grpcClient, err := t.GRPCClient()
@@ -169,23 +182,23 @@ func findPlugins() {
 
 			name := p.PluginInfo().Name
 
-			if plugins[name.Type] == nil {
-				plugins[name.Type] = map[string]Plugin{}
+			if m.plugins[name.Type] == nil {
+				m.plugins[name.Type] = map[string]Plugin{}
 			}
 
-			plugins[name.Type][name.Name] = p
+			m.plugins[name.Type][name.Name] = p
 		}
 	}
 }
 
-func initPlugin(p Plugin) {
+func (m Manager) initPlugin(p Plugin) {
 	info := p.PluginInfo()
 	logger := log.L().With("name", info.Name.Name, "type", info.Name.Type)
 	logger = augmentLogger(logger, info.Fields)
 
 	if config, err := p.Init(); err != nil {
 		logger.Warn("could not load plugin", "error", err)
-		delete(plugins[info.Name.Type], info.Name.Name)
+		delete(m.plugins[info.Name.Type], info.Name.Name)
 	} else {
 		augmentLogger(logger, config).Info("loaded plugin")
 	}

@@ -1,75 +1,40 @@
-package core
+package configuration
 
 import (
 	"fmt"
 
 	api "github.com/dodo-cli/dodo-core/api/v1alpha2"
 	"github.com/dodo-cli/dodo-core/pkg/plugin"
-	"github.com/dodo-cli/dodo-core/pkg/plugin/builder"
-	"github.com/dodo-cli/dodo-core/pkg/plugin/configuration"
-	"github.com/dodo-cli/dodo-core/pkg/plugin/runtime"
 	log "github.com/hashicorp/go-hclog"
 )
 
-func GetRuntime(name string) (runtime.ContainerRuntime, error) {
-	for n, p := range plugin.GetPlugins(runtime.Type.String()) {
-		if name != "" && name != n {
-			continue
-		}
-
-		if rt, ok := p.(runtime.ContainerRuntime); ok {
-			log.L().Info("using runtime", "name", n)
-
-			return rt, nil
-		}
-	}
-
-	return nil, fmt.Errorf("could not find container runtime: %w", plugin.ErrNoValidPluginFound)
-}
-
-func GetBuilder(name string) (builder.ImageBuilder, error) {
-	for n, p := range plugin.GetPlugins(builder.Type.String()) {
-		if name != "" && name != n {
-			continue
-		}
-
-		if rt, ok := p.(builder.ImageBuilder); ok {
-			log.L().Info("using builder", "name", n)
-
-			return rt, nil
-		}
-	}
-
-	return nil, fmt.Errorf("could not find image builder: %w", plugin.ErrNoValidPluginFound)
-}
-
-func AssembleBackdropConfig(name string, overrides *api.Backdrop) *api.Backdrop {
+func AssembleBackdropConfig(m plugin.Manager, name string, overrides *api.Backdrop) *api.Backdrop {
 	config := &api.Backdrop{Entrypoint: &api.Entrypoint{}}
 
-	for n, p := range plugin.GetPlugins(configuration.Type.String()) {
+	for n, p := range m.GetPlugins(Type.String()) {
 		log.L().Debug("Fetching configuration from plugin", "name", n)
 
-		conf, err := p.(configuration.Configuration).GetBackdrop(name)
+		conf, err := p.(Configuration).GetBackdrop(name)
 		if err != nil {
 			log.L().Warn("could not get config", "error", err)
 
 			continue
 		}
 
-		mergeBackdrop(config, conf)
+		MergeBackdrop(config, conf)
 	}
 
-	mergeBackdrop(config, overrides)
+	MergeBackdrop(config, overrides)
 	log.L().Debug("assembled configuration", "backdrop", config)
 
 	return config
 }
 
-func FindBuildConfig(name string, overrides *api.BuildInfo) (*api.BuildInfo, error) {
-	for n, p := range plugin.GetPlugins(configuration.Type.String()) {
+func FindBuildConfig(m plugin.Manager, name string, overrides *api.BuildInfo) (*api.BuildInfo, error) {
+	for n, p := range m.GetPlugins(Type.String()) {
 		log.L().Debug("Fetching configuration from plugin", "name", n)
 
-		confs, err := p.(configuration.Configuration).ListBackdrops()
+		confs, err := p.(Configuration).ListBackdrops()
 		if err != nil {
 			log.L().Warn("could not get config", "error", err)
 
@@ -79,8 +44,8 @@ func FindBuildConfig(name string, overrides *api.BuildInfo) (*api.BuildInfo, err
 		for _, conf := range confs {
 			if conf.BuildInfo != nil && conf.BuildInfo.ImageName == name {
 				config := &api.BuildInfo{}
-				mergeBuildInfo(config, conf.BuildInfo)
-				mergeBuildInfo(config, overrides)
+				MergeBuildInfo(config, conf.BuildInfo)
+				MergeBuildInfo(config, overrides)
 
 				return config, nil
 			}
@@ -90,7 +55,7 @@ func FindBuildConfig(name string, overrides *api.BuildInfo) (*api.BuildInfo, err
 	return nil, fmt.Errorf("no config found for image")
 }
 
-func mergeBackdrop(target *api.Backdrop, source *api.Backdrop) {
+func MergeBackdrop(target *api.Backdrop, source *api.Backdrop) {
 	if len(source.Name) > 0 {
 		target.Name = source.Name
 	}
@@ -146,12 +111,12 @@ func mergeBackdrop(target *api.Backdrop, source *api.Backdrop) {
 		if target.BuildInfo == nil {
 			target.BuildInfo = source.BuildInfo
 		} else {
-			mergeBuildInfo(target.BuildInfo, source.BuildInfo)
+			MergeBuildInfo(target.BuildInfo, source.BuildInfo)
 		}
 	}
 }
 
-func mergeBuildInfo(target *api.BuildInfo, source *api.BuildInfo) {
+func MergeBuildInfo(target *api.BuildInfo, source *api.BuildInfo) {
 	if len(source.Builder) > 0 {
 		target.Builder = source.Builder
 	}
