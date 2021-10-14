@@ -14,7 +14,7 @@ lint:
 
 .PHONY: test
 test:
-	go test -cover ./...
+	go test -cover -race ./...
 
 .PHONY: v1alpha1
 v1alpha1: api/v1alpha1/plugin.pb.go api/v1alpha1/backdrop.pb.go api/v1alpha1/build.pb.go api/v1alpha1/configuration.pb.go api/v1alpha1/runtime.pb.go api/v1alpha1/builder.pb.go

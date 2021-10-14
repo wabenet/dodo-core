@@ -3,8 +3,7 @@ backdrops:
     image:
       steps: |
         FROM golang:1.16-alpine3.12
-        ENV CGO_ENABLED=0
-        RUN apk add -U git bash curl tree make protobuf-dev
+        RUN apk add -U build-base git bash curl tree make protobuf-dev
         RUN go get -u github.com/golang/protobuf/protoc-gen-go
         RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.37.1
     volumes:

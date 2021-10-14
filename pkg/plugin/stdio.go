@@ -34,18 +34,24 @@ type muxStream byte
 type StdioServer struct {
 	listener   net.Listener
 	connection net.Conn
+	lock       *sync.Mutex
 }
 
 func NewStdioServer() (*StdioServer, error) {
 	listener, err := net.Listen("tcp", streamListenAddress)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("could not open network connection: %w", err)
 	}
 
-	s := &StdioServer{listener: listener}
+	s := &StdioServer{
+		listener: listener,
+		lock:     &sync.Mutex{},
+	}
 
-	// TODO: wait (somewhere) that this is done before proceeding
 	go func() {
+		s.lock.Lock()
+		defer s.lock.Unlock()
+
 		if conn, err := s.listener.Accept(); err != nil {
 			log.Default().Error("could not accept client connection", "error", err)
 		} else {
@@ -57,13 +63,15 @@ func NewStdioServer() (*StdioServer, error) {
 }
 
 func (s *StdioServer) Endpoint() string {
+	s.lock.Lock()
+	defer s.lock.Unlock()
+
 	return s.listener.Addr().String()
 }
 
 func (s *StdioServer) Copy(inStream io.Writer, outStream io.Reader, errStream io.Reader) error {
-	if s.connection == nil {
-		return ErrNoStreamingConnection
-	}
+	s.lock.Lock()
+	defer s.lock.Unlock()
 
 	eg, _ := errgroup.WithContext(context.Background())
 	inCopier := NewCancelCopier(s.connection, inStream)
@@ -107,12 +115,12 @@ type StdioClient struct {
 func NewStdioClient(url string) (*StdioClient, error) {
 	addr, err := net.ResolveTCPAddr("tcp", url)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("could not resolve host: %w", err)
 	}
 
 	conn, err := net.DialTCP("tcp", nil, addr)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("could not connect to host: %w", err)
 	}
 
 	return &StdioClient{connection: conn}, nil
@@ -208,7 +216,7 @@ func (c *MuxCopier) copyFrom(src io.Reader, stream muxStream) error {
 			c.bufPool.Put(writeBuf)
 
 			if writeErr != nil {
-				return writeErr
+				return fmt.Errorf("could not write to stream: %w", writeErr)
 			}
 
 			if read != written {
@@ -221,7 +229,7 @@ func (c *MuxCopier) copyFrom(src io.Reader, stream muxStream) error {
 		}
 
 		if readErr != nil {
-			return readErr
+			return fmt.Errorf("could not read from stream: %w", readErr)
 		}
 	}
 }
@@ -267,14 +275,14 @@ func (c *DemuxCopier) Copy() error {
 			if read, err := c.Src.Read(c.buf[c.index:]); err == io.EOF {
 				return nil
 			} else if err != nil {
-				return err
+				return fmt.Errorf("could not read from stream: %w", err)
 			} else {
 				c.index += read
 			}
 		}
 
 		if written, err := out.Write(c.buf[headerSize:size]); err != nil {
-			return err
+			return fmt.Errorf("could not write to stream: %w", err)
 		} else if written != size-headerSize {
 			return io.ErrShortWrite
 		}
@@ -296,7 +304,7 @@ func (c *DemuxCopier) readHeader() (io.Writer, int, error) {
 		c.index += read
 
 		if err != nil {
-			return nil, 0, err
+			return nil, 0, fmt.Errorf("could not read from stream: %w", err)
 		}
 	}
 
@@ -363,7 +371,7 @@ func (c *CancelCopier) Copy() error {
 		case read, ok := <-c.read:
 			if read > 0 {
 				if written, err := c.Dst.Write(c.buf[0:read]); err != nil {
-					return err
+					return fmt.Errorf("could not write to stream: %w", err)
 				} else if read != written {
 					return io.ErrShortWrite
 				}
