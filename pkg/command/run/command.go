@@ -5,6 +5,7 @@ import (
 	"github.com/dodo-cli/dodo-core/pkg/config"
 	"github.com/dodo-cli/dodo-core/pkg/core"
 	"github.com/dodo-cli/dodo-core/pkg/plugin"
+	"github.com/dodo-cli/dodo-core/pkg/plugin/command"
 	"github.com/spf13/cobra"
 )
 
@@ -33,22 +34,22 @@ func New(m plugin.Manager) *Command {
 	var opts options
 
 	cmd := &cobra.Command{
-		Use:                   name,
+		Use:                   Name,
 		Short:                 "Run commands in Docker context",
 		Long:                  description,
 		DisableFlagsInUseLine: true,
 		SilenceUsage:          true,
-		// Because exec results are not really errors
-		// TODO: is there a more elegant way to handle this?
-		SilenceErrors: true,
-		Args:          cobra.MinimumNArgs(1),
-		RunE: func(_ *cobra.Command, args []string) error {
+		Args:                  cobra.MinimumNArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
 			backdrop, err := opts.createConfig(args[0], args[1:])
 			if err != nil {
 				return err
 			}
 
-			return core.RunByName(m, backdrop)
+			exitCode, err := core.RunByName(m, backdrop)
+			command.SetExitCode(cmd, exitCode)
+
+			return err
 		},
 	}
 

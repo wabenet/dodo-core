@@ -15,24 +15,24 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-func RunBackdrop(m plugin.Manager, config *api.Backdrop) error {
-	rt, err := runtime.GetByName(m, config.Runtime)
+func RunBackdrop(m plugin.Manager, b *api.Backdrop) (int, error) {
+	rt, err := runtime.GetByName(m, b.Runtime)
 	if err != nil {
-		return err
+		return ExitCodeInternalError, err
 	}
 
-	imageID, err := rt.ResolveImage(config.ImageId)
+	imageID, err := rt.ResolveImage(b.ImageId)
 	if err != nil {
-		return err
+		return ExitCodeInternalError, err
 	}
 
-	config.ImageId = imageID
+	b.ImageId = imageID
 
 	tty := term.IsTerminal(os.Stdin.Fd()) && term.IsTerminal(os.Stdout.Fd())
 
-	containerID, err := rt.CreateContainer(config, tty, true)
+	containerID, err := rt.CreateContainer(b, tty, true)
 	if err != nil {
-		return err
+		return ExitCodeInternalError, err
 	}
 
 	var height, width uint32
@@ -43,7 +43,7 @@ func RunBackdrop(m plugin.Manager, config *api.Backdrop) error {
 	if fd := os.Stdin.Fd(); term.IsTerminal(fd) {
 		state, err := term.SetRawTerminal(fd)
 		if err != nil {
-			return fmt.Errorf("could not set raw terminal: %w", err)
+			return ExitCodeInternalError, fmt.Errorf("could not set raw terminal: %w", err)
 		}
 
 		defer func() {
@@ -54,7 +54,7 @@ func RunBackdrop(m plugin.Manager, config *api.Backdrop) error {
 
 		ws, err := term.GetWinsize(fd)
 		if err != nil {
-			return fmt.Errorf("could not get terminal size: %w", err)
+			return ExitCodeInternalError, fmt.Errorf("could not get terminal size: %w", err)
 		}
 
 		height = uint32(ws.Height)
@@ -71,19 +71,25 @@ func RunBackdrop(m plugin.Manager, config *api.Backdrop) error {
 		})
 	}
 
+	exitCode := 0
+
 	eg.Go(func() error {
 		defer close(resizeChannel)
 
-		return rt.StreamContainer(containerID, &plugin.StreamConfig{
+		r, err := rt.StreamContainer(containerID, &plugin.StreamConfig{
 			Stdin:          os.Stdin,
 			Stdout:         os.Stdout,
 			Stderr:         os.Stderr,
 			TerminalHeight: height,
 			TerminalWidth:  width,
 		})
+
+		exitCode = r.ExitCode
+
+		return err
 	})
 
-	return eg.Wait()
+	return exitCode, eg.Wait()
 }
 
 func resize(fd uintptr, rt runtime.ContainerRuntime, containerID string) {

@@ -29,7 +29,7 @@ func Configure() {
 	viper.SetConfigName(Name)
 	viper.SetConfigType("yaml")
 
-        viper.AutomaticEnv()
+	viper.AutomaticEnv()
 	viper.SetEnvPrefix(Name)
 	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
 

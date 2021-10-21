@@ -84,17 +84,18 @@ func (c *client) ResizeContainer(id string, height uint32, width uint32) error {
 	return fmt.Errorf("could not resize container: %w", err)
 }
 
-func (c *client) StreamContainer(id string, stream *plugin.StreamConfig) error {
+func (c *client) StreamContainer(id string, stream *plugin.StreamConfig) (*Result, error) {
 	ctx := context.Background()
+	result := &Result{}
 
 	connInfo, err := c.runtimeClient.GetStreamingConnection(ctx, &api.GetStreamingConnectionRequest{})
 	if err != nil {
-		return fmt.Errorf("could not get streaming connection: %w", err)
+		return nil, fmt.Errorf("could not get streaming connection: %w", err)
 	}
 
 	stdio, err := plugin.NewStdioClient(connInfo.Url)
 	if err != nil {
-		return fmt.Errorf("could not get stdio server: %w", err)
+		return nil, fmt.Errorf("could not get stdio server: %w", err)
 	}
 
 	eg, _ := errgroup.WithContext(ctx)
@@ -104,16 +105,15 @@ func (c *client) StreamContainer(id string, stream *plugin.StreamConfig) error {
 	})
 
 	eg.Go(func() error {
-		result, err := c.runtimeClient.StreamContainer(ctx, &api.StreamContainerRequest{ContainerId: id, Height: stream.TerminalHeight, Width: stream.TerminalWidth})
+		r, err := c.runtimeClient.StreamContainer(ctx, &api.StreamContainerRequest{ContainerId: id, Height: stream.TerminalHeight, Width: stream.TerminalWidth})
 		if err != nil {
 			return fmt.Errorf("could not stream container: %w", err)
 		}
 
-		return &Result{
-			ExitCode: result.ExitCode,
-			Message:  result.Message,
-		}
+		result.ExitCode = int(r.ExitCode)
+
+		return nil
 	})
 
-	return eg.Wait()
+	return result, eg.Wait()
 }

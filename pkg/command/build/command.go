@@ -17,7 +17,7 @@ func New(m plugin.Manager) *Command {
 	var opts options
 
 	cmd := &cobra.Command{
-		Use:                   name,
+		Use:                   Name,
 		Short:                 "Build all required images for backdrop without running it",
 		DisableFlagsInUseLine: true,
 		SilenceUsage:          true,

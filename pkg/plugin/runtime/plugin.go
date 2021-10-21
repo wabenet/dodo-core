@@ -37,16 +37,11 @@ type ContainerRuntime interface {
 	StartContainer(string) error
 	DeleteContainer(string) error
 	ResizeContainer(string, uint32, uint32) error
-	StreamContainer(string, *dodo.StreamConfig) error
+	StreamContainer(string, *dodo.StreamConfig) (*Result, error)
 }
 
 type Result struct {
-	ExitCode int64
-	Message  string
-}
-
-func (e Result) Error() string {
-	return e.Message
+	ExitCode int
 }
 
 type grpcPlugin struct {

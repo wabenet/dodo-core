@@ -2,7 +2,6 @@ package runtime
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"io"
 
@@ -76,11 +75,13 @@ func (s *server) StreamContainer(_ context.Context, request *api.StreamContainer
 	outReader, outWriter := io.Pipe()
 	errReader, errWriter := io.Pipe()
 
+	result := &api.StreamContainerResponse{}
 	eg, _ := errgroup.WithContext(context.Background())
 
 	eg.Go(func() error {
 		return s.stdio.Copy(inWriter, outReader, errReader)
 	})
+
 
 	eg.Go(func() error {
 		defer func() {
@@ -89,28 +90,23 @@ func (s *server) StreamContainer(_ context.Context, request *api.StreamContainer
 			errWriter.Close()
 		}()
 
-		return s.impl.StreamContainer(request.ContainerId, &plugin.StreamConfig{
+		r, err := s.impl.StreamContainer(request.ContainerId, &plugin.StreamConfig{
 			Stdin:          inReader,
 			Stdout:         outWriter,
 			Stderr:         errWriter,
 			TerminalHeight: request.Height,
 			TerminalWidth:  request.Width,
 		})
+
+		result.ExitCode = int64(r.ExitCode)
+
+		return err
 	})
 
 	err := eg.Wait()
-
-	result := &Result{}
-	if ok := errors.As(err, result); ok {
-		return &api.StreamContainerResponse{
-			ExitCode: result.ExitCode,
-			Message:  result.Message,
-		}, nil
-	}
-
 	if err != nil {
 		return nil, fmt.Errorf("error during container stream: %w", err)
 	}
 
-	return &api.StreamContainerResponse{ExitCode: 0}, nil
+	return result, nil
 }

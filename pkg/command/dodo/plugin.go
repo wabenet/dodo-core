@@ -1,4 +1,4 @@
-package proxycmd
+package dodo
 
 import (
 	api "github.com/dodo-cli/dodo-core/api/v1alpha2"
@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const name = "dodo"
+const Name = "dodo"
 
 var _ command.Command = &Command{}
 
@@ -21,7 +21,7 @@ func (p *Command) Type() plugin.Type {
 
 func (p *Command) PluginInfo() *api.PluginInfo {
 	return &api.PluginInfo{
-		Name: &api.PluginName{Name: name, Type: command.Type.String()},
+		Name: &api.PluginName{Name: Name, Type: command.Type.String()},
 	}
 }
 
