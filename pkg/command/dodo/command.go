@@ -60,7 +60,7 @@ func runProxy(cmd *cobra.Command, executable string, args []string) error {
 		if exit, ok := err.(*exec.ExitError); ok {
 			command.SetExitCode(cmd, exit.ExitCode())
 		} else {
-			return err
+			return fmt.Errorf("error executing external command: %w", err)
 		}
 	}
 

@@ -1,6 +1,8 @@
 package run
 
 import (
+	"fmt"
+
 	api "github.com/dodo-cli/dodo-core/api/v1alpha2"
 	"github.com/dodo-cli/dodo-core/pkg/config"
 	"github.com/dodo-cli/dodo-core/pkg/core"
@@ -49,7 +51,7 @@ func New(m plugin.Manager) *Command {
 			exitCode, err := core.RunByName(m, backdrop)
 			command.SetExitCode(cmd, exitCode)
 
-			return err
+			return fmt.Errorf("error running backdrop: %w", err)
 		},
 	}
 
@@ -96,7 +98,7 @@ func (opts *options) createConfig(name string, command []string) (*api.Backdrop,
 	for _, spec := range opts.volumes {
 		vol, err := config.ParseVolumeMount(spec)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("could not parse volume config: %w", err)
 		}
 
 		c.Volumes = append(c.Volumes, vol)
@@ -105,7 +107,7 @@ func (opts *options) createConfig(name string, command []string) (*api.Backdrop,
 	for _, spec := range opts.environment {
 		env, err := config.ParseEnvironmentVariable(spec)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("could not parse environment config: %w", err)
 		}
 
 		c.Environment = append(c.Environment, env)
@@ -114,7 +116,7 @@ func (opts *options) createConfig(name string, command []string) (*api.Backdrop,
 	for _, spec := range opts.publish {
 		port, err := config.ParsePortBinding(spec)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("could not parse port config: %w", err)
 		}
 
 		c.Ports = append(c.Ports, port)

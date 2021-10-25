@@ -3,6 +3,7 @@ package core
 import (
 	"crypto/rand"
 	"encoding/hex"
+	"errors"
 	"fmt"
 
 	api "github.com/dodo-cli/dodo-core/api/v1alpha2"
@@ -15,6 +16,10 @@ import (
 const (
 	ExitCodeInternalError = 1
 	DefaultCommand        = "run"
+)
+
+var (
+	ErrInvalidConfiguration = errors.New("invalid configuration")
 )
 
 func ExecuteDodoMain(m plugin.Manager) int {
@@ -41,7 +46,7 @@ func RunByName(m plugin.Manager, overrides *api.Backdrop) (int, error) {
 
 	if len(b.ImageId) == 0 {
 		if b.BuildInfo == nil {
-			return ExitCodeInternalError, fmt.Errorf("neither image nor build configured for backdrop '%s'", overrides.Name)
+			return ExitCodeInternalError, fmt.Errorf("neither image nor build configured for backdrop %s: %w", overrides.Name, ErrInvalidConfiguration)
 		}
 
 		for _, dep := range b.BuildInfo.Dependencies {
@@ -64,7 +69,7 @@ func RunByName(m plugin.Manager, overrides *api.Backdrop) (int, error) {
 func BuildByName(m plugin.Manager, overrides *api.BuildInfo) (string, error) {
 	config, err := configuration.FindBuildConfig(m, overrides.ImageName, overrides)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("error finding build config for %s: %w", overrides.ImageName, err)
 	}
 
 	for _, dep := range config.Dependencies {

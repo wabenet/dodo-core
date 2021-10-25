@@ -82,7 +82,6 @@ func (s *server) StreamContainer(_ context.Context, request *api.StreamContainer
 		return s.stdio.Copy(inWriter, outReader, errReader)
 	})
 
-
 	eg.Go(func() error {
 		defer func() {
 			inWriter.Close()
@@ -100,7 +99,7 @@ func (s *server) StreamContainer(_ context.Context, request *api.StreamContainer
 
 		result.ExitCode = int64(r.ExitCode)
 
-		return err
+		return fmt.Errorf("could not stream container: %w", err)
 	})
 
 	err := eg.Wait()

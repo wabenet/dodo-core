@@ -101,6 +101,7 @@ func LogOutput() io.Writer {
 		if outFile, err := os.OpenFile(path, syscall.O_CREAT|syscall.O_RDWR|syscall.O_APPEND, 0666); err == nil {
 			return outFile
 		}
+
 		return io.Discard
 	}
 }

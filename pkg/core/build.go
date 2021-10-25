@@ -14,7 +14,7 @@ import (
 func BuildImage(m plugin.Manager, config *api.BuildInfo) (string, error) {
 	b, err := builder.GetByName(m, config.Builder)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("could not find build plugin for %s: %w", config.Builder, err)
 	}
 
 	var height, width uint32

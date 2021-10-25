@@ -1,6 +1,8 @@
 package build
 
 import (
+	"fmt"
+
 	api "github.com/dodo-cli/dodo-core/api/v1alpha2"
 	"github.com/dodo-cli/dodo-core/pkg/core"
 	"github.com/dodo-cli/dodo-core/pkg/plugin"
@@ -32,7 +34,7 @@ func New(m plugin.Manager) *Command {
 
 			_, err := core.BuildByName(m, config)
 
-			return err
+			return fmt.Errorf("could not build backdrop image: %w", err)
 		},
 	}
 

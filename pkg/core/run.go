@@ -18,12 +18,12 @@ import (
 func RunBackdrop(m plugin.Manager, b *api.Backdrop) (int, error) {
 	rt, err := runtime.GetByName(m, b.Runtime)
 	if err != nil {
-		return ExitCodeInternalError, err
+		return ExitCodeInternalError, fmt.Errorf("could not find runtime plugin for %s: %w", b.Runtime, err)
 	}
 
 	imageID, err := rt.ResolveImage(b.ImageId)
 	if err != nil {
-		return ExitCodeInternalError, err
+		return ExitCodeInternalError, fmt.Errorf("could not find %s: %w", b.ImageId, err)
 	}
 
 	b.ImageId = imageID
@@ -32,7 +32,7 @@ func RunBackdrop(m plugin.Manager, b *api.Backdrop) (int, error) {
 
 	containerID, err := rt.CreateContainer(b, tty, true)
 	if err != nil {
-		return ExitCodeInternalError, err
+		return ExitCodeInternalError, fmt.Errorf("could not create container: %w", err)
 	}
 
 	var height, width uint32
@@ -86,7 +86,7 @@ func RunBackdrop(m plugin.Manager, b *api.Backdrop) (int, error) {
 
 		exitCode = r.ExitCode
 
-		return err
+		return fmt.Errorf("error in container I/O stream: %w", err)
 	})
 
 	return exitCode, eg.Wait()
