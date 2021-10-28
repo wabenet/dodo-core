@@ -45,13 +45,13 @@ func New(m plugin.Manager) *Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			backdrop, err := opts.createConfig(args[0], args[1:])
 			if err != nil {
-				return err
+				return fmt.Errorf("error running backdrop: %w", err)
 			}
 
 			exitCode, err := core.RunByName(m, backdrop)
 			command.SetExitCode(cmd, exitCode)
 
-			return fmt.Errorf("error running backdrop: %w", err)
+			return nil
 		},
 	}
 

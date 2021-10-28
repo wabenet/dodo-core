@@ -76,17 +76,19 @@ func RunBackdrop(m plugin.Manager, b *api.Backdrop) (int, error) {
 	eg.Go(func() error {
 		defer close(resizeChannel)
 
-		r, err := rt.StreamContainer(containerID, &plugin.StreamConfig{
+		if r, err := rt.StreamContainer(containerID, &plugin.StreamConfig{
 			Stdin:          os.Stdin,
 			Stdout:         os.Stdout,
 			Stderr:         os.Stderr,
 			TerminalHeight: height,
 			TerminalWidth:  width,
-		})
+		}); err != nil {
+			return fmt.Errorf("error in container I/O stream: %w", err)
+		} else {
+			exitCode = r.ExitCode
+		}
 
-		exitCode = r.ExitCode
-
-		return fmt.Errorf("error in container I/O stream: %w", err)
+		return nil
 	})
 
 	return exitCode, eg.Wait()

@@ -32,9 +32,11 @@ func New(m plugin.Manager) *Command {
 				ForcePull:    opts.forcePull,
 			}
 
-			_, err := core.BuildByName(m, config)
+			if _, err := core.BuildByName(m, config); err != nil {
+				fmt.Errorf("could not build backdrop image: %w", err)
+			}
 
-			return fmt.Errorf("could not build backdrop image: %w", err)
+			return nil
 		},
 	}
 
