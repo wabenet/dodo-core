@@ -33,7 +33,7 @@ func New(m plugin.Manager) *Command {
 			}
 
 			if _, err := core.BuildByName(m, config); err != nil {
-				fmt.Errorf("could not build backdrop image: %w", err)
+				return fmt.Errorf("could not build backdrop image: %w", err)
 			}
 
 			return nil

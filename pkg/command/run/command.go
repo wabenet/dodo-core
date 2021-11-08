@@ -51,6 +51,10 @@ func New(m plugin.Manager) *Command {
 			exitCode, err := core.RunByName(m, backdrop)
 			command.SetExitCode(cmd, exitCode)
 
+			if err != nil {
+				return fmt.Errorf("error running backdrop: %w", err)
+			}
+
 			return nil
 		},
 	}
