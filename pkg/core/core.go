@@ -7,12 +7,9 @@ import (
 	"fmt"
 
 	api "github.com/dodo-cli/dodo-core/api/v1alpha2"
-	"github.com/dodo-cli/dodo-core/pkg/command/dodo"
 	"github.com/dodo-cli/dodo-core/pkg/plugin"
-	"github.com/dodo-cli/dodo-core/pkg/plugin/command"
 	"github.com/dodo-cli/dodo-core/pkg/plugin/configuration"
 )
-
 const (
 	ExitCodeInternalError = 1
 	DefaultCommand        = "run"
@@ -21,16 +18,6 @@ const (
 var (
 	ErrInvalidConfiguration = errors.New("invalid configuration")
 )
-
-func ExecuteDodoMain(m plugin.Manager) int {
-	cmd := dodo.New(m, DefaultCommand).GetCobraCommand()
-
-	if err := cmd.Execute(); err != nil {
-		return ExitCodeInternalError
-	}
-
-	return command.GetExitCode(cmd)
-}
 
 func RunByName(m plugin.Manager, overrides *api.Backdrop) (int, error) {
 	b := configuration.AssembleBackdropConfig(m, overrides.Name, overrides)
