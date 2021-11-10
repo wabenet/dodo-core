@@ -2,13 +2,11 @@ package core
 
 import (
 	"fmt"
-	"os"
 
 	api "github.com/dodo-cli/dodo-core/api/v1alpha2"
 	"github.com/dodo-cli/dodo-core/pkg/plugin"
 	"github.com/dodo-cli/dodo-core/pkg/plugin/builder"
-	log "github.com/hashicorp/go-hclog"
-	"github.com/moby/term"
+	"github.com/dodo-cli/dodo-core/pkg/ui"
 )
 
 func BuildImage(m plugin.Manager, config *api.BuildInfo) (string, error) {
@@ -17,34 +15,25 @@ func BuildImage(m plugin.Manager, config *api.BuildInfo) (string, error) {
 		return "", fmt.Errorf("could not find build plugin for %s: %w", config.Builder, err)
 	}
 
-	var height, width uint32
+	imageID := ""
 
-	if fd := os.Stdin.Fd(); term.IsTerminal(fd) {
-		state, err := term.SetRawTerminal(fd)
-		if err != nil {
-			return "", fmt.Errorf("could not set raw terminal: %w", err)
-		}
-
-		defer func() {
-			if err := term.RestoreTerminal(fd, state); err != nil {
-				log.L().Error("could not restore terminal", "error", err)
+	err = ui.NewTerminal().RunInRaw(
+		func(t *ui.Terminal) error {
+			if id, err := b.CreateImage(config, &plugin.StreamConfig{
+				Stdin:          t.Stdin,
+				Stdout:         t.Stdout,
+				Stderr:         t.Stderr,
+				TerminalHeight: t.Height,
+				TerminalWidth:  t.Width,
+			}); err != nil {
+				return fmt.Errorf("error in container I/O stream: %w", err)
+			} else {
+				imageID = id
 			}
-		}()
 
-		ws, err := term.GetWinsize(fd)
-		if err != nil {
-			return "", fmt.Errorf("could not get terminal size: %w", err)
-		}
+			return nil
+		},
+	)
 
-		height = uint32(ws.Height)
-		width = uint32(ws.Width)
-	}
-
-	return b.CreateImage(config, &plugin.StreamConfig{
-		Stdin:          os.Stdin,
-		Stdout:         os.Stdout,
-		Stderr:         os.Stderr,
-		TerminalHeight: height,
-		TerminalWidth:  width,
-	})
+	return imageID, err
 }
