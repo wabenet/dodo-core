@@ -1,8 +1,7 @@
 package runtime
 
 import (
-	"fmt"
-
+	api "github.com/dodo-cli/dodo-core/api/v1alpha2"
 	"github.com/dodo-cli/dodo-core/pkg/plugin"
 	log "github.com/hashicorp/go-hclog"
 )
@@ -20,5 +19,7 @@ func GetByName(m plugin.Manager, name string) (ContainerRuntime, error) {
 		}
 	}
 
-	return nil, fmt.Errorf("could not find container runtime: %w", plugin.ErrNoValidPluginFound)
+	return nil, plugin.ErrPluginNotFound{
+		Plugin: &api.PluginName{Type: Type.String(), Name: name},
+	}
 }

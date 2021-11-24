@@ -56,15 +56,15 @@ func (t *Terminal) RunInRaw(wrapped func(*Terminal) error) error {
 			}
 		}()
 
+		ws, err := term.GetWinsize(fd)
+		if err != nil {
+			return fmt.Errorf("could not get terminal size: %w", err)
+		}
+
+		t.Height = uint32(ws.Height)
+		t.Width = uint32(ws.Width)
+
 		if t.resizeHook != nil {
-			ws, err := term.GetWinsize(fd)
-			if err != nil {
-				return fmt.Errorf("could not get terminal size: %w", err)
-			}
-
-			t.Height = uint32(ws.Height)
-			t.Width = uint32(ws.Width)
-
 			signal.Notify(t.resizeChannel, syscall.SIGWINCH)
 
 			eg.Go(func() error {
@@ -96,9 +96,6 @@ func (t *Terminal) RunInRaw(wrapped func(*Terminal) error) error {
 	})
 
 	return eg.Wait()
-}
-
-func (t *Terminal) resizeLoop() {
 }
 
 func IsTTY() bool {

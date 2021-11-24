@@ -18,21 +18,8 @@ const (
 	ProtocolVersion  = 1
 	MagicCookieKey   = "DODO_PLUGIN"
 	MagicCookieValue = "69318785-d741-4150-ac91-8f03fa703530"
-
-	FailedPlugin = "error"
-
-	ErrPluginInvalid        PluginError = "invalid plugin"
-	ErrPluginNotImplemented PluginError = "not implemented"
-	ErrPluginNotFound       PluginError = "plugin not found"
-	ErrNoValidPluginFound   PluginError = "no valid plugin found"
-	ErrCircularDependency   PluginError = "circular plugin dependency"
+	FailedPlugin     = "error"
 )
-
-type PluginError string
-
-func (e PluginError) Error() string {
-	return string(e)
-}
 
 type Plugin interface {
 	PluginInfo() *api.PluginInfo
@@ -60,6 +47,32 @@ type StreamConfig struct {
 type Manager struct {
 	pluginTypes map[string]Type
 	plugins     map[string]map[string]Plugin
+}
+
+type ErrPluginNotFound struct {
+	Plugin *api.PluginName
+}
+
+func (e ErrPluginNotFound) Error() string {
+	return fmt.Sprintf(
+		"could not find plugin '%s' of type %s",
+		e.Plugin.Name,
+		e.Plugin.Type,
+	)
+}
+
+type ErrInvalidPlugin struct {
+	Plugin  *api.PluginName
+	Message string
+}
+
+func (e ErrInvalidPlugin) Error() string {
+	return fmt.Sprintf(
+		"invalid plugin '%s' of type %s: %s",
+		e.Plugin.Name,
+		e.Plugin.Type,
+		e.Message,
+	)
 }
 
 func Init() Manager {
@@ -238,7 +251,10 @@ func loadGRPCPlugin(path string, pluginType string, grpcPlugin plugin.Plugin) (P
 
 	client.Kill()
 
-	return nil, ErrPluginInvalid
+	return nil, ErrInvalidPlugin{
+		Plugin:  &api.PluginName{Type: pluginType, Name: path}, // TODO: name?
+		Message: "does not implement Plugin interface",
+	}
 }
 
 func augmentLogger(logger log.Logger, fields map[string]string) log.Logger {

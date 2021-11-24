@@ -6,37 +6,83 @@ import (
 	api "github.com/dodo-cli/dodo-core/api/v1alpha2"
 	"github.com/dodo-cli/dodo-core/pkg/plugin"
 	log "github.com/hashicorp/go-hclog"
+	"github.com/hashicorp/go-multierror"
 )
 
-func AssembleBackdropConfig(m plugin.Manager, name string, overrides *api.Backdrop) *api.Backdrop {
+type ErrConfigNotFound struct {
+	Name   string
+	Reason error
+}
+
+func (e ErrConfigNotFound) Error() string {
+	if e.Reason == nil {
+		return fmt.Sprintf(
+			"could not find any configuration for '%s'", e.Name,
+		)
+	}
+
+	return fmt.Sprintf(
+		"could not find any configuration for '%s': %s",
+		e.Name,
+		e.Reason.Error(),
+	)
+}
+
+type ErrInvalidConfig struct {
+	Name    string
+	Message string
+}
+
+func (e ErrInvalidConfig) Error() string {
+	return fmt.Sprintf(
+		"invalid configuration for '%s': %s",
+		e.Name,
+		e.Message,
+	)
+}
+
+func AssembleBackdropConfig(m plugin.Manager, name string, overrides *api.Backdrop) (*api.Backdrop, error) {
+	var errs error
+
 	config := &api.Backdrop{Entrypoint: &api.Entrypoint{}}
+	foundSomething := false
 
 	for n, p := range m.GetPlugins(Type.String()) {
 		log.L().Debug("Fetching configuration from plugin", "name", n)
 
 		conf, err := p.(Configuration).GetBackdrop(name)
 		if err != nil {
-			log.L().Warn("could not get config", "error", err)
+			errs = multierror.Append(errs, err)
 
 			continue
 		}
 
+		foundSomething = true
+
 		MergeBackdrop(config, conf)
+	}
+
+	if !foundSomething {
+		return nil, ErrConfigNotFound{Name: name, Reason: errs}
 	}
 
 	MergeBackdrop(config, overrides)
 	log.L().Debug("assembled configuration", "backdrop", config)
 
-	return config
+	err := ValidateBackdrop(config)
+
+	return config, err
 }
 
 func FindBuildConfig(m plugin.Manager, name string, overrides *api.BuildInfo) (*api.BuildInfo, error) {
+	var errs error
+
 	for n, p := range m.GetPlugins(Type.String()) {
 		log.L().Debug("Fetching configuration from plugin", "name", n)
 
 		confs, err := p.(Configuration).ListBackdrops()
 		if err != nil {
-			log.L().Warn("could not get config", "error", err)
+			errs = multierror.Append(errs, err)
 
 			continue
 		}
@@ -47,12 +93,18 @@ func FindBuildConfig(m plugin.Manager, name string, overrides *api.BuildInfo) (*
 				MergeBuildInfo(config, conf.BuildInfo)
 				MergeBuildInfo(config, overrides)
 
+				if err := ValidateBuildInfo(config); err != nil {
+					errs = multierror.Append(errs, err)
+
+					continue
+				}
+
 				return config, nil
 			}
 		}
 	}
 
-	return nil, fmt.Errorf("no config found for image")
+	return nil, ErrConfigNotFound{Name: name, Reason: errs}
 }
 
 func MergeBackdrop(target *api.Backdrop, source *api.Backdrop) {
@@ -154,4 +206,22 @@ func MergeBuildInfo(target *api.BuildInfo, source *api.BuildInfo) {
 	}
 
 	target.Dependencies = append(target.Dependencies, source.Dependencies...)
+}
+
+func ValidateBackdrop(b *api.Backdrop) error {
+	if b.ImageId == "" && b.BuildInfo == nil {
+		return ErrInvalidConfig{Name: b.Name, Message: "neither image nor build configured"}
+	}
+
+	if b.BuildInfo != nil {
+		if err := ValidateBuildInfo(b.BuildInfo); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func ValidateBuildInfo(b *api.BuildInfo) error {
+	return nil
 }

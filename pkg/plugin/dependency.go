@@ -1,9 +1,26 @@
 package plugin
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/deckarep/golang-set"
 	api "github.com/dodo-cli/dodo-core/api/v1alpha2"
 )
+
+type ErrCircularDependency struct {
+	Dependencies map[dependency]mapset.Set
+}
+
+func (e ErrCircularDependency) Error() string {
+	lines := []string{"circular dependencies in plugins:"}
+
+	for dep := range e.Dependencies {
+		lines = append(lines, fmt.Sprintf("%s/%s", dep.t, dep.n))
+	}
+
+	return strings.Join(lines, "\n")
+}
 
 type dependency struct {
 	n string
@@ -49,7 +66,7 @@ func ResolveDependencies(pluginMap map[string]map[string]Plugin) ([]Plugin, erro
 		}
 
 		if withoutDeps.Cardinality() == 0 {
-			return nil, ErrCircularDependency
+			return nil, ErrCircularDependency{Dependencies: dependencies}
 		}
 
 		for n := range withoutDeps.Iter() {

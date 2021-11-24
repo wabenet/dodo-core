@@ -15,8 +15,6 @@ import (
 )
 
 const (
-	ErrNoStreamingConnection PluginError = "no streaming connection established"
-
 	stdout muxStream = iota
 	stderr
 
