@@ -1,6 +1,8 @@
 package runtime
 
 import (
+	"os"
+
 	api "github.com/dodo-cli/dodo-core/api/v1alpha2"
 	dodo "github.com/dodo-cli/dodo-core/pkg/plugin"
 	"github.com/hashicorp/go-plugin"
@@ -40,6 +42,7 @@ type ContainerRuntime interface {
 	StartContainer(string) error
 	DeleteContainer(string) error
 	ResizeContainer(string, uint32, uint32) error
+	KillContainer(string, os.Signal) error
 	StreamContainer(string, *dodo.StreamConfig) (*Result, error)
 }
 

@@ -3,6 +3,7 @@ package runtime
 import (
 	"context"
 	"fmt"
+	"os"
 
 	api "github.com/dodo-cli/dodo-core/api/v1alpha2"
 	"github.com/dodo-cli/dodo-core/pkg/plugin"
@@ -64,24 +65,47 @@ func (c *client) CreateContainer(config *api.Backdrop, tty bool, stdio bool) (st
 }
 
 func (c *client) StartContainer(id string) error {
-	_, err := c.runtimeClient.StartContainer(context.Background(), &api.StartContainerRequest{ContainerId: id})
+	if _, err := c.runtimeClient.StartContainer(
+		context.Background(),
+		&api.StartContainerRequest{ContainerId: id},
+	); err != nil {
+		return fmt.Errorf("could not start container: %w", err)
+	}
 
-	return fmt.Errorf("could not start container: %w", err)
+	return nil
 }
 
 func (c *client) DeleteContainer(id string) error {
-	_, err := c.runtimeClient.DeleteContainer(context.Background(), &api.DeleteContainerRequest{ContainerId: id})
+	if _, err := c.runtimeClient.DeleteContainer(
+		context.Background(),
+		&api.DeleteContainerRequest{ContainerId: id},
+	); err != nil {
+		return fmt.Errorf("could not delete container: %w", err)
+	}
 
-	return fmt.Errorf("could not delete container: %w", err)
+	return nil
 }
 
 func (c *client) ResizeContainer(id string, height uint32, width uint32) error {
-	_, err := c.runtimeClient.ResizeContainer(
+	if _, err := c.runtimeClient.ResizeContainer(
 		context.Background(),
 		&api.ResizeContainerRequest{ContainerId: id, Height: height, Width: width},
-	)
+	); err != nil {
+		return fmt.Errorf("could not resize container: %w", err)
+	}
 
-	return fmt.Errorf("could not resize container: %w", err)
+	return nil
+}
+
+func (c *client) KillContainer(id string, signal os.Signal) error {
+	if _, err := c.runtimeClient.KillContainer(
+		context.Background(),
+		&api.KillContainerRequest{ContainerId: id, Signal: signalToString(signal)},
+	); err != nil {
+		return fmt.Errorf("could not kill container: %w", err)
+	}
+
+	return nil
 }
 
 func (c *client) StreamContainer(id string, stream *plugin.StreamConfig) (*Result, error) {
@@ -105,7 +129,11 @@ func (c *client) StreamContainer(id string, stream *plugin.StreamConfig) (*Resul
 	})
 
 	eg.Go(func() error {
-		r, err := c.runtimeClient.StreamContainer(ctx, &api.StreamContainerRequest{ContainerId: id, Height: stream.TerminalHeight, Width: stream.TerminalWidth})
+		r, err := c.runtimeClient.StreamContainer(ctx, &api.StreamContainerRequest{
+			ContainerId: id,
+			Height:      stream.TerminalHeight,
+			Width:       stream.TerminalWidth,
+		})
 		if err != nil {
 			return fmt.Errorf("could not stream container: %w", err)
 		}

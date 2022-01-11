@@ -59,6 +59,10 @@ func (s *server) ResizeContainer(_ context.Context, request *api.ResizeContainer
 	return &empty.Empty{}, s.impl.ResizeContainer(request.ContainerId, request.Height, request.Width)
 }
 
+func (s *server) KillContainer(_ context.Context, request *api.KillContainerRequest) (*empty.Empty, error) {
+	return &empty.Empty{}, s.impl.KillContainer(request.ContainerId, signalFromString(request.Signal))
+}
+
 func (s *server) GetStreamingConnection(_ context.Context, _ *api.GetStreamingConnectionRequest) (*api.GetStreamingConnectionResponse, error) {
 	stdio, err := plugin.NewStdioServer()
 	if err != nil {
