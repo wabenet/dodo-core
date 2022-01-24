@@ -76,7 +76,9 @@ func (t *Terminal) handleSignal(s os.Signal) {
 		t.refreshSize()
 	}
 
-	t.signalHook(s, t)
+	if t.signalHook != nil {
+		t.signalHook(s, t)
+	}
 }
 
 func (t *Terminal) RunInRaw(wrapped func(*Terminal) error) error {
