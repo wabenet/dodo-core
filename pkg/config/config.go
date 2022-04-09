@@ -1,7 +1,6 @@
 package config
 
 import (
-	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -17,9 +16,10 @@ import (
 const (
 	Name = "dodo"
 
-	ConfKeyLogLevel = "log-level"
-	ConfKeyLogFile  = "log-file"
-	ConfKeyAppDir   = "app-dir"
+	ConfKeyConfigFiles = "config-files"
+	ConfKeyLogLevel    = "log-level"
+	ConfKeyLogFile     = "log-file"
+	ConfKeyAppDir      = "app-dir"
 
 	DefaultLogLevel = "INFO"
 	DefaultAppDir   = "/var/lib/dodo"
@@ -33,8 +33,7 @@ func Configure() {
 	viper.SetEnvPrefix(Name)
 	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
 
-	viper.AddConfigPath(fmt.Sprintf("/etc/%s", Name))
-
+	viper.SetDefault(ConfKeyConfigFiles, discoverConfigFiles())
 	viper.SetDefault(ConfKeyLogLevel, DefaultLogLevel)
 
 	if user, err := user.Current(); err == nil && user.HomeDir != "" {
@@ -46,18 +45,11 @@ func Configure() {
 		viper.SetDefault(ConfKeyAppDir, DefaultAppDir)
 	}
 
-	// Init logger with the default values, so the following log lines
-	// already use our logging config.
 	log.SetDefault(log.New(GetLoggerOptions()))
+}
 
-	if err := viper.ReadInConfig(); err != nil {
-		var e *viper.ConfigFileNotFoundError
-		if errors.As(err, &e) {
-			log.L().Warn("no configuration file found", "error", err)
-		} else {
-			log.L().Warn("could not read config file", "error", err)
-		}
-	}
+func GetConfigFiles() []string {
+	return viper.GetStringSlice(ConfKeyConfigFiles)
 }
 
 func GetAppDir() string {
