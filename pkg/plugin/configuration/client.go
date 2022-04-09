@@ -3,7 +3,7 @@ package configuration
 import (
 	"fmt"
 
-	api "github.com/dodo-cli/dodo-core/api/v1alpha2"
+	api "github.com/dodo-cli/dodo-core/api/v1alpha3"
 	"github.com/dodo-cli/dodo-core/pkg/plugin"
 	"github.com/golang/protobuf/ptypes/empty"
 	"golang.org/x/net/context"

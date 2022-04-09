@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package com.wabenet.dodo.core.v1alpha3;
+
+option go_package = "github.com/dodo-cli/dodo-core/api/v1alpha3";
+
+message PluginName {
+  string type = 1;
+  string name = 2;
+}
+
+message PluginInfo {
+  PluginName name = 1;
+  repeated PluginName dependencies = 2;
+  map<string, string> fields = 3;
+}
+
+message InitPluginResponse {
+  map<string, string> config = 1;
+}
+
+message GetStreamingConnectionRequest {
+}
+
+message GetStreamingConnectionResponse {
+  string url = 1;
+}

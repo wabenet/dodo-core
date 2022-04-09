@@ -3,7 +3,7 @@ package configuration
 import (
 	"fmt"
 
-	api "github.com/dodo-cli/dodo-core/api/v1alpha2"
+	api "github.com/dodo-cli/dodo-core/api/v1alpha3"
 	"github.com/dodo-cli/dodo-core/pkg/plugin"
 	log "github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-multierror"

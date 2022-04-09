@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+package com.wabenet.dodo.core.v1alpha3;
+
+option go_package = "github.com/dodo-cli/dodo-core/api/v1alpha3";
+
+import "google/protobuf/empty.proto";
+import "api/v1alpha3/plugin.proto";
+import "api/v1alpha3/backdrop.proto";
+
+service RuntimePlugin {
+  rpc GetPluginInfo(google.protobuf.Empty) returns (com.wabenet.dodo.core.v1alpha3.PluginInfo);
+  rpc InitPlugin(google.protobuf.Empty) returns (com.wabenet.dodo.core.v1alpha3.InitPluginResponse);
+
+  rpc CreateContainer(CreateContainerRequest) returns (CreateContainerResponse);
+  rpc DeleteContainer(DeleteContainerRequest) returns (google.protobuf.Empty);
+  rpc StartContainer(StartContainerRequest) returns (google.protobuf.Empty);
+  rpc StreamContainer(StreamContainerRequest) returns (StreamContainerResponse);
+  rpc ResizeContainer(ResizeContainerRequest) returns (google.protobuf.Empty);
+  rpc KillContainer(KillContainerRequest) returns (google.protobuf.Empty);
+
+  rpc GetImage(GetImageRequest) returns (GetImageResponse);
+  rpc GetStreamingConnection(com.wabenet.dodo.core.v1alpha3.GetStreamingConnectionRequest) returns (com.wabenet.dodo.core.v1alpha3.GetStreamingConnectionResponse);
+}
+
+message CreateContainerResponse {
+  string container_id = 1;
+}
+
+message GetImageRequest {
+  string image_spec = 1;
+}
+
+message CreateContainerRequest {
+  com.wabenet.dodo.core.v1alpha3.Backdrop config = 1;
+  bool tty = 2;
+  bool stdio = 3;
+}
+
+message DeleteContainerRequest {
+  string container_id = 1;
+}
+
+message StartContainerRequest {
+  string container_id = 1;
+}
+
+message ResizeContainerRequest {
+  string container_id = 1;
+  uint32 height = 2;
+  uint32 width = 3;
+}
+
+message StreamContainerRequest {
+  string container_id = 1;
+  uint32 height = 2;
+  uint32 width = 3;
+}
+
+message KillContainerRequest {
+  string container_id = 1;
+  string signal = 2;
+}
+
+message StreamContainerResponse {
+  int64 exitCode = 1;
+  string message = 2;
+}
+
+message GetImageResponse {
+  string image_id = 1;
+}

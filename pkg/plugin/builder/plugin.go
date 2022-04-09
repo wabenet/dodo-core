@@ -1,7 +1,7 @@
 package builder
 
 import (
-	api "github.com/dodo-cli/dodo-core/api/v1alpha2"
+	api "github.com/dodo-cli/dodo-core/api/v1alpha3"
 	dodo "github.com/dodo-cli/dodo-core/pkg/plugin"
 	"github.com/hashicorp/go-plugin"
 	"golang.org/x/net/context"
