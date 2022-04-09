@@ -2,10 +2,10 @@ backdrops:
   make:
     image:
       steps: |
-        FROM golang:1.16-alpine3.12
-        RUN apk add -U build-base git bash curl tree make protobuf-dev
-        RUN go get -u github.com/golang/protobuf/protoc-gen-go
-        RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.37.1
+        FROM golang:1.18
+        RUN apt-get update && apt-get install -y git bash curl tree make libprotobuf-dev
+        RUN go install github.com/golang/protobuf/protoc-gen-go@latest
+        RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.45.2
     volumes:
       - "{{ projectRoot }}:/build"
       - "{{ projectRoot }}/.cache:/go/pkg/mod"
