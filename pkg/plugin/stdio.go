@@ -18,8 +18,6 @@ const (
 	stdout muxStream = iota
 	stderr
 
-	streamListenAddress = "127.0.0.1:"
-
 	bufSize = 32 * 1024
 
 	headerSize = 8
@@ -35,8 +33,8 @@ type StdioServer struct {
 	lock       *sync.Mutex
 }
 
-func NewStdioServer() (*StdioServer, error) {
-	listener, err := net.Listen("tcp", streamListenAddress)
+func NewStdioServer(listenAddress string) (*StdioServer, error) {
+	listener, err := net.Listen("tcp", listenAddress)
 	if err != nil {
 		return nil, fmt.Errorf("could not open network connection: %w", err)
 	}

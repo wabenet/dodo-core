@@ -12,6 +12,10 @@ type server struct {
 	impl Configuration
 }
 
+func NewGRPCServer(impl Configuration) api.ConfigurationPluginServer {
+	return &server{impl: impl}
+}
+
 func (s *server) GetPluginInfo(_ context.Context, _ *empty.Empty) (*api.PluginInfo, error) {
 	return s.impl.PluginInfo(), nil
 }

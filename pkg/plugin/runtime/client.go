@@ -17,6 +17,10 @@ type client struct {
 	runtimeClient api.RuntimePluginClient
 }
 
+func NewGRPCClient(c api.RuntimePluginClient) ContainerRuntime {
+	return &client{runtimeClient: c}
+}
+
 func (c *client) Type() plugin.Type {
 	return Type
 }

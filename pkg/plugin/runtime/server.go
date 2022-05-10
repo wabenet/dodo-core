@@ -13,7 +13,12 @@ import (
 
 type server struct {
 	impl  ContainerRuntime
+	addr  string
 	stdio *plugin.StdioServer
+}
+
+func NewGRPCServer(impl ContainerRuntime, listen string) api.RuntimePluginServer {
+	return &server{impl: impl, addr: listen}
 }
 
 func (s *server) GetPluginInfo(_ context.Context, _ *empty.Empty) (*api.PluginInfo, error) {
@@ -64,7 +69,7 @@ func (s *server) KillContainer(_ context.Context, request *api.KillContainerRequ
 }
 
 func (s *server) GetStreamingConnection(_ context.Context, _ *api.GetStreamingConnectionRequest) (*api.GetStreamingConnectionResponse, error) {
-	stdio, err := plugin.NewStdioServer()
+	stdio, err := plugin.NewStdioServer(s.addr)
 	if err != nil {
 		return nil, fmt.Errorf("could not get stdio server: %w", err)
 	}

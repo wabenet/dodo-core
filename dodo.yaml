@@ -11,4 +11,3 @@ backdrops:
       - "{{ projectRoot }}/.cache:/go/pkg/mod"
     working_dir: '/build/{{ projectPath }}'
     script: make $@
-    command: all

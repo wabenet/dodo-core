@@ -49,7 +49,7 @@ func (p *grpcPlugin) GRPCClient(_ context.Context, _ *plugin.GRPCBroker, conn *g
 }
 
 func (p *grpcPlugin) GRPCServer(_ *plugin.GRPCBroker, s *grpc.Server) error {
-	api.RegisterConfigurationPluginServer(s, &server{impl: p.Impl})
+	api.RegisterConfigurationPluginServer(s, NewGRPCServer(p.Impl))
 
 	return nil
 }

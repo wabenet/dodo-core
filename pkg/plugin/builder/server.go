@@ -13,7 +13,12 @@ import (
 
 type server struct {
 	impl  ImageBuilder
+	addr  string
 	stdio *plugin.StdioServer
+}
+
+func NewGRPCServer(impl ImageBuilder, listen string) api.BuilderPluginServer {
+	return &server{impl: impl, addr: listen}
 }
 
 func (s *server) GetPluginInfo(_ context.Context, _ *empty.Empty) (*api.PluginInfo, error) {
@@ -30,7 +35,7 @@ func (s *server) InitPlugin(_ context.Context, _ *empty.Empty) (*api.InitPluginR
 }
 
 func (s *server) GetStreamingConnection(_ context.Context, _ *api.GetStreamingConnectionRequest) (*api.GetStreamingConnectionResponse, error) {
-	stdio, err := plugin.NewStdioServer()
+	stdio, err := plugin.NewStdioServer(s.addr)
 	if err != nil {
 		return nil, fmt.Errorf("could not get stdio server: %w", err)
 	}

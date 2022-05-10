@@ -15,6 +15,10 @@ type client struct {
 	configClient api.ConfigurationPluginClient
 }
 
+func NewGRPCClient(c api.ConfigurationPluginClient) Configuration {
+	return &client{configClient: c}
+}
+
 func (c *client) Type() plugin.Type {
 	return Type
 }

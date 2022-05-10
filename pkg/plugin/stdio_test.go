@@ -21,7 +21,7 @@ const (
 func TestStdio(t *testing.T) {
 	t.Parallel()
 
-	server, err := plugin.NewStdioServer()
+	server, err := plugin.NewStdioServer("127.0.0.1:")
 	assert.Nil(t, err)
 
 	client, err := plugin.NewStdioClient(server.Endpoint())
@@ -36,11 +36,11 @@ func TestStdio(t *testing.T) {
 	eg.Go(func() error {
 		// Avoiding race condition by waiting, what a great idea :/
 		// For context: The copy for stdin is canceled once the copy of
-                // stdout is done. This is completely expected behaviour, but
-                // fails here in the test because we want to validate that the
-                // stdin is also correct. Probably the test should be written
-                // in a different way, but for now we are happy if we validate
-                // that the production code works as intended.
+		// stdout is done. This is completely expected behaviour, but
+		// fails here in the test because we want to validate that the
+		// stdin is also correct. Probably the test should be written
+		// in a different way, but for now we are happy if we validate
+		// that the production code works as intended.
 		time.Sleep(100 * time.Millisecond)
 
 		return server.Copy(
@@ -69,7 +69,7 @@ func TestStdio(t *testing.T) {
 func TestOutputOnly(t *testing.T) {
 	t.Parallel()
 
-	server, err := plugin.NewStdioServer()
+	server, err := plugin.NewStdioServer("127.0.0.1:")
 	assert.Nil(t, err)
 
 	client, err := plugin.NewStdioClient(server.Endpoint())

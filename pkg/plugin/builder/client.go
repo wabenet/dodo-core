@@ -16,6 +16,10 @@ type client struct {
 	builderClient api.BuilderPluginClient
 }
 
+func NewGRPCClient(c api.BuilderPluginClient) ImageBuilder {
+	return &client{builderClient: c}
+}
+
 func (c *client) Type() plugin.Type {
 	return Type
 }
