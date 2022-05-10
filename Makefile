@@ -1,4 +1,4 @@
-all: v1alpha1 v1alpha2 v1alpha3 test lint
+all: v1alpha3 test lint
 
 .PHONY: fmt
 fmt:
@@ -15,12 +15,6 @@ lint:
 .PHONY: test
 test:
 	go test -cover -race ./...
-
-.PHONY: v1alpha1
-v1alpha1: api/v1alpha1/plugin.pb.go api/v1alpha1/backdrop.pb.go api/v1alpha1/build.pb.go api/v1alpha1/configuration.pb.go api/v1alpha1/runtime.pb.go api/v1alpha1/builder.pb.go
-
-.PHONY: v1alpha2
-v1alpha2: api/v1alpha2/plugin.pb.go api/v1alpha2/backdrop.pb.go api/v1alpha2/build.pb.go api/v1alpha2/configuration.pb.go api/v1alpha2/runtime.pb.go api/v1alpha2/builder.pb.go
 
 .PHONY: v1alpha3
 v1alpha3: api/v1alpha3/plugin.pb.go api/v1alpha3/backdrop.pb.go api/v1alpha3/build.pb.go api/v1alpha3/configuration.pb.go api/v1alpha3/runtime.pb.go api/v1alpha3/builder.pb.go
