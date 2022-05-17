@@ -12,8 +12,9 @@ service BuilderPlugin {
   rpc GetPluginInfo(google.protobuf.Empty) returns (com.wabenet.dodo.core.v1alpha3.PluginInfo);
   rpc InitPlugin(google.protobuf.Empty) returns (com.wabenet.dodo.core.v1alpha3.InitPluginResponse);
 
+  rpc StreamBuildOutput(google.protobuf.Empty) returns (stream com.wabenet.dodo.core.v1alpha3.OutputData);
+
   rpc CreateImage(CreateImageRequest) returns (CreateImageResponse);
-  rpc GetStreamingConnection(com.wabenet.dodo.core.v1alpha3.GetStreamingConnectionRequest) returns (com.wabenet.dodo.core.v1alpha3.GetStreamingConnectionResponse);
 }
 
 message CreateImageRequest {

@@ -1,6 +1,7 @@
 package runtime
 
 import (
+	"bufio"
 	"context"
 	"fmt"
 	"io"
@@ -8,17 +9,21 @@ import (
 	api "github.com/dodo-cli/dodo-core/api/v1alpha3"
 	"github.com/dodo-cli/dodo-core/pkg/plugin"
 	"github.com/golang/protobuf/ptypes/empty"
-	"golang.org/x/sync/errgroup"
+	log "github.com/hashicorp/go-hclog"
 )
 
 type server struct {
-	impl  ContainerRuntime
-	addr  string
-	stdio *plugin.StdioServer
+	impl     ContainerRuntime
+	stdoutCh chan []byte
+	stderrCh chan []byte
 }
 
 func NewGRPCServer(impl ContainerRuntime, listen string) api.RuntimePluginServer {
-	return &server{impl: impl, addr: listen}
+	return &server{
+		impl:     impl,
+		stdoutCh: make(chan []byte),
+		stderrCh: make(chan []byte),
+	}
 }
 
 func (s *server) GetPluginInfo(_ context.Context, _ *empty.Empty) (*api.PluginInfo, error) {
@@ -68,53 +73,86 @@ func (s *server) KillContainer(_ context.Context, request *api.KillContainerRequ
 	return &empty.Empty{}, s.impl.KillContainer(request.ContainerId, signalFromString(request.Signal))
 }
 
-func (s *server) GetStreamingConnection(_ context.Context, _ *api.GetStreamingConnectionRequest) (*api.GetStreamingConnectionResponse, error) {
-	stdio, err := plugin.NewStdioServer(s.addr)
-	if err != nil {
-		return nil, fmt.Errorf("could not get stdio server: %w", err)
+func (s *server) StreamRuntimeInput(srv api.RuntimePlugin_StreamRuntimeInputServer) error {
+	return nil // TODO
+}
+
+func (s *server) StreamRuntimeOutput(_ *empty.Empty, srv api.RuntimePlugin_StreamRuntimeOutputServer) error {
+	var data api.OutputData
+
+	for {
+		select {
+		case data.Data = <-s.stdoutCh:
+			data.Channel = api.OutputData_STDOUT
+
+		case data.Data = <-s.stderrCh:
+			data.Channel = api.OutputData_STDERR
+
+		case <-srv.Context().Done():
+			return nil
+		}
+
+		if len(data.Data) == 0 {
+			continue
+		}
+
+		if err := srv.Send(&data); err != nil {
+			return err
+		}
 	}
-
-	s.stdio = stdio
-
-	return &api.GetStreamingConnectionResponse{Url: stdio.Endpoint()}, nil
 }
 
 func (s *server) StreamContainer(_ context.Context, request *api.StreamContainerRequest) (*api.StreamContainerResponse, error) {
-	inReader, inWriter := io.Pipe()
 	outReader, outWriter := io.Pipe()
 	errReader, errWriter := io.Pipe()
 
-	result := &api.StreamContainerResponse{}
-	eg, _ := errgroup.WithContext(context.Background())
+	go copyOutput(s.stdoutCh, outReader)
+	go copyOutput(s.stderrCh, errReader)
 
-	eg.Go(func() error {
-		return s.stdio.Copy(inWriter, outReader, errReader)
+	defer func() {
+		outWriter.Close()
+		errWriter.Close()
+	}()
+
+	r, err := s.impl.StreamContainer(request.ContainerId, &plugin.StreamConfig{
+		Stdin:          dummyReader{},
+		Stdout:         outWriter,
+		Stderr:         errWriter,
+		TerminalHeight: request.Height,
+		TerminalWidth:  request.Width,
 	})
-
-	eg.Go(func() error {
-		defer func() {
-			inWriter.Close()
-			outWriter.Close()
-			errWriter.Close()
-		}()
-
-		r, err := s.impl.StreamContainer(request.ContainerId, &plugin.StreamConfig{
-			Stdin:          inReader,
-			Stdout:         outWriter,
-			Stderr:         errWriter,
-			TerminalHeight: request.Height,
-			TerminalWidth:  request.Width,
-		})
-
-		result.ExitCode = int64(r.ExitCode)
-
-		return fmt.Errorf("could not stream container: %w", err)
-	})
-
-	err := eg.Wait()
 	if err != nil {
-		return nil, fmt.Errorf("error during container stream: %w", err)
+		return nil, fmt.Errorf("could not stream container: %w", err)
 	}
 
-	return result, nil
+	return &api.StreamContainerResponse{ExitCode: int64(r.ExitCode)}, nil
+}
+
+type dummyReader struct{}
+
+func (dummyReader) Read(p []byte) (int, error) {
+	return 0, nil
+}
+
+func copyOutput(dst chan []byte, src io.Reader) {
+	bufsrc := bufio.NewReader(src)
+
+	for {
+		var data [1024]byte
+
+		n, err := bufsrc.Read(data[:])
+
+		if n > 0 {
+			dst <- data[:n]
+		}
+
+		if err == io.EOF {
+			return
+		}
+
+		if err != nil {
+			log.L().Warn("error in stdio stream", "err", err)
+			return
+		}
+	}
 }

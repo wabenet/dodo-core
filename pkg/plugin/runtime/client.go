@@ -1,14 +1,18 @@
 package runtime
 
 import (
+	"bytes"
 	"context"
 	"fmt"
+	"io"
 	"os"
 
 	api "github.com/dodo-cli/dodo-core/api/v1alpha3"
 	"github.com/dodo-cli/dodo-core/pkg/plugin"
 	"github.com/golang/protobuf/ptypes/empty"
-	"golang.org/x/sync/errgroup"
+	log "github.com/hashicorp/go-hclog"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 var _ ContainerRuntime = &client{}
@@ -113,39 +117,59 @@ func (c *client) KillContainer(id string, signal os.Signal) error {
 }
 
 func (c *client) StreamContainer(id string, stream *plugin.StreamConfig) (*Result, error) {
-	ctx := context.Background()
-	result := &Result{}
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
-	connInfo, err := c.runtimeClient.GetStreamingConnection(ctx, &api.GetStreamingConnectionRequest{})
+	stdioClient, err := c.runtimeClient.StreamRuntimeOutput(ctx, &empty.Empty{})
 	if err != nil {
-		return nil, fmt.Errorf("could not get streaming connection: %w", err)
+		return nil, err
 	}
 
-	stdio, err := plugin.NewStdioClient(connInfo.Url)
-	if err != nil {
-		return nil, fmt.Errorf("could not get stdio server: %w", err)
-	}
+	go streamOutput(stdioClient, stream.Stdout, stream.Stderr)
 
-	eg, _ := errgroup.WithContext(ctx)
-
-	eg.Go(func() error {
-		return stdio.Copy(stream.Stdin, stream.Stdout, stream.Stderr)
+	result, err := c.runtimeClient.StreamContainer(ctx, &api.StreamContainerRequest{
+		ContainerId: id,
+		Height:      stream.TerminalHeight,
+		Width:       stream.TerminalWidth,
 	})
+	if err != nil {
+		return nil, fmt.Errorf("could not stream container: %w", err)
+	}
 
-	eg.Go(func() error {
-		r, err := c.runtimeClient.StreamContainer(ctx, &api.StreamContainerRequest{
-			ContainerId: id,
-			Height:      stream.TerminalHeight,
-			Width:       stream.TerminalWidth,
-		})
+	return &Result{ExitCode: int(result.ExitCode)}, nil
+}
+
+func streamOutput(c api.RuntimePlugin_StreamRuntimeOutputClient, stdout io.Writer, stderr io.Writer) {
+	for {
+		data, err := c.Recv()
 		if err != nil {
-			return fmt.Errorf("could not stream container: %w", err)
+			if err == io.EOF ||
+				status.Code(err) == codes.Unavailable ||
+				status.Code(err) == codes.Canceled ||
+				status.Code(err) == codes.Unimplemented ||
+				err == context.Canceled {
+				return
+			}
+
+			log.L().Error("error receiving data", "err", err)
+			return
 		}
 
-		result.ExitCode = int(r.ExitCode)
+		var w io.Writer
+		switch data.Channel {
+		case api.OutputData_STDOUT:
+			w = stdout
 
-		return nil
-	})
+		case api.OutputData_STDERR:
+			w = stderr
 
-	return result, eg.Wait()
+		default:
+			log.L().Warn("unknown channel, dropping", "channel", data.Channel)
+			continue
+		}
+
+		if _, err := io.Copy(w, bytes.NewReader(data.Data)); err != nil {
+			log.L().Error("failed to copy all bytes", "err", err)
+		}
+	}
 }

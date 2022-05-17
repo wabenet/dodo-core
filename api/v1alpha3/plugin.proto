@@ -19,6 +19,21 @@ message InitPluginResponse {
   map<string, string> config = 1;
 }
 
+message InputData {
+  bytes data = 1;
+}
+
+message OutputData {
+  enum Channel {
+    INVALID = 0;
+    STDOUT = 1;
+    STDERR = 2;
+  }
+
+  Channel channel = 1;
+  bytes data = 2;
+}
+
 message GetStreamingConnectionRequest {
 }
 
