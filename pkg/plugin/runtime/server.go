@@ -10,10 +10,13 @@ import (
 	"github.com/dodo-cli/dodo-core/pkg/plugin"
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/hashicorp/go-hclog"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type server struct {
 	impl     ContainerRuntime
+	stdinCh  chan []byte
 	stdoutCh chan []byte
 	stderrCh chan []byte
 }
@@ -21,6 +24,7 @@ type server struct {
 func NewGRPCServer(impl ContainerRuntime, listen string) api.RuntimePluginServer {
 	return &server{
 		impl:     impl,
+		stdinCh:  make(chan []byte),
 		stdoutCh: make(chan []byte),
 		stderrCh: make(chan []byte),
 	}
@@ -74,7 +78,29 @@ func (s *server) KillContainer(_ context.Context, request *api.KillContainerRequ
 }
 
 func (s *server) StreamRuntimeInput(srv api.RuntimePlugin_StreamRuntimeInputServer) error {
-	return nil // TODO
+	defer close(s.stdinCh)
+
+	for {
+		data, err := srv.Recv()
+		if err != nil {
+			if err == io.EOF {
+				return srv.SendAndClose(&empty.Empty{})
+
+			}
+
+			if status.Code(err) == codes.Unavailable ||
+				status.Code(err) == codes.Canceled ||
+				status.Code(err) == codes.Unimplemented ||
+				err == context.Canceled {
+				return nil
+			}
+
+			log.L().Error("error receiving data", "err", err)
+			return err
+		}
+
+		s.stdinCh <- data.Data
+	}
 }
 
 func (s *server) StreamRuntimeOutput(_ *empty.Empty, srv api.RuntimePlugin_StreamRuntimeOutputServer) error {
@@ -103,8 +129,14 @@ func (s *server) StreamRuntimeOutput(_ *empty.Empty, srv api.RuntimePlugin_Strea
 }
 
 func (s *server) StreamContainer(_ context.Context, request *api.StreamContainerRequest) (*api.StreamContainerResponse, error) {
+	inReader, inWriter := io.Pipe()
 	outReader, outWriter := io.Pipe()
 	errReader, errWriter := io.Pipe()
+
+	go func() {
+		copyInput(inWriter, s.stdinCh)
+		inWriter.Close()
+	}()
 
 	go copyOutput(s.stdoutCh, outReader)
 	go copyOutput(s.stderrCh, errReader)
@@ -115,7 +147,7 @@ func (s *server) StreamContainer(_ context.Context, request *api.StreamContainer
 	}()
 
 	r, err := s.impl.StreamContainer(request.ContainerId, &plugin.StreamConfig{
-		Stdin:          dummyReader{},
+		Stdin:          inReader,
 		Stdout:         outWriter,
 		Stderr:         errWriter,
 		TerminalHeight: request.Height,
@@ -128,10 +160,21 @@ func (s *server) StreamContainer(_ context.Context, request *api.StreamContainer
 	return &api.StreamContainerResponse{ExitCode: int64(r.ExitCode)}, nil
 }
 
-type dummyReader struct{}
+func copyInput(dst io.Writer, src chan []byte) {
+	bufdst := bufio.NewWriter(dst)
 
-func (dummyReader) Read(p []byte) (int, error) {
-	return 0, nil
+	for data := range src {
+		if len(data) == 0 {
+			continue
+		}
+
+		if _, err := bufdst.Write(data); err != nil {
+			log.L().Warn("error in stdio stream", "err", err)
+			break
+		}
+	}
+
+	bufdst.Flush()
 }
 
 func copyOutput(dst chan []byte, src io.Reader) {

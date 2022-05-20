@@ -1,6 +1,7 @@
 package runtime
 
 import (
+	"bufio"
 	"bytes"
 	"context"
 	"fmt"
@@ -118,14 +119,20 @@ func (c *client) KillContainer(id string, signal os.Signal) error {
 
 func (c *client) StreamContainer(id string, stream *plugin.StreamConfig) (*Result, error) {
 	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	defer cancel() // TODO: replace the cancel with Close and Send/Recv pair on the stream thing?
 
-	stdioClient, err := c.runtimeClient.StreamRuntimeOutput(ctx, &empty.Empty{})
+	inputClient, err := c.runtimeClient.StreamRuntimeInput(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	go streamOutput(stdioClient, stream.Stdout, stream.Stderr)
+	outputClient, err := c.runtimeClient.StreamRuntimeOutput(ctx, &empty.Empty{})
+	if err != nil {
+		return nil, err
+	}
+
+	go streamInput(inputClient, stream.Stdin)
+	go streamOutput(outputClient, stream.Stdout, stream.Stderr)
 
 	result, err := c.runtimeClient.StreamContainer(ctx, &api.StreamContainerRequest{
 		ContainerId: id,
@@ -137,6 +144,35 @@ func (c *client) StreamContainer(id string, stream *plugin.StreamConfig) (*Resul
 	}
 
 	return &Result{ExitCode: int(result.ExitCode)}, nil
+}
+
+func streamInput(c api.RuntimePlugin_StreamRuntimeInputClient, stdin io.Reader) {
+	bufsrc := bufio.NewReader(stdin)
+	data := api.InputData{}
+
+	for {
+		var b [1024]byte
+
+		n, err := bufsrc.Read(b[:])
+
+		if n > 0 {
+			data.Data = b[:n]
+			if serr := c.Send(&data); err != nil {
+				log.L().Warn("error in stdio stream", "err", serr)
+				return
+			}
+		}
+
+		if err == io.EOF {
+			c.CloseAndRecv()
+			return
+		}
+
+		if err != nil {
+			log.L().Warn("error in stdio stream", "err", err)
+			return
+		}
+	}
 }
 
 func streamOutput(c api.RuntimePlugin_StreamRuntimeOutputClient, stdout io.Writer, stderr io.Writer) {

@@ -50,6 +50,20 @@ func (c *client) Init() (plugin.PluginConfig, error) {
 }
 
 func (c *client) CreateImage(config *api.BuildInfo, stream *plugin.StreamConfig) (string, error) {
+	if stream == nil {
+		result, err := c.builderClient.CreateImage(context.Background(), &api.CreateImageRequest{
+			Config: config,
+			Height: 0,
+			Width:  0,
+		})
+
+		if err != nil {
+			return "", fmt.Errorf("could not build image: %w", err)
+		}
+
+		return result.ImageId, nil
+	}
+
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 

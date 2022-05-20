@@ -65,6 +65,16 @@ func (s *server) StreamBuildOutput(_ *empty.Empty, srv api.BuilderPlugin_StreamB
 }
 
 func (s *server) CreateImage(_ context.Context, request *api.CreateImageRequest) (*api.CreateImageResponse, error) {
+	if request.Height == 0 && request.Width == 0 {
+		imageID, err := s.impl.CreateImage(request.Config, nil)
+
+		if err != nil {
+			return nil, fmt.Errorf("could not build image: %w", err)
+		}
+
+		return &api.CreateImageResponse{ImageId: imageID}, nil
+	}
+
 	outReader, outWriter := io.Pipe()
 	errReader, errWriter := io.Pipe()
 
