@@ -59,7 +59,7 @@ func (s *server) StreamBuildOutput(_ *empty.Empty, srv api.BuilderPlugin_StreamB
 		}
 
 		if err := srv.Send(&data); err != nil {
-			return err
+			return fmt.Errorf("error sending build output to client: %w", err)
 		}
 	}
 }
@@ -118,6 +118,7 @@ func copyOutput(dst chan []byte, src io.Reader) {
 
 		if err != nil {
 			log.L().Warn("error in stdio stream", "err", err)
+
 			return
 		}
 	}

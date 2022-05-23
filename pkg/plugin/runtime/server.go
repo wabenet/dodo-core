@@ -52,7 +52,10 @@ func (s *server) GetImage(_ context.Context, request *api.GetImageRequest) (*api
 	return &api.GetImageResponse{ImageId: id}, nil
 }
 
-func (s *server) CreateContainer(_ context.Context, config *api.CreateContainerRequest) (*api.CreateContainerResponse, error) {
+func (s *server) CreateContainer(
+	_ context.Context,
+	config *api.CreateContainerRequest,
+) (*api.CreateContainerResponse, error) {
 	id, err := s.impl.CreateContainer(config.Config, config.Tty, config.Stdio)
 	if err != nil {
 		return nil, fmt.Errorf("could not create container: %w", err)
@@ -62,19 +65,35 @@ func (s *server) CreateContainer(_ context.Context, config *api.CreateContainerR
 }
 
 func (s *server) StartContainer(_ context.Context, request *api.StartContainerRequest) (*empty.Empty, error) {
-	return &empty.Empty{}, s.impl.StartContainer(request.ContainerId)
+	if err := s.impl.StartContainer(request.ContainerId); err != nil {
+		return nil, fmt.Errorf("could not start container: %w", err)
+	}
+
+	return &empty.Empty{}, nil
 }
 
 func (s *server) DeleteContainer(_ context.Context, request *api.DeleteContainerRequest) (*empty.Empty, error) {
-	return &empty.Empty{}, s.impl.DeleteContainer(request.ContainerId)
+	if err := s.impl.DeleteContainer(request.ContainerId); err != nil {
+		return nil, fmt.Errorf("could not delete container: %w", err)
+	}
+
+	return &empty.Empty{}, nil
 }
 
 func (s *server) ResizeContainer(_ context.Context, request *api.ResizeContainerRequest) (*empty.Empty, error) {
-	return &empty.Empty{}, s.impl.ResizeContainer(request.ContainerId, request.Height, request.Width)
+	if err := s.impl.ResizeContainer(request.ContainerId, request.Height, request.Width); err != nil {
+		return nil, fmt.Errorf("could not resize container: %w", err)
+	}
+
+	return &empty.Empty{}, nil
 }
 
 func (s *server) KillContainer(_ context.Context, request *api.KillContainerRequest) (*empty.Empty, error) {
-	return &empty.Empty{}, s.impl.KillContainer(request.ContainerId, signalFromString(request.Signal))
+	if err := s.impl.KillContainer(request.ContainerId, signalFromString(request.Signal)); err != nil {
+		return nil, fmt.Errorf("could not kill container: %w", err)
+	}
+
+	return &empty.Empty{}, nil
 }
 
 func (s *server) StreamRuntimeInput(srv api.RuntimePlugin_StreamRuntimeInputServer) error {
@@ -84,8 +103,11 @@ func (s *server) StreamRuntimeInput(srv api.RuntimePlugin_StreamRuntimeInputServ
 		data, err := srv.Recv()
 		if err != nil {
 			if err == io.EOF {
-				return srv.SendAndClose(&empty.Empty{})
+				if err := srv.SendAndClose(&empty.Empty{}); err != nil {
+					return fmt.Errorf("could not close input stream: %w", err)
+				}
 
+				return nil
 			}
 
 			if status.Code(err) == codes.Unavailable ||
@@ -96,7 +118,8 @@ func (s *server) StreamRuntimeInput(srv api.RuntimePlugin_StreamRuntimeInputServ
 			}
 
 			log.L().Error("error receiving data", "err", err)
-			return err
+
+			return fmt.Errorf("error receiving build input from clien: %w", err)
 		}
 
 		s.stdinCh <- data.Data
@@ -123,12 +146,15 @@ func (s *server) StreamRuntimeOutput(_ *empty.Empty, srv api.RuntimePlugin_Strea
 		}
 
 		if err := srv.Send(&data); err != nil {
-			return err
+			return fmt.Errorf("error sending runtime output to client: %w", err)
 		}
 	}
 }
 
-func (s *server) StreamContainer(_ context.Context, request *api.StreamContainerRequest) (*api.StreamContainerResponse, error) {
+func (s *server) StreamContainer(
+	_ context.Context,
+	request *api.StreamContainerRequest,
+) (*api.StreamContainerResponse, error) {
 	inReader, inWriter := io.Pipe()
 	outReader, outWriter := io.Pipe()
 	errReader, errWriter := io.Pipe()
@@ -170,6 +196,7 @@ func copyInput(dst io.Writer, src chan []byte) {
 
 		if _, err := bufdst.Write(data); err != nil {
 			log.L().Warn("error in stdio stream", "err", err)
+
 			break
 		}
 	}
@@ -195,6 +222,7 @@ func copyOutput(dst chan []byte, src io.Reader) {
 
 		if err != nil {
 			log.L().Warn("error in stdio stream", "err", err)
+
 			return
 		}
 	}

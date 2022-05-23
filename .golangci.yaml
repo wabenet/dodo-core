@@ -2,11 +2,14 @@
 linters:
   enable-all: true
   disable:
+    - exhaustruct
     - exhaustivestruct
 
 linters-settings:
   gofumpt:
     extra-rules: true
+  gomnd:
+    ignored-numbers: [1,2,3]
 
 issues:
   exclude-rules:

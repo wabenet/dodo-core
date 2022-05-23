@@ -64,12 +64,9 @@ func (c *client) CreateImage(config *api.BuildInfo, stream *plugin.StreamConfig)
 		return result.ImageId, nil
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	stdioClient, err := c.builderClient.StreamBuildOutput(ctx, &empty.Empty{})
+	stdioClient, err := c.builderClient.StreamBuildOutput(context.Background(), &empty.Empty{})
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("could not stream build output: %w", err)
 	}
 
 	go streamOutput(stdioClient, stream.Stdout, stream.Stderr)
@@ -99,24 +96,25 @@ func streamOutput(c api.BuilderPlugin_StreamBuildOutputClient, stdout io.Writer,
 			}
 
 			log.L().Error("error receiving data", "err", err)
+
 			return
 		}
 
-		var w io.Writer
 		switch data.Channel {
 		case api.OutputData_STDOUT:
-			w = stdout
+			if _, err := io.Copy(stdout, bytes.NewReader(data.Data)); err != nil {
+				log.L().Error("failed to copy all bytes", "err", err)
+			}
 
 		case api.OutputData_STDERR:
-			w = stderr
+			if _, err := io.Copy(stderr, bytes.NewReader(data.Data)); err != nil {
+				log.L().Error("failed to copy all bytes", "err", err)
+			}
 
-		default:
+		case api.OutputData_INVALID:
 			log.L().Warn("unknown channel, dropping", "channel", data.Channel)
-			continue
-		}
 
-		if _, err := io.Copy(w, bytes.NewReader(data.Data)); err != nil {
-			log.L().Error("failed to copy all bytes", "err", err)
+			continue
 		}
 	}
 }

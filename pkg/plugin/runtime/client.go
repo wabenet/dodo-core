@@ -118,23 +118,20 @@ func (c *client) KillContainer(id string, signal os.Signal) error {
 }
 
 func (c *client) StreamContainer(id string, stream *plugin.StreamConfig) (*Result, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel() // TODO: replace the cancel with Close and Send/Recv pair on the stream thing?
-
-	inputClient, err := c.runtimeClient.StreamRuntimeInput(ctx)
+	inputClient, err := c.runtimeClient.StreamRuntimeInput(context.Background())
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("could not stream runtime input: %w", err)
 	}
 
-	outputClient, err := c.runtimeClient.StreamRuntimeOutput(ctx, &empty.Empty{})
+	outputClient, err := c.runtimeClient.StreamRuntimeOutput(context.Background(), &empty.Empty{})
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("could not stream runtime output: %w", err)
 	}
 
 	go streamInput(inputClient, stream.Stdin)
 	go streamOutput(outputClient, stream.Stdout, stream.Stderr)
 
-	result, err := c.runtimeClient.StreamContainer(ctx, &api.StreamContainerRequest{
+	result, err := c.runtimeClient.StreamContainer(context.Background(), &api.StreamContainerRequest{
 		ContainerId: id,
 		Height:      stream.TerminalHeight,
 		Width:       stream.TerminalWidth,
@@ -159,17 +156,22 @@ func streamInput(c api.RuntimePlugin_StreamRuntimeInputClient, stdin io.Reader) 
 			data.Data = b[:n]
 			if serr := c.Send(&data); err != nil {
 				log.L().Warn("error in stdio stream", "err", serr)
+
 				return
 			}
 		}
 
 		if err == io.EOF {
-			c.CloseAndRecv()
+			if _, serr := c.CloseAndRecv(); err != nil {
+				log.L().Warn("could not close input stream", "err", serr)
+			}
+
 			return
 		}
 
 		if err != nil {
 			log.L().Warn("error in stdio stream", "err", err)
+
 			return
 		}
 	}
@@ -188,24 +190,25 @@ func streamOutput(c api.RuntimePlugin_StreamRuntimeOutputClient, stdout io.Write
 			}
 
 			log.L().Error("error receiving data", "err", err)
+
 			return
 		}
 
-		var w io.Writer
 		switch data.Channel {
 		case api.OutputData_STDOUT:
-			w = stdout
+			if _, err := io.Copy(stdout, bytes.NewReader(data.Data)); err != nil {
+				log.L().Error("failed to copy all bytes", "err", err)
+			}
 
 		case api.OutputData_STDERR:
-			w = stderr
+			if _, err := io.Copy(stderr, bytes.NewReader(data.Data)); err != nil {
+				log.L().Error("failed to copy all bytes", "err", err)
+			}
 
-		default:
+		case api.OutputData_INVALID:
 			log.L().Warn("unknown channel, dropping", "channel", data.Channel)
-			continue
-		}
 
-		if _, err := io.Copy(w, bytes.NewReader(data.Data)); err != nil {
-			log.L().Error("failed to copy all bytes", "err", err)
+			continue
 		}
 	}
 }
