@@ -3,8 +3,8 @@ package plugin_test
 import (
 	"testing"
 
-	dodo "github.com/dodo-cli/dodo-core/pkg/plugin"
 	"github.com/stretchr/testify/assert"
+	dodo "github.com/wabenet/dodo-core/pkg/plugin"
 )
 
 func TestResolveDependencies(t *testing.T) {

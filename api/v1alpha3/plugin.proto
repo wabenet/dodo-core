@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package com.wabenet.dodo.core.v1alpha3;
 
-option go_package = "github.com/dodo-cli/dodo-core/api/v1alpha3";
+option go_package = "github.com/wabenet/dodo-core/api/v1alpha3";
 
 message PluginName {
   string type = 1;

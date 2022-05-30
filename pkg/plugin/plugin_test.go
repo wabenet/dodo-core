@@ -1,9 +1,9 @@
 package plugin_test
 
 import (
-	api "github.com/dodo-cli/dodo-core/api/v1alpha3"
-	dodo "github.com/dodo-cli/dodo-core/pkg/plugin"
 	"github.com/hashicorp/go-plugin"
+	api "github.com/wabenet/dodo-core/api/v1alpha3"
+	dodo "github.com/wabenet/dodo-core/pkg/plugin"
 )
 
 type (

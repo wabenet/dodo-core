@@ -8,10 +8,10 @@ import (
 	"path/filepath"
 	"runtime"
 
-	api "github.com/dodo-cli/dodo-core/api/v1alpha3"
-	"github.com/dodo-cli/dodo-core/pkg/config"
 	log "github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
+	api "github.com/wabenet/dodo-core/api/v1alpha3"
+	"github.com/wabenet/dodo-core/pkg/config"
 )
 
 const (

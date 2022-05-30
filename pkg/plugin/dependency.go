@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/deckarep/golang-set"
-	api "github.com/dodo-cli/dodo-core/api/v1alpha3"
+	api "github.com/wabenet/dodo-core/api/v1alpha3"
 )
 
 type ErrCircularDependency struct {

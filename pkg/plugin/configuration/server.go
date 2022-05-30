@@ -1,11 +1,11 @@
 package configuration
 
 import (
+	"context"
 	"fmt"
 
-	api "github.com/dodo-cli/dodo-core/api/v1alpha3"
 	"github.com/golang/protobuf/ptypes/empty"
-	"golang.org/x/net/context"
+	api "github.com/wabenet/dodo-core/api/v1alpha3"
 )
 
 type server struct {

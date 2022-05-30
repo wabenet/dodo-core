@@ -1,9 +1,9 @@
 package builder
 
 import (
-	api "github.com/dodo-cli/dodo-core/api/v1alpha3"
-	"github.com/dodo-cli/dodo-core/pkg/plugin"
 	log "github.com/hashicorp/go-hclog"
+	api "github.com/wabenet/dodo-core/api/v1alpha3"
+	"github.com/wabenet/dodo-core/pkg/plugin"
 )
 
 func GetByName(m plugin.Manager, name string) (ImageBuilder, error) {

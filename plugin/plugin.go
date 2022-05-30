@@ -1,11 +1,11 @@
 package plugin
 
 import (
-	"github.com/dodo-cli/dodo-core/pkg/plugin"
-	"github.com/dodo-cli/dodo-core/pkg/plugin/builder"
-	"github.com/dodo-cli/dodo-core/pkg/plugin/command"
-	"github.com/dodo-cli/dodo-core/pkg/plugin/configuration"
-	"github.com/dodo-cli/dodo-core/pkg/plugin/runtime"
+	"github.com/wabenet/dodo-core/pkg/plugin"
+	"github.com/wabenet/dodo-core/pkg/plugin/builder"
+	"github.com/wabenet/dodo-core/pkg/plugin/command"
+	"github.com/wabenet/dodo-core/pkg/plugin/configuration"
+	"github.com/wabenet/dodo-core/pkg/plugin/runtime"
 )
 
 func IncludeMe(m plugin.Manager) {

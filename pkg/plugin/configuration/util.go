@@ -3,10 +3,10 @@ package configuration
 import (
 	"fmt"
 
-	api "github.com/dodo-cli/dodo-core/api/v1alpha3"
-	"github.com/dodo-cli/dodo-core/pkg/plugin"
 	log "github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-multierror"
+	api "github.com/wabenet/dodo-core/api/v1alpha3"
+	"github.com/wabenet/dodo-core/pkg/plugin"
 )
 
 type ErrConfigNotFound struct {

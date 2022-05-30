@@ -1,12 +1,12 @@
 package runtime
 
 import (
+	"context"
 	"os"
 
-	api "github.com/dodo-cli/dodo-core/api/v1alpha3"
-	dodo "github.com/dodo-cli/dodo-core/pkg/plugin"
 	"github.com/hashicorp/go-plugin"
-	"golang.org/x/net/context"
+	api "github.com/wabenet/dodo-core/api/v1alpha3"
+	dodo "github.com/wabenet/dodo-core/pkg/plugin"
 	"google.golang.org/grpc"
 )
 

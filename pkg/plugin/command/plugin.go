@@ -1,9 +1,9 @@
 package command
 
 import (
-	dodo "github.com/dodo-cli/dodo-core/pkg/plugin"
 	"github.com/hashicorp/go-plugin"
 	"github.com/spf13/cobra"
+	dodo "github.com/wabenet/dodo-core/pkg/plugin"
 )
 
 // TODO: Implement cobra commands via GRPC
