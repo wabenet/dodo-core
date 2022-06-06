@@ -135,6 +135,7 @@ func (s *server) StreamRuntimeOutput(_ *empty.Empty, srv api.RuntimePlugin_Strea
 		case d, ok := <-s.stdoutCh:
 			if !ok {
 				s.stdoutCh = nil
+
 				continue
 			}
 
@@ -144,6 +145,7 @@ func (s *server) StreamRuntimeOutput(_ *empty.Empty, srv api.RuntimePlugin_Strea
 		case d, ok := <-s.stderrCh:
 			if !ok {
 				s.stderrCh = nil
+
 				continue
 			}
 
@@ -196,17 +198,18 @@ func (s *server) StreamContainer(
 		defer outWriter.Close()
 		defer errWriter.Close()
 
-		if r, err := s.impl.StreamContainer(request.ContainerId, &plugin.StreamConfig{
+		r, err := s.impl.StreamContainer(request.ContainerId, &plugin.StreamConfig{
 			Stdin:          inReader,
 			Stdout:         outWriter,
 			Stderr:         errWriter,
 			TerminalHeight: request.Height,
 			TerminalWidth:  request.Width,
-		}); err != nil {
+		})
+		if err != nil {
 			return fmt.Errorf("could not stream container: %w", err)
-		} else {
-			resp.ExitCode = int64(r.ExitCode)
 		}
+
+		resp.ExitCode = int64(r.ExitCode)
 
 		return nil
 	})

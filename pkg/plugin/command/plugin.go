@@ -17,13 +17,13 @@ func (t pluginType) String() string {
 }
 
 func (t pluginType) GRPCClient() (plugin.Plugin, error) {
-	return nil, dodo.ErrInvalidPlugin{
+	return nil, dodo.InvalidError{
 		Message: "command plugin is not implemented via grpc",
 	}
 }
 
 func (t pluginType) GRPCServer(p dodo.Plugin) (plugin.Plugin, error) {
-	return nil, dodo.ErrInvalidPlugin{
+	return nil, dodo.InvalidError{
 		Message: "command plugin is not implemented via grpc",
 	}
 }

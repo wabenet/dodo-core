@@ -53,7 +53,7 @@ func grpcServer(t dodo.Type, p dodo.Plugin) (*grpc.Server, error) {
 
 	gp, ok := pl.(plugin.GRPCPlugin)
 	if !ok {
-		return nil, dodo.ErrInvalidPlugin{}
+		return nil, dodo.InvalidError{}
 	}
 
 	s := grpc.NewServer()
@@ -73,7 +73,7 @@ func grpcClient(t dodo.Type, conn *grpc.ClientConn) (dodo.Plugin, error) {
 
 	gp, ok := p.(plugin.GRPCPlugin)
 	if !ok {
-		return nil, dodo.ErrInvalidPlugin{}
+		return nil, dodo.InvalidError{}
 	}
 
 	c, err := gp.GRPCClient(context.Background(), nil, conn)
@@ -83,7 +83,7 @@ func grpcClient(t dodo.Type, conn *grpc.ClientConn) (dodo.Plugin, error) {
 
 	b, ok := c.(dodo.Plugin)
 	if !ok {
-		return nil, dodo.ErrInvalidPlugin{}
+		return nil, dodo.InvalidError{}
 	}
 
 	return b, nil

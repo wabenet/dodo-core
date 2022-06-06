@@ -65,7 +65,7 @@ func (c *client) CreateImage(config *api.BuildInfo, stream *plugin.StreamConfig)
 		return result.ImageId, nil
 	}
 
-	imageId := ""
+	imageID := ""
 	eg, _ := errgroup.WithContext(context.Background())
 
 	eg.Go(func() error {
@@ -87,7 +87,7 @@ func (c *client) CreateImage(config *api.BuildInfo, stream *plugin.StreamConfig)
 			return fmt.Errorf("could not build image: %w", err)
 		}
 
-		imageId = result.ImageId
+		imageID = result.ImageId
 
 		return nil
 	})
@@ -96,7 +96,7 @@ func (c *client) CreateImage(config *api.BuildInfo, stream *plugin.StreamConfig)
 		return "", err
 	}
 
-	return imageId, nil
+	return imageID, nil
 }
 
 func streamOutput(c api.BuilderPlugin_StreamBuildOutputClient, stdout io.Writer, stderr io.Writer) error {

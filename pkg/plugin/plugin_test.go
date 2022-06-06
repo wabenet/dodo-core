@@ -25,11 +25,11 @@ func (t typeA) String() string {
 }
 
 func (typeA) GRPCClient() (plugin.Plugin, error) {
-	return nil, dodo.ErrInvalidPlugin{}
+	return nil, dodo.InvalidError{}
 }
 
 func (typeA) GRPCServer(p dodo.Plugin) (plugin.Plugin, error) {
-	return nil, dodo.ErrInvalidPlugin{}
+	return nil, dodo.InvalidError{}
 }
 
 func (t typeB) String() string {
@@ -37,11 +37,11 @@ func (t typeB) String() string {
 }
 
 func (typeB) GRPCClient() (plugin.Plugin, error) {
-	return nil, dodo.ErrInvalidPlugin{}
+	return nil, dodo.InvalidError{}
 }
 
 func (typeB) GRPCServer(p dodo.Plugin) (plugin.Plugin, error) {
-	return nil, dodo.ErrInvalidPlugin{}
+	return nil, dodo.InvalidError{}
 }
 
 func (p pluginA) PluginInfo() *api.PluginInfo {

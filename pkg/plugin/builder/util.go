@@ -19,7 +19,7 @@ func GetByName(m plugin.Manager, name string) (ImageBuilder, error) {
 		}
 	}
 
-	return nil, plugin.ErrPluginNotFound{
+	return nil, plugin.NotFoundError{
 		Plugin: &api.PluginName{Type: Type.String(), Name: name},
 	}
 }

@@ -9,12 +9,12 @@ import (
 	"github.com/wabenet/dodo-core/pkg/plugin"
 )
 
-type ErrConfigNotFound struct {
+type NotFoundError struct {
 	Name   string
 	Reason error
 }
 
-func (e ErrConfigNotFound) Error() string {
+func (e NotFoundError) Error() string {
 	if e.Reason == nil {
 		return fmt.Sprintf(
 			"could not find any configuration for '%s'", e.Name,
@@ -28,12 +28,12 @@ func (e ErrConfigNotFound) Error() string {
 	)
 }
 
-type ErrInvalidConfig struct {
+type InvalidError struct {
 	Name    string
 	Message string
 }
 
-func (e ErrInvalidConfig) Error() string {
+func (e InvalidError) Error() string {
 	return fmt.Sprintf(
 		"invalid configuration for '%s': %s",
 		e.Name,
@@ -63,7 +63,7 @@ func AssembleBackdropConfig(m plugin.Manager, name string, overrides *api.Backdr
 	}
 
 	if !foundSomething {
-		return nil, ErrConfigNotFound{Name: name, Reason: errs}
+		return nil, NotFoundError{Name: name, Reason: errs}
 	}
 
 	MergeBackdrop(config, overrides)
@@ -104,7 +104,7 @@ func FindBuildConfig(m plugin.Manager, name string, overrides *api.BuildInfo) (*
 		}
 	}
 
-	return nil, ErrConfigNotFound{Name: name, Reason: errs}
+	return nil, NotFoundError{Name: name, Reason: errs}
 }
 
 func MergeBackdrop(target *api.Backdrop, source *api.Backdrop) {
@@ -210,7 +210,7 @@ func MergeBuildInfo(target *api.BuildInfo, source *api.BuildInfo) {
 
 func ValidateBackdrop(b *api.Backdrop) error {
 	if b.ImageId == "" && b.BuildInfo == nil {
-		return ErrInvalidConfig{Name: b.Name, Message: "neither image nor build configured"}
+		return InvalidError{Name: b.Name, Message: "neither image nor build configured"}
 	}
 
 	if b.BuildInfo != nil {

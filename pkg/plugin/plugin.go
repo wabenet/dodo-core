@@ -49,11 +49,11 @@ type Manager struct {
 	plugins     map[string]map[string]Plugin
 }
 
-type ErrPluginNotFound struct {
+type NotFoundError struct {
 	Plugin *api.PluginName
 }
 
-func (e ErrPluginNotFound) Error() string {
+func (e NotFoundError) Error() string {
 	return fmt.Sprintf(
 		"could not find plugin '%s' of type %s",
 		e.Plugin.Name,
@@ -61,12 +61,12 @@ func (e ErrPluginNotFound) Error() string {
 	)
 }
 
-type ErrInvalidPlugin struct {
+type InvalidError struct {
 	Plugin  *api.PluginName
 	Message string
 }
 
-func (e ErrInvalidPlugin) Error() string {
+func (e InvalidError) Error() string {
 	if e.Plugin == nil {
 		return fmt.Sprintf("invalid unknown plugin encountered: %s", e.Message)
 	}
@@ -255,7 +255,7 @@ func loadGRPCPlugin(path string, pluginType string, grpcPlugin plugin.Plugin) (P
 
 	client.Kill()
 
-	return nil, ErrInvalidPlugin{
+	return nil, InvalidError{
 		Plugin:  &api.PluginName{Type: pluginType, Name: path}, // TODO: name?
 		Message: "does not implement Plugin interface",
 	}

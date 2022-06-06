@@ -141,15 +141,16 @@ func (c *client) StreamContainer(id string, stream *plugin.StreamConfig) (*Resul
 	})
 
 	eg.Go(func() error {
-		if r, err := c.runtimeClient.StreamContainer(context.Background(), &api.StreamContainerRequest{
+		r, err := c.runtimeClient.StreamContainer(context.Background(), &api.StreamContainerRequest{
 			ContainerId: id,
 			Height:      stream.TerminalHeight,
 			Width:       stream.TerminalWidth,
-		}); err != nil {
+		})
+		if err != nil {
 			return fmt.Errorf("could not stream container: %w", err)
-		} else {
-			result.ExitCode = int(r.ExitCode)
 		}
+
+		result.ExitCode = int(r.ExitCode)
 
 		return nil
 	})

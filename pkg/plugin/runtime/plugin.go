@@ -25,7 +25,7 @@ func (t pluginType) GRPCClient() (plugin.Plugin, error) {
 func (t pluginType) GRPCServer(p dodo.Plugin) (plugin.Plugin, error) {
 	rt, ok := p.(ContainerRuntime)
 	if !ok {
-		return nil, dodo.ErrInvalidPlugin{
+		return nil, dodo.InvalidError{
 			Plugin:  p.PluginInfo().Name,
 			Message: "plugin does not implement ContainerRuntime API",
 		}

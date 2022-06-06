@@ -8,11 +8,11 @@ import (
 	api "github.com/wabenet/dodo-core/api/v1alpha3"
 )
 
-type ErrCircularDependency struct {
+type CircularDependencyError struct {
 	Dependencies map[dependency]mapset.Set
 }
 
-func (e ErrCircularDependency) Error() string {
+func (e CircularDependencyError) Error() string {
 	lines := []string{"circular dependencies in plugins:"}
 
 	for dep := range e.Dependencies {
@@ -66,7 +66,7 @@ func ResolveDependencies(pluginMap map[string]map[string]Plugin) ([]Plugin, erro
 		}
 
 		if withoutDeps.Cardinality() == 0 {
-			return nil, ErrCircularDependency{Dependencies: dependencies}
+			return nil, CircularDependencyError{Dependencies: dependencies}
 		}
 
 		for n := range withoutDeps.Iter() {

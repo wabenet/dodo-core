@@ -48,7 +48,7 @@ func TestCreateImage(t *testing.T) {
 	stdout := new(bytes.Buffer)
 	stderr := new(bytes.Buffer)
 
-	imageId, err := b.CreateImage(
+	imageID, err := b.CreateImage(
 		&api.BuildInfo{ImageName: "testimage"},
 		&dodo.StreamConfig{
 			Stdout: stdout, Stderr: stderr,
@@ -57,7 +57,7 @@ func TestCreateImage(t *testing.T) {
 	)
 	assert.Nil(t, err)
 
-	assert.Equal(t, "testimage", imageId)
+	assert.Equal(t, "testimage", imageID)
 	assert.Equal(t, "This goes to stdout", stdout.String())
 	assert.Equal(t, "This goes to stderr", stderr.String())
 }
