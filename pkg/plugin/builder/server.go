@@ -7,9 +7,9 @@ import (
 	"io"
 
 	"github.com/golang/protobuf/ptypes/empty"
-	log "github.com/hashicorp/go-hclog"
 	api "github.com/wabenet/dodo-core/api/v1alpha3"
 	"github.com/wabenet/dodo-core/pkg/plugin"
+	"golang.org/x/sync/errgroup"
 )
 
 type server struct {
@@ -18,7 +18,7 @@ type server struct {
 	stderrCh chan []byte
 }
 
-func NewGRPCServer(impl ImageBuilder, listen string) api.BuilderPluginServer {
+func NewGRPCServer(impl ImageBuilder) api.BuilderPluginServer {
 	return &server{
 		impl:     impl,
 		stdoutCh: make(chan []byte),
@@ -42,12 +42,24 @@ func (s *server) InitPlugin(_ context.Context, _ *empty.Empty) (*api.InitPluginR
 func (s *server) StreamBuildOutput(_ *empty.Empty, srv api.BuilderPlugin_StreamBuildOutputServer) error {
 	var data api.OutputData
 
-	for {
+	for s.stdoutCh != nil && s.stderrCh != nil {
 		select {
-		case data.Data = <-s.stdoutCh:
+		case d, ok := <-s.stdoutCh:
+			if !ok {
+				s.stdoutCh = nil
+				continue
+			}
+
+			data.Data = d
 			data.Channel = api.OutputData_STDOUT
 
-		case data.Data = <-s.stderrCh:
+		case d, ok := <-s.stderrCh:
+			if !ok {
+				s.stderrCh = nil
+				continue
+			}
+
+			data.Data = d
 			data.Channel = api.OutputData_STDERR
 
 		case <-srv.Context().Done():
@@ -62,45 +74,64 @@ func (s *server) StreamBuildOutput(_ *empty.Empty, srv api.BuilderPlugin_StreamB
 			return fmt.Errorf("error sending build output to client: %w", err)
 		}
 	}
+
+	return nil
 }
 
 func (s *server) CreateImage(_ context.Context, request *api.CreateImageRequest) (*api.CreateImageResponse, error) {
-	if request.Height == 0 && request.Width == 0 {
-		imageID, err := s.impl.CreateImage(request.Config, nil)
+	resp := &api.CreateImageResponse{}
 
-		if err != nil {
+	if request.Height == 0 && request.Width == 0 {
+		if id, err := s.impl.CreateImage(request.Config, nil); err != nil {
 			return nil, fmt.Errorf("could not build image: %w", err)
+		} else {
+			resp.ImageId = id
 		}
 
-		return &api.CreateImageResponse{ImageId: imageID}, nil
+		return resp, nil
 	}
 
 	outReader, outWriter := io.Pipe()
 	errReader, errWriter := io.Pipe()
 
-	go copyOutput(s.stdoutCh, outReader)
-	go copyOutput(s.stderrCh, errReader)
+	eg, _ := errgroup.WithContext(context.Background())
 
-	defer func() {
-		outWriter.Close()
-		errWriter.Close()
-	}()
-
-	imageID, err := s.impl.CreateImage(request.Config, &plugin.StreamConfig{
-		Stdout:         outWriter,
-		Stderr:         errWriter,
-		TerminalHeight: request.Height,
-		TerminalWidth:  request.Width,
+	eg.Go(func() error {
+		return copyOutput(s.stdoutCh, outReader)
 	})
 
-	if err != nil {
-		return nil, fmt.Errorf("could not build image: %w", err)
+	eg.Go(func() error {
+		return copyOutput(s.stderrCh, errReader)
+	})
+
+	eg.Go(func() error {
+		defer outWriter.Close()
+		defer errWriter.Close()
+
+		if id, err := s.impl.CreateImage(request.Config, &plugin.StreamConfig{
+			Stdout:         outWriter,
+			Stderr:         errWriter,
+			TerminalHeight: request.Height,
+			TerminalWidth:  request.Width,
+		}); err != nil {
+			return fmt.Errorf("could not build image: %w", err)
+		} else {
+			resp.ImageId = id
+		}
+
+		return nil
+	})
+
+	if err := eg.Wait(); err != nil {
+		return resp, err
 	}
 
-	return &api.CreateImageResponse{ImageId: imageID}, nil
+	return resp, nil
 }
 
-func copyOutput(dst chan []byte, src io.Reader) {
+func copyOutput(dst chan []byte, src io.Reader) error {
+	defer close(dst)
+
 	bufsrc := bufio.NewReader(src)
 
 	for {
@@ -113,13 +144,11 @@ func copyOutput(dst chan []byte, src io.Reader) {
 		}
 
 		if err == io.EOF {
-			return
+			return nil
 		}
 
 		if err != nil {
-			log.L().Warn("error in stdio stream", "err", err)
-
-			return
+			return err
 		}
 	}
 }

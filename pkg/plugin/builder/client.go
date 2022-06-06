@@ -10,6 +10,7 @@ import (
 	log "github.com/hashicorp/go-hclog"
 	api "github.com/wabenet/dodo-core/api/v1alpha3"
 	"github.com/wabenet/dodo-core/pkg/plugin"
+	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -64,26 +65,41 @@ func (c *client) CreateImage(config *api.BuildInfo, stream *plugin.StreamConfig)
 		return result.ImageId, nil
 	}
 
-	stdioClient, err := c.builderClient.StreamBuildOutput(context.Background(), &empty.Empty{})
-	if err != nil {
-		return "", fmt.Errorf("could not stream build output: %w", err)
-	}
+	imageId := ""
+	eg, _ := errgroup.WithContext(context.Background())
 
-	go streamOutput(stdioClient, stream.Stdout, stream.Stderr)
+	eg.Go(func() error {
+		stdioClient, err := c.builderClient.StreamBuildOutput(context.Background(), &empty.Empty{})
+		if err != nil {
+			return fmt.Errorf("could not stream build output: %w", err)
+		}
 
-	result, err := c.builderClient.CreateImage(context.Background(), &api.CreateImageRequest{
-		Config: config,
-		Height: stream.TerminalHeight,
-		Width:  stream.TerminalWidth,
+		return streamOutput(stdioClient, stream.Stdout, stream.Stderr)
 	})
-	if err != nil {
-		return "", fmt.Errorf("could not build image: %w", err)
+
+	eg.Go(func() error {
+		result, err := c.builderClient.CreateImage(context.Background(), &api.CreateImageRequest{
+			Config: config,
+			Height: stream.TerminalHeight,
+			Width:  stream.TerminalWidth,
+		})
+		if err != nil {
+			return fmt.Errorf("could not build image: %w", err)
+		}
+
+		imageId = result.ImageId
+
+		return nil
+	})
+
+	if err := eg.Wait(); err != nil {
+		return "", err
 	}
 
-	return result.ImageId, nil
+	return imageId, nil
 }
 
-func streamOutput(c api.BuilderPlugin_StreamBuildOutputClient, stdout io.Writer, stderr io.Writer) {
+func streamOutput(c api.BuilderPlugin_StreamBuildOutputClient, stdout io.Writer, stderr io.Writer) error {
 	for {
 		data, err := c.Recv()
 		if err != nil {
@@ -92,12 +108,12 @@ func streamOutput(c api.BuilderPlugin_StreamBuildOutputClient, stdout io.Writer,
 				status.Code(err) == codes.Canceled ||
 				status.Code(err) == codes.Unimplemented ||
 				err == context.Canceled {
-				return
+				return nil
 			}
 
 			log.L().Error("error receiving data", "err", err)
 
-			return
+			return err
 		}
 
 		switch data.Channel {

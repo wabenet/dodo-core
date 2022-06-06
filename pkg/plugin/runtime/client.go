@@ -12,6 +12,7 @@ import (
 	log "github.com/hashicorp/go-hclog"
 	api "github.com/wabenet/dodo-core/api/v1alpha3"
 	"github.com/wabenet/dodo-core/pkg/plugin"
+	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -118,32 +119,49 @@ func (c *client) KillContainer(id string, signal os.Signal) error {
 }
 
 func (c *client) StreamContainer(id string, stream *plugin.StreamConfig) (*Result, error) {
-	inputClient, err := c.runtimeClient.StreamRuntimeInput(context.Background())
-	if err != nil {
-		return nil, fmt.Errorf("could not stream runtime input: %w", err)
-	}
+	result := &Result{}
+	eg, _ := errgroup.WithContext(context.Background())
 
-	outputClient, err := c.runtimeClient.StreamRuntimeOutput(context.Background(), &empty.Empty{})
-	if err != nil {
-		return nil, fmt.Errorf("could not stream runtime output: %w", err)
-	}
+	eg.Go(func() error {
+		inputClient, err := c.runtimeClient.StreamRuntimeInput(context.Background())
+		if err != nil {
+			return fmt.Errorf("could not stream runtime input: %w", err)
+		}
 
-	go streamInput(inputClient, stream.Stdin)
-	go streamOutput(outputClient, stream.Stdout, stream.Stderr)
-
-	result, err := c.runtimeClient.StreamContainer(context.Background(), &api.StreamContainerRequest{
-		ContainerId: id,
-		Height:      stream.TerminalHeight,
-		Width:       stream.TerminalWidth,
+		return streamInput(inputClient, stream.Stdin)
 	})
-	if err != nil {
-		return nil, fmt.Errorf("could not stream container: %w", err)
+
+	eg.Go(func() error {
+		outputClient, err := c.runtimeClient.StreamRuntimeOutput(context.Background(), &empty.Empty{})
+		if err != nil {
+			return fmt.Errorf("could not stream runtime output: %w", err)
+		}
+
+		return streamOutput(outputClient, stream.Stdout, stream.Stderr)
+	})
+
+	eg.Go(func() error {
+		if r, err := c.runtimeClient.StreamContainer(context.Background(), &api.StreamContainerRequest{
+			ContainerId: id,
+			Height:      stream.TerminalHeight,
+			Width:       stream.TerminalWidth,
+		}); err != nil {
+			return fmt.Errorf("could not stream container: %w", err)
+		} else {
+			result.ExitCode = int(r.ExitCode)
+		}
+
+		return nil
+	})
+
+	if err := eg.Wait(); err != nil {
+		return result, err
 	}
 
-	return &Result{ExitCode: int(result.ExitCode)}, nil
+	return result, nil
 }
 
-func streamInput(c api.RuntimePlugin_StreamRuntimeInputClient, stdin io.Reader) {
+func streamInput(c api.RuntimePlugin_StreamRuntimeInputClient, stdin io.Reader) error {
 	bufsrc := bufio.NewReader(stdin)
 	data := api.InputData{}
 
@@ -155,29 +173,25 @@ func streamInput(c api.RuntimePlugin_StreamRuntimeInputClient, stdin io.Reader) 
 		if n > 0 {
 			data.Data = b[:n]
 			if serr := c.Send(&data); err != nil {
-				log.L().Warn("error in stdio stream", "err", serr)
-
-				return
+				return serr
 			}
 		}
 
 		if err == io.EOF {
-			if _, serr := c.CloseAndRecv(); err != nil {
+			if _, serr := c.CloseAndRecv(); serr != nil {
 				log.L().Warn("could not close input stream", "err", serr)
 			}
 
-			return
+			return nil
 		}
 
 		if err != nil {
-			log.L().Warn("error in stdio stream", "err", err)
-
-			return
+			return err
 		}
 	}
 }
 
-func streamOutput(c api.RuntimePlugin_StreamRuntimeOutputClient, stdout io.Writer, stderr io.Writer) {
+func streamOutput(c api.RuntimePlugin_StreamRuntimeOutputClient, stdout io.Writer, stderr io.Writer) error {
 	for {
 		data, err := c.Recv()
 		if err != nil {
@@ -186,12 +200,12 @@ func streamOutput(c api.RuntimePlugin_StreamRuntimeOutputClient, stdout io.Write
 				status.Code(err) == codes.Canceled ||
 				status.Code(err) == codes.Unimplemented ||
 				err == context.Canceled {
-				return
+				return nil
 			}
 
 			log.L().Error("error receiving data", "err", err)
 
-			return
+			return err
 		}
 
 		switch data.Channel {
