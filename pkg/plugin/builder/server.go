@@ -131,7 +131,7 @@ func (s *server) CreateImage(_ context.Context, request *api.CreateImageRequest)
 	})
 
 	if err := eg.Wait(); err != nil {
-		return resp, err
+		return resp, fmt.Errorf("error during image build stream: %w", err)
 	}
 
 	return resp, nil
@@ -156,7 +156,7 @@ func copyOutput(dst chan []byte, src io.Reader) error {
 		}
 
 		if err != nil {
-			return err
+			return fmt.Errorf("error copying build output: %w", err)
 		}
 	}
 }

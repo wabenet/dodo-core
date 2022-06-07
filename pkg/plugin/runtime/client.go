@@ -156,7 +156,7 @@ func (c *client) StreamContainer(id string, stream *plugin.StreamConfig) (*Resul
 	})
 
 	if err := eg.Wait(); err != nil {
-		return result, err
+		return result, fmt.Errorf("error during container stream: %w", err)
 	}
 
 	return result, nil
@@ -174,7 +174,7 @@ func streamInput(c api.RuntimePlugin_StreamRuntimeInputClient, stdin io.Reader) 
 		if n > 0 {
 			data.Data = b[:n]
 			if serr := c.Send(&data); err != nil {
-				return serr
+				return fmt.Errorf("could not send input to server: %w", serr)
 			}
 		}
 
@@ -187,7 +187,7 @@ func streamInput(c api.RuntimePlugin_StreamRuntimeInputClient, stdin io.Reader) 
 		}
 
 		if err != nil {
-			return err
+			return fmt.Errorf("could not read stream from client: %w", err)
 		}
 	}
 }
@@ -204,9 +204,7 @@ func streamOutput(c api.RuntimePlugin_StreamRuntimeOutputClient, stdout io.Write
 				return nil
 			}
 
-			log.L().Error("error receiving data", "err", err)
-
-			return err
+			return fmt.Errorf("error receiving data: %w", err)
 		}
 
 		switch data.Channel {

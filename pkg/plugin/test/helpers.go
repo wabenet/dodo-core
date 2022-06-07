@@ -2,6 +2,7 @@ package test
 
 import (
 	"context"
+	"fmt"
 	"net"
 
 	"github.com/hashicorp/go-plugin"
@@ -27,12 +28,17 @@ func GRPCWrapPlugin(t dodo.Type, p dodo.Plugin) (dodo.Plugin, func(), error) {
 	conn, err := grpc.DialContext(
 		context.Background(),
 		"bufnet", grpc.WithContextDialer(func(context.Context, string) (net.Conn, error) {
-			return lis.Dial()
+			conn, err := lis.Dial()
+			if err != nil {
+				return nil, fmt.Errorf("could not dial bufconn: %w", err)
+			}
+
+			return conn, nil
 		}),
 		grpc.WithInsecure(),
 	)
 	if err != nil {
-		return nil, func() {}, err
+		return nil, func() {}, fmt.Errorf("could not connect to bufconn: %w", err)
 	}
 
 	cleanup := func() { conn.Close() }
@@ -48,7 +54,7 @@ func GRPCWrapPlugin(t dodo.Type, p dodo.Plugin) (dodo.Plugin, func(), error) {
 func grpcServer(t dodo.Type, p dodo.Plugin) (*grpc.Server, error) {
 	pl, err := t.GRPCServer(p)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("could not setup grpc server: %w", err)
 	}
 
 	gp, ok := pl.(plugin.GRPCPlugin)
@@ -59,7 +65,7 @@ func grpcServer(t dodo.Type, p dodo.Plugin) (*grpc.Server, error) {
 	s := grpc.NewServer()
 
 	if err := gp.GRPCServer(nil, s); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("could not start grpc server: %w", err)
 	}
 
 	return s, nil
@@ -68,7 +74,7 @@ func grpcServer(t dodo.Type, p dodo.Plugin) (*grpc.Server, error) {
 func grpcClient(t dodo.Type, conn *grpc.ClientConn) (dodo.Plugin, error) {
 	p, err := t.GRPCClient()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("could not setup grpc client: %w", err)
 	}
 
 	gp, ok := p.(plugin.GRPCPlugin)
@@ -78,7 +84,7 @@ func grpcClient(t dodo.Type, conn *grpc.ClientConn) (dodo.Plugin, error) {
 
 	c, err := gp.GRPCClient(context.Background(), nil, conn)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("could not start grpc client: %w", err)
 	}
 
 	b, ok := c.(dodo.Plugin)

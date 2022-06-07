@@ -54,5 +54,10 @@ func (c *client) ListBackdrops() ([]*api.Backdrop, error) {
 }
 
 func (c *client) GetBackdrop(alias string) (*api.Backdrop, error) {
-	return c.configClient.GetBackdrop(context.Background(), &api.GetBackdropRequest{Alias: alias})
+	response, err := c.configClient.GetBackdrop(context.Background(), &api.GetBackdropRequest{Alias: alias})
+	if err != nil {
+		return nil, fmt.Errorf("could not get backdrop: %w", err)
+	}
+
+	return response, nil
 }

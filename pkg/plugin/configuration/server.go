@@ -39,5 +39,10 @@ func (s *server) ListBackdrops(_ context.Context, _ *empty.Empty) (*api.ListBack
 }
 
 func (s *server) GetBackdrop(_ context.Context, request *api.GetBackdropRequest) (*api.Backdrop, error) {
-	return s.impl.GetBackdrop(request.Alias)
+	response, err := s.impl.GetBackdrop(request.Alias)
+	if err != nil {
+		return nil, fmt.Errorf("could not get backdrop: %w", err)
+	}
+
+	return response, nil
 }

@@ -168,8 +168,6 @@ func (s *server) StreamRuntimeOutput(_ *empty.Empty, srv api.RuntimePlugin_Strea
 			return fmt.Errorf("error sending build output to client: %w", err)
 		}
 	}
-
-	return nil
 }
 
 func (s *server) StreamContainer(
@@ -219,7 +217,7 @@ func (s *server) StreamContainer(
 	})
 
 	if err := eg.Wait(); err != nil {
-		return resp, err
+		return resp, fmt.Errorf("error during container stream: %w", err)
 	}
 
 	return resp, nil
@@ -240,7 +238,11 @@ func copyInput(dst io.Writer, src chan []byte) error {
 		}
 	}
 
-	return bufdst.Flush()
+	if err := bufdst.Flush(); err != nil {
+		return fmt.Errorf("could not flush container input: %w", err)
+	}
+
+	return nil
 }
 
 func copyOutput(dst chan []byte, src io.Reader) error {
@@ -262,7 +264,7 @@ func copyOutput(dst chan []byte, src io.Reader) error {
 		}
 
 		if err != nil {
-			return err
+			return fmt.Errorf("error copying container output: %w", err)
 		}
 	}
 }

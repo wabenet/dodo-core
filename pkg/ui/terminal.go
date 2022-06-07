@@ -115,7 +115,11 @@ func (t *Terminal) RunInRaw(wrapped func(*Terminal) error) error {
 		return wrapped(t)
 	})
 
-	return eg.Wait()
+	if err := eg.Wait(); err != nil {
+		return fmt.Errorf("error during raw terminal wrap: %w", err)
+	}
+
+	return nil
 }
 
 func IsTTY() bool {

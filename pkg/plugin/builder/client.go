@@ -93,7 +93,7 @@ func (c *client) CreateImage(config *api.BuildInfo, stream *plugin.StreamConfig)
 	})
 
 	if err := eg.Wait(); err != nil {
-		return "", err
+		return "", fmt.Errorf("error during image build stream: %w", err)
 	}
 
 	return imageID, nil
@@ -111,9 +111,7 @@ func streamOutput(c api.BuilderPlugin_StreamBuildOutputClient, stdout io.Writer,
 				return nil
 			}
 
-			log.L().Error("error receiving data", "err", err)
-
-			return err
+			return fmt.Errorf("error receiving data: %w", err)
 		}
 
 		switch data.Channel {
