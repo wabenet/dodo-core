@@ -130,7 +130,11 @@ func (s *server) StreamRuntimeInput(srv api.RuntimePlugin_StreamRuntimeInputServ
 func (s *server) StreamRuntimeOutput(_ *empty.Empty, srv api.RuntimePlugin_StreamRuntimeOutputServer) error {
 	var data api.OutputData
 
-	for s.stdoutCh != nil && s.stderrCh != nil {
+	for {
+		if s.stdoutCh == nil && s.stderrCh == nil {
+			return nil
+		}
+
 		select {
 		case d, ok := <-s.stdoutCh:
 			if !ok {

@@ -42,7 +42,11 @@ func (s *server) InitPlugin(_ context.Context, _ *empty.Empty) (*api.InitPluginR
 func (s *server) StreamBuildOutput(_ *empty.Empty, srv api.BuilderPlugin_StreamBuildOutputServer) error {
 	var data api.OutputData
 
-	for s.stdoutCh != nil && s.stderrCh != nil {
+	for {
+		if s.stdoutCh == nil && s.stderrCh == nil {
+			return nil
+		}
+
 		select {
 		case d, ok := <-s.stdoutCh:
 			if !ok {
