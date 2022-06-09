@@ -80,8 +80,6 @@ func (s *server) StreamBuildOutput(_ *empty.Empty, srv api.BuilderPlugin_StreamB
 			return fmt.Errorf("error sending build output to client: %w", err)
 		}
 	}
-
-	return nil
 }
 
 func (s *server) CreateImage(_ context.Context, request *api.CreateImageRequest) (*api.CreateImageResponse, error) {

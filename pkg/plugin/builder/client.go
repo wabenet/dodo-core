@@ -57,7 +57,6 @@ func (c *client) CreateImage(config *api.BuildInfo, stream *plugin.StreamConfig)
 			Height: 0,
 			Width:  0,
 		})
-
 		if err != nil {
 			return "", fmt.Errorf("could not build image: %w", err)
 		}
@@ -99,7 +98,7 @@ func (c *client) CreateImage(config *api.BuildInfo, stream *plugin.StreamConfig)
 	return imageID, nil
 }
 
-func streamOutput(c api.BuilderPlugin_StreamBuildOutputClient, stdout io.Writer, stderr io.Writer) error {
+func streamOutput(c api.BuilderPlugin_StreamBuildOutputClient, stdout, stderr io.Writer) error {
 	for {
 		data, err := c.Recv()
 		if err != nil {

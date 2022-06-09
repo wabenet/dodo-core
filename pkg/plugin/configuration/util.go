@@ -107,7 +107,7 @@ func FindBuildConfig(m plugin.Manager, name string, overrides *api.BuildInfo) (*
 	return nil, NotFoundError{Name: name, Reason: errs}
 }
 
-func MergeBackdrop(target *api.Backdrop, source *api.Backdrop) {
+func MergeBackdrop(target, source *api.Backdrop) {
 	if len(source.Name) > 0 {
 		target.Name = source.Name
 	}
@@ -168,7 +168,7 @@ func MergeBackdrop(target *api.Backdrop, source *api.Backdrop) {
 	}
 }
 
-func MergeBuildInfo(target *api.BuildInfo, source *api.BuildInfo) {
+func MergeBuildInfo(target, source *api.BuildInfo) {
 	if len(source.Builder) > 0 {
 		target.Builder = source.Builder
 	}

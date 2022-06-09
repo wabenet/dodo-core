@@ -23,6 +23,9 @@ const (
 
 	DefaultLogLevel = "INFO"
 	DefaultAppDir   = "/var/lib/dodo"
+
+	permConfigDir = 0o700
+	permLogFile   = 0o666
 )
 
 func Configure() {
@@ -55,7 +58,7 @@ func GetConfigFiles() []string {
 func GetAppDir() string {
 	dir := filepath.FromSlash(viper.GetString(ConfKeyAppDir))
 
-	if err := os.MkdirAll(dir, 0700); err != nil {
+	if err := os.MkdirAll(dir, permConfigDir); err != nil {
 		log.L().Warn("could not create app directory", "error", err)
 	}
 
@@ -90,7 +93,7 @@ func LogOutput() io.Writer {
 	case "-":
 		return os.Stderr
 	default:
-		if outFile, err := os.OpenFile(path, syscall.O_CREAT|syscall.O_RDWR|syscall.O_APPEND, 0666); err == nil {
+		if outFile, err := os.OpenFile(path, syscall.O_CREAT|syscall.O_RDWR|syscall.O_APPEND, permLogFile); err == nil {
 			return outFile
 		}
 

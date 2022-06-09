@@ -4,6 +4,9 @@ linters:
   disable:
     - exhaustruct
     - exhaustivestruct
+    - godox
+    - ireturn # TODO: this needs a separate cleanup
+    - varnamelen # TODO: consider if we should actually follow this practice
 
 linters-settings:
   gofumpt:

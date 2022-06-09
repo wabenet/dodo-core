@@ -61,7 +61,7 @@ func (c *client) ResolveImage(spec string) (string, error) {
 	return img.ImageId, nil
 }
 
-func (c *client) CreateContainer(config *api.Backdrop, tty bool, stdio bool) (string, error) {
+func (c *client) CreateContainer(config *api.Backdrop, tty, stdio bool) (string, error) {
 	resp, err := c.runtimeClient.CreateContainer(context.Background(), &api.CreateContainerRequest{
 		Config: config,
 		Tty:    tty,
@@ -96,7 +96,7 @@ func (c *client) DeleteContainer(id string) error {
 	return nil
 }
 
-func (c *client) ResizeContainer(id string, height uint32, width uint32) error {
+func (c *client) ResizeContainer(id string, height, width uint32) error {
 	if _, err := c.runtimeClient.ResizeContainer(
 		context.Background(),
 		&api.ResizeContainerRequest{ContainerId: id, Height: height, Width: width},
@@ -192,7 +192,7 @@ func streamInput(c api.RuntimePlugin_StreamRuntimeInputClient, stdin io.Reader) 
 	}
 }
 
-func streamOutput(c api.RuntimePlugin_StreamRuntimeOutputClient, stdout io.Writer, stderr io.Writer) error {
+func streamOutput(c api.RuntimePlugin_StreamRuntimeOutputClient, stdout, stderr io.Writer) error {
 	for {
 		data, err := c.Recv()
 		if err != nil {

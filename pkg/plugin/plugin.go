@@ -176,7 +176,7 @@ func (m Manager) findPlugins() {
 	for _, path := range matches {
 		logger := log.Default().With("path", path)
 
-		if stat, err := os.Stat(path); err != nil || stat.Mode().Perm()&0111 == 0 {
+		if stat, err := os.Stat(path); err != nil || stat.Mode().Perm()&0o111 == 0 {
 			continue
 		}
 
@@ -221,7 +221,7 @@ func (m Manager) initPlugin(p Plugin) {
 	}
 }
 
-func loadGRPCPlugin(path string, pluginType string, grpcPlugin plugin.Plugin) (Plugin, error) {
+func loadGRPCPlugin(path, pluginType string, grpcPlugin plugin.Plugin) (Plugin, error) {
 	client := plugin.NewClient(&plugin.ClientConfig{
 		Managed:          true,
 		Plugins:          map[string]plugin.Plugin{pluginType: grpcPlugin},

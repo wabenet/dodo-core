@@ -36,7 +36,7 @@ func (r *DummyRuntime) ResolveImage(_ string) (string, error) {
 	return "", nil
 }
 
-func (r *DummyRuntime) CreateContainer(_ *api.Backdrop, _ bool, _ bool) (string, error) {
+func (r *DummyRuntime) CreateContainer(_ *api.Backdrop, _, _ bool) (string, error) {
 	return "", nil
 }
 
@@ -48,7 +48,7 @@ func (r *DummyRuntime) DeleteContainer(_ string) error {
 	return nil
 }
 
-func (r *DummyRuntime) ResizeContainer(_ string, _ uint32, _ uint32) error {
+func (r *DummyRuntime) ResizeContainer(_ string, _, _ uint32) error {
 	return nil
 }
 
@@ -65,6 +65,8 @@ func (r *DummyRuntime) StreamContainer(_ string, stream *dodo.StreamConfig) (*ru
 }
 
 func TestStreamContainer(t *testing.T) {
+	t.Parallel()
+
 	c, cleanup, err := plugintest.GRPCWrapPlugin(runtime.Type, &DummyRuntime{})
 	assert.Nil(t, err)
 

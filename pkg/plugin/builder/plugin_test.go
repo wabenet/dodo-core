@@ -37,6 +37,8 @@ func (b *DummyBuilder) CreateImage(config *api.BuildInfo, stream *dodo.StreamCon
 }
 
 func TestCreateImage(t *testing.T) {
+	t.Parallel()
+
 	c, cleanup, err := plugintest.GRPCWrapPlugin(builder.Type, &DummyBuilder{})
 	assert.Nil(t, err)
 
