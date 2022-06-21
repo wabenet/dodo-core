@@ -3,6 +3,7 @@ package builder
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"io"
 
@@ -102,11 +103,11 @@ func streamOutput(c api.BuilderPlugin_StreamBuildOutputClient, stdout, stderr io
 	for {
 		data, err := c.Recv()
 		if err != nil {
-			if err == io.EOF ||
+			if errors.Is(err, io.EOF) ||
+				errors.Is(err, context.Canceled) ||
 				status.Code(err) == codes.Unavailable ||
 				status.Code(err) == codes.Canceled ||
-				status.Code(err) == codes.Unimplemented ||
-				err == context.Canceled {
+				status.Code(err) == codes.Unimplemented {
 				return nil
 			}
 

@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -11,6 +12,7 @@ import (
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/hashicorp/go-hclog"
 	api "github.com/wabenet/dodo-core/api/v1alpha3"
+	"github.com/wabenet/dodo-core/pkg/ioutil"
 	"github.com/wabenet/dodo-core/pkg/plugin"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc/codes"
@@ -122,13 +124,16 @@ func (c *client) StreamContainer(id string, stream *plugin.StreamConfig) (*Resul
 	result := &Result{}
 	eg, _ := errgroup.WithContext(context.Background())
 
+	inContext, inCancel := context.WithCancel(context.Background())
+	inReader := ioutil.NewCancelableReader(inContext, stream.Stdin)
+
 	eg.Go(func() error {
 		inputClient, err := c.runtimeClient.StreamRuntimeInput(context.Background())
 		if err != nil {
 			return fmt.Errorf("could not stream runtime input: %w", err)
 		}
 
-		return streamInput(inputClient, stream.Stdin)
+		return streamInput(inputClient, inReader)
 	})
 
 	eg.Go(func() error {
@@ -141,6 +146,8 @@ func (c *client) StreamContainer(id string, stream *plugin.StreamConfig) (*Resul
 	})
 
 	eg.Go(func() error {
+		defer inCancel()
+
 		r, err := c.runtimeClient.StreamContainer(context.Background(), &api.StreamContainerRequest{
 			ContainerId: id,
 			Height:      stream.TerminalHeight,
@@ -178,7 +185,7 @@ func streamInput(c api.RuntimePlugin_StreamRuntimeInputClient, stdin io.Reader) 
 			}
 		}
 
-		if err == io.EOF {
+		if errors.Is(err, io.EOF) || errors.Is(err, context.Canceled) {
 			if _, serr := c.CloseAndRecv(); serr != nil {
 				log.L().Warn("could not close input stream", "err", serr)
 			}
@@ -196,11 +203,11 @@ func streamOutput(c api.RuntimePlugin_StreamRuntimeOutputClient, stdout, stderr 
 	for {
 		data, err := c.Recv()
 		if err != nil {
-			if err == io.EOF ||
+			if errors.Is(err, io.EOF) ||
+				errors.Is(err, context.Canceled) ||
 				status.Code(err) == codes.Unavailable ||
 				status.Code(err) == codes.Canceled ||
-				status.Code(err) == codes.Unimplemented ||
-				err == context.Canceled {
+				status.Code(err) == codes.Unimplemented {
 				return nil
 			}
 

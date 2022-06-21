@@ -3,8 +3,10 @@ package runtime
 import (
 	"bufio"
 	"context"
+	"errors"
 	"fmt"
 	"io"
+	"sync"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/hashicorp/go-hclog"
@@ -16,19 +18,27 @@ import (
 )
 
 type server struct {
-	impl     ContainerRuntime
-	stdinCh  chan []byte
-	stdoutCh chan []byte
-	stderrCh chan []byte
+	impl        ContainerRuntime
+	stdinCh     chan []byte
+	stdoutCh    chan []byte
+	stderrCh    chan []byte
+	stdinCloser sync.Once
 }
 
 func NewGRPCServer(impl ContainerRuntime) api.RuntimePluginServer {
 	return &server{
-		impl:     impl,
-		stdinCh:  make(chan []byte),
-		stdoutCh: make(chan []byte),
-		stderrCh: make(chan []byte),
+		impl:        impl,
+		stdinCh:     make(chan []byte),
+		stdoutCh:    make(chan []byte),
+		stderrCh:    make(chan []byte),
+		stdinCloser: sync.Once{},
 	}
+}
+
+func (s *server) closeStdin() {
+	s.stdinCloser.Do(func() {
+		close(s.stdinCh)
+	})
 }
 
 func (s *server) GetPluginInfo(_ context.Context, _ *empty.Empty) (*api.PluginInfo, error) {
@@ -98,12 +108,12 @@ func (s *server) KillContainer(_ context.Context, request *api.KillContainerRequ
 }
 
 func (s *server) StreamRuntimeInput(srv api.RuntimePlugin_StreamRuntimeInputServer) error {
-	defer close(s.stdinCh)
+	defer s.closeStdin()
 
 	for {
 		data, err := srv.Recv()
 		if err != nil {
-			if err == io.EOF {
+			if errors.Is(err, io.EOF) {
 				if err := srv.SendAndClose(&empty.Empty{}); err != nil {
 					return fmt.Errorf("could not close input stream: %w", err)
 				}
@@ -111,10 +121,10 @@ func (s *server) StreamRuntimeInput(srv api.RuntimePlugin_StreamRuntimeInputServ
 				return nil
 			}
 
-			if status.Code(err) == codes.Unavailable ||
+			if errors.Is(err, context.Canceled) ||
+				status.Code(err) == codes.Unavailable ||
 				status.Code(err) == codes.Canceled ||
-				status.Code(err) == codes.Unimplemented ||
-				err == context.Canceled {
+				status.Code(err) == codes.Unimplemented {
 				return nil
 			}
 
@@ -199,6 +209,8 @@ func (s *server) StreamContainer(
 	eg.Go(func() error {
 		defer outWriter.Close()
 		defer errWriter.Close()
+
+		defer s.closeStdin()
 
 		r, err := s.impl.StreamContainer(request.ContainerId, &plugin.StreamConfig{
 			Stdin:          inReader,
