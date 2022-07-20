@@ -2,7 +2,7 @@ package plugin_test
 
 import (
 	"github.com/hashicorp/go-plugin"
-	api "github.com/wabenet/dodo-core/api/v1alpha3"
+	api "github.com/wabenet/dodo-core/api/v1alpha4"
 	dodo "github.com/wabenet/dodo-core/pkg/plugin"
 )
 
@@ -57,6 +57,8 @@ func (pluginA) Init() (dodo.PluginConfig, error) {
 	return map[string]string{}, nil
 }
 
+func (pluginA) Cleanup() {}
+
 func (pluginA) Type() dodo.Type {
 	return typeAImpl
 }
@@ -76,6 +78,8 @@ func (p pluginB) PluginInfo() *api.PluginInfo {
 func (pluginB) Init() (dodo.PluginConfig, error) {
 	return map[string]string{}, nil
 }
+
+func (pluginB) Cleanup() {}
 
 func (pluginB) Type() dodo.Type {
 	return typeBImpl

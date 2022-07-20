@@ -1,10 +1,10 @@
 syntax = "proto3";
 
-package com.wabenet.dodo.core.v1alpha3;
+package com.wabenet.dodo.core.v1alpha4;
 
-option go_package = "github.com/wabenet/dodo-core/api/v1alpha3";
+option go_package = "github.com/wabenet/dodo-core/api/v1alpha4";
 
-import "api/v1alpha3/build.proto";
+import "api/v1alpha4/build.proto";
 
 message Backdrop {
   string name = 1;
@@ -25,7 +25,7 @@ message Backdrop {
   string user = 12;
   string working_dir = 13;
 
-  com.wabenet.dodo.core.v1alpha3.BuildInfo build_info = 14;
+  com.wabenet.dodo.core.v1alpha4.BuildInfo build_info = 14;
 }
 
 message Entrypoint {

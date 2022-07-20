@@ -2,9 +2,9 @@
 // versions:
 // 	protoc-gen-go v1.26.0
 // 	protoc        v3.12.4
-// source: api/v1alpha3/configuration.proto
+// source: api/v1alpha4/configuration.proto
 
-package v1alpha3
+package v1alpha4
 
 import (
 	context "context"
@@ -36,7 +36,7 @@ type ListBackdropsResponse struct {
 func (x *ListBackdropsResponse) Reset() {
 	*x = ListBackdropsResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_v1alpha3_configuration_proto_msgTypes[0]
+		mi := &file_api_v1alpha4_configuration_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -49,7 +49,7 @@ func (x *ListBackdropsResponse) String() string {
 func (*ListBackdropsResponse) ProtoMessage() {}
 
 func (x *ListBackdropsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_v1alpha3_configuration_proto_msgTypes[0]
+	mi := &file_api_v1alpha4_configuration_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -62,7 +62,7 @@ func (x *ListBackdropsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListBackdropsResponse.ProtoReflect.Descriptor instead.
 func (*ListBackdropsResponse) Descriptor() ([]byte, []int) {
-	return file_api_v1alpha3_configuration_proto_rawDescGZIP(), []int{0}
+	return file_api_v1alpha4_configuration_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *ListBackdropsResponse) GetBackdrops() []*Backdrop {
@@ -83,7 +83,7 @@ type GetBackdropRequest struct {
 func (x *GetBackdropRequest) Reset() {
 	*x = GetBackdropRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_v1alpha3_configuration_proto_msgTypes[1]
+		mi := &file_api_v1alpha4_configuration_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -96,7 +96,7 @@ func (x *GetBackdropRequest) String() string {
 func (*GetBackdropRequest) ProtoMessage() {}
 
 func (x *GetBackdropRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_v1alpha3_configuration_proto_msgTypes[1]
+	mi := &file_api_v1alpha4_configuration_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -109,7 +109,7 @@ func (x *GetBackdropRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetBackdropRequest.ProtoReflect.Descriptor instead.
 func (*GetBackdropRequest) Descriptor() ([]byte, []int) {
-	return file_api_v1alpha3_configuration_proto_rawDescGZIP(), []int{1}
+	return file_api_v1alpha4_configuration_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *GetBackdropRequest) GetAlias() string {
@@ -119,105 +119,111 @@ func (x *GetBackdropRequest) GetAlias() string {
 	return ""
 }
 
-var File_api_v1alpha3_configuration_proto protoreflect.FileDescriptor
+var File_api_v1alpha4_configuration_proto protoreflect.FileDescriptor
 
-var file_api_v1alpha3_configuration_proto_rawDesc = []byte{
-	0x0a, 0x20, 0x61, 0x70, 0x69, 0x2f, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x33, 0x2f, 0x63,
+var file_api_v1alpha4_configuration_proto_rawDesc = []byte{
+	0x0a, 0x20, 0x61, 0x70, 0x69, 0x2f, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x34, 0x2f, 0x63,
 	0x6f, 0x6e, 0x66, 0x69, 0x67, 0x75, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x2e, 0x70, 0x72, 0x6f,
 	0x74, 0x6f, 0x12, 0x1e, 0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65, 0x6e, 0x65, 0x74, 0x2e,
 	0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68,
-	0x61, 0x33, 0x1a, 0x1b, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x61, 0x34, 0x1a, 0x1b, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f,
 	0x62, 0x75, 0x66, 0x2f, 0x65, 0x6d, 0x70, 0x74, 0x79, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a,
-	0x19, 0x61, 0x70, 0x69, 0x2f, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x33, 0x2f, 0x70, 0x6c,
+	0x19, 0x61, 0x70, 0x69, 0x2f, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x34, 0x2f, 0x70, 0x6c,
 	0x75, 0x67, 0x69, 0x6e, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x1b, 0x61, 0x70, 0x69, 0x2f,
-	0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x33, 0x2f, 0x62, 0x61, 0x63, 0x6b, 0x64, 0x72, 0x6f,
+	0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x34, 0x2f, 0x62, 0x61, 0x63, 0x6b, 0x64, 0x72, 0x6f,
 	0x70, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x5f, 0x0a, 0x15, 0x4c, 0x69, 0x73, 0x74, 0x42,
 	0x61, 0x63, 0x6b, 0x64, 0x72, 0x6f, 0x70, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
 	0x12, 0x46, 0x0a, 0x09, 0x62, 0x61, 0x63, 0x6b, 0x64, 0x72, 0x6f, 0x70, 0x73, 0x18, 0x01, 0x20,
 	0x03, 0x28, 0x0b, 0x32, 0x28, 0x2e, 0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65, 0x6e, 0x65,
 	0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c,
-	0x70, 0x68, 0x61, 0x33, 0x2e, 0x42, 0x61, 0x63, 0x6b, 0x64, 0x72, 0x6f, 0x70, 0x52, 0x09, 0x62,
+	0x70, 0x68, 0x61, 0x34, 0x2e, 0x42, 0x61, 0x63, 0x6b, 0x64, 0x72, 0x6f, 0x70, 0x52, 0x09, 0x62,
 	0x61, 0x63, 0x6b, 0x64, 0x72, 0x6f, 0x70, 0x73, 0x22, 0x2a, 0x0a, 0x12, 0x47, 0x65, 0x74, 0x42,
 	0x61, 0x63, 0x6b, 0x64, 0x72, 0x6f, 0x70, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x14,
 	0x0a, 0x05, 0x61, 0x6c, 0x69, 0x61, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x61,
-	0x6c, 0x69, 0x61, 0x73, 0x32, 0x91, 0x03, 0x0a, 0x13, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x75,
+	0x6c, 0x69, 0x61, 0x73, 0x32, 0xd0, 0x03, 0x0a, 0x13, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x75,
 	0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x12, 0x53, 0x0a, 0x0d,
 	0x47, 0x65, 0x74, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x49, 0x6e, 0x66, 0x6f, 0x12, 0x16, 0x2e,
 	0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e,
 	0x45, 0x6d, 0x70, 0x74, 0x79, 0x1a, 0x2a, 0x2e, 0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65,
 	0x6e, 0x65, 0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31,
-	0x61, 0x6c, 0x70, 0x68, 0x61, 0x33, 0x2e, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x49, 0x6e, 0x66,
+	0x61, 0x6c, 0x70, 0x68, 0x61, 0x34, 0x2e, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x49, 0x6e, 0x66,
 	0x6f, 0x12, 0x58, 0x0a, 0x0a, 0x49, 0x6e, 0x69, 0x74, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x12,
 	0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75,
 	0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x1a, 0x32, 0x2e, 0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61,
 	0x62, 0x65, 0x6e, 0x65, 0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e,
-	0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x33, 0x2e, 0x49, 0x6e, 0x69, 0x74, 0x50, 0x6c, 0x75,
-	0x67, 0x69, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x5e, 0x0a, 0x0d, 0x4c,
-	0x69, 0x73, 0x74, 0x42, 0x61, 0x63, 0x6b, 0x64, 0x72, 0x6f, 0x70, 0x73, 0x12, 0x16, 0x2e, 0x67,
-	0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45,
-	0x6d, 0x70, 0x74, 0x79, 0x1a, 0x35, 0x2e, 0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65, 0x6e,
-	0x65, 0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61,
-	0x6c, 0x70, 0x68, 0x61, 0x33, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x42, 0x61, 0x63, 0x6b, 0x64, 0x72,
-	0x6f, 0x70, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x6b, 0x0a, 0x0b, 0x47,
-	0x65, 0x74, 0x42, 0x61, 0x63, 0x6b, 0x64, 0x72, 0x6f, 0x70, 0x12, 0x32, 0x2e, 0x63, 0x6f, 0x6d,
-	0x2e, 0x77, 0x61, 0x62, 0x65, 0x6e, 0x65, 0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63, 0x6f,
-	0x72, 0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x33, 0x2e, 0x47, 0x65, 0x74, 0x42,
-	0x61, 0x63, 0x6b, 0x64, 0x72, 0x6f, 0x70, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x28,
-	0x2e, 0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65, 0x6e, 0x65, 0x74, 0x2e, 0x64, 0x6f, 0x64,
-	0x6f, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x33, 0x2e,
-	0x42, 0x61, 0x63, 0x6b, 0x64, 0x72, 0x6f, 0x70, 0x42, 0x2b, 0x5a, 0x29, 0x67, 0x69, 0x74, 0x68,
-	0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x77, 0x61, 0x62, 0x65, 0x6e, 0x65, 0x74, 0x2f, 0x64,
-	0x6f, 0x64, 0x6f, 0x2d, 0x63, 0x6f, 0x72, 0x65, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x76, 0x31, 0x61,
-	0x6c, 0x70, 0x68, 0x61, 0x33, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x34, 0x2e, 0x49, 0x6e, 0x69, 0x74, 0x50, 0x6c, 0x75,
+	0x67, 0x69, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x3d, 0x0a, 0x0b, 0x52,
+	0x65, 0x73, 0x65, 0x74, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x12, 0x16, 0x2e, 0x67, 0x6f, 0x6f,
+	0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70,
+	0x74, 0x79, 0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x12, 0x5e, 0x0a, 0x0d, 0x4c, 0x69,
+	0x73, 0x74, 0x42, 0x61, 0x63, 0x6b, 0x64, 0x72, 0x6f, 0x70, 0x73, 0x12, 0x16, 0x2e, 0x67, 0x6f,
+	0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d,
+	0x70, 0x74, 0x79, 0x1a, 0x35, 0x2e, 0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65, 0x6e, 0x65,
+	0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c,
+	0x70, 0x68, 0x61, 0x34, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x42, 0x61, 0x63, 0x6b, 0x64, 0x72, 0x6f,
+	0x70, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x6b, 0x0a, 0x0b, 0x47, 0x65,
+	0x74, 0x42, 0x61, 0x63, 0x6b, 0x64, 0x72, 0x6f, 0x70, 0x12, 0x32, 0x2e, 0x63, 0x6f, 0x6d, 0x2e,
+	0x77, 0x61, 0x62, 0x65, 0x6e, 0x65, 0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63, 0x6f, 0x72,
+	0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x34, 0x2e, 0x47, 0x65, 0x74, 0x42, 0x61,
+	0x63, 0x6b, 0x64, 0x72, 0x6f, 0x70, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x28, 0x2e,
+	0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65, 0x6e, 0x65, 0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f,
+	0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x34, 0x2e, 0x42,
+	0x61, 0x63, 0x6b, 0x64, 0x72, 0x6f, 0x70, 0x42, 0x2b, 0x5a, 0x29, 0x67, 0x69, 0x74, 0x68, 0x75,
+	0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x77, 0x61, 0x62, 0x65, 0x6e, 0x65, 0x74, 0x2f, 0x64, 0x6f,
+	0x64, 0x6f, 0x2d, 0x63, 0x6f, 0x72, 0x65, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x76, 0x31, 0x61, 0x6c,
+	0x70, 0x68, 0x61, 0x34, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
-	file_api_v1alpha3_configuration_proto_rawDescOnce sync.Once
-	file_api_v1alpha3_configuration_proto_rawDescData = file_api_v1alpha3_configuration_proto_rawDesc
+	file_api_v1alpha4_configuration_proto_rawDescOnce sync.Once
+	file_api_v1alpha4_configuration_proto_rawDescData = file_api_v1alpha4_configuration_proto_rawDesc
 )
 
-func file_api_v1alpha3_configuration_proto_rawDescGZIP() []byte {
-	file_api_v1alpha3_configuration_proto_rawDescOnce.Do(func() {
-		file_api_v1alpha3_configuration_proto_rawDescData = protoimpl.X.CompressGZIP(file_api_v1alpha3_configuration_proto_rawDescData)
+func file_api_v1alpha4_configuration_proto_rawDescGZIP() []byte {
+	file_api_v1alpha4_configuration_proto_rawDescOnce.Do(func() {
+		file_api_v1alpha4_configuration_proto_rawDescData = protoimpl.X.CompressGZIP(file_api_v1alpha4_configuration_proto_rawDescData)
 	})
-	return file_api_v1alpha3_configuration_proto_rawDescData
+	return file_api_v1alpha4_configuration_proto_rawDescData
 }
 
-var file_api_v1alpha3_configuration_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
-var file_api_v1alpha3_configuration_proto_goTypes = []interface{}{
-	(*ListBackdropsResponse)(nil), // 0: com.wabenet.dodo.core.v1alpha3.ListBackdropsResponse
-	(*GetBackdropRequest)(nil),    // 1: com.wabenet.dodo.core.v1alpha3.GetBackdropRequest
-	(*Backdrop)(nil),              // 2: com.wabenet.dodo.core.v1alpha3.Backdrop
+var file_api_v1alpha4_configuration_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_api_v1alpha4_configuration_proto_goTypes = []interface{}{
+	(*ListBackdropsResponse)(nil), // 0: com.wabenet.dodo.core.v1alpha4.ListBackdropsResponse
+	(*GetBackdropRequest)(nil),    // 1: com.wabenet.dodo.core.v1alpha4.GetBackdropRequest
+	(*Backdrop)(nil),              // 2: com.wabenet.dodo.core.v1alpha4.Backdrop
 	(*empty.Empty)(nil),           // 3: google.protobuf.Empty
-	(*PluginInfo)(nil),            // 4: com.wabenet.dodo.core.v1alpha3.PluginInfo
-	(*InitPluginResponse)(nil),    // 5: com.wabenet.dodo.core.v1alpha3.InitPluginResponse
+	(*PluginInfo)(nil),            // 4: com.wabenet.dodo.core.v1alpha4.PluginInfo
+	(*InitPluginResponse)(nil),    // 5: com.wabenet.dodo.core.v1alpha4.InitPluginResponse
 }
-var file_api_v1alpha3_configuration_proto_depIdxs = []int32{
-	2, // 0: com.wabenet.dodo.core.v1alpha3.ListBackdropsResponse.backdrops:type_name -> com.wabenet.dodo.core.v1alpha3.Backdrop
-	3, // 1: com.wabenet.dodo.core.v1alpha3.ConfigurationPlugin.GetPluginInfo:input_type -> google.protobuf.Empty
-	3, // 2: com.wabenet.dodo.core.v1alpha3.ConfigurationPlugin.InitPlugin:input_type -> google.protobuf.Empty
-	3, // 3: com.wabenet.dodo.core.v1alpha3.ConfigurationPlugin.ListBackdrops:input_type -> google.protobuf.Empty
-	1, // 4: com.wabenet.dodo.core.v1alpha3.ConfigurationPlugin.GetBackdrop:input_type -> com.wabenet.dodo.core.v1alpha3.GetBackdropRequest
-	4, // 5: com.wabenet.dodo.core.v1alpha3.ConfigurationPlugin.GetPluginInfo:output_type -> com.wabenet.dodo.core.v1alpha3.PluginInfo
-	5, // 6: com.wabenet.dodo.core.v1alpha3.ConfigurationPlugin.InitPlugin:output_type -> com.wabenet.dodo.core.v1alpha3.InitPluginResponse
-	0, // 7: com.wabenet.dodo.core.v1alpha3.ConfigurationPlugin.ListBackdrops:output_type -> com.wabenet.dodo.core.v1alpha3.ListBackdropsResponse
-	2, // 8: com.wabenet.dodo.core.v1alpha3.ConfigurationPlugin.GetBackdrop:output_type -> com.wabenet.dodo.core.v1alpha3.Backdrop
-	5, // [5:9] is the sub-list for method output_type
-	1, // [1:5] is the sub-list for method input_type
+var file_api_v1alpha4_configuration_proto_depIdxs = []int32{
+	2, // 0: com.wabenet.dodo.core.v1alpha4.ListBackdropsResponse.backdrops:type_name -> com.wabenet.dodo.core.v1alpha4.Backdrop
+	3, // 1: com.wabenet.dodo.core.v1alpha4.ConfigurationPlugin.GetPluginInfo:input_type -> google.protobuf.Empty
+	3, // 2: com.wabenet.dodo.core.v1alpha4.ConfigurationPlugin.InitPlugin:input_type -> google.protobuf.Empty
+	3, // 3: com.wabenet.dodo.core.v1alpha4.ConfigurationPlugin.ResetPlugin:input_type -> google.protobuf.Empty
+	3, // 4: com.wabenet.dodo.core.v1alpha4.ConfigurationPlugin.ListBackdrops:input_type -> google.protobuf.Empty
+	1, // 5: com.wabenet.dodo.core.v1alpha4.ConfigurationPlugin.GetBackdrop:input_type -> com.wabenet.dodo.core.v1alpha4.GetBackdropRequest
+	4, // 6: com.wabenet.dodo.core.v1alpha4.ConfigurationPlugin.GetPluginInfo:output_type -> com.wabenet.dodo.core.v1alpha4.PluginInfo
+	5, // 7: com.wabenet.dodo.core.v1alpha4.ConfigurationPlugin.InitPlugin:output_type -> com.wabenet.dodo.core.v1alpha4.InitPluginResponse
+	3, // 8: com.wabenet.dodo.core.v1alpha4.ConfigurationPlugin.ResetPlugin:output_type -> google.protobuf.Empty
+	0, // 9: com.wabenet.dodo.core.v1alpha4.ConfigurationPlugin.ListBackdrops:output_type -> com.wabenet.dodo.core.v1alpha4.ListBackdropsResponse
+	2, // 10: com.wabenet.dodo.core.v1alpha4.ConfigurationPlugin.GetBackdrop:output_type -> com.wabenet.dodo.core.v1alpha4.Backdrop
+	6, // [6:11] is the sub-list for method output_type
+	1, // [1:6] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
 	1, // [1:1] is the sub-list for extension extendee
 	0, // [0:1] is the sub-list for field type_name
 }
 
-func init() { file_api_v1alpha3_configuration_proto_init() }
-func file_api_v1alpha3_configuration_proto_init() {
-	if File_api_v1alpha3_configuration_proto != nil {
+func init() { file_api_v1alpha4_configuration_proto_init() }
+func file_api_v1alpha4_configuration_proto_init() {
+	if File_api_v1alpha4_configuration_proto != nil {
 		return
 	}
-	file_api_v1alpha3_plugin_proto_init()
-	file_api_v1alpha3_backdrop_proto_init()
+	file_api_v1alpha4_plugin_proto_init()
+	file_api_v1alpha4_backdrop_proto_init()
 	if !protoimpl.UnsafeEnabled {
-		file_api_v1alpha3_configuration_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
+		file_api_v1alpha4_configuration_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListBackdropsResponse); i {
 			case 0:
 				return &v.state
@@ -229,7 +235,7 @@ func file_api_v1alpha3_configuration_proto_init() {
 				return nil
 			}
 		}
-		file_api_v1alpha3_configuration_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
+		file_api_v1alpha4_configuration_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetBackdropRequest); i {
 			case 0:
 				return &v.state
@@ -246,20 +252,20 @@ func file_api_v1alpha3_configuration_proto_init() {
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: file_api_v1alpha3_configuration_proto_rawDesc,
+			RawDescriptor: file_api_v1alpha4_configuration_proto_rawDesc,
 			NumEnums:      0,
 			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_api_v1alpha3_configuration_proto_goTypes,
-		DependencyIndexes: file_api_v1alpha3_configuration_proto_depIdxs,
-		MessageInfos:      file_api_v1alpha3_configuration_proto_msgTypes,
+		GoTypes:           file_api_v1alpha4_configuration_proto_goTypes,
+		DependencyIndexes: file_api_v1alpha4_configuration_proto_depIdxs,
+		MessageInfos:      file_api_v1alpha4_configuration_proto_msgTypes,
 	}.Build()
-	File_api_v1alpha3_configuration_proto = out.File
-	file_api_v1alpha3_configuration_proto_rawDesc = nil
-	file_api_v1alpha3_configuration_proto_goTypes = nil
-	file_api_v1alpha3_configuration_proto_depIdxs = nil
+	File_api_v1alpha4_configuration_proto = out.File
+	file_api_v1alpha4_configuration_proto_rawDesc = nil
+	file_api_v1alpha4_configuration_proto_goTypes = nil
+	file_api_v1alpha4_configuration_proto_depIdxs = nil
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -276,6 +282,7 @@ const _ = grpc.SupportPackageIsVersion6
 type ConfigurationPluginClient interface {
 	GetPluginInfo(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*PluginInfo, error)
 	InitPlugin(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*InitPluginResponse, error)
+	ResetPlugin(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error)
 	ListBackdrops(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*ListBackdropsResponse, error)
 	GetBackdrop(ctx context.Context, in *GetBackdropRequest, opts ...grpc.CallOption) (*Backdrop, error)
 }
@@ -290,7 +297,7 @@ func NewConfigurationPluginClient(cc grpc.ClientConnInterface) ConfigurationPlug
 
 func (c *configurationPluginClient) GetPluginInfo(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*PluginInfo, error) {
 	out := new(PluginInfo)
-	err := c.cc.Invoke(ctx, "/com.wabenet.dodo.core.v1alpha3.ConfigurationPlugin/GetPluginInfo", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/com.wabenet.dodo.core.v1alpha4.ConfigurationPlugin/GetPluginInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -299,7 +306,16 @@ func (c *configurationPluginClient) GetPluginInfo(ctx context.Context, in *empty
 
 func (c *configurationPluginClient) InitPlugin(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*InitPluginResponse, error) {
 	out := new(InitPluginResponse)
-	err := c.cc.Invoke(ctx, "/com.wabenet.dodo.core.v1alpha3.ConfigurationPlugin/InitPlugin", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/com.wabenet.dodo.core.v1alpha4.ConfigurationPlugin/InitPlugin", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *configurationPluginClient) ResetPlugin(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/com.wabenet.dodo.core.v1alpha4.ConfigurationPlugin/ResetPlugin", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -308,7 +324,7 @@ func (c *configurationPluginClient) InitPlugin(ctx context.Context, in *empty.Em
 
 func (c *configurationPluginClient) ListBackdrops(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*ListBackdropsResponse, error) {
 	out := new(ListBackdropsResponse)
-	err := c.cc.Invoke(ctx, "/com.wabenet.dodo.core.v1alpha3.ConfigurationPlugin/ListBackdrops", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/com.wabenet.dodo.core.v1alpha4.ConfigurationPlugin/ListBackdrops", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -317,7 +333,7 @@ func (c *configurationPluginClient) ListBackdrops(ctx context.Context, in *empty
 
 func (c *configurationPluginClient) GetBackdrop(ctx context.Context, in *GetBackdropRequest, opts ...grpc.CallOption) (*Backdrop, error) {
 	out := new(Backdrop)
-	err := c.cc.Invoke(ctx, "/com.wabenet.dodo.core.v1alpha3.ConfigurationPlugin/GetBackdrop", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/com.wabenet.dodo.core.v1alpha4.ConfigurationPlugin/GetBackdrop", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -328,6 +344,7 @@ func (c *configurationPluginClient) GetBackdrop(ctx context.Context, in *GetBack
 type ConfigurationPluginServer interface {
 	GetPluginInfo(context.Context, *empty.Empty) (*PluginInfo, error)
 	InitPlugin(context.Context, *empty.Empty) (*InitPluginResponse, error)
+	ResetPlugin(context.Context, *empty.Empty) (*empty.Empty, error)
 	ListBackdrops(context.Context, *empty.Empty) (*ListBackdropsResponse, error)
 	GetBackdrop(context.Context, *GetBackdropRequest) (*Backdrop, error)
 }
@@ -341,6 +358,9 @@ func (*UnimplementedConfigurationPluginServer) GetPluginInfo(context.Context, *e
 }
 func (*UnimplementedConfigurationPluginServer) InitPlugin(context.Context, *empty.Empty) (*InitPluginResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InitPlugin not implemented")
+}
+func (*UnimplementedConfigurationPluginServer) ResetPlugin(context.Context, *empty.Empty) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ResetPlugin not implemented")
 }
 func (*UnimplementedConfigurationPluginServer) ListBackdrops(context.Context, *empty.Empty) (*ListBackdropsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListBackdrops not implemented")
@@ -363,7 +383,7 @@ func _ConfigurationPlugin_GetPluginInfo_Handler(srv interface{}, ctx context.Con
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/com.wabenet.dodo.core.v1alpha3.ConfigurationPlugin/GetPluginInfo",
+		FullMethod: "/com.wabenet.dodo.core.v1alpha4.ConfigurationPlugin/GetPluginInfo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ConfigurationPluginServer).GetPluginInfo(ctx, req.(*empty.Empty))
@@ -381,10 +401,28 @@ func _ConfigurationPlugin_InitPlugin_Handler(srv interface{}, ctx context.Contex
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/com.wabenet.dodo.core.v1alpha3.ConfigurationPlugin/InitPlugin",
+		FullMethod: "/com.wabenet.dodo.core.v1alpha4.ConfigurationPlugin/InitPlugin",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ConfigurationPluginServer).InitPlugin(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ConfigurationPlugin_ResetPlugin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConfigurationPluginServer).ResetPlugin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/com.wabenet.dodo.core.v1alpha4.ConfigurationPlugin/ResetPlugin",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConfigurationPluginServer).ResetPlugin(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -399,7 +437,7 @@ func _ConfigurationPlugin_ListBackdrops_Handler(srv interface{}, ctx context.Con
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/com.wabenet.dodo.core.v1alpha3.ConfigurationPlugin/ListBackdrops",
+		FullMethod: "/com.wabenet.dodo.core.v1alpha4.ConfigurationPlugin/ListBackdrops",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ConfigurationPluginServer).ListBackdrops(ctx, req.(*empty.Empty))
@@ -417,7 +455,7 @@ func _ConfigurationPlugin_GetBackdrop_Handler(srv interface{}, ctx context.Conte
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/com.wabenet.dodo.core.v1alpha3.ConfigurationPlugin/GetBackdrop",
+		FullMethod: "/com.wabenet.dodo.core.v1alpha4.ConfigurationPlugin/GetBackdrop",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ConfigurationPluginServer).GetBackdrop(ctx, req.(*GetBackdropRequest))
@@ -426,7 +464,7 @@ func _ConfigurationPlugin_GetBackdrop_Handler(srv interface{}, ctx context.Conte
 }
 
 var _ConfigurationPlugin_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "com.wabenet.dodo.core.v1alpha3.ConfigurationPlugin",
+	ServiceName: "com.wabenet.dodo.core.v1alpha4.ConfigurationPlugin",
 	HandlerType: (*ConfigurationPluginServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -438,6 +476,10 @@ var _ConfigurationPlugin_serviceDesc = grpc.ServiceDesc{
 			Handler:    _ConfigurationPlugin_InitPlugin_Handler,
 		},
 		{
+			MethodName: "ResetPlugin",
+			Handler:    _ConfigurationPlugin_ResetPlugin_Handler,
+		},
+		{
 			MethodName: "ListBackdrops",
 			Handler:    _ConfigurationPlugin_ListBackdrops_Handler,
 		},
@@ -447,5 +489,5 @@ var _ConfigurationPlugin_serviceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "api/v1alpha3/configuration.proto",
+	Metadata: "api/v1alpha4/configuration.proto",
 }

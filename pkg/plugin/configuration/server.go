@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/golang/protobuf/ptypes/empty"
-	api "github.com/wabenet/dodo-core/api/v1alpha3"
+	api "github.com/wabenet/dodo-core/api/v1alpha4"
 )
 
 type server struct {
@@ -27,6 +27,12 @@ func (s *server) InitPlugin(_ context.Context, _ *empty.Empty) (*api.InitPluginR
 	}
 
 	return &api.InitPluginResponse{Config: config}, nil
+}
+
+func (s *server) ResetPlugin(_ context.Context, _ *empty.Empty) (*empty.Empty, error) {
+	s.impl.Cleanup()
+
+	return &empty.Empty{}, nil
 }
 
 func (s *server) ListBackdrops(_ context.Context, _ *empty.Empty) (*api.ListBackdropsResponse, error) {

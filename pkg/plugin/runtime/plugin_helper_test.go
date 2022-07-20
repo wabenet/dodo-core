@@ -4,7 +4,7 @@ import (
 	"io"
 	"os"
 
-	api "github.com/wabenet/dodo-core/api/v1alpha3"
+	api "github.com/wabenet/dodo-core/api/v1alpha4"
 	dodo "github.com/wabenet/dodo-core/pkg/plugin"
 	"github.com/wabenet/dodo-core/pkg/plugin/runtime"
 )
@@ -26,6 +26,8 @@ func (r *DummyRuntime) PluginInfo() *api.PluginInfo {
 func (r *DummyRuntime) Init() (dodo.PluginConfig, error) {
 	return map[string]string{}, nil
 }
+
+func (*DummyRuntime) Cleanup() {}
 
 func (r *DummyRuntime) ResolveImage(_ string) (string, error) {
 	return "", nil
@@ -75,6 +77,8 @@ func (r *ErrorRuntime) Init() (dodo.PluginConfig, error) {
 	return map[string]string{}, nil
 }
 
+func (*ErrorRuntime) Cleanup() {}
+
 func (r *ErrorRuntime) ResolveImage(_ string) (string, error) {
 	return "", nil
 }
@@ -123,6 +127,8 @@ func (r *EchoRuntime) PluginInfo() *api.PluginInfo {
 func (r *EchoRuntime) Init() (dodo.PluginConfig, error) {
 	return map[string]string{}, nil
 }
+
+func (*EchoRuntime) Cleanup() {}
 
 func (r *EchoRuntime) ResolveImage(_ string) (string, error) {
 	return "", nil

@@ -10,7 +10,7 @@ import (
 
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/hashicorp/go-hclog"
-	api "github.com/wabenet/dodo-core/api/v1alpha3"
+	api "github.com/wabenet/dodo-core/api/v1alpha4"
 	"github.com/wabenet/dodo-core/pkg/plugin"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc/codes"
@@ -22,22 +22,28 @@ type server struct {
 	stdinCh     chan []byte
 	stdoutCh    chan []byte
 	stderrCh    chan []byte
+	inputDone   chan error
+	outputDone  chan error
 	stdinCloser sync.Once
 }
 
 func NewGRPCServer(impl ContainerRuntime) api.RuntimePluginServer {
-	return &server{
-		impl:        impl,
-		stdinCh:     make(chan []byte),
-		stdoutCh:    make(chan []byte),
-		stderrCh:    make(chan []byte),
-		stdinCloser: sync.Once{},
-	}
+	return &server{impl: impl}
+}
+
+func (s *server) reset() {
+	s.stdinCh = make(chan []byte)
+	s.stdoutCh = make(chan []byte)
+	s.stderrCh = make(chan []byte)
+	s.inputDone = make(chan error, 1)
+	s.outputDone = make(chan error, 1)
+	s.stdinCloser = sync.Once{}
 }
 
 func (s *server) closeStdin() {
 	s.stdinCloser.Do(func() {
 		close(s.stdinCh)
+		s.inputDone <- nil
 	})
 }
 
@@ -46,12 +52,21 @@ func (s *server) GetPluginInfo(_ context.Context, _ *empty.Empty) (*api.PluginIn
 }
 
 func (s *server) InitPlugin(_ context.Context, _ *empty.Empty) (*api.InitPluginResponse, error) {
+	s.reset()
+
 	config, err := s.impl.Init()
 	if err != nil {
 		return nil, fmt.Errorf("could not initialize plugin: %w", err)
 	}
 
 	return &api.InitPluginResponse{Config: config}, nil
+}
+
+func (s *server) ResetPlugin(_ context.Context, _ *empty.Empty) (*empty.Empty, error) {
+	s.reset()
+	s.impl.Cleanup()
+
+	return &empty.Empty{}, nil
 }
 
 func (s *server) GetImage(_ context.Context, request *api.GetImageRequest) (*api.GetImageResponse, error) {
@@ -140,6 +155,10 @@ func (s *server) StreamRuntimeInput(srv api.RuntimePlugin_StreamRuntimeInputServ
 func (s *server) StreamRuntimeOutput(_ *empty.Empty, srv api.RuntimePlugin_StreamRuntimeOutputServer) error {
 	var data api.OutputData
 
+	defer func() {
+		s.outputDone <- nil
+	}()
+
 	for {
 		if s.stdoutCh == nil && s.stderrCh == nil {
 			return nil
@@ -204,6 +223,14 @@ func (s *server) StreamContainer(
 
 	eg.Go(func() error {
 		return copyOutput(s.stderrCh, errReader)
+	})
+
+	eg.Go(func() error {
+		return <-s.outputDone
+	})
+
+	eg.Go(func() error {
+		return <-s.inputDone
 	})
 
 	eg.Go(func() error {

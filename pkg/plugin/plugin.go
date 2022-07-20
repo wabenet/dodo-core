@@ -10,7 +10,7 @@ import (
 
 	log "github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
-	api "github.com/wabenet/dodo-core/api/v1alpha3"
+	api "github.com/wabenet/dodo-core/api/v1alpha4"
 	"github.com/wabenet/dodo-core/pkg/config"
 )
 
@@ -24,6 +24,7 @@ const (
 type Plugin interface {
 	PluginInfo() *api.PluginInfo
 	Init() (PluginConfig, error)
+	Cleanup()
 
 	Type() Type
 }
@@ -163,7 +164,13 @@ func (m Manager) LoadPlugins() {
 	}
 }
 
-func (Manager) UnloadPlugins() {
+func (m Manager) UnloadPlugins() {
+	for _, ps := range m.plugins {
+		for _, p := range ps {
+			p.Cleanup()
+		}
+	}
+
 	plugin.CleanupClients()
 }
 

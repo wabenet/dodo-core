@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	mapset "github.com/deckarep/golang-set"
-	api "github.com/wabenet/dodo-core/api/v1alpha3"
+	api "github.com/wabenet/dodo-core/api/v1alpha4"
 )
 
 type CircularDependencyError struct {

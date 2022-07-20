@@ -41,14 +41,23 @@ func GRPCWrapPlugin(t dodo.Type, p dodo.Plugin) (dodo.Plugin, func(), error) {
 		return nil, func() {}, fmt.Errorf("could not connect to bufconn: %w", err)
 	}
 
-	cleanup := func() { conn.Close() }
-
 	c, err := grpcClient(t, conn)
 	if err != nil {
-		return nil, cleanup, err
+		conn.Close()
+
+		return nil, func() {}, err
 	}
 
-	return c, cleanup, nil
+	if _, err := c.Init(); err != nil {
+		conn.Close()
+
+		return nil, func() {}, err
+	}
+
+	return c, func() {
+		conn.Close()
+		c.Cleanup()
+	}, nil
 }
 
 func grpcServer(t dodo.Type, p dodo.Plugin) (*grpc.Server, error) {

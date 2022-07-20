@@ -1,19 +1,20 @@
 syntax = "proto3";
 
-package com.wabenet.dodo.core.v1alpha3;
+package com.wabenet.dodo.core.v1alpha4;
 
-option go_package = "github.com/wabenet/dodo-core/api/v1alpha3";
+option go_package = "github.com/wabenet/dodo-core/api/v1alpha4";
 
 import "google/protobuf/empty.proto";
-import "api/v1alpha3/plugin.proto";
-import "api/v1alpha3/backdrop.proto";
+import "api/v1alpha4/plugin.proto";
+import "api/v1alpha4/backdrop.proto";
 
 service RuntimePlugin {
-  rpc GetPluginInfo(google.protobuf.Empty) returns (com.wabenet.dodo.core.v1alpha3.PluginInfo);
-  rpc InitPlugin(google.protobuf.Empty) returns (com.wabenet.dodo.core.v1alpha3.InitPluginResponse);
+  rpc GetPluginInfo(google.protobuf.Empty) returns (com.wabenet.dodo.core.v1alpha4.PluginInfo);
+  rpc InitPlugin(google.protobuf.Empty) returns (com.wabenet.dodo.core.v1alpha4.InitPluginResponse);
+  rpc ResetPlugin(google.protobuf.Empty) returns (google.protobuf.Empty);
 
-  rpc StreamRuntimeInput(stream com.wabenet.dodo.core.v1alpha3.InputData) returns (google.protobuf.Empty);
-  rpc StreamRuntimeOutput(google.protobuf.Empty) returns (stream com.wabenet.dodo.core.v1alpha3.OutputData);
+  rpc StreamRuntimeInput(stream com.wabenet.dodo.core.v1alpha4.InputData) returns (google.protobuf.Empty);
+  rpc StreamRuntimeOutput(google.protobuf.Empty) returns (stream com.wabenet.dodo.core.v1alpha4.OutputData);
 
   rpc CreateContainer(CreateContainerRequest) returns (CreateContainerResponse);
   rpc DeleteContainer(DeleteContainerRequest) returns (google.protobuf.Empty);
@@ -34,7 +35,7 @@ message GetImageRequest {
 }
 
 message CreateContainerRequest {
-  com.wabenet.dodo.core.v1alpha3.Backdrop config = 1;
+  com.wabenet.dodo.core.v1alpha4.Backdrop config = 1;
   bool tty = 2;
   bool stdio = 3;
 }

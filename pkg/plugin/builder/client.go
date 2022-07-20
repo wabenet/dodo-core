@@ -9,7 +9,7 @@ import (
 
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/hashicorp/go-hclog"
-	api "github.com/wabenet/dodo-core/api/v1alpha3"
+	api "github.com/wabenet/dodo-core/api/v1alpha4"
 	"github.com/wabenet/dodo-core/pkg/plugin"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc/codes"
@@ -49,6 +49,13 @@ func (c *client) Init() (plugin.PluginConfig, error) {
 	}
 
 	return resp.Config, nil
+}
+
+func (c *client) Cleanup() {
+	_, err := c.builderClient.ResetPlugin(context.Background(), &empty.Empty{})
+	if err != nil {
+		log.L().Error("plugin reset error", "error", err)
+	}
 }
 
 func (c *client) CreateImage(config *api.BuildInfo, stream *plugin.StreamConfig) (string, error) {

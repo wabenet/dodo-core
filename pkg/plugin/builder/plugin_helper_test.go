@@ -1,7 +1,7 @@
 package builder_test
 
 import (
-	api "github.com/wabenet/dodo-core/api/v1alpha3"
+	api "github.com/wabenet/dodo-core/api/v1alpha4"
 	dodo "github.com/wabenet/dodo-core/pkg/plugin"
 	"github.com/wabenet/dodo-core/pkg/plugin/builder"
 )
@@ -23,6 +23,8 @@ func (b *DummyBuilder) PluginInfo() *api.PluginInfo {
 func (b *DummyBuilder) Init() (dodo.PluginConfig, error) {
 	return map[string]string{"testkey": "testvalue"}, nil
 }
+
+func (*DummyBuilder) Cleanup() {}
 
 func (b *DummyBuilder) CreateImage(config *api.BuildInfo, stream *dodo.StreamConfig) (string, error) {
 	stream.Stdout.Write([]byte("This goes to stdout"))

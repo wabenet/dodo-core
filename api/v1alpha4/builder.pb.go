@@ -2,9 +2,9 @@
 // versions:
 // 	protoc-gen-go v1.26.0
 // 	protoc        v3.12.4
-// source: api/v1alpha3/builder.proto
+// source: api/v1alpha4/builder.proto
 
-package v1alpha3
+package v1alpha4
 
 import (
 	context "context"
@@ -38,7 +38,7 @@ type CreateImageRequest struct {
 func (x *CreateImageRequest) Reset() {
 	*x = CreateImageRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_v1alpha3_builder_proto_msgTypes[0]
+		mi := &file_api_v1alpha4_builder_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -51,7 +51,7 @@ func (x *CreateImageRequest) String() string {
 func (*CreateImageRequest) ProtoMessage() {}
 
 func (x *CreateImageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_v1alpha3_builder_proto_msgTypes[0]
+	mi := &file_api_v1alpha4_builder_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -64,7 +64,7 @@ func (x *CreateImageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateImageRequest.ProtoReflect.Descriptor instead.
 func (*CreateImageRequest) Descriptor() ([]byte, []int) {
-	return file_api_v1alpha3_builder_proto_rawDescGZIP(), []int{0}
+	return file_api_v1alpha4_builder_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *CreateImageRequest) GetConfig() *BuildInfo {
@@ -99,7 +99,7 @@ type CreateImageResponse struct {
 func (x *CreateImageResponse) Reset() {
 	*x = CreateImageResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_v1alpha3_builder_proto_msgTypes[1]
+		mi := &file_api_v1alpha4_builder_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -112,7 +112,7 @@ func (x *CreateImageResponse) String() string {
 func (*CreateImageResponse) ProtoMessage() {}
 
 func (x *CreateImageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_v1alpha3_builder_proto_msgTypes[1]
+	mi := &file_api_v1alpha4_builder_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -125,7 +125,7 @@ func (x *CreateImageResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateImageResponse.ProtoReflect.Descriptor instead.
 func (*CreateImageResponse) Descriptor() ([]byte, []int) {
-	return file_api_v1alpha3_builder_proto_rawDescGZIP(), []int{1}
+	return file_api_v1alpha4_builder_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *CreateImageResponse) GetImageId() string {
@@ -135,109 +135,114 @@ func (x *CreateImageResponse) GetImageId() string {
 	return ""
 }
 
-var File_api_v1alpha3_builder_proto protoreflect.FileDescriptor
+var File_api_v1alpha4_builder_proto protoreflect.FileDescriptor
 
-var file_api_v1alpha3_builder_proto_rawDesc = []byte{
-	0x0a, 0x1a, 0x61, 0x70, 0x69, 0x2f, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x33, 0x2f, 0x62,
+var file_api_v1alpha4_builder_proto_rawDesc = []byte{
+	0x0a, 0x1a, 0x61, 0x70, 0x69, 0x2f, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x34, 0x2f, 0x62,
 	0x75, 0x69, 0x6c, 0x64, 0x65, 0x72, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x1e, 0x63, 0x6f,
 	0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65, 0x6e, 0x65, 0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63,
-	0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x33, 0x1a, 0x1b, 0x67, 0x6f,
+	0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x34, 0x1a, 0x1b, 0x67, 0x6f,
 	0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2f, 0x65, 0x6d,
 	0x70, 0x74, 0x79, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x19, 0x61, 0x70, 0x69, 0x2f, 0x76,
-	0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x33, 0x2f, 0x70, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x2e, 0x70,
+	0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x34, 0x2f, 0x70, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x2e, 0x70,
 	0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x18, 0x61, 0x70, 0x69, 0x2f, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68,
-	0x61, 0x33, 0x2f, 0x62, 0x75, 0x69, 0x6c, 0x64, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x85,
+	0x61, 0x34, 0x2f, 0x62, 0x75, 0x69, 0x6c, 0x64, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x85,
 	0x01, 0x0a, 0x12, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x52, 0x65,
 	0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x41, 0x0a, 0x06, 0x63, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x18,
 	0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x29, 0x2e, 0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65,
 	0x6e, 0x65, 0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31,
-	0x61, 0x6c, 0x70, 0x68, 0x61, 0x33, 0x2e, 0x42, 0x75, 0x69, 0x6c, 0x64, 0x49, 0x6e, 0x66, 0x6f,
+	0x61, 0x6c, 0x70, 0x68, 0x61, 0x34, 0x2e, 0x42, 0x75, 0x69, 0x6c, 0x64, 0x49, 0x6e, 0x66, 0x6f,
 	0x52, 0x06, 0x63, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x12, 0x16, 0x0a, 0x06, 0x68, 0x65, 0x69, 0x67,
 	0x68, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x06, 0x68, 0x65, 0x69, 0x67, 0x68, 0x74,
 	0x12, 0x14, 0x0a, 0x05, 0x77, 0x69, 0x64, 0x74, 0x68, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0d, 0x52,
 	0x05, 0x77, 0x69, 0x64, 0x74, 0x68, 0x22, 0x30, 0x0a, 0x13, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65,
 	0x49, 0x6d, 0x61, 0x67, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x19, 0x0a,
 	0x08, 0x69, 0x6d, 0x61, 0x67, 0x65, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x07, 0x69, 0x6d, 0x61, 0x67, 0x65, 0x49, 0x64, 0x32, 0x91, 0x03, 0x0a, 0x0d, 0x42, 0x75, 0x69,
+	0x07, 0x69, 0x6d, 0x61, 0x67, 0x65, 0x49, 0x64, 0x32, 0xd0, 0x03, 0x0a, 0x0d, 0x42, 0x75, 0x69,
 	0x6c, 0x64, 0x65, 0x72, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x12, 0x53, 0x0a, 0x0d, 0x47, 0x65,
 	0x74, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x49, 0x6e, 0x66, 0x6f, 0x12, 0x16, 0x2e, 0x67, 0x6f,
 	0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d,
 	0x70, 0x74, 0x79, 0x1a, 0x2a, 0x2e, 0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65, 0x6e, 0x65,
 	0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c,
-	0x70, 0x68, 0x61, 0x33, 0x2e, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x49, 0x6e, 0x66, 0x6f, 0x12,
+	0x70, 0x68, 0x61, 0x34, 0x2e, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x49, 0x6e, 0x66, 0x6f, 0x12,
 	0x58, 0x0a, 0x0a, 0x49, 0x6e, 0x69, 0x74, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x12, 0x16, 0x2e,
 	0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e,
 	0x45, 0x6d, 0x70, 0x74, 0x79, 0x1a, 0x32, 0x2e, 0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65,
 	0x6e, 0x65, 0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31,
-	0x61, 0x6c, 0x70, 0x68, 0x61, 0x33, 0x2e, 0x49, 0x6e, 0x69, 0x74, 0x50, 0x6c, 0x75, 0x67, 0x69,
-	0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x59, 0x0a, 0x11, 0x53, 0x74, 0x72,
-	0x65, 0x61, 0x6d, 0x42, 0x75, 0x69, 0x6c, 0x64, 0x4f, 0x75, 0x74, 0x70, 0x75, 0x74, 0x12, 0x16,
-	0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66,
-	0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x1a, 0x2a, 0x2e, 0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62,
+	0x61, 0x6c, 0x70, 0x68, 0x61, 0x34, 0x2e, 0x49, 0x6e, 0x69, 0x74, 0x50, 0x6c, 0x75, 0x67, 0x69,
+	0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x3d, 0x0a, 0x0b, 0x52, 0x65, 0x73,
+	0x65, 0x74, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x12, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c,
+	0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79,
+	0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62,
+	0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x12, 0x59, 0x0a, 0x11, 0x53, 0x74, 0x72, 0x65,
+	0x61, 0x6d, 0x42, 0x75, 0x69, 0x6c, 0x64, 0x4f, 0x75, 0x74, 0x70, 0x75, 0x74, 0x12, 0x16, 0x2e,
+	0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e,
+	0x45, 0x6d, 0x70, 0x74, 0x79, 0x1a, 0x2a, 0x2e, 0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65,
+	0x6e, 0x65, 0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31,
+	0x61, 0x6c, 0x70, 0x68, 0x61, 0x34, 0x2e, 0x4f, 0x75, 0x74, 0x70, 0x75, 0x74, 0x44, 0x61, 0x74,
+	0x61, 0x30, 0x01, 0x12, 0x76, 0x0a, 0x0b, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x49, 0x6d, 0x61,
+	0x67, 0x65, 0x12, 0x32, 0x2e, 0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65, 0x6e, 0x65, 0x74,
+	0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c, 0x70,
+	0x68, 0x61, 0x34, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x33, 0x2e, 0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62,
 	0x65, 0x6e, 0x65, 0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76,
-	0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x33, 0x2e, 0x4f, 0x75, 0x74, 0x70, 0x75, 0x74, 0x44, 0x61,
-	0x74, 0x61, 0x30, 0x01, 0x12, 0x76, 0x0a, 0x0b, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x49, 0x6d,
-	0x61, 0x67, 0x65, 0x12, 0x32, 0x2e, 0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65, 0x6e, 0x65,
-	0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c,
-	0x70, 0x68, 0x61, 0x33, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x49, 0x6d, 0x61, 0x67, 0x65,
-	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x33, 0x2e, 0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61,
-	0x62, 0x65, 0x6e, 0x65, 0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e,
-	0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x33, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x49,
-	0x6d, 0x61, 0x67, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x42, 0x2b, 0x5a, 0x29,
-	0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x77, 0x61, 0x62, 0x65, 0x6e,
-	0x65, 0x74, 0x2f, 0x64, 0x6f, 0x64, 0x6f, 0x2d, 0x63, 0x6f, 0x72, 0x65, 0x2f, 0x61, 0x70, 0x69,
-	0x2f, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x33, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x33,
+	0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x34, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x49, 0x6d,
+	0x61, 0x67, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x42, 0x2b, 0x5a, 0x29, 0x67,
+	0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x77, 0x61, 0x62, 0x65, 0x6e, 0x65,
+	0x74, 0x2f, 0x64, 0x6f, 0x64, 0x6f, 0x2d, 0x63, 0x6f, 0x72, 0x65, 0x2f, 0x61, 0x70, 0x69, 0x2f,
+	0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x34, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
-	file_api_v1alpha3_builder_proto_rawDescOnce sync.Once
-	file_api_v1alpha3_builder_proto_rawDescData = file_api_v1alpha3_builder_proto_rawDesc
+	file_api_v1alpha4_builder_proto_rawDescOnce sync.Once
+	file_api_v1alpha4_builder_proto_rawDescData = file_api_v1alpha4_builder_proto_rawDesc
 )
 
-func file_api_v1alpha3_builder_proto_rawDescGZIP() []byte {
-	file_api_v1alpha3_builder_proto_rawDescOnce.Do(func() {
-		file_api_v1alpha3_builder_proto_rawDescData = protoimpl.X.CompressGZIP(file_api_v1alpha3_builder_proto_rawDescData)
+func file_api_v1alpha4_builder_proto_rawDescGZIP() []byte {
+	file_api_v1alpha4_builder_proto_rawDescOnce.Do(func() {
+		file_api_v1alpha4_builder_proto_rawDescData = protoimpl.X.CompressGZIP(file_api_v1alpha4_builder_proto_rawDescData)
 	})
-	return file_api_v1alpha3_builder_proto_rawDescData
+	return file_api_v1alpha4_builder_proto_rawDescData
 }
 
-var file_api_v1alpha3_builder_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
-var file_api_v1alpha3_builder_proto_goTypes = []interface{}{
-	(*CreateImageRequest)(nil),  // 0: com.wabenet.dodo.core.v1alpha3.CreateImageRequest
-	(*CreateImageResponse)(nil), // 1: com.wabenet.dodo.core.v1alpha3.CreateImageResponse
-	(*BuildInfo)(nil),           // 2: com.wabenet.dodo.core.v1alpha3.BuildInfo
+var file_api_v1alpha4_builder_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_api_v1alpha4_builder_proto_goTypes = []interface{}{
+	(*CreateImageRequest)(nil),  // 0: com.wabenet.dodo.core.v1alpha4.CreateImageRequest
+	(*CreateImageResponse)(nil), // 1: com.wabenet.dodo.core.v1alpha4.CreateImageResponse
+	(*BuildInfo)(nil),           // 2: com.wabenet.dodo.core.v1alpha4.BuildInfo
 	(*empty.Empty)(nil),         // 3: google.protobuf.Empty
-	(*PluginInfo)(nil),          // 4: com.wabenet.dodo.core.v1alpha3.PluginInfo
-	(*InitPluginResponse)(nil),  // 5: com.wabenet.dodo.core.v1alpha3.InitPluginResponse
-	(*OutputData)(nil),          // 6: com.wabenet.dodo.core.v1alpha3.OutputData
+	(*PluginInfo)(nil),          // 4: com.wabenet.dodo.core.v1alpha4.PluginInfo
+	(*InitPluginResponse)(nil),  // 5: com.wabenet.dodo.core.v1alpha4.InitPluginResponse
+	(*OutputData)(nil),          // 6: com.wabenet.dodo.core.v1alpha4.OutputData
 }
-var file_api_v1alpha3_builder_proto_depIdxs = []int32{
-	2, // 0: com.wabenet.dodo.core.v1alpha3.CreateImageRequest.config:type_name -> com.wabenet.dodo.core.v1alpha3.BuildInfo
-	3, // 1: com.wabenet.dodo.core.v1alpha3.BuilderPlugin.GetPluginInfo:input_type -> google.protobuf.Empty
-	3, // 2: com.wabenet.dodo.core.v1alpha3.BuilderPlugin.InitPlugin:input_type -> google.protobuf.Empty
-	3, // 3: com.wabenet.dodo.core.v1alpha3.BuilderPlugin.StreamBuildOutput:input_type -> google.protobuf.Empty
-	0, // 4: com.wabenet.dodo.core.v1alpha3.BuilderPlugin.CreateImage:input_type -> com.wabenet.dodo.core.v1alpha3.CreateImageRequest
-	4, // 5: com.wabenet.dodo.core.v1alpha3.BuilderPlugin.GetPluginInfo:output_type -> com.wabenet.dodo.core.v1alpha3.PluginInfo
-	5, // 6: com.wabenet.dodo.core.v1alpha3.BuilderPlugin.InitPlugin:output_type -> com.wabenet.dodo.core.v1alpha3.InitPluginResponse
-	6, // 7: com.wabenet.dodo.core.v1alpha3.BuilderPlugin.StreamBuildOutput:output_type -> com.wabenet.dodo.core.v1alpha3.OutputData
-	1, // 8: com.wabenet.dodo.core.v1alpha3.BuilderPlugin.CreateImage:output_type -> com.wabenet.dodo.core.v1alpha3.CreateImageResponse
-	5, // [5:9] is the sub-list for method output_type
-	1, // [1:5] is the sub-list for method input_type
+var file_api_v1alpha4_builder_proto_depIdxs = []int32{
+	2, // 0: com.wabenet.dodo.core.v1alpha4.CreateImageRequest.config:type_name -> com.wabenet.dodo.core.v1alpha4.BuildInfo
+	3, // 1: com.wabenet.dodo.core.v1alpha4.BuilderPlugin.GetPluginInfo:input_type -> google.protobuf.Empty
+	3, // 2: com.wabenet.dodo.core.v1alpha4.BuilderPlugin.InitPlugin:input_type -> google.protobuf.Empty
+	3, // 3: com.wabenet.dodo.core.v1alpha4.BuilderPlugin.ResetPlugin:input_type -> google.protobuf.Empty
+	3, // 4: com.wabenet.dodo.core.v1alpha4.BuilderPlugin.StreamBuildOutput:input_type -> google.protobuf.Empty
+	0, // 5: com.wabenet.dodo.core.v1alpha4.BuilderPlugin.CreateImage:input_type -> com.wabenet.dodo.core.v1alpha4.CreateImageRequest
+	4, // 6: com.wabenet.dodo.core.v1alpha4.BuilderPlugin.GetPluginInfo:output_type -> com.wabenet.dodo.core.v1alpha4.PluginInfo
+	5, // 7: com.wabenet.dodo.core.v1alpha4.BuilderPlugin.InitPlugin:output_type -> com.wabenet.dodo.core.v1alpha4.InitPluginResponse
+	3, // 8: com.wabenet.dodo.core.v1alpha4.BuilderPlugin.ResetPlugin:output_type -> google.protobuf.Empty
+	6, // 9: com.wabenet.dodo.core.v1alpha4.BuilderPlugin.StreamBuildOutput:output_type -> com.wabenet.dodo.core.v1alpha4.OutputData
+	1, // 10: com.wabenet.dodo.core.v1alpha4.BuilderPlugin.CreateImage:output_type -> com.wabenet.dodo.core.v1alpha4.CreateImageResponse
+	6, // [6:11] is the sub-list for method output_type
+	1, // [1:6] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
 	1, // [1:1] is the sub-list for extension extendee
 	0, // [0:1] is the sub-list for field type_name
 }
 
-func init() { file_api_v1alpha3_builder_proto_init() }
-func file_api_v1alpha3_builder_proto_init() {
-	if File_api_v1alpha3_builder_proto != nil {
+func init() { file_api_v1alpha4_builder_proto_init() }
+func file_api_v1alpha4_builder_proto_init() {
+	if File_api_v1alpha4_builder_proto != nil {
 		return
 	}
-	file_api_v1alpha3_plugin_proto_init()
-	file_api_v1alpha3_build_proto_init()
+	file_api_v1alpha4_plugin_proto_init()
+	file_api_v1alpha4_build_proto_init()
 	if !protoimpl.UnsafeEnabled {
-		file_api_v1alpha3_builder_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
+		file_api_v1alpha4_builder_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*CreateImageRequest); i {
 			case 0:
 				return &v.state
@@ -249,7 +254,7 @@ func file_api_v1alpha3_builder_proto_init() {
 				return nil
 			}
 		}
-		file_api_v1alpha3_builder_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
+		file_api_v1alpha4_builder_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*CreateImageResponse); i {
 			case 0:
 				return &v.state
@@ -266,20 +271,20 @@ func file_api_v1alpha3_builder_proto_init() {
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: file_api_v1alpha3_builder_proto_rawDesc,
+			RawDescriptor: file_api_v1alpha4_builder_proto_rawDesc,
 			NumEnums:      0,
 			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_api_v1alpha3_builder_proto_goTypes,
-		DependencyIndexes: file_api_v1alpha3_builder_proto_depIdxs,
-		MessageInfos:      file_api_v1alpha3_builder_proto_msgTypes,
+		GoTypes:           file_api_v1alpha4_builder_proto_goTypes,
+		DependencyIndexes: file_api_v1alpha4_builder_proto_depIdxs,
+		MessageInfos:      file_api_v1alpha4_builder_proto_msgTypes,
 	}.Build()
-	File_api_v1alpha3_builder_proto = out.File
-	file_api_v1alpha3_builder_proto_rawDesc = nil
-	file_api_v1alpha3_builder_proto_goTypes = nil
-	file_api_v1alpha3_builder_proto_depIdxs = nil
+	File_api_v1alpha4_builder_proto = out.File
+	file_api_v1alpha4_builder_proto_rawDesc = nil
+	file_api_v1alpha4_builder_proto_goTypes = nil
+	file_api_v1alpha4_builder_proto_depIdxs = nil
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -296,6 +301,7 @@ const _ = grpc.SupportPackageIsVersion6
 type BuilderPluginClient interface {
 	GetPluginInfo(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*PluginInfo, error)
 	InitPlugin(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*InitPluginResponse, error)
+	ResetPlugin(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error)
 	StreamBuildOutput(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (BuilderPlugin_StreamBuildOutputClient, error)
 	CreateImage(ctx context.Context, in *CreateImageRequest, opts ...grpc.CallOption) (*CreateImageResponse, error)
 }
@@ -310,7 +316,7 @@ func NewBuilderPluginClient(cc grpc.ClientConnInterface) BuilderPluginClient {
 
 func (c *builderPluginClient) GetPluginInfo(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*PluginInfo, error) {
 	out := new(PluginInfo)
-	err := c.cc.Invoke(ctx, "/com.wabenet.dodo.core.v1alpha3.BuilderPlugin/GetPluginInfo", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/com.wabenet.dodo.core.v1alpha4.BuilderPlugin/GetPluginInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -319,7 +325,16 @@ func (c *builderPluginClient) GetPluginInfo(ctx context.Context, in *empty.Empty
 
 func (c *builderPluginClient) InitPlugin(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*InitPluginResponse, error) {
 	out := new(InitPluginResponse)
-	err := c.cc.Invoke(ctx, "/com.wabenet.dodo.core.v1alpha3.BuilderPlugin/InitPlugin", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/com.wabenet.dodo.core.v1alpha4.BuilderPlugin/InitPlugin", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *builderPluginClient) ResetPlugin(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/com.wabenet.dodo.core.v1alpha4.BuilderPlugin/ResetPlugin", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -327,7 +342,7 @@ func (c *builderPluginClient) InitPlugin(ctx context.Context, in *empty.Empty, o
 }
 
 func (c *builderPluginClient) StreamBuildOutput(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (BuilderPlugin_StreamBuildOutputClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_BuilderPlugin_serviceDesc.Streams[0], "/com.wabenet.dodo.core.v1alpha3.BuilderPlugin/StreamBuildOutput", opts...)
+	stream, err := c.cc.NewStream(ctx, &_BuilderPlugin_serviceDesc.Streams[0], "/com.wabenet.dodo.core.v1alpha4.BuilderPlugin/StreamBuildOutput", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -360,7 +375,7 @@ func (x *builderPluginStreamBuildOutputClient) Recv() (*OutputData, error) {
 
 func (c *builderPluginClient) CreateImage(ctx context.Context, in *CreateImageRequest, opts ...grpc.CallOption) (*CreateImageResponse, error) {
 	out := new(CreateImageResponse)
-	err := c.cc.Invoke(ctx, "/com.wabenet.dodo.core.v1alpha3.BuilderPlugin/CreateImage", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/com.wabenet.dodo.core.v1alpha4.BuilderPlugin/CreateImage", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -371,6 +386,7 @@ func (c *builderPluginClient) CreateImage(ctx context.Context, in *CreateImageRe
 type BuilderPluginServer interface {
 	GetPluginInfo(context.Context, *empty.Empty) (*PluginInfo, error)
 	InitPlugin(context.Context, *empty.Empty) (*InitPluginResponse, error)
+	ResetPlugin(context.Context, *empty.Empty) (*empty.Empty, error)
 	StreamBuildOutput(*empty.Empty, BuilderPlugin_StreamBuildOutputServer) error
 	CreateImage(context.Context, *CreateImageRequest) (*CreateImageResponse, error)
 }
@@ -384,6 +400,9 @@ func (*UnimplementedBuilderPluginServer) GetPluginInfo(context.Context, *empty.E
 }
 func (*UnimplementedBuilderPluginServer) InitPlugin(context.Context, *empty.Empty) (*InitPluginResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InitPlugin not implemented")
+}
+func (*UnimplementedBuilderPluginServer) ResetPlugin(context.Context, *empty.Empty) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ResetPlugin not implemented")
 }
 func (*UnimplementedBuilderPluginServer) StreamBuildOutput(*empty.Empty, BuilderPlugin_StreamBuildOutputServer) error {
 	return status.Errorf(codes.Unimplemented, "method StreamBuildOutput not implemented")
@@ -406,7 +425,7 @@ func _BuilderPlugin_GetPluginInfo_Handler(srv interface{}, ctx context.Context, 
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/com.wabenet.dodo.core.v1alpha3.BuilderPlugin/GetPluginInfo",
+		FullMethod: "/com.wabenet.dodo.core.v1alpha4.BuilderPlugin/GetPluginInfo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(BuilderPluginServer).GetPluginInfo(ctx, req.(*empty.Empty))
@@ -424,10 +443,28 @@ func _BuilderPlugin_InitPlugin_Handler(srv interface{}, ctx context.Context, dec
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/com.wabenet.dodo.core.v1alpha3.BuilderPlugin/InitPlugin",
+		FullMethod: "/com.wabenet.dodo.core.v1alpha4.BuilderPlugin/InitPlugin",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(BuilderPluginServer).InitPlugin(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BuilderPlugin_ResetPlugin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BuilderPluginServer).ResetPlugin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/com.wabenet.dodo.core.v1alpha4.BuilderPlugin/ResetPlugin",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BuilderPluginServer).ResetPlugin(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -463,7 +500,7 @@ func _BuilderPlugin_CreateImage_Handler(srv interface{}, ctx context.Context, de
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/com.wabenet.dodo.core.v1alpha3.BuilderPlugin/CreateImage",
+		FullMethod: "/com.wabenet.dodo.core.v1alpha4.BuilderPlugin/CreateImage",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(BuilderPluginServer).CreateImage(ctx, req.(*CreateImageRequest))
@@ -472,7 +509,7 @@ func _BuilderPlugin_CreateImage_Handler(srv interface{}, ctx context.Context, de
 }
 
 var _BuilderPlugin_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "com.wabenet.dodo.core.v1alpha3.BuilderPlugin",
+	ServiceName: "com.wabenet.dodo.core.v1alpha4.BuilderPlugin",
 	HandlerType: (*BuilderPluginServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -482,6 +519,10 @@ var _BuilderPlugin_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "InitPlugin",
 			Handler:    _BuilderPlugin_InitPlugin_Handler,
+		},
+		{
+			MethodName: "ResetPlugin",
+			Handler:    _BuilderPlugin_ResetPlugin_Handler,
 		},
 		{
 			MethodName: "CreateImage",
@@ -495,5 +536,5 @@ var _BuilderPlugin_serviceDesc = grpc.ServiceDesc{
 			ServerStreams: true,
 		},
 	},
-	Metadata: "api/v1alpha3/builder.proto",
+	Metadata: "api/v1alpha4/builder.proto",
 }

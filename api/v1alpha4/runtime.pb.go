@@ -2,9 +2,9 @@
 // versions:
 // 	protoc-gen-go v1.26.0
 // 	protoc        v3.12.4
-// source: api/v1alpha3/runtime.proto
+// source: api/v1alpha4/runtime.proto
 
-package v1alpha3
+package v1alpha4
 
 import (
 	context "context"
@@ -36,7 +36,7 @@ type CreateContainerResponse struct {
 func (x *CreateContainerResponse) Reset() {
 	*x = CreateContainerResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_v1alpha3_runtime_proto_msgTypes[0]
+		mi := &file_api_v1alpha4_runtime_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -49,7 +49,7 @@ func (x *CreateContainerResponse) String() string {
 func (*CreateContainerResponse) ProtoMessage() {}
 
 func (x *CreateContainerResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_v1alpha3_runtime_proto_msgTypes[0]
+	mi := &file_api_v1alpha4_runtime_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -62,7 +62,7 @@ func (x *CreateContainerResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateContainerResponse.ProtoReflect.Descriptor instead.
 func (*CreateContainerResponse) Descriptor() ([]byte, []int) {
-	return file_api_v1alpha3_runtime_proto_rawDescGZIP(), []int{0}
+	return file_api_v1alpha4_runtime_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *CreateContainerResponse) GetContainerId() string {
@@ -83,7 +83,7 @@ type GetImageRequest struct {
 func (x *GetImageRequest) Reset() {
 	*x = GetImageRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_v1alpha3_runtime_proto_msgTypes[1]
+		mi := &file_api_v1alpha4_runtime_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -96,7 +96,7 @@ func (x *GetImageRequest) String() string {
 func (*GetImageRequest) ProtoMessage() {}
 
 func (x *GetImageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_v1alpha3_runtime_proto_msgTypes[1]
+	mi := &file_api_v1alpha4_runtime_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -109,7 +109,7 @@ func (x *GetImageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetImageRequest.ProtoReflect.Descriptor instead.
 func (*GetImageRequest) Descriptor() ([]byte, []int) {
-	return file_api_v1alpha3_runtime_proto_rawDescGZIP(), []int{1}
+	return file_api_v1alpha4_runtime_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *GetImageRequest) GetImageSpec() string {
@@ -132,7 +132,7 @@ type CreateContainerRequest struct {
 func (x *CreateContainerRequest) Reset() {
 	*x = CreateContainerRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_v1alpha3_runtime_proto_msgTypes[2]
+		mi := &file_api_v1alpha4_runtime_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -145,7 +145,7 @@ func (x *CreateContainerRequest) String() string {
 func (*CreateContainerRequest) ProtoMessage() {}
 
 func (x *CreateContainerRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_v1alpha3_runtime_proto_msgTypes[2]
+	mi := &file_api_v1alpha4_runtime_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -158,7 +158,7 @@ func (x *CreateContainerRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateContainerRequest.ProtoReflect.Descriptor instead.
 func (*CreateContainerRequest) Descriptor() ([]byte, []int) {
-	return file_api_v1alpha3_runtime_proto_rawDescGZIP(), []int{2}
+	return file_api_v1alpha4_runtime_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *CreateContainerRequest) GetConfig() *Backdrop {
@@ -193,7 +193,7 @@ type DeleteContainerRequest struct {
 func (x *DeleteContainerRequest) Reset() {
 	*x = DeleteContainerRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_v1alpha3_runtime_proto_msgTypes[3]
+		mi := &file_api_v1alpha4_runtime_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -206,7 +206,7 @@ func (x *DeleteContainerRequest) String() string {
 func (*DeleteContainerRequest) ProtoMessage() {}
 
 func (x *DeleteContainerRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_v1alpha3_runtime_proto_msgTypes[3]
+	mi := &file_api_v1alpha4_runtime_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -219,7 +219,7 @@ func (x *DeleteContainerRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteContainerRequest.ProtoReflect.Descriptor instead.
 func (*DeleteContainerRequest) Descriptor() ([]byte, []int) {
-	return file_api_v1alpha3_runtime_proto_rawDescGZIP(), []int{3}
+	return file_api_v1alpha4_runtime_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *DeleteContainerRequest) GetContainerId() string {
@@ -240,7 +240,7 @@ type StartContainerRequest struct {
 func (x *StartContainerRequest) Reset() {
 	*x = StartContainerRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_v1alpha3_runtime_proto_msgTypes[4]
+		mi := &file_api_v1alpha4_runtime_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -253,7 +253,7 @@ func (x *StartContainerRequest) String() string {
 func (*StartContainerRequest) ProtoMessage() {}
 
 func (x *StartContainerRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_v1alpha3_runtime_proto_msgTypes[4]
+	mi := &file_api_v1alpha4_runtime_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -266,7 +266,7 @@ func (x *StartContainerRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StartContainerRequest.ProtoReflect.Descriptor instead.
 func (*StartContainerRequest) Descriptor() ([]byte, []int) {
-	return file_api_v1alpha3_runtime_proto_rawDescGZIP(), []int{4}
+	return file_api_v1alpha4_runtime_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *StartContainerRequest) GetContainerId() string {
@@ -289,7 +289,7 @@ type ResizeContainerRequest struct {
 func (x *ResizeContainerRequest) Reset() {
 	*x = ResizeContainerRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_v1alpha3_runtime_proto_msgTypes[5]
+		mi := &file_api_v1alpha4_runtime_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -302,7 +302,7 @@ func (x *ResizeContainerRequest) String() string {
 func (*ResizeContainerRequest) ProtoMessage() {}
 
 func (x *ResizeContainerRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_v1alpha3_runtime_proto_msgTypes[5]
+	mi := &file_api_v1alpha4_runtime_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -315,7 +315,7 @@ func (x *ResizeContainerRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResizeContainerRequest.ProtoReflect.Descriptor instead.
 func (*ResizeContainerRequest) Descriptor() ([]byte, []int) {
-	return file_api_v1alpha3_runtime_proto_rawDescGZIP(), []int{5}
+	return file_api_v1alpha4_runtime_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *ResizeContainerRequest) GetContainerId() string {
@@ -352,7 +352,7 @@ type StreamContainerRequest struct {
 func (x *StreamContainerRequest) Reset() {
 	*x = StreamContainerRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_v1alpha3_runtime_proto_msgTypes[6]
+		mi := &file_api_v1alpha4_runtime_proto_msgTypes[6]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -365,7 +365,7 @@ func (x *StreamContainerRequest) String() string {
 func (*StreamContainerRequest) ProtoMessage() {}
 
 func (x *StreamContainerRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_v1alpha3_runtime_proto_msgTypes[6]
+	mi := &file_api_v1alpha4_runtime_proto_msgTypes[6]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -378,7 +378,7 @@ func (x *StreamContainerRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StreamContainerRequest.ProtoReflect.Descriptor instead.
 func (*StreamContainerRequest) Descriptor() ([]byte, []int) {
-	return file_api_v1alpha3_runtime_proto_rawDescGZIP(), []int{6}
+	return file_api_v1alpha4_runtime_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *StreamContainerRequest) GetContainerId() string {
@@ -414,7 +414,7 @@ type KillContainerRequest struct {
 func (x *KillContainerRequest) Reset() {
 	*x = KillContainerRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_v1alpha3_runtime_proto_msgTypes[7]
+		mi := &file_api_v1alpha4_runtime_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -427,7 +427,7 @@ func (x *KillContainerRequest) String() string {
 func (*KillContainerRequest) ProtoMessage() {}
 
 func (x *KillContainerRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_v1alpha3_runtime_proto_msgTypes[7]
+	mi := &file_api_v1alpha4_runtime_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -440,7 +440,7 @@ func (x *KillContainerRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use KillContainerRequest.ProtoReflect.Descriptor instead.
 func (*KillContainerRequest) Descriptor() ([]byte, []int) {
-	return file_api_v1alpha3_runtime_proto_rawDescGZIP(), []int{7}
+	return file_api_v1alpha4_runtime_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *KillContainerRequest) GetContainerId() string {
@@ -469,7 +469,7 @@ type StreamContainerResponse struct {
 func (x *StreamContainerResponse) Reset() {
 	*x = StreamContainerResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_v1alpha3_runtime_proto_msgTypes[8]
+		mi := &file_api_v1alpha4_runtime_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -482,7 +482,7 @@ func (x *StreamContainerResponse) String() string {
 func (*StreamContainerResponse) ProtoMessage() {}
 
 func (x *StreamContainerResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_v1alpha3_runtime_proto_msgTypes[8]
+	mi := &file_api_v1alpha4_runtime_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -495,7 +495,7 @@ func (x *StreamContainerResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StreamContainerResponse.ProtoReflect.Descriptor instead.
 func (*StreamContainerResponse) Descriptor() ([]byte, []int) {
-	return file_api_v1alpha3_runtime_proto_rawDescGZIP(), []int{8}
+	return file_api_v1alpha4_runtime_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *StreamContainerResponse) GetExitCode() int64 {
@@ -523,7 +523,7 @@ type GetImageResponse struct {
 func (x *GetImageResponse) Reset() {
 	*x = GetImageResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_v1alpha3_runtime_proto_msgTypes[9]
+		mi := &file_api_v1alpha4_runtime_proto_msgTypes[9]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -536,7 +536,7 @@ func (x *GetImageResponse) String() string {
 func (*GetImageResponse) ProtoMessage() {}
 
 func (x *GetImageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_v1alpha3_runtime_proto_msgTypes[9]
+	mi := &file_api_v1alpha4_runtime_proto_msgTypes[9]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -549,7 +549,7 @@ func (x *GetImageResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetImageResponse.ProtoReflect.Descriptor instead.
 func (*GetImageResponse) Descriptor() ([]byte, []int) {
-	return file_api_v1alpha3_runtime_proto_rawDescGZIP(), []int{9}
+	return file_api_v1alpha4_runtime_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *GetImageResponse) GetImageId() string {
@@ -559,18 +559,18 @@ func (x *GetImageResponse) GetImageId() string {
 	return ""
 }
 
-var File_api_v1alpha3_runtime_proto protoreflect.FileDescriptor
+var File_api_v1alpha4_runtime_proto protoreflect.FileDescriptor
 
-var file_api_v1alpha3_runtime_proto_rawDesc = []byte{
-	0x0a, 0x1a, 0x61, 0x70, 0x69, 0x2f, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x33, 0x2f, 0x72,
+var file_api_v1alpha4_runtime_proto_rawDesc = []byte{
+	0x0a, 0x1a, 0x61, 0x70, 0x69, 0x2f, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x34, 0x2f, 0x72,
 	0x75, 0x6e, 0x74, 0x69, 0x6d, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x1e, 0x63, 0x6f,
 	0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65, 0x6e, 0x65, 0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63,
-	0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x33, 0x1a, 0x1b, 0x67, 0x6f,
+	0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x34, 0x1a, 0x1b, 0x67, 0x6f,
 	0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2f, 0x65, 0x6d,
 	0x70, 0x74, 0x79, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x19, 0x61, 0x70, 0x69, 0x2f, 0x76,
-	0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x33, 0x2f, 0x70, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x2e, 0x70,
+	0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x34, 0x2f, 0x70, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x2e, 0x70,
 	0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x1b, 0x61, 0x70, 0x69, 0x2f, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68,
-	0x61, 0x33, 0x2f, 0x62, 0x61, 0x63, 0x6b, 0x64, 0x72, 0x6f, 0x70, 0x2e, 0x70, 0x72, 0x6f, 0x74,
+	0x61, 0x34, 0x2f, 0x62, 0x61, 0x63, 0x6b, 0x64, 0x72, 0x6f, 0x70, 0x2e, 0x70, 0x72, 0x6f, 0x74,
 	0x6f, 0x22, 0x3c, 0x0a, 0x17, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x43, 0x6f, 0x6e, 0x74, 0x61,
 	0x69, 0x6e, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x21, 0x0a, 0x0c,
 	0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01,
@@ -582,7 +582,7 @@ var file_api_v1alpha3_runtime_proto_rawDesc = []byte{
 	0x61, 0x69, 0x6e, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x40, 0x0a, 0x06,
 	0x63, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x28, 0x2e, 0x63,
 	0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65, 0x6e, 0x65, 0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e,
-	0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x33, 0x2e, 0x42, 0x61,
+	0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x34, 0x2e, 0x42, 0x61,
 	0x63, 0x6b, 0x64, 0x72, 0x6f, 0x70, 0x52, 0x06, 0x63, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x12, 0x10,
 	0x0a, 0x03, 0x74, 0x74, 0x79, 0x18, 0x02, 0x20, 0x01, 0x28, 0x08, 0x52, 0x03, 0x74, 0x74, 0x79,
 	0x12, 0x14, 0x0a, 0x05, 0x73, 0x74, 0x64, 0x69, 0x6f, 0x18, 0x03, 0x20, 0x01, 0x28, 0x08, 0x52,
@@ -620,155 +620,161 @@ var file_api_v1alpha3_runtime_proto_rawDesc = []byte{
 	0x52, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x2d, 0x0a, 0x10, 0x47, 0x65, 0x74,
 	0x49, 0x6d, 0x61, 0x67, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x19, 0x0a,
 	0x08, 0x69, 0x6d, 0x61, 0x67, 0x65, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x07, 0x69, 0x6d, 0x61, 0x67, 0x65, 0x49, 0x64, 0x32, 0xf5, 0x08, 0x0a, 0x0d, 0x52, 0x75, 0x6e,
+	0x07, 0x69, 0x6d, 0x61, 0x67, 0x65, 0x49, 0x64, 0x32, 0xb4, 0x09, 0x0a, 0x0d, 0x52, 0x75, 0x6e,
 	0x74, 0x69, 0x6d, 0x65, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x12, 0x53, 0x0a, 0x0d, 0x47, 0x65,
 	0x74, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x49, 0x6e, 0x66, 0x6f, 0x12, 0x16, 0x2e, 0x67, 0x6f,
 	0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d,
 	0x70, 0x74, 0x79, 0x1a, 0x2a, 0x2e, 0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65, 0x6e, 0x65,
 	0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c,
-	0x70, 0x68, 0x61, 0x33, 0x2e, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x49, 0x6e, 0x66, 0x6f, 0x12,
+	0x70, 0x68, 0x61, 0x34, 0x2e, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x49, 0x6e, 0x66, 0x6f, 0x12,
 	0x58, 0x0a, 0x0a, 0x49, 0x6e, 0x69, 0x74, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x12, 0x16, 0x2e,
 	0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e,
 	0x45, 0x6d, 0x70, 0x74, 0x79, 0x1a, 0x32, 0x2e, 0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65,
 	0x6e, 0x65, 0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31,
-	0x61, 0x6c, 0x70, 0x68, 0x61, 0x33, 0x2e, 0x49, 0x6e, 0x69, 0x74, 0x50, 0x6c, 0x75, 0x67, 0x69,
-	0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x59, 0x0a, 0x12, 0x53, 0x74, 0x72,
-	0x65, 0x61, 0x6d, 0x52, 0x75, 0x6e, 0x74, 0x69, 0x6d, 0x65, 0x49, 0x6e, 0x70, 0x75, 0x74, 0x12,
-	0x29, 0x2e, 0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65, 0x6e, 0x65, 0x74, 0x2e, 0x64, 0x6f,
-	0x64, 0x6f, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x33,
-	0x2e, 0x49, 0x6e, 0x70, 0x75, 0x74, 0x44, 0x61, 0x74, 0x61, 0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f,
-	0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70,
-	0x74, 0x79, 0x28, 0x01, 0x12, 0x5b, 0x0a, 0x13, 0x53, 0x74, 0x72, 0x65, 0x61, 0x6d, 0x52, 0x75,
-	0x6e, 0x74, 0x69, 0x6d, 0x65, 0x4f, 0x75, 0x74, 0x70, 0x75, 0x74, 0x12, 0x16, 0x2e, 0x67, 0x6f,
-	0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d,
-	0x70, 0x74, 0x79, 0x1a, 0x2a, 0x2e, 0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65, 0x6e, 0x65,
-	0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c,
-	0x70, 0x68, 0x61, 0x33, 0x2e, 0x4f, 0x75, 0x74, 0x70, 0x75, 0x74, 0x44, 0x61, 0x74, 0x61, 0x30,
-	0x01, 0x12, 0x82, 0x01, 0x0a, 0x0f, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x43, 0x6f, 0x6e, 0x74,
-	0x61, 0x69, 0x6e, 0x65, 0x72, 0x12, 0x36, 0x2e, 0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65,
-	0x6e, 0x65, 0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31,
-	0x61, 0x6c, 0x70, 0x68, 0x61, 0x33, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x43, 0x6f, 0x6e,
-	0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x37, 0x2e,
-	0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65, 0x6e, 0x65, 0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f,
-	0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x33, 0x2e, 0x43,
-	0x72, 0x65, 0x61, 0x74, 0x65, 0x43, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x52, 0x65,
-	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x61, 0x0a, 0x0f, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65,
-	0x43, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x12, 0x36, 0x2e, 0x63, 0x6f, 0x6d, 0x2e,
-	0x77, 0x61, 0x62, 0x65, 0x6e, 0x65, 0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63, 0x6f, 0x72,
-	0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x33, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74,
-	0x65, 0x43, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
-	0x74, 0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x12, 0x5f, 0x0a, 0x0e, 0x53, 0x74, 0x61,
-	0x72, 0x74, 0x43, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x12, 0x35, 0x2e, 0x63, 0x6f,
-	0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65, 0x6e, 0x65, 0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63,
-	0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x33, 0x2e, 0x53, 0x74, 0x61,
-	0x72, 0x74, 0x43, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65,
-	0x73, 0x74, 0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74,
-	0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x12, 0x82, 0x01, 0x0a, 0x0f, 0x53,
-	0x74, 0x72, 0x65, 0x61, 0x6d, 0x43, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x12, 0x36,
+	0x61, 0x6c, 0x70, 0x68, 0x61, 0x34, 0x2e, 0x49, 0x6e, 0x69, 0x74, 0x50, 0x6c, 0x75, 0x67, 0x69,
+	0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x3d, 0x0a, 0x0b, 0x52, 0x65, 0x73,
+	0x65, 0x74, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x12, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c,
+	0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79,
+	0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62,
+	0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x12, 0x59, 0x0a, 0x12, 0x53, 0x74, 0x72, 0x65,
+	0x61, 0x6d, 0x52, 0x75, 0x6e, 0x74, 0x69, 0x6d, 0x65, 0x49, 0x6e, 0x70, 0x75, 0x74, 0x12, 0x29,
 	0x2e, 0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65, 0x6e, 0x65, 0x74, 0x2e, 0x64, 0x6f, 0x64,
-	0x6f, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x33, 0x2e,
-	0x53, 0x74, 0x72, 0x65, 0x61, 0x6d, 0x43, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x52,
-	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x37, 0x2e, 0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62,
-	0x65, 0x6e, 0x65, 0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76,
-	0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x33, 0x2e, 0x53, 0x74, 0x72, 0x65, 0x61, 0x6d, 0x43, 0x6f,
-	0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
-	0x61, 0x0a, 0x0f, 0x52, 0x65, 0x73, 0x69, 0x7a, 0x65, 0x43, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e,
-	0x65, 0x72, 0x12, 0x36, 0x2e, 0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65, 0x6e, 0x65, 0x74,
-	0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c, 0x70,
-	0x68, 0x61, 0x33, 0x2e, 0x52, 0x65, 0x73, 0x69, 0x7a, 0x65, 0x43, 0x6f, 0x6e, 0x74, 0x61, 0x69,
-	0x6e, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f,
+	0x6f, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x34, 0x2e,
+	0x49, 0x6e, 0x70, 0x75, 0x74, 0x44, 0x61, 0x74, 0x61, 0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67,
+	0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74,
+	0x79, 0x28, 0x01, 0x12, 0x5b, 0x0a, 0x13, 0x53, 0x74, 0x72, 0x65, 0x61, 0x6d, 0x52, 0x75, 0x6e,
+	0x74, 0x69, 0x6d, 0x65, 0x4f, 0x75, 0x74, 0x70, 0x75, 0x74, 0x12, 0x16, 0x2e, 0x67, 0x6f, 0x6f,
 	0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70,
-	0x74, 0x79, 0x12, 0x5d, 0x0a, 0x0d, 0x4b, 0x69, 0x6c, 0x6c, 0x43, 0x6f, 0x6e, 0x74, 0x61, 0x69,
-	0x6e, 0x65, 0x72, 0x12, 0x34, 0x2e, 0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65, 0x6e, 0x65,
-	0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c,
-	0x70, 0x68, 0x61, 0x33, 0x2e, 0x4b, 0x69, 0x6c, 0x6c, 0x43, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e,
+	0x74, 0x79, 0x1a, 0x2a, 0x2e, 0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65, 0x6e, 0x65, 0x74,
+	0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c, 0x70,
+	0x68, 0x61, 0x34, 0x2e, 0x4f, 0x75, 0x74, 0x70, 0x75, 0x74, 0x44, 0x61, 0x74, 0x61, 0x30, 0x01,
+	0x12, 0x82, 0x01, 0x0a, 0x0f, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x43, 0x6f, 0x6e, 0x74, 0x61,
+	0x69, 0x6e, 0x65, 0x72, 0x12, 0x36, 0x2e, 0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65, 0x6e,
+	0x65, 0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61,
+	0x6c, 0x70, 0x68, 0x61, 0x34, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x43, 0x6f, 0x6e, 0x74,
+	0x61, 0x69, 0x6e, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x37, 0x2e, 0x63,
+	0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65, 0x6e, 0x65, 0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e,
+	0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x34, 0x2e, 0x43, 0x72,
+	0x65, 0x61, 0x74, 0x65, 0x43, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x61, 0x0a, 0x0f, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x43,
+	0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x12, 0x36, 0x2e, 0x63, 0x6f, 0x6d, 0x2e, 0x77,
+	0x61, 0x62, 0x65, 0x6e, 0x65, 0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63, 0x6f, 0x72, 0x65,
+	0x2e, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x34, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65,
+	0x43, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62,
+	0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x12, 0x5f, 0x0a, 0x0e, 0x53, 0x74, 0x61, 0x72,
+	0x74, 0x43, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x12, 0x35, 0x2e, 0x63, 0x6f, 0x6d,
+	0x2e, 0x77, 0x61, 0x62, 0x65, 0x6e, 0x65, 0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63, 0x6f,
+	0x72, 0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x34, 0x2e, 0x53, 0x74, 0x61, 0x72,
+	0x74, 0x43, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x12, 0x82, 0x01, 0x0a, 0x0f, 0x53, 0x74,
+	0x72, 0x65, 0x61, 0x6d, 0x43, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x12, 0x36, 0x2e,
+	0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65, 0x6e, 0x65, 0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f,
+	0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x34, 0x2e, 0x53,
+	0x74, 0x72, 0x65, 0x61, 0x6d, 0x43, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x37, 0x2e, 0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65,
+	0x6e, 0x65, 0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31,
+	0x61, 0x6c, 0x70, 0x68, 0x61, 0x34, 0x2e, 0x53, 0x74, 0x72, 0x65, 0x61, 0x6d, 0x43, 0x6f, 0x6e,
+	0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x61,
+	0x0a, 0x0f, 0x52, 0x65, 0x73, 0x69, 0x7a, 0x65, 0x43, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65,
+	0x72, 0x12, 0x36, 0x2e, 0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65, 0x6e, 0x65, 0x74, 0x2e,
+	0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68,
+	0x61, 0x34, 0x2e, 0x52, 0x65, 0x73, 0x69, 0x7a, 0x65, 0x43, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e,
 	0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67,
 	0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74,
-	0x79, 0x12, 0x6d, 0x0a, 0x08, 0x47, 0x65, 0x74, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x12, 0x2f, 0x2e,
+	0x79, 0x12, 0x5d, 0x0a, 0x0d, 0x4b, 0x69, 0x6c, 0x6c, 0x43, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e,
+	0x65, 0x72, 0x12, 0x34, 0x2e, 0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65, 0x6e, 0x65, 0x74,
+	0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c, 0x70,
+	0x68, 0x61, 0x34, 0x2e, 0x4b, 0x69, 0x6c, 0x6c, 0x43, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65,
+	0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c,
+	0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79,
+	0x12, 0x6d, 0x0a, 0x08, 0x47, 0x65, 0x74, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x12, 0x2f, 0x2e, 0x63,
+	0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65, 0x6e, 0x65, 0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e,
+	0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x34, 0x2e, 0x47, 0x65,
+	0x74, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x30, 0x2e,
 	0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65, 0x6e, 0x65, 0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f,
-	0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x33, 0x2e, 0x47,
-	0x65, 0x74, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x30,
-	0x2e, 0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65, 0x6e, 0x65, 0x74, 0x2e, 0x64, 0x6f, 0x64,
-	0x6f, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x33, 0x2e,
-	0x47, 0x65, 0x74, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
-	0x42, 0x2b, 0x5a, 0x29, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x77,
-	0x61, 0x62, 0x65, 0x6e, 0x65, 0x74, 0x2f, 0x64, 0x6f, 0x64, 0x6f, 0x2d, 0x63, 0x6f, 0x72, 0x65,
-	0x2f, 0x61, 0x70, 0x69, 0x2f, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x33, 0x62, 0x06, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x34, 0x2e, 0x47,
+	0x65, 0x74, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x42,
+	0x2b, 0x5a, 0x29, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x77, 0x61,
+	0x62, 0x65, 0x6e, 0x65, 0x74, 0x2f, 0x64, 0x6f, 0x64, 0x6f, 0x2d, 0x63, 0x6f, 0x72, 0x65, 0x2f,
+	0x61, 0x70, 0x69, 0x2f, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x34, 0x62, 0x06, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
-	file_api_v1alpha3_runtime_proto_rawDescOnce sync.Once
-	file_api_v1alpha3_runtime_proto_rawDescData = file_api_v1alpha3_runtime_proto_rawDesc
+	file_api_v1alpha4_runtime_proto_rawDescOnce sync.Once
+	file_api_v1alpha4_runtime_proto_rawDescData = file_api_v1alpha4_runtime_proto_rawDesc
 )
 
-func file_api_v1alpha3_runtime_proto_rawDescGZIP() []byte {
-	file_api_v1alpha3_runtime_proto_rawDescOnce.Do(func() {
-		file_api_v1alpha3_runtime_proto_rawDescData = protoimpl.X.CompressGZIP(file_api_v1alpha3_runtime_proto_rawDescData)
+func file_api_v1alpha4_runtime_proto_rawDescGZIP() []byte {
+	file_api_v1alpha4_runtime_proto_rawDescOnce.Do(func() {
+		file_api_v1alpha4_runtime_proto_rawDescData = protoimpl.X.CompressGZIP(file_api_v1alpha4_runtime_proto_rawDescData)
 	})
-	return file_api_v1alpha3_runtime_proto_rawDescData
+	return file_api_v1alpha4_runtime_proto_rawDescData
 }
 
-var file_api_v1alpha3_runtime_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
-var file_api_v1alpha3_runtime_proto_goTypes = []interface{}{
-	(*CreateContainerResponse)(nil), // 0: com.wabenet.dodo.core.v1alpha3.CreateContainerResponse
-	(*GetImageRequest)(nil),         // 1: com.wabenet.dodo.core.v1alpha3.GetImageRequest
-	(*CreateContainerRequest)(nil),  // 2: com.wabenet.dodo.core.v1alpha3.CreateContainerRequest
-	(*DeleteContainerRequest)(nil),  // 3: com.wabenet.dodo.core.v1alpha3.DeleteContainerRequest
-	(*StartContainerRequest)(nil),   // 4: com.wabenet.dodo.core.v1alpha3.StartContainerRequest
-	(*ResizeContainerRequest)(nil),  // 5: com.wabenet.dodo.core.v1alpha3.ResizeContainerRequest
-	(*StreamContainerRequest)(nil),  // 6: com.wabenet.dodo.core.v1alpha3.StreamContainerRequest
-	(*KillContainerRequest)(nil),    // 7: com.wabenet.dodo.core.v1alpha3.KillContainerRequest
-	(*StreamContainerResponse)(nil), // 8: com.wabenet.dodo.core.v1alpha3.StreamContainerResponse
-	(*GetImageResponse)(nil),        // 9: com.wabenet.dodo.core.v1alpha3.GetImageResponse
-	(*Backdrop)(nil),                // 10: com.wabenet.dodo.core.v1alpha3.Backdrop
+var file_api_v1alpha4_runtime_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_api_v1alpha4_runtime_proto_goTypes = []interface{}{
+	(*CreateContainerResponse)(nil), // 0: com.wabenet.dodo.core.v1alpha4.CreateContainerResponse
+	(*GetImageRequest)(nil),         // 1: com.wabenet.dodo.core.v1alpha4.GetImageRequest
+	(*CreateContainerRequest)(nil),  // 2: com.wabenet.dodo.core.v1alpha4.CreateContainerRequest
+	(*DeleteContainerRequest)(nil),  // 3: com.wabenet.dodo.core.v1alpha4.DeleteContainerRequest
+	(*StartContainerRequest)(nil),   // 4: com.wabenet.dodo.core.v1alpha4.StartContainerRequest
+	(*ResizeContainerRequest)(nil),  // 5: com.wabenet.dodo.core.v1alpha4.ResizeContainerRequest
+	(*StreamContainerRequest)(nil),  // 6: com.wabenet.dodo.core.v1alpha4.StreamContainerRequest
+	(*KillContainerRequest)(nil),    // 7: com.wabenet.dodo.core.v1alpha4.KillContainerRequest
+	(*StreamContainerResponse)(nil), // 8: com.wabenet.dodo.core.v1alpha4.StreamContainerResponse
+	(*GetImageResponse)(nil),        // 9: com.wabenet.dodo.core.v1alpha4.GetImageResponse
+	(*Backdrop)(nil),                // 10: com.wabenet.dodo.core.v1alpha4.Backdrop
 	(*empty.Empty)(nil),             // 11: google.protobuf.Empty
-	(*InputData)(nil),               // 12: com.wabenet.dodo.core.v1alpha3.InputData
-	(*PluginInfo)(nil),              // 13: com.wabenet.dodo.core.v1alpha3.PluginInfo
-	(*InitPluginResponse)(nil),      // 14: com.wabenet.dodo.core.v1alpha3.InitPluginResponse
-	(*OutputData)(nil),              // 15: com.wabenet.dodo.core.v1alpha3.OutputData
+	(*InputData)(nil),               // 12: com.wabenet.dodo.core.v1alpha4.InputData
+	(*PluginInfo)(nil),              // 13: com.wabenet.dodo.core.v1alpha4.PluginInfo
+	(*InitPluginResponse)(nil),      // 14: com.wabenet.dodo.core.v1alpha4.InitPluginResponse
+	(*OutputData)(nil),              // 15: com.wabenet.dodo.core.v1alpha4.OutputData
 }
-var file_api_v1alpha3_runtime_proto_depIdxs = []int32{
-	10, // 0: com.wabenet.dodo.core.v1alpha3.CreateContainerRequest.config:type_name -> com.wabenet.dodo.core.v1alpha3.Backdrop
-	11, // 1: com.wabenet.dodo.core.v1alpha3.RuntimePlugin.GetPluginInfo:input_type -> google.protobuf.Empty
-	11, // 2: com.wabenet.dodo.core.v1alpha3.RuntimePlugin.InitPlugin:input_type -> google.protobuf.Empty
-	12, // 3: com.wabenet.dodo.core.v1alpha3.RuntimePlugin.StreamRuntimeInput:input_type -> com.wabenet.dodo.core.v1alpha3.InputData
-	11, // 4: com.wabenet.dodo.core.v1alpha3.RuntimePlugin.StreamRuntimeOutput:input_type -> google.protobuf.Empty
-	2,  // 5: com.wabenet.dodo.core.v1alpha3.RuntimePlugin.CreateContainer:input_type -> com.wabenet.dodo.core.v1alpha3.CreateContainerRequest
-	3,  // 6: com.wabenet.dodo.core.v1alpha3.RuntimePlugin.DeleteContainer:input_type -> com.wabenet.dodo.core.v1alpha3.DeleteContainerRequest
-	4,  // 7: com.wabenet.dodo.core.v1alpha3.RuntimePlugin.StartContainer:input_type -> com.wabenet.dodo.core.v1alpha3.StartContainerRequest
-	6,  // 8: com.wabenet.dodo.core.v1alpha3.RuntimePlugin.StreamContainer:input_type -> com.wabenet.dodo.core.v1alpha3.StreamContainerRequest
-	5,  // 9: com.wabenet.dodo.core.v1alpha3.RuntimePlugin.ResizeContainer:input_type -> com.wabenet.dodo.core.v1alpha3.ResizeContainerRequest
-	7,  // 10: com.wabenet.dodo.core.v1alpha3.RuntimePlugin.KillContainer:input_type -> com.wabenet.dodo.core.v1alpha3.KillContainerRequest
-	1,  // 11: com.wabenet.dodo.core.v1alpha3.RuntimePlugin.GetImage:input_type -> com.wabenet.dodo.core.v1alpha3.GetImageRequest
-	13, // 12: com.wabenet.dodo.core.v1alpha3.RuntimePlugin.GetPluginInfo:output_type -> com.wabenet.dodo.core.v1alpha3.PluginInfo
-	14, // 13: com.wabenet.dodo.core.v1alpha3.RuntimePlugin.InitPlugin:output_type -> com.wabenet.dodo.core.v1alpha3.InitPluginResponse
-	11, // 14: com.wabenet.dodo.core.v1alpha3.RuntimePlugin.StreamRuntimeInput:output_type -> google.protobuf.Empty
-	15, // 15: com.wabenet.dodo.core.v1alpha3.RuntimePlugin.StreamRuntimeOutput:output_type -> com.wabenet.dodo.core.v1alpha3.OutputData
-	0,  // 16: com.wabenet.dodo.core.v1alpha3.RuntimePlugin.CreateContainer:output_type -> com.wabenet.dodo.core.v1alpha3.CreateContainerResponse
-	11, // 17: com.wabenet.dodo.core.v1alpha3.RuntimePlugin.DeleteContainer:output_type -> google.protobuf.Empty
-	11, // 18: com.wabenet.dodo.core.v1alpha3.RuntimePlugin.StartContainer:output_type -> google.protobuf.Empty
-	8,  // 19: com.wabenet.dodo.core.v1alpha3.RuntimePlugin.StreamContainer:output_type -> com.wabenet.dodo.core.v1alpha3.StreamContainerResponse
-	11, // 20: com.wabenet.dodo.core.v1alpha3.RuntimePlugin.ResizeContainer:output_type -> google.protobuf.Empty
-	11, // 21: com.wabenet.dodo.core.v1alpha3.RuntimePlugin.KillContainer:output_type -> google.protobuf.Empty
-	9,  // 22: com.wabenet.dodo.core.v1alpha3.RuntimePlugin.GetImage:output_type -> com.wabenet.dodo.core.v1alpha3.GetImageResponse
-	12, // [12:23] is the sub-list for method output_type
-	1,  // [1:12] is the sub-list for method input_type
+var file_api_v1alpha4_runtime_proto_depIdxs = []int32{
+	10, // 0: com.wabenet.dodo.core.v1alpha4.CreateContainerRequest.config:type_name -> com.wabenet.dodo.core.v1alpha4.Backdrop
+	11, // 1: com.wabenet.dodo.core.v1alpha4.RuntimePlugin.GetPluginInfo:input_type -> google.protobuf.Empty
+	11, // 2: com.wabenet.dodo.core.v1alpha4.RuntimePlugin.InitPlugin:input_type -> google.protobuf.Empty
+	11, // 3: com.wabenet.dodo.core.v1alpha4.RuntimePlugin.ResetPlugin:input_type -> google.protobuf.Empty
+	12, // 4: com.wabenet.dodo.core.v1alpha4.RuntimePlugin.StreamRuntimeInput:input_type -> com.wabenet.dodo.core.v1alpha4.InputData
+	11, // 5: com.wabenet.dodo.core.v1alpha4.RuntimePlugin.StreamRuntimeOutput:input_type -> google.protobuf.Empty
+	2,  // 6: com.wabenet.dodo.core.v1alpha4.RuntimePlugin.CreateContainer:input_type -> com.wabenet.dodo.core.v1alpha4.CreateContainerRequest
+	3,  // 7: com.wabenet.dodo.core.v1alpha4.RuntimePlugin.DeleteContainer:input_type -> com.wabenet.dodo.core.v1alpha4.DeleteContainerRequest
+	4,  // 8: com.wabenet.dodo.core.v1alpha4.RuntimePlugin.StartContainer:input_type -> com.wabenet.dodo.core.v1alpha4.StartContainerRequest
+	6,  // 9: com.wabenet.dodo.core.v1alpha4.RuntimePlugin.StreamContainer:input_type -> com.wabenet.dodo.core.v1alpha4.StreamContainerRequest
+	5,  // 10: com.wabenet.dodo.core.v1alpha4.RuntimePlugin.ResizeContainer:input_type -> com.wabenet.dodo.core.v1alpha4.ResizeContainerRequest
+	7,  // 11: com.wabenet.dodo.core.v1alpha4.RuntimePlugin.KillContainer:input_type -> com.wabenet.dodo.core.v1alpha4.KillContainerRequest
+	1,  // 12: com.wabenet.dodo.core.v1alpha4.RuntimePlugin.GetImage:input_type -> com.wabenet.dodo.core.v1alpha4.GetImageRequest
+	13, // 13: com.wabenet.dodo.core.v1alpha4.RuntimePlugin.GetPluginInfo:output_type -> com.wabenet.dodo.core.v1alpha4.PluginInfo
+	14, // 14: com.wabenet.dodo.core.v1alpha4.RuntimePlugin.InitPlugin:output_type -> com.wabenet.dodo.core.v1alpha4.InitPluginResponse
+	11, // 15: com.wabenet.dodo.core.v1alpha4.RuntimePlugin.ResetPlugin:output_type -> google.protobuf.Empty
+	11, // 16: com.wabenet.dodo.core.v1alpha4.RuntimePlugin.StreamRuntimeInput:output_type -> google.protobuf.Empty
+	15, // 17: com.wabenet.dodo.core.v1alpha4.RuntimePlugin.StreamRuntimeOutput:output_type -> com.wabenet.dodo.core.v1alpha4.OutputData
+	0,  // 18: com.wabenet.dodo.core.v1alpha4.RuntimePlugin.CreateContainer:output_type -> com.wabenet.dodo.core.v1alpha4.CreateContainerResponse
+	11, // 19: com.wabenet.dodo.core.v1alpha4.RuntimePlugin.DeleteContainer:output_type -> google.protobuf.Empty
+	11, // 20: com.wabenet.dodo.core.v1alpha4.RuntimePlugin.StartContainer:output_type -> google.protobuf.Empty
+	8,  // 21: com.wabenet.dodo.core.v1alpha4.RuntimePlugin.StreamContainer:output_type -> com.wabenet.dodo.core.v1alpha4.StreamContainerResponse
+	11, // 22: com.wabenet.dodo.core.v1alpha4.RuntimePlugin.ResizeContainer:output_type -> google.protobuf.Empty
+	11, // 23: com.wabenet.dodo.core.v1alpha4.RuntimePlugin.KillContainer:output_type -> google.protobuf.Empty
+	9,  // 24: com.wabenet.dodo.core.v1alpha4.RuntimePlugin.GetImage:output_type -> com.wabenet.dodo.core.v1alpha4.GetImageResponse
+	13, // [13:25] is the sub-list for method output_type
+	1,  // [1:13] is the sub-list for method input_type
 	1,  // [1:1] is the sub-list for extension type_name
 	1,  // [1:1] is the sub-list for extension extendee
 	0,  // [0:1] is the sub-list for field type_name
 }
 
-func init() { file_api_v1alpha3_runtime_proto_init() }
-func file_api_v1alpha3_runtime_proto_init() {
-	if File_api_v1alpha3_runtime_proto != nil {
+func init() { file_api_v1alpha4_runtime_proto_init() }
+func file_api_v1alpha4_runtime_proto_init() {
+	if File_api_v1alpha4_runtime_proto != nil {
 		return
 	}
-	file_api_v1alpha3_plugin_proto_init()
-	file_api_v1alpha3_backdrop_proto_init()
+	file_api_v1alpha4_plugin_proto_init()
+	file_api_v1alpha4_backdrop_proto_init()
 	if !protoimpl.UnsafeEnabled {
-		file_api_v1alpha3_runtime_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
+		file_api_v1alpha4_runtime_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*CreateContainerResponse); i {
 			case 0:
 				return &v.state
@@ -780,7 +786,7 @@ func file_api_v1alpha3_runtime_proto_init() {
 				return nil
 			}
 		}
-		file_api_v1alpha3_runtime_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
+		file_api_v1alpha4_runtime_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetImageRequest); i {
 			case 0:
 				return &v.state
@@ -792,7 +798,7 @@ func file_api_v1alpha3_runtime_proto_init() {
 				return nil
 			}
 		}
-		file_api_v1alpha3_runtime_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+		file_api_v1alpha4_runtime_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*CreateContainerRequest); i {
 			case 0:
 				return &v.state
@@ -804,7 +810,7 @@ func file_api_v1alpha3_runtime_proto_init() {
 				return nil
 			}
 		}
-		file_api_v1alpha3_runtime_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+		file_api_v1alpha4_runtime_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteContainerRequest); i {
 			case 0:
 				return &v.state
@@ -816,7 +822,7 @@ func file_api_v1alpha3_runtime_proto_init() {
 				return nil
 			}
 		}
-		file_api_v1alpha3_runtime_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+		file_api_v1alpha4_runtime_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*StartContainerRequest); i {
 			case 0:
 				return &v.state
@@ -828,7 +834,7 @@ func file_api_v1alpha3_runtime_proto_init() {
 				return nil
 			}
 		}
-		file_api_v1alpha3_runtime_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+		file_api_v1alpha4_runtime_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ResizeContainerRequest); i {
 			case 0:
 				return &v.state
@@ -840,7 +846,7 @@ func file_api_v1alpha3_runtime_proto_init() {
 				return nil
 			}
 		}
-		file_api_v1alpha3_runtime_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+		file_api_v1alpha4_runtime_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*StreamContainerRequest); i {
 			case 0:
 				return &v.state
@@ -852,7 +858,7 @@ func file_api_v1alpha3_runtime_proto_init() {
 				return nil
 			}
 		}
-		file_api_v1alpha3_runtime_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+		file_api_v1alpha4_runtime_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*KillContainerRequest); i {
 			case 0:
 				return &v.state
@@ -864,7 +870,7 @@ func file_api_v1alpha3_runtime_proto_init() {
 				return nil
 			}
 		}
-		file_api_v1alpha3_runtime_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+		file_api_v1alpha4_runtime_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*StreamContainerResponse); i {
 			case 0:
 				return &v.state
@@ -876,7 +882,7 @@ func file_api_v1alpha3_runtime_proto_init() {
 				return nil
 			}
 		}
-		file_api_v1alpha3_runtime_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+		file_api_v1alpha4_runtime_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetImageResponse); i {
 			case 0:
 				return &v.state
@@ -893,20 +899,20 @@ func file_api_v1alpha3_runtime_proto_init() {
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: file_api_v1alpha3_runtime_proto_rawDesc,
+			RawDescriptor: file_api_v1alpha4_runtime_proto_rawDesc,
 			NumEnums:      0,
 			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_api_v1alpha3_runtime_proto_goTypes,
-		DependencyIndexes: file_api_v1alpha3_runtime_proto_depIdxs,
-		MessageInfos:      file_api_v1alpha3_runtime_proto_msgTypes,
+		GoTypes:           file_api_v1alpha4_runtime_proto_goTypes,
+		DependencyIndexes: file_api_v1alpha4_runtime_proto_depIdxs,
+		MessageInfos:      file_api_v1alpha4_runtime_proto_msgTypes,
 	}.Build()
-	File_api_v1alpha3_runtime_proto = out.File
-	file_api_v1alpha3_runtime_proto_rawDesc = nil
-	file_api_v1alpha3_runtime_proto_goTypes = nil
-	file_api_v1alpha3_runtime_proto_depIdxs = nil
+	File_api_v1alpha4_runtime_proto = out.File
+	file_api_v1alpha4_runtime_proto_rawDesc = nil
+	file_api_v1alpha4_runtime_proto_goTypes = nil
+	file_api_v1alpha4_runtime_proto_depIdxs = nil
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -923,6 +929,7 @@ const _ = grpc.SupportPackageIsVersion6
 type RuntimePluginClient interface {
 	GetPluginInfo(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*PluginInfo, error)
 	InitPlugin(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*InitPluginResponse, error)
+	ResetPlugin(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error)
 	StreamRuntimeInput(ctx context.Context, opts ...grpc.CallOption) (RuntimePlugin_StreamRuntimeInputClient, error)
 	StreamRuntimeOutput(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (RuntimePlugin_StreamRuntimeOutputClient, error)
 	CreateContainer(ctx context.Context, in *CreateContainerRequest, opts ...grpc.CallOption) (*CreateContainerResponse, error)
@@ -944,7 +951,7 @@ func NewRuntimePluginClient(cc grpc.ClientConnInterface) RuntimePluginClient {
 
 func (c *runtimePluginClient) GetPluginInfo(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*PluginInfo, error) {
 	out := new(PluginInfo)
-	err := c.cc.Invoke(ctx, "/com.wabenet.dodo.core.v1alpha3.RuntimePlugin/GetPluginInfo", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/com.wabenet.dodo.core.v1alpha4.RuntimePlugin/GetPluginInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -953,7 +960,16 @@ func (c *runtimePluginClient) GetPluginInfo(ctx context.Context, in *empty.Empty
 
 func (c *runtimePluginClient) InitPlugin(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*InitPluginResponse, error) {
 	out := new(InitPluginResponse)
-	err := c.cc.Invoke(ctx, "/com.wabenet.dodo.core.v1alpha3.RuntimePlugin/InitPlugin", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/com.wabenet.dodo.core.v1alpha4.RuntimePlugin/InitPlugin", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimePluginClient) ResetPlugin(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/com.wabenet.dodo.core.v1alpha4.RuntimePlugin/ResetPlugin", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -961,7 +977,7 @@ func (c *runtimePluginClient) InitPlugin(ctx context.Context, in *empty.Empty, o
 }
 
 func (c *runtimePluginClient) StreamRuntimeInput(ctx context.Context, opts ...grpc.CallOption) (RuntimePlugin_StreamRuntimeInputClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_RuntimePlugin_serviceDesc.Streams[0], "/com.wabenet.dodo.core.v1alpha3.RuntimePlugin/StreamRuntimeInput", opts...)
+	stream, err := c.cc.NewStream(ctx, &_RuntimePlugin_serviceDesc.Streams[0], "/com.wabenet.dodo.core.v1alpha4.RuntimePlugin/StreamRuntimeInput", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -995,7 +1011,7 @@ func (x *runtimePluginStreamRuntimeInputClient) CloseAndRecv() (*empty.Empty, er
 }
 
 func (c *runtimePluginClient) StreamRuntimeOutput(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (RuntimePlugin_StreamRuntimeOutputClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_RuntimePlugin_serviceDesc.Streams[1], "/com.wabenet.dodo.core.v1alpha3.RuntimePlugin/StreamRuntimeOutput", opts...)
+	stream, err := c.cc.NewStream(ctx, &_RuntimePlugin_serviceDesc.Streams[1], "/com.wabenet.dodo.core.v1alpha4.RuntimePlugin/StreamRuntimeOutput", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1028,7 +1044,7 @@ func (x *runtimePluginStreamRuntimeOutputClient) Recv() (*OutputData, error) {
 
 func (c *runtimePluginClient) CreateContainer(ctx context.Context, in *CreateContainerRequest, opts ...grpc.CallOption) (*CreateContainerResponse, error) {
 	out := new(CreateContainerResponse)
-	err := c.cc.Invoke(ctx, "/com.wabenet.dodo.core.v1alpha3.RuntimePlugin/CreateContainer", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/com.wabenet.dodo.core.v1alpha4.RuntimePlugin/CreateContainer", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1037,7 +1053,7 @@ func (c *runtimePluginClient) CreateContainer(ctx context.Context, in *CreateCon
 
 func (c *runtimePluginClient) DeleteContainer(ctx context.Context, in *DeleteContainerRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := c.cc.Invoke(ctx, "/com.wabenet.dodo.core.v1alpha3.RuntimePlugin/DeleteContainer", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/com.wabenet.dodo.core.v1alpha4.RuntimePlugin/DeleteContainer", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1046,7 +1062,7 @@ func (c *runtimePluginClient) DeleteContainer(ctx context.Context, in *DeleteCon
 
 func (c *runtimePluginClient) StartContainer(ctx context.Context, in *StartContainerRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := c.cc.Invoke(ctx, "/com.wabenet.dodo.core.v1alpha3.RuntimePlugin/StartContainer", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/com.wabenet.dodo.core.v1alpha4.RuntimePlugin/StartContainer", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1055,7 +1071,7 @@ func (c *runtimePluginClient) StartContainer(ctx context.Context, in *StartConta
 
 func (c *runtimePluginClient) StreamContainer(ctx context.Context, in *StreamContainerRequest, opts ...grpc.CallOption) (*StreamContainerResponse, error) {
 	out := new(StreamContainerResponse)
-	err := c.cc.Invoke(ctx, "/com.wabenet.dodo.core.v1alpha3.RuntimePlugin/StreamContainer", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/com.wabenet.dodo.core.v1alpha4.RuntimePlugin/StreamContainer", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1064,7 +1080,7 @@ func (c *runtimePluginClient) StreamContainer(ctx context.Context, in *StreamCon
 
 func (c *runtimePluginClient) ResizeContainer(ctx context.Context, in *ResizeContainerRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := c.cc.Invoke(ctx, "/com.wabenet.dodo.core.v1alpha3.RuntimePlugin/ResizeContainer", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/com.wabenet.dodo.core.v1alpha4.RuntimePlugin/ResizeContainer", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1073,7 +1089,7 @@ func (c *runtimePluginClient) ResizeContainer(ctx context.Context, in *ResizeCon
 
 func (c *runtimePluginClient) KillContainer(ctx context.Context, in *KillContainerRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := c.cc.Invoke(ctx, "/com.wabenet.dodo.core.v1alpha3.RuntimePlugin/KillContainer", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/com.wabenet.dodo.core.v1alpha4.RuntimePlugin/KillContainer", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1082,7 +1098,7 @@ func (c *runtimePluginClient) KillContainer(ctx context.Context, in *KillContain
 
 func (c *runtimePluginClient) GetImage(ctx context.Context, in *GetImageRequest, opts ...grpc.CallOption) (*GetImageResponse, error) {
 	out := new(GetImageResponse)
-	err := c.cc.Invoke(ctx, "/com.wabenet.dodo.core.v1alpha3.RuntimePlugin/GetImage", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/com.wabenet.dodo.core.v1alpha4.RuntimePlugin/GetImage", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1093,6 +1109,7 @@ func (c *runtimePluginClient) GetImage(ctx context.Context, in *GetImageRequest,
 type RuntimePluginServer interface {
 	GetPluginInfo(context.Context, *empty.Empty) (*PluginInfo, error)
 	InitPlugin(context.Context, *empty.Empty) (*InitPluginResponse, error)
+	ResetPlugin(context.Context, *empty.Empty) (*empty.Empty, error)
 	StreamRuntimeInput(RuntimePlugin_StreamRuntimeInputServer) error
 	StreamRuntimeOutput(*empty.Empty, RuntimePlugin_StreamRuntimeOutputServer) error
 	CreateContainer(context.Context, *CreateContainerRequest) (*CreateContainerResponse, error)
@@ -1113,6 +1130,9 @@ func (*UnimplementedRuntimePluginServer) GetPluginInfo(context.Context, *empty.E
 }
 func (*UnimplementedRuntimePluginServer) InitPlugin(context.Context, *empty.Empty) (*InitPluginResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InitPlugin not implemented")
+}
+func (*UnimplementedRuntimePluginServer) ResetPlugin(context.Context, *empty.Empty) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ResetPlugin not implemented")
 }
 func (*UnimplementedRuntimePluginServer) StreamRuntimeInput(RuntimePlugin_StreamRuntimeInputServer) error {
 	return status.Errorf(codes.Unimplemented, "method StreamRuntimeInput not implemented")
@@ -1156,7 +1176,7 @@ func _RuntimePlugin_GetPluginInfo_Handler(srv interface{}, ctx context.Context, 
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/com.wabenet.dodo.core.v1alpha3.RuntimePlugin/GetPluginInfo",
+		FullMethod: "/com.wabenet.dodo.core.v1alpha4.RuntimePlugin/GetPluginInfo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RuntimePluginServer).GetPluginInfo(ctx, req.(*empty.Empty))
@@ -1174,10 +1194,28 @@ func _RuntimePlugin_InitPlugin_Handler(srv interface{}, ctx context.Context, dec
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/com.wabenet.dodo.core.v1alpha3.RuntimePlugin/InitPlugin",
+		FullMethod: "/com.wabenet.dodo.core.v1alpha4.RuntimePlugin/InitPlugin",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RuntimePluginServer).InitPlugin(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimePlugin_ResetPlugin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimePluginServer).ResetPlugin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/com.wabenet.dodo.core.v1alpha4.RuntimePlugin/ResetPlugin",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimePluginServer).ResetPlugin(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1239,7 +1277,7 @@ func _RuntimePlugin_CreateContainer_Handler(srv interface{}, ctx context.Context
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/com.wabenet.dodo.core.v1alpha3.RuntimePlugin/CreateContainer",
+		FullMethod: "/com.wabenet.dodo.core.v1alpha4.RuntimePlugin/CreateContainer",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RuntimePluginServer).CreateContainer(ctx, req.(*CreateContainerRequest))
@@ -1257,7 +1295,7 @@ func _RuntimePlugin_DeleteContainer_Handler(srv interface{}, ctx context.Context
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/com.wabenet.dodo.core.v1alpha3.RuntimePlugin/DeleteContainer",
+		FullMethod: "/com.wabenet.dodo.core.v1alpha4.RuntimePlugin/DeleteContainer",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RuntimePluginServer).DeleteContainer(ctx, req.(*DeleteContainerRequest))
@@ -1275,7 +1313,7 @@ func _RuntimePlugin_StartContainer_Handler(srv interface{}, ctx context.Context,
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/com.wabenet.dodo.core.v1alpha3.RuntimePlugin/StartContainer",
+		FullMethod: "/com.wabenet.dodo.core.v1alpha4.RuntimePlugin/StartContainer",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RuntimePluginServer).StartContainer(ctx, req.(*StartContainerRequest))
@@ -1293,7 +1331,7 @@ func _RuntimePlugin_StreamContainer_Handler(srv interface{}, ctx context.Context
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/com.wabenet.dodo.core.v1alpha3.RuntimePlugin/StreamContainer",
+		FullMethod: "/com.wabenet.dodo.core.v1alpha4.RuntimePlugin/StreamContainer",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RuntimePluginServer).StreamContainer(ctx, req.(*StreamContainerRequest))
@@ -1311,7 +1349,7 @@ func _RuntimePlugin_ResizeContainer_Handler(srv interface{}, ctx context.Context
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/com.wabenet.dodo.core.v1alpha3.RuntimePlugin/ResizeContainer",
+		FullMethod: "/com.wabenet.dodo.core.v1alpha4.RuntimePlugin/ResizeContainer",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RuntimePluginServer).ResizeContainer(ctx, req.(*ResizeContainerRequest))
@@ -1329,7 +1367,7 @@ func _RuntimePlugin_KillContainer_Handler(srv interface{}, ctx context.Context, 
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/com.wabenet.dodo.core.v1alpha3.RuntimePlugin/KillContainer",
+		FullMethod: "/com.wabenet.dodo.core.v1alpha4.RuntimePlugin/KillContainer",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RuntimePluginServer).KillContainer(ctx, req.(*KillContainerRequest))
@@ -1347,7 +1385,7 @@ func _RuntimePlugin_GetImage_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/com.wabenet.dodo.core.v1alpha3.RuntimePlugin/GetImage",
+		FullMethod: "/com.wabenet.dodo.core.v1alpha4.RuntimePlugin/GetImage",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RuntimePluginServer).GetImage(ctx, req.(*GetImageRequest))
@@ -1356,7 +1394,7 @@ func _RuntimePlugin_GetImage_Handler(srv interface{}, ctx context.Context, dec f
 }
 
 var _RuntimePlugin_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "com.wabenet.dodo.core.v1alpha3.RuntimePlugin",
+	ServiceName: "com.wabenet.dodo.core.v1alpha4.RuntimePlugin",
 	HandlerType: (*RuntimePluginServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -1366,6 +1404,10 @@ var _RuntimePlugin_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "InitPlugin",
 			Handler:    _RuntimePlugin_InitPlugin_Handler,
+		},
+		{
+			MethodName: "ResetPlugin",
+			Handler:    _RuntimePlugin_ResetPlugin_Handler,
 		},
 		{
 			MethodName: "CreateContainer",
@@ -1408,5 +1450,5 @@ var _RuntimePlugin_serviceDesc = grpc.ServiceDesc{
 			ServerStreams: true,
 		},
 	},
-	Metadata: "api/v1alpha3/runtime.proto",
+	Metadata: "api/v1alpha4/runtime.proto",
 }

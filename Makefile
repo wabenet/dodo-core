@@ -1,4 +1,4 @@
-all: v1alpha3 test lint
+all: v1alpha4 test lint
 
 .PHONY: fmt
 fmt:
@@ -16,8 +16,8 @@ lint:
 test:
 	go test -cover -race ./pkg/...
 
-.PHONY: v1alpha3
-v1alpha3: api/v1alpha3/plugin.pb.go api/v1alpha3/backdrop.pb.go api/v1alpha3/build.pb.go api/v1alpha3/configuration.pb.go api/v1alpha3/runtime.pb.go api/v1alpha3/builder.pb.go
+.PHONY: v1alpha4
+v1alpha4: api/v1alpha4/plugin.pb.go api/v1alpha4/backdrop.pb.go api/v1alpha4/build.pb.go api/v1alpha4/configuration.pb.go api/v1alpha4/runtime.pb.go api/v1alpha4/builder.pb.go
 
 %.pb.go: %.proto
 	protoc -I . --go_out=plugins=grpc:. --go_opt=module=github.com/wabenet/dodo-core $<

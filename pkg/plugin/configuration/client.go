@@ -5,7 +5,8 @@ import (
 	"fmt"
 
 	"github.com/golang/protobuf/ptypes/empty"
-	api "github.com/wabenet/dodo-core/api/v1alpha3"
+	log "github.com/hashicorp/go-hclog"
+	api "github.com/wabenet/dodo-core/api/v1alpha4"
 	"github.com/wabenet/dodo-core/pkg/plugin"
 )
 
@@ -42,6 +43,13 @@ func (c *client) Init() (plugin.PluginConfig, error) {
 	}
 
 	return resp.Config, nil
+}
+
+func (c *client) Cleanup() {
+	_, err := c.configClient.ResetPlugin(context.Background(), &empty.Empty{})
+	if err != nil {
+		log.L().Error("plugin reset error", "error", err)
+	}
 }
 
 func (c *client) ListBackdrops() ([]*api.Backdrop, error) {
