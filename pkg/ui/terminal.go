@@ -72,6 +72,10 @@ func (t *Terminal) handleSignal(s os.Signal) {
 	case syscall.SIGCHLD, syscall.SIGPIPE:
 		return
 
+	case syscall.SIGURG:
+		// These are used by Golang to preempt goroutines and should not be forwarded
+		return
+
 	case syscall.SIGWINCH:
 		t.refreshSize()
 	}

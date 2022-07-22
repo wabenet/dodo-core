@@ -2,6 +2,7 @@ package ioutil
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 )
@@ -65,6 +66,10 @@ func (c *CancelableReader) Read(p []byte) (int, error) {
 			copy(p, d)
 
 			return len(d), nil
+		}
+
+		if errors.Is(c.err, io.EOF) {
+			return 0, io.EOF
 		}
 
 		if c.err != nil {
