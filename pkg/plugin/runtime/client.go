@@ -1,7 +1,6 @@
 package runtime
 
 import (
-	"bufio"
 	"bytes"
 	"context"
 	"errors"
@@ -177,13 +176,12 @@ func (c *client) StreamContainer(id string, stream *plugin.StreamConfig) (*Resul
 }
 
 func streamInput(c api.RuntimePlugin_StreamRuntimeInputClient, stdin io.Reader) error {
-	bufsrc := bufio.NewReader(stdin)
 	data := api.InputData{}
 
 	for {
 		var b [1024]byte
 
-		n, err := bufsrc.Read(b[:])
+		n, err := stdin.Read(b[:])
 
 		if n > 0 {
 			data.Data = b[:n]

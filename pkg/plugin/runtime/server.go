@@ -263,22 +263,16 @@ func (s *server) StreamContainer(
 }
 
 func copyInput(dst io.Writer, src chan []byte) error {
-	bufdst := bufio.NewWriter(dst)
-
 	for data := range src {
 		if len(data) == 0 {
 			continue
 		}
 
-		if _, err := bufdst.Write(data); err != nil {
+		if _, err := dst.Write(data); err != nil {
 			log.L().Warn("error in stdio stream", "err", err)
 
 			break
 		}
-	}
-
-	if err := bufdst.Flush(); err != nil {
-		return fmt.Errorf("could not flush container input: %w", err)
 	}
 
 	return nil
