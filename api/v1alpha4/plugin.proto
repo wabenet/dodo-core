@@ -33,10 +33,3 @@ message OutputData {
   Channel channel = 1;
   bytes data = 2;
 }
-
-message GetStreamingConnectionRequest {
-}
-
-message GetStreamingConnectionResponse {
-  string url = 1;
-}

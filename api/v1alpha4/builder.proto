@@ -13,7 +13,7 @@ service BuilderPlugin {
   rpc InitPlugin(google.protobuf.Empty) returns (com.wabenet.dodo.core.v1alpha4.InitPluginResponse);
   rpc ResetPlugin(google.protobuf.Empty) returns (google.protobuf.Empty);
 
-  rpc StreamBuildOutput(google.protobuf.Empty) returns (stream com.wabenet.dodo.core.v1alpha4.OutputData);
+  rpc StreamOutput(google.protobuf.Empty) returns (stream com.wabenet.dodo.core.v1alpha4.OutputData);
 
   rpc CreateImage(CreateImageRequest) returns (CreateImageResponse);
 }

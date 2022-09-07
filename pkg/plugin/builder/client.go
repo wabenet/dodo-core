@@ -1,29 +1,29 @@
 package builder
 
 import (
-	"bytes"
 	"context"
-	"errors"
 	"fmt"
-	"io"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/hashicorp/go-hclog"
 	api "github.com/wabenet/dodo-core/api/v1alpha4"
+	"github.com/wabenet/dodo-core/pkg/grpcutil"
 	"github.com/wabenet/dodo-core/pkg/plugin"
 	"golang.org/x/sync/errgroup"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 var _ ImageBuilder = &client{}
 
 type client struct {
 	builderClient api.BuilderPluginClient
+	stdout        *grpcutil.StreamOutputClient
 }
 
 func NewGRPCClient(c api.BuilderPluginClient) ImageBuilder {
-	return &client{builderClient: c}
+	return &client{
+		builderClient: c,
+		stdout:        grpcutil.NewStreamOutputClient(),
+	}
 }
 
 func (c *client) Type() plugin.Type {
@@ -76,12 +76,16 @@ func (c *client) CreateImage(config *api.BuildInfo, stream *plugin.StreamConfig)
 	eg, _ := errgroup.WithContext(context.Background())
 
 	eg.Go(func() error {
-		stdioClient, err := c.builderClient.StreamBuildOutput(context.Background(), &empty.Empty{})
+		stdioClient, err := c.builderClient.StreamOutput(context.Background(), &empty.Empty{})
 		if err != nil {
 			return fmt.Errorf("could not stream build output: %w", err)
 		}
 
-		return streamOutput(stdioClient, stream.Stdout, stream.Stderr)
+		if err := c.stdout.StreamOutput(stdioClient, stream.Stdout, stream.Stderr); err != nil {
+			return fmt.Errorf("could not stream build output: %w", err)
+		}
+
+		return nil
 	})
 
 	eg.Go(func() error {
@@ -104,38 +108,4 @@ func (c *client) CreateImage(config *api.BuildInfo, stream *plugin.StreamConfig)
 	}
 
 	return imageID, nil
-}
-
-func streamOutput(c api.BuilderPlugin_StreamBuildOutputClient, stdout, stderr io.Writer) error {
-	for {
-		data, err := c.Recv()
-		if err != nil {
-			if errors.Is(err, io.EOF) ||
-				errors.Is(err, context.Canceled) ||
-				status.Code(err) == codes.Unavailable ||
-				status.Code(err) == codes.Canceled ||
-				status.Code(err) == codes.Unimplemented {
-				return nil
-			}
-
-			return fmt.Errorf("error receiving data: %w", err)
-		}
-
-		switch data.Channel {
-		case api.OutputData_STDOUT:
-			if _, err := io.Copy(stdout, bytes.NewReader(data.Data)); err != nil {
-				log.L().Error("failed to copy all bytes", "err", err)
-			}
-
-		case api.OutputData_STDERR:
-			if _, err := io.Copy(stderr, bytes.NewReader(data.Data)); err != nil {
-				log.L().Error("failed to copy all bytes", "err", err)
-			}
-
-		case api.OutputData_INVALID:
-			log.L().Warn("unknown channel, dropping", "channel", data.Channel)
-
-			continue
-		}
-	}
 }

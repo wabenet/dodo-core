@@ -1,30 +1,21 @@
 package runtime
 
 import (
-	"bufio"
 	"context"
-	"errors"
 	"fmt"
 	"io"
-	"sync"
 
 	"github.com/golang/protobuf/ptypes/empty"
-	log "github.com/hashicorp/go-hclog"
 	api "github.com/wabenet/dodo-core/api/v1alpha4"
+	"github.com/wabenet/dodo-core/pkg/grpcutil"
 	"github.com/wabenet/dodo-core/pkg/plugin"
 	"golang.org/x/sync/errgroup"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 type server struct {
-	impl        ContainerRuntime
-	stdinCh     chan []byte
-	stdoutCh    chan []byte
-	stderrCh    chan []byte
-	inputDone   chan error
-	outputDone  chan error
-	stdinCloser sync.Once
+	impl   ContainerRuntime
+	stdin  *grpcutil.StreamInputServer
+	stdout *grpcutil.StreamOutputServer
 }
 
 func NewGRPCServer(impl ContainerRuntime) api.RuntimePluginServer {
@@ -32,19 +23,8 @@ func NewGRPCServer(impl ContainerRuntime) api.RuntimePluginServer {
 }
 
 func (s *server) reset() {
-	s.stdinCh = make(chan []byte)
-	s.stdoutCh = make(chan []byte)
-	s.stderrCh = make(chan []byte)
-	s.inputDone = make(chan error, 1)
-	s.outputDone = make(chan error, 1)
-	s.stdinCloser = sync.Once{}
-}
-
-func (s *server) closeStdin() {
-	s.stdinCloser.Do(func() {
-		close(s.stdinCh)
-		s.inputDone <- nil
-	})
+	s.stdin = grpcutil.NewStreamInputServer()
+	s.stdout = grpcutil.NewStreamOutputServer()
 }
 
 func (s *server) GetPluginInfo(_ context.Context, _ *empty.Empty) (*api.PluginInfo, error) {
@@ -122,81 +102,20 @@ func (s *server) KillContainer(_ context.Context, request *api.KillContainerRequ
 	return &empty.Empty{}, nil
 }
 
-func (s *server) StreamRuntimeInput(srv api.RuntimePlugin_StreamRuntimeInputServer) error {
-	defer s.closeStdin()
-
-	for {
-		data, err := srv.Recv()
-		if err != nil {
-			if errors.Is(err, io.EOF) {
-				if err := srv.SendAndClose(&empty.Empty{}); err != nil {
-					return fmt.Errorf("could not close input stream: %w", err)
-				}
-
-				return nil
-			}
-
-			if errors.Is(err, context.Canceled) ||
-				status.Code(err) == codes.Unavailable ||
-				status.Code(err) == codes.Canceled ||
-				status.Code(err) == codes.Unimplemented {
-				return nil
-			}
-
-			log.L().Error("error receiving data", "err", err)
-
-			return fmt.Errorf("error receiving build input from clien: %w", err)
-		}
-
-		s.stdinCh <- data.Data
+func (s *server) StreamInput(srv api.RuntimePlugin_StreamInputServer) error {
+	if err := s.stdin.ReceiveFrom(srv); err != nil {
+		return fmt.Errorf("error during input stream: %w", err)
 	}
+
+	return nil
 }
 
-func (s *server) StreamRuntimeOutput(_ *empty.Empty, srv api.RuntimePlugin_StreamRuntimeOutputServer) error {
-	var data api.OutputData
-
-	defer func() {
-		s.outputDone <- nil
-	}()
-
-	for {
-		if s.stdoutCh == nil && s.stderrCh == nil {
-			return nil
-		}
-
-		select {
-		case d, ok := <-s.stdoutCh:
-			if !ok {
-				s.stdoutCh = nil
-
-				continue
-			}
-
-			data.Data = d
-			data.Channel = api.OutputData_STDOUT
-
-		case d, ok := <-s.stderrCh:
-			if !ok {
-				s.stderrCh = nil
-
-				continue
-			}
-
-			data.Data = d
-			data.Channel = api.OutputData_STDERR
-
-		case <-srv.Context().Done():
-			return nil
-		}
-
-		if len(data.Data) == 0 {
-			continue
-		}
-
-		if err := srv.Send(&data); err != nil {
-			return fmt.Errorf("error sending build output to client: %w", err)
-		}
+func (s *server) StreamOutput(_ *empty.Empty, srv api.RuntimePlugin_StreamOutputServer) error {
+	if err := s.stdout.SendTo(srv); err != nil {
+		return fmt.Errorf("error during output stream: %w", err)
 	}
+
+	return nil
 }
 
 func (s *server) StreamContainer(
@@ -212,32 +131,26 @@ func (s *server) StreamContainer(
 	eg, _ := errgroup.WithContext(context.Background())
 
 	eg.Go(func() error {
-		defer inWriter.Close()
+		if err := s.stdin.WriteTo(inWriter); err != nil {
+			return fmt.Errorf("error writing input stream: %w", err)
+		}
 
-		return copyInput(inWriter, s.stdinCh)
+		return nil
 	})
 
 	eg.Go(func() error {
-		return copyOutput(s.stdoutCh, outReader)
-	})
+		if err := s.stdout.ReadFrom(outReader, errReader); err != nil {
+			return fmt.Errorf("error reading output stream: %w", err)
+		}
 
-	eg.Go(func() error {
-		return copyOutput(s.stderrCh, errReader)
-	})
-
-	eg.Go(func() error {
-		return <-s.outputDone
-	})
-
-	eg.Go(func() error {
-		return <-s.inputDone
+		return nil
 	})
 
 	eg.Go(func() error {
 		defer outWriter.Close()
 		defer errWriter.Close()
 
-		defer s.closeStdin()
+		defer s.stdin.Close()
 
 		r, err := s.impl.StreamContainer(request.ContainerId, &plugin.StreamConfig{
 			Stdin:          inReader,
@@ -260,44 +173,4 @@ func (s *server) StreamContainer(
 	}
 
 	return resp, nil
-}
-
-func copyInput(dst io.Writer, src chan []byte) error {
-	for data := range src {
-		if len(data) == 0 {
-			continue
-		}
-
-		if _, err := dst.Write(data); err != nil {
-			log.L().Warn("error in stdio stream", "err", err)
-
-			break
-		}
-	}
-
-	return nil
-}
-
-func copyOutput(dst chan []byte, src io.Reader) error {
-	defer close(dst)
-
-	bufsrc := bufio.NewReader(src)
-
-	for {
-		var data [1024]byte
-
-		n, err := bufsrc.Read(data[:])
-
-		if n > 0 {
-			dst <- data[:n]
-		}
-
-		if err == io.EOF {
-			return nil
-		}
-
-		if err != nil {
-			return fmt.Errorf("error copying container output: %w", err)
-		}
-	}
 }

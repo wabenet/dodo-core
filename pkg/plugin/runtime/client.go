@@ -1,31 +1,33 @@
 package runtime
 
 import (
-	"bytes"
 	"context"
-	"errors"
 	"fmt"
-	"io"
 	"os"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/hashicorp/go-hclog"
 	api "github.com/wabenet/dodo-core/api/v1alpha4"
+	"github.com/wabenet/dodo-core/pkg/grpcutil"
 	"github.com/wabenet/dodo-core/pkg/ioutil"
 	"github.com/wabenet/dodo-core/pkg/plugin"
 	"golang.org/x/sync/errgroup"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 var _ ContainerRuntime = &client{}
 
 type client struct {
 	runtimeClient api.RuntimePluginClient
+	stdin         *grpcutil.StreamInputClient
+	stdout        *grpcutil.StreamOutputClient
 }
 
 func NewGRPCClient(c api.RuntimePluginClient) ContainerRuntime {
-	return &client{runtimeClient: c}
+	return &client{
+		runtimeClient: c,
+		stdin:         grpcutil.NewStreamInputClient(),
+		stdout:        grpcutil.NewStreamOutputClient(),
+	}
 }
 
 func (c *client) Type() plugin.Type {
@@ -134,21 +136,29 @@ func (c *client) StreamContainer(id string, stream *plugin.StreamConfig) (*Resul
 	inReader := ioutil.NewCancelableReader(inContext, stream.Stdin)
 
 	eg.Go(func() error {
-		inputClient, err := c.runtimeClient.StreamRuntimeInput(context.Background())
+		inputClient, err := c.runtimeClient.StreamInput(context.Background())
 		if err != nil {
 			return fmt.Errorf("could not stream runtime input: %w", err)
 		}
 
-		return streamInput(inputClient, inReader)
+		if err := c.stdin.StreamInput(inputClient, inReader); err != nil {
+			return fmt.Errorf("could not stream runtime input: %w", err)
+		}
+
+		return nil
 	})
 
 	eg.Go(func() error {
-		outputClient, err := c.runtimeClient.StreamRuntimeOutput(context.Background(), &empty.Empty{})
+		outputClient, err := c.runtimeClient.StreamOutput(context.Background(), &empty.Empty{})
 		if err != nil {
 			return fmt.Errorf("could not stream runtime output: %w", err)
 		}
 
-		return streamOutput(outputClient, stream.Stdout, stream.Stderr)
+		if err := c.stdout.StreamOutput(outputClient, stream.Stdout, stream.Stderr); err != nil {
+			return fmt.Errorf("could not stream runtime output: %w", err)
+		}
+
+		return nil
 	})
 
 	eg.Go(func() error {
@@ -173,67 +183,4 @@ func (c *client) StreamContainer(id string, stream *plugin.StreamConfig) (*Resul
 	}
 
 	return result, nil
-}
-
-func streamInput(c api.RuntimePlugin_StreamRuntimeInputClient, stdin io.Reader) error {
-	data := api.InputData{}
-
-	for {
-		var b [1024]byte
-
-		n, err := stdin.Read(b[:])
-
-		if n > 0 {
-			data.Data = b[:n]
-			if serr := c.Send(&data); err != nil {
-				return fmt.Errorf("could not send input to server: %w", serr)
-			}
-		}
-
-		if errors.Is(err, io.EOF) || errors.Is(err, context.Canceled) {
-			if _, serr := c.CloseAndRecv(); serr != nil {
-				log.L().Warn("could not close input stream", "err", serr)
-			}
-
-			return nil
-		}
-
-		if err != nil {
-			return fmt.Errorf("could not read stream from client: %w", err)
-		}
-	}
-}
-
-func streamOutput(c api.RuntimePlugin_StreamRuntimeOutputClient, stdout, stderr io.Writer) error {
-	for {
-		data, err := c.Recv()
-		if err != nil {
-			if errors.Is(err, io.EOF) ||
-				errors.Is(err, context.Canceled) ||
-				status.Code(err) == codes.Unavailable ||
-				status.Code(err) == codes.Canceled ||
-				status.Code(err) == codes.Unimplemented {
-				return nil
-			}
-
-			return fmt.Errorf("error receiving data: %w", err)
-		}
-
-		switch data.Channel {
-		case api.OutputData_STDOUT:
-			if _, err := io.Copy(stdout, bytes.NewReader(data.Data)); err != nil {
-				log.L().Error("failed to copy all bytes", "err", err)
-			}
-
-		case api.OutputData_STDERR:
-			if _, err := io.Copy(stderr, bytes.NewReader(data.Data)); err != nil {
-				log.L().Error("failed to copy all bytes", "err", err)
-			}
-
-		case api.OutputData_INVALID:
-			log.L().Warn("unknown channel, dropping", "channel", data.Channel)
-
-			continue
-		}
-	}
 }
