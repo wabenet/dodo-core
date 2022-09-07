@@ -3,6 +3,7 @@ package test
 import (
 	"context"
 	"fmt"
+	"log"
 	"net"
 
 	"github.com/hashicorp/go-plugin"
@@ -22,7 +23,9 @@ func GRPCWrapPlugin(t dodo.Type, p dodo.Plugin) (dodo.Plugin, func(), error) {
 	}
 
 	go func() {
-		s.Serve(lis)
+		if err := s.Serve(lis); err != nil {
+			log.Println(err.Error())
+		}
 	}()
 
 	conn, err := grpc.DialContext(
@@ -51,7 +54,7 @@ func GRPCWrapPlugin(t dodo.Type, p dodo.Plugin) (dodo.Plugin, func(), error) {
 	if _, err := c.Init(); err != nil {
 		conn.Close()
 
-		return nil, func() {}, err
+		return nil, func() {}, fmt.Errorf("could not init client: %w", err)
 	}
 
 	return c, func() {

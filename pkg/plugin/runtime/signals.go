@@ -5,6 +5,7 @@ import (
 	"syscall"
 )
 
+//nolint:gochecknoglobals
 var allSignals = map[string]syscall.Signal{
 	"ABRT":   syscall.SIGABRT,
 	"ALRM":   syscall.SIGALRM,

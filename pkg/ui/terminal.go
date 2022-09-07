@@ -13,6 +13,8 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
+const chanSize = 128
+
 type Terminal struct {
 	Stdin  io.Reader
 	Stdout io.Writer
@@ -34,7 +36,7 @@ func NewTerminal() *Terminal {
 
 		fd: os.Stdin.Fd(),
 
-		signalChannel: make(chan os.Signal, 128),
+		signalChannel: make(chan os.Signal, chanSize),
 		signalHook:    nil,
 	}
 }

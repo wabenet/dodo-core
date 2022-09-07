@@ -69,6 +69,7 @@ func ResolveDependencies(pluginMap map[string]map[string]Plugin) ([]Plugin, erro
 			return nil, CircularDependencyError{Dependencies: dependencies}
 		}
 
+		//nolint:forcetypeassert // we know that the map keys are of type dependency
 		for n := range withoutDeps.Iter() {
 			delete(dependencies, n.(dependency))
 			result = append(result, names[n.(dependency)])
