@@ -3,6 +3,7 @@ package runtime
 import (
 	"context"
 	"fmt"
+	"io"
 	"os"
 
 	"github.com/golang/protobuf/ptypes/empty"
@@ -28,6 +29,29 @@ func NewGRPCClient(c api.RuntimePluginClient) ContainerRuntime {
 		stdin:         grpcutil.NewStreamInputClient(),
 		stdout:        grpcutil.NewStreamOutputClient(),
 	}
+}
+
+type streamInputClient struct {
+	client api.RuntimePlugin_StreamInputClient
+}
+
+func (s *streamInputClient) Send(data *api.InputData) error {
+	if err := s.client.Send(&api.StreamInputRequest{
+		InputRequestType: &api.StreamInputRequest_InputData{InputData: data},
+	}); err != nil {
+		return fmt.Errorf("error wrapping Send call: %w", err)
+	}
+
+	return nil
+}
+
+func (s *streamInputClient) CloseAndRecv() (*empty.Empty, error) {
+	e, err := s.client.CloseAndRecv()
+	if err != nil {
+		return nil, fmt.Errorf("error wrapping CloseAndRecv call: %w", err)
+	}
+
+	return e, nil
 }
 
 func (c *client) Type() plugin.Type {
@@ -135,31 +159,8 @@ func (c *client) StreamContainer(id string, stream *plugin.StreamConfig) (*Resul
 	inContext, inCancel := context.WithCancel(context.Background())
 	inReader := ioutil.NewCancelableReader(inContext, stream.Stdin)
 
-	eg.Go(func() error {
-		inputClient, err := c.runtimeClient.StreamInput(context.Background())
-		if err != nil {
-			return fmt.Errorf("could not stream runtime input: %w", err)
-		}
-
-		if err := c.stdin.StreamInput(inputClient, inReader); err != nil {
-			return fmt.Errorf("could not stream runtime input: %w", err)
-		}
-
-		return nil
-	})
-
-	eg.Go(func() error {
-		outputClient, err := c.runtimeClient.StreamOutput(context.Background(), &empty.Empty{})
-		if err != nil {
-			return fmt.Errorf("could not stream runtime output: %w", err)
-		}
-
-		if err := c.stdout.StreamOutput(outputClient, stream.Stdout, stream.Stderr); err != nil {
-			return fmt.Errorf("could not stream runtime output: %w", err)
-		}
-
-		return nil
-	})
+	eg.Go(func() error { return c.copyInputClientToStdin(id, inReader) })
+	eg.Go(func() error { return c.copyOutputClientToStdout(id, stream.Stdout, stream.Stderr) })
 
 	eg.Go(func() error {
 		defer inCancel()
@@ -183,4 +184,41 @@ func (c *client) StreamContainer(id string, stream *plugin.StreamConfig) (*Resul
 	}
 
 	return result, nil
+}
+
+func (c *client) copyInputClientToStdin(containerID string, stdin io.Reader) error {
+	inputClient, err := c.runtimeClient.StreamInput(context.Background())
+	if err != nil {
+		return fmt.Errorf("could not stream runtime input: %w", err)
+	}
+
+	if err := inputClient.Send(&api.StreamInputRequest{
+		InputRequestType: &api.StreamInputRequest_InitialRequest{
+			InitialRequest: &api.InitialStreamInputRequest{ContainerId: containerID},
+		},
+	}); err != nil {
+		return fmt.Errorf("could not stream runtime input: %w", err)
+	}
+
+	if err := c.stdin.StreamInput(&streamInputClient{client: inputClient}, stdin); err != nil {
+		return fmt.Errorf("could not stream runtime input: %w", err)
+	}
+
+	return nil
+}
+
+func (c *client) copyOutputClientToStdout(containerID string, stdout, stderr io.Writer) error {
+	outputClient, err := c.runtimeClient.StreamOutput(
+		context.Background(),
+		&api.StreamOutputRequest{ContainerId: containerID},
+	)
+	if err != nil {
+		return fmt.Errorf("could not stream runtime output: %w", err)
+	}
+
+	if err := c.stdout.StreamOutput(outputClient, stdout, stderr); err != nil {
+		return fmt.Errorf("could not stream runtime output: %w", err)
+	}
+
+	return nil
 }
