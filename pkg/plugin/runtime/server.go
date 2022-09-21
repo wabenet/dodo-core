@@ -155,7 +155,7 @@ func (s *server) StreamInput(srv api.RuntimePlugin_StreamInputServer) error {
 		return fmt.Errorf("error during input stream: %w", err)
 	}
 
-	id := req.GetInitialRequest().ContainerId
+	id := req.GetInitialRequest().Id
 
 	inputServer, err := s.stdinServer(id)
 	if err != nil {
@@ -170,7 +170,7 @@ func (s *server) StreamInput(srv api.RuntimePlugin_StreamInputServer) error {
 }
 
 func (s *server) StreamOutput(request *api.StreamOutputRequest, srv api.RuntimePlugin_StreamOutputServer) error {
-	id := request.ContainerId
+	id := request.Id
 
 	outputServer, err := s.stdoutServer(id)
 	if err != nil {

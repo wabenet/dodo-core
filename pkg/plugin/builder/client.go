@@ -2,7 +2,10 @@ package builder
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/hex"
 	"fmt"
+	"io"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/hashicorp/go-hclog"
@@ -11,6 +14,8 @@ import (
 	"github.com/wabenet/dodo-core/pkg/plugin"
 	"golang.org/x/sync/errgroup"
 )
+
+const lenStreamID = 32
 
 var _ ImageBuilder = &client{}
 
@@ -72,27 +77,24 @@ func (c *client) CreateImage(config *api.BuildInfo, stream *plugin.StreamConfig)
 		return result.ImageId, nil
 	}
 
+	b := make([]byte, lenStreamID)
+	if _, err := rand.Read(b); err != nil {
+		return "", fmt.Errorf("could not generate stream id: %w", err)
+	}
+
+	streamID := hex.EncodeToString(b)
 	imageID := ""
+
 	eg, _ := errgroup.WithContext(context.Background())
 
-	eg.Go(func() error {
-		stdioClient, err := c.builderClient.StreamOutput(context.Background(), &empty.Empty{})
-		if err != nil {
-			return fmt.Errorf("could not stream build output: %w", err)
-		}
-
-		if err := c.stdout.StreamOutput(stdioClient, stream.Stdout, stream.Stderr); err != nil {
-			return fmt.Errorf("could not stream build output: %w", err)
-		}
-
-		return nil
-	})
+	eg.Go(func() error { return c.copyOutputClientToStdout(streamID, stream.Stdout, stream.Stderr) })
 
 	eg.Go(func() error {
 		result, err := c.builderClient.CreateImage(context.Background(), &api.CreateImageRequest{
-			Config: config,
-			Height: stream.TerminalHeight,
-			Width:  stream.TerminalWidth,
+			StreamId: streamID,
+			Config:   config,
+			Height:   stream.TerminalHeight,
+			Width:    stream.TerminalWidth,
 		})
 		if err != nil {
 			return fmt.Errorf("could not build image: %w", err)
@@ -108,4 +110,20 @@ func (c *client) CreateImage(config *api.BuildInfo, stream *plugin.StreamConfig)
 	}
 
 	return imageID, nil
+}
+
+func (c *client) copyOutputClientToStdout(streamID string, stdout, stderr io.Writer) error {
+	outputClient, err := c.builderClient.StreamOutput(
+		context.Background(),
+		&api.StreamOutputRequest{Id: streamID},
+	)
+	if err != nil {
+		return fmt.Errorf("could not stream runtime output: %w", err)
+	}
+
+	if err := c.stdout.StreamOutput(outputClient, stdout, stderr); err != nil {
+		return fmt.Errorf("could not stream runtime output: %w", err)
+	}
+
+	return nil
 }

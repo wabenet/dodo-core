@@ -33,3 +33,18 @@ message OutputData {
   Channel channel = 1;
   bytes data = 2;
 }
+
+message StreamInputRequest {
+  oneof input_request_type {
+    InitialStreamInputRequest initial_request = 1;
+    InputData input_data = 2;
+  }
+}
+
+message InitialStreamInputRequest {
+  string id = 1;
+}
+
+message StreamOutputRequest {
+  string id = 1;
+}

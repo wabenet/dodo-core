@@ -2,8 +2,10 @@ package builder
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
+	"sync"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	api "github.com/wabenet/dodo-core/api/v1alpha4"
@@ -12,9 +14,11 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
+var ErrUnexpectedMapType = errors.New("unexpected map type for stdio streaming server")
+
 type server struct {
 	impl   ImageBuilder
-	stdout *grpcutil.StreamOutputServer
+	stdout sync.Map
 }
 
 func NewGRPCServer(impl ImageBuilder) api.BuilderPluginServer {
@@ -22,7 +26,18 @@ func NewGRPCServer(impl ImageBuilder) api.BuilderPluginServer {
 }
 
 func (s *server) reset() {
-	s.stdout = grpcutil.NewStreamOutputServer()
+	s.stdout = sync.Map{}
+}
+
+func (s *server) stdoutServer(streamID string) (*grpcutil.StreamOutputServer, error) {
+	outputServer, _ := s.stdout.LoadOrStore(streamID, grpcutil.NewStreamOutputServer())
+
+	result, ok := outputServer.(*grpcutil.StreamOutputServer)
+	if !ok {
+		return nil, ErrUnexpectedMapType
+	}
+
+	return result, nil
 }
 
 func (s *server) GetPluginInfo(_ context.Context, _ *empty.Empty) (*api.PluginInfo, error) {
@@ -47,8 +62,15 @@ func (s *server) ResetPlugin(_ context.Context, _ *empty.Empty) (*empty.Empty, e
 	return &empty.Empty{}, nil
 }
 
-func (s *server) StreamOutput(_ *empty.Empty, srv api.BuilderPlugin_StreamOutputServer) error {
-	if err := s.stdout.SendTo(srv); err != nil {
+func (s *server) StreamOutput(request *api.StreamOutputRequest, srv api.BuilderPlugin_StreamOutputServer) error {
+	id := request.Id
+
+	outputServer, err := s.stdoutServer(id)
+	if err != nil {
+		return fmt.Errorf("could not find stream output server: %w", err)
+	}
+
+	if err := outputServer.SendTo(srv); err != nil {
 		return fmt.Errorf("error during output stream: %w", err)
 	}
 
@@ -72,15 +94,14 @@ func (s *server) CreateImage(_ context.Context, request *api.CreateImageRequest)
 	outReader, outWriter := io.Pipe()
 	errReader, errWriter := io.Pipe()
 
+	outputServer, err := s.stdoutServer(request.StreamId)
+	if err != nil {
+		return nil, fmt.Errorf("could not find stream output server: %w", err)
+	}
+
 	eg, _ := errgroup.WithContext(context.Background())
 
-	eg.Go(func() error {
-		if err := s.stdout.ReadFrom(outReader, errReader); err != nil {
-			return fmt.Errorf("error reading output stream: %w", err)
-		}
-
-		return nil
-	})
+	eg.Go(func() error { return copyOutputServerToStdout(outputServer, outReader, errReader) })
 
 	eg.Go(func() error {
 		defer outWriter.Close()
@@ -106,4 +127,12 @@ func (s *server) CreateImage(_ context.Context, request *api.CreateImageRequest)
 	}
 
 	return resp, nil
+}
+
+func copyOutputServerToStdout(outputServer *grpcutil.StreamOutputServer, stdout, stderr io.Reader) error {
+	if err := outputServer.ReadFrom(stdout, stderr); err != nil {
+		return fmt.Errorf("error reading output stream: %w", err)
+	}
+
+	return nil
 }

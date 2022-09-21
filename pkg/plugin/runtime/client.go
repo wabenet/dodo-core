@@ -194,7 +194,7 @@ func (c *client) copyInputClientToStdin(containerID string, stdin io.Reader) err
 
 	if err := inputClient.Send(&api.StreamInputRequest{
 		InputRequestType: &api.StreamInputRequest_InitialRequest{
-			InitialRequest: &api.InitialStreamInputRequest{ContainerId: containerID},
+			InitialRequest: &api.InitialStreamInputRequest{Id: containerID},
 		},
 	}); err != nil {
 		return fmt.Errorf("could not stream runtime input: %w", err)
@@ -210,7 +210,7 @@ func (c *client) copyInputClientToStdin(containerID string, stdin io.Reader) err
 func (c *client) copyOutputClientToStdout(containerID string, stdout, stderr io.Writer) error {
 	outputClient, err := c.runtimeClient.StreamOutput(
 		context.Background(),
-		&api.StreamOutputRequest{ContainerId: containerID},
+		&api.StreamOutputRequest{Id: containerID},
 	)
 	if err != nil {
 		return fmt.Errorf("could not stream runtime output: %w", err)

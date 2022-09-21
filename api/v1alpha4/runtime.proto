@@ -13,8 +13,8 @@ service RuntimePlugin {
   rpc InitPlugin(google.protobuf.Empty) returns (com.wabenet.dodo.core.v1alpha4.InitPluginResponse);
   rpc ResetPlugin(google.protobuf.Empty) returns (google.protobuf.Empty);
 
-  rpc StreamInput(stream StreamInputRequest) returns (google.protobuf.Empty);
-  rpc StreamOutput(StreamOutputRequest) returns (stream com.wabenet.dodo.core.v1alpha4.OutputData);
+  rpc StreamInput(stream com.wabenet.dodo.core.v1alpha4.StreamInputRequest) returns (google.protobuf.Empty);
+  rpc StreamOutput(com.wabenet.dodo.core.v1alpha4.StreamOutputRequest) returns (stream com.wabenet.dodo.core.v1alpha4.OutputData);
 
   rpc CreateContainer(CreateContainerRequest) returns (CreateContainerResponse);
   rpc DeleteContainer(DeleteContainerRequest) returns (google.protobuf.Empty);
@@ -72,19 +72,4 @@ message StreamContainerResponse {
 
 message GetImageResponse {
   string image_id = 1;
-}
-
-message StreamInputRequest {
-  oneof input_request_type {
-    InitialStreamInputRequest initial_request = 1;
-    com.wabenet.dodo.core.v1alpha4.InputData input_data = 2;
-  }
-}
-
-message InitialStreamInputRequest {
-  string container_id = 1;
-}
-
-message StreamOutputRequest {
-  string container_id = 1;
 }
