@@ -3,7 +3,7 @@ apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: dodo-core
-  description: Core components for the dodo plugin ecosystem
+  description: This repository contains the core components and plugin system for the dodo project.
 
 spec:
   type: library

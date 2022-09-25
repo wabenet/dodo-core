@@ -1,0 +1,13 @@
+# Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
+_commit: v0.1.0
+_src_path: https://github.com/wabenet/copier-dodo-plugin
+author_email: ole.claussen@wabenet.com
+author_name: Ole Claussen
+description: This repository contains the core components and plugin system for the
+    dodo project.
+go_version: '1.18'
+is_standalone: false
+lifecycle: production
+name: core
+use_protobuf: true
+

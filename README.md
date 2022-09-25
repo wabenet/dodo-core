@@ -1,11 +1,11 @@
-# dodo core library
+# dodo core plugin
 
 This repository contains the core components and plugin system for the dodo project.
 
 ## license & authors
 
 ```text
-Copyright 2021 Ole Claussen
+Copyright 2022 Ole Claussen
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

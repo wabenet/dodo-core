@@ -3,11 +3,13 @@ backdrops:
     image:
       steps: |
         FROM golang:1.18
-        RUN apt-get update && apt-get install -y git bash curl tree make libprotobuf-dev protobuf-compiler
+        RUN apt-get update && apt-get install -y git bash curl tree make
+        RUN apt-get install -y libprotobuf-dev protobuf-compiler
         RUN go install github.com/golang/protobuf/protoc-gen-go@latest
-        RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.46.2
+        RUN go install github.com/goreleaser/goreleaser@latest
+        RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.49.0
     volumes:
       - "{{ projectRoot }}:/build"
       - "{{ projectRoot }}/.cache:/go/pkg/mod"
-    working_dir: '/build/{{ projectPath }}'
-    script: make $@
+    working_dir: "/build/{{ projectPath }}"
+    script: exec make "$@"

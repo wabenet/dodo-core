@@ -1,11 +1,17 @@
-all: v1alpha4 test lint
+.PHONY: all
+all: clean test build lint
+
+.PHONY: clean
+clean:
+	rm -rf ./dist
 
 .PHONY: fmt
 fmt:
 	go fmt ./...
 
-.PHONY: tidy
-tidy:
+.PHONY: update
+update:
+	go list -f '{{if not (or .Main .Indirect)}}{{.Path}}{{end}}' -m all | xargs --no-run-if-empty go get
 	go mod tidy
 
 .PHONY: lint
@@ -13,11 +19,14 @@ lint:
 	golangci-lint run
 
 .PHONY: test
-test:
+test: api
 	go test -cover -race ./pkg/...
 
-.PHONY: v1alpha4
-v1alpha4: api/v1alpha4/plugin.pb.go api/v1alpha4/backdrop.pb.go api/v1alpha4/build.pb.go api/v1alpha4/configuration.pb.go api/v1alpha4/runtime.pb.go api/v1alpha4/builder.pb.go
+.PHONY: build
+build: api
+
+.PHONY: api
+build: $(shell ls api/**/*.proto | sed 's|\.proto|.pb.go|g' | xargs)
 
 %.pb.go: %.proto
 	protoc -I . --go_out=plugins=grpc:. --go_opt=module=github.com/wabenet/dodo-core $<
