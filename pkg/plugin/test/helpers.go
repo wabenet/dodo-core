@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/go-plugin"
 	dodo "github.com/wabenet/dodo-core/pkg/plugin"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/test/bufconn"
 )
 
@@ -38,7 +39,7 @@ func GRPCWrapPlugin(t dodo.Type, p dodo.Plugin) (dodo.Plugin, func(), error) {
 
 			return conn, nil
 		}),
-		grpc.WithInsecure(),
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	if err != nil {
 		return nil, func() {}, fmt.Errorf("could not connect to bufconn: %w", err)
