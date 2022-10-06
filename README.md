@@ -1,3 +1,9 @@
+![release](https://img.shields.io/github/v/release/wabenet/dodo-core?sort=semver)
+![build](https://img.shields.io/github/workflow/status/wabenet/dodo-core/CI?logo=github)
+![codecov](https://img.shields.io/codecov/c/github/wabenet/dodo-core?logo=codecov)
+![codeclimate](https://img.shields.io/codeclimate/maintainability/wabenet/dodo-core?logo=codeclimate)
+![license](https://img.shields.io/github/license/wabenet/dodo-core)
+
 # dodo core plugin
 
 This repository contains the core components and plugin system for the dodo project.
