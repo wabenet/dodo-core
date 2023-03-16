@@ -10,9 +10,7 @@ import (
 func TestResolveDependencies(t *testing.T) {
 	t.Parallel()
 
-	plugins, err := dodo.ResolveDependencies(populatePluginMap())
-	assert.Nil(t, err)
-
+	plugins := dodo.ResolveDependencies(populatePluginMap())
 	assert.Equal(t, 2, len(plugins))
 
 	resultA := plugins[0]

@@ -152,12 +152,7 @@ func PathByName(name string) string {
 func (m Manager) LoadPlugins() {
 	m.findPlugins()
 
-	ps, err := ResolveDependencies(m.plugins)
-	if err != nil {
-		log.L().Error("could not resolve plugin dependencies", "error", err)
-
-		return
-	}
+	ps := ResolveDependencies(m.plugins)
 
 	for _, p := range ps {
 		m.initPlugin(p)

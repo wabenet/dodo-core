@@ -32,7 +32,7 @@ func asDependency(name *core.PluginName) dependency {
 	return dependency{n: name.Name, t: name.Type}
 }
 
-func ResolveDependencies(pluginMap map[string]map[string]Plugin) ([]Plugin, error) {
+func ResolveDependencies(pluginMap map[string]map[string]Plugin) []Plugin {
 	result := []Plugin{}
 	names := make(map[dependency]Plugin)
 	dependencies := make(map[dependency]mapset.Set)
@@ -67,7 +67,14 @@ func ResolveDependencies(pluginMap map[string]map[string]Plugin) ([]Plugin, erro
 		}
 
 		if withoutDeps.Cardinality() == 0 {
-			return nil, CircularDependencyError{Dependencies: dependencies}
+			removed := []string{}
+			for dep := range dependencies {
+				removed = append(removed, fmt.Sprintf("%s/%s", dep.t, dep.n))
+			}
+
+			log.L().Warn("could not fully resolve dependencies, some plugins are automatically removed", "plugins", removed)
+
+			return result
 		}
 
 		//nolint:forcetypeassert // we know that the map keys are of type dependency
@@ -81,5 +88,5 @@ func ResolveDependencies(pluginMap map[string]map[string]Plugin) ([]Plugin, erro
 		}
 	}
 
-	return result, nil
+	return result
 }
