@@ -8,13 +8,13 @@ import (
 
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/hashicorp/go-hclog"
-	api "github.com/wabenet/dodo-core/api/v1alpha4"
+	core "github.com/wabenet/dodo-core/api/core/v1alpha5"
 )
 
 type StreamInputClient struct{}
 
 type grpcInputClient interface {
-	Send(*api.InputData) error
+	Send(*core.InputData) error
 	CloseAndRecv() (*empty.Empty, error)
 }
 
@@ -23,7 +23,7 @@ func NewStreamInputClient() *StreamInputClient {
 }
 
 func (*StreamInputClient) StreamInput(cl grpcInputClient, stdin io.Reader) error {
-	data := api.InputData{}
+	data := core.InputData{}
 
 	for {
 		var b [1024]byte

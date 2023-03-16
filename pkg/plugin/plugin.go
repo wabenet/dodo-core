@@ -10,7 +10,7 @@ import (
 
 	log "github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
-	api "github.com/wabenet/dodo-core/api/v1alpha4"
+	core "github.com/wabenet/dodo-core/api/core/v1alpha5"
 	"github.com/wabenet/dodo-core/pkg/config"
 )
 
@@ -22,7 +22,7 @@ const (
 )
 
 type Plugin interface {
-	PluginInfo() *api.PluginInfo
+	PluginInfo() *core.PluginInfo
 	Init() (PluginConfig, error)
 	Cleanup()
 
@@ -51,7 +51,7 @@ type Manager struct {
 }
 
 type NotFoundError struct {
-	Plugin *api.PluginName
+	Plugin *core.PluginName
 }
 
 func (e NotFoundError) Error() string {
@@ -63,7 +63,7 @@ func (e NotFoundError) Error() string {
 }
 
 type InvalidError struct {
-	Plugin  *api.PluginName
+	Plugin  *core.PluginName
 	Message string
 }
 
@@ -263,7 +263,7 @@ func loadGRPCPlugin(path, pluginType string, grpcPlugin plugin.Plugin) (Plugin, 
 	client.Kill()
 
 	return nil, InvalidError{
-		Plugin:  &api.PluginName{Type: pluginType, Name: path}, // TODO: name?
+		Plugin:  &core.PluginName{Type: pluginType, Name: path}, // TODO: name?
 		Message: "does not implement Plugin interface",
 	}
 }

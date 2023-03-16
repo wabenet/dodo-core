@@ -5,7 +5,7 @@ import (
 
 	log "github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-multierror"
-	api "github.com/wabenet/dodo-core/api/v1alpha4"
+	core "github.com/wabenet/dodo-core/api/core/v1alpha5"
 	"github.com/wabenet/dodo-core/pkg/plugin"
 )
 
@@ -41,10 +41,10 @@ func (e InvalidError) Error() string {
 	)
 }
 
-func AssembleBackdropConfig(m plugin.Manager, name string, overrides *api.Backdrop) (*api.Backdrop, error) {
+func AssembleBackdropConfig(m plugin.Manager, name string, overrides *core.Backdrop) (*core.Backdrop, error) {
 	var errs error
 
-	config := &api.Backdrop{Entrypoint: &api.Entrypoint{}}
+	config := &core.Backdrop{Entrypoint: &core.Entrypoint{}}
 	foundSomething := false
 
 	for n, p := range m.GetPlugins(Type.String()) {
@@ -74,7 +74,7 @@ func AssembleBackdropConfig(m plugin.Manager, name string, overrides *api.Backdr
 	return config, err
 }
 
-func FindBuildConfig(m plugin.Manager, name string, overrides *api.BuildInfo) (*api.BuildInfo, error) {
+func FindBuildConfig(m plugin.Manager, name string, overrides *core.BuildInfo) (*core.BuildInfo, error) {
 	var errs error
 
 	for n, p := range m.GetPlugins(Type.String()) {
@@ -89,7 +89,7 @@ func FindBuildConfig(m plugin.Manager, name string, overrides *api.BuildInfo) (*
 
 		for _, conf := range confs {
 			if conf.BuildInfo != nil && conf.BuildInfo.ImageName == name {
-				config := &api.BuildInfo{}
+				config := &core.BuildInfo{}
 				MergeBuildInfo(config, conf.BuildInfo)
 				MergeBuildInfo(config, overrides)
 
@@ -107,7 +107,7 @@ func FindBuildConfig(m plugin.Manager, name string, overrides *api.BuildInfo) (*
 	return nil, NotFoundError{Name: name, Reason: errs}
 }
 
-func MergeBackdrop(target, source *api.Backdrop) {
+func MergeBackdrop(target, source *core.Backdrop) {
 	if len(source.Name) > 0 {
 		target.Name = source.Name
 	}
@@ -168,7 +168,7 @@ func MergeBackdrop(target, source *api.Backdrop) {
 	}
 }
 
-func MergeBuildInfo(target, source *api.BuildInfo) {
+func MergeBuildInfo(target, source *core.BuildInfo) {
 	if len(source.Builder) > 0 {
 		target.Builder = source.Builder
 	}
@@ -208,7 +208,7 @@ func MergeBuildInfo(target, source *api.BuildInfo) {
 	target.Dependencies = append(target.Dependencies, source.Dependencies...)
 }
 
-func ValidateBackdrop(b *api.Backdrop) error {
+func ValidateBackdrop(b *core.Backdrop) error {
 	if b.ImageId == "" && b.BuildInfo == nil {
 		return InvalidError{Name: b.Name, Message: "neither image nor build configured"}
 	}
@@ -222,6 +222,6 @@ func ValidateBackdrop(b *api.Backdrop) error {
 	return nil
 }
 
-func ValidateBuildInfo(b *api.BuildInfo) error {
+func ValidateBuildInfo(b *core.BuildInfo) error {
 	return nil
 }

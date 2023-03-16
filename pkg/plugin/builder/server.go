@@ -8,7 +8,8 @@ import (
 	"sync"
 
 	"github.com/golang/protobuf/ptypes/empty"
-	api "github.com/wabenet/dodo-core/api/v1alpha4"
+	build "github.com/wabenet/dodo-core/api/build/v1alpha1"
+	core "github.com/wabenet/dodo-core/api/core/v1alpha5"
 	"github.com/wabenet/dodo-core/pkg/grpcutil"
 	"github.com/wabenet/dodo-core/pkg/plugin"
 	"golang.org/x/sync/errgroup"
@@ -21,7 +22,7 @@ type server struct {
 	stdout sync.Map
 }
 
-func NewGRPCServer(impl ImageBuilder) api.BuilderPluginServer {
+func NewGRPCServer(impl ImageBuilder) build.PluginServer {
 	return &server{impl: impl}
 }
 
@@ -40,11 +41,11 @@ func (s *server) stdoutServer(streamID string) (*grpcutil.StreamOutputServer, er
 	return result, nil
 }
 
-func (s *server) GetPluginInfo(_ context.Context, _ *empty.Empty) (*api.PluginInfo, error) {
+func (s *server) GetPluginInfo(_ context.Context, _ *empty.Empty) (*core.PluginInfo, error) {
 	return s.impl.PluginInfo(), nil
 }
 
-func (s *server) InitPlugin(_ context.Context, _ *empty.Empty) (*api.InitPluginResponse, error) {
+func (s *server) InitPlugin(_ context.Context, _ *empty.Empty) (*core.InitPluginResponse, error) {
 	s.reset()
 
 	config, err := s.impl.Init()
@@ -52,7 +53,7 @@ func (s *server) InitPlugin(_ context.Context, _ *empty.Empty) (*api.InitPluginR
 		return nil, fmt.Errorf("could not initialize plugin: %w", err)
 	}
 
-	return &api.InitPluginResponse{Config: config}, nil
+	return &core.InitPluginResponse{Config: config}, nil
 }
 
 func (s *server) ResetPlugin(_ context.Context, _ *empty.Empty) (*empty.Empty, error) {
@@ -62,7 +63,7 @@ func (s *server) ResetPlugin(_ context.Context, _ *empty.Empty) (*empty.Empty, e
 	return &empty.Empty{}, nil
 }
 
-func (s *server) StreamOutput(request *api.StreamOutputRequest, srv api.BuilderPlugin_StreamOutputServer) error {
+func (s *server) StreamOutput(request *core.StreamOutputRequest, srv build.Plugin_StreamOutputServer) error {
 	id := request.Id
 
 	outputServer, err := s.stdoutServer(id)
@@ -77,8 +78,8 @@ func (s *server) StreamOutput(request *api.StreamOutputRequest, srv api.BuilderP
 	return nil
 }
 
-func (s *server) CreateImage(_ context.Context, request *api.CreateImageRequest) (*api.CreateImageResponse, error) {
-	resp := &api.CreateImageResponse{}
+func (s *server) CreateImage(_ context.Context, request *build.CreateImageRequest) (*build.CreateImageResponse, error) {
+	resp := &build.CreateImageResponse{}
 
 	if request.Height == 0 && request.Width == 0 {
 		id, err := s.impl.CreateImage(request.Config, nil)

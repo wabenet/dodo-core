@@ -8,7 +8,8 @@ import (
 	"sync"
 
 	"github.com/golang/protobuf/ptypes/empty"
-	api "github.com/wabenet/dodo-core/api/v1alpha4"
+	core "github.com/wabenet/dodo-core/api/core/v1alpha5"
+	runtime "github.com/wabenet/dodo-core/api/runtime/v1alpha1"
 	"github.com/wabenet/dodo-core/pkg/grpcutil"
 	"github.com/wabenet/dodo-core/pkg/plugin"
 	"golang.org/x/sync/errgroup"
@@ -22,7 +23,7 @@ type server struct {
 	stdout sync.Map
 }
 
-func NewGRPCServer(impl ContainerRuntime) api.RuntimePluginServer {
+func NewGRPCServer(impl ContainerRuntime) runtime.PluginServer {
 	return &server{impl: impl}
 }
 
@@ -54,10 +55,10 @@ func (s *server) stdoutServer(containerID string) (*grpcutil.StreamOutputServer,
 }
 
 type streamInputServer struct {
-	server api.RuntimePlugin_StreamInputServer
+	server runtime.Plugin_StreamInputServer
 }
 
-func (s *streamInputServer) Recv() (*api.InputData, error) {
+func (s *streamInputServer) Recv() (*core.InputData, error) {
 	d, err := s.server.Recv()
 	if err != nil {
 		return nil, fmt.Errorf("error wrapping Recv call: %w", err)
@@ -74,11 +75,11 @@ func (s *streamInputServer) SendAndClose(e *empty.Empty) error {
 	return nil
 }
 
-func (s *server) GetPluginInfo(_ context.Context, _ *empty.Empty) (*api.PluginInfo, error) {
+func (s *server) GetPluginInfo(_ context.Context, _ *empty.Empty) (*core.PluginInfo, error) {
 	return s.impl.PluginInfo(), nil
 }
 
-func (s *server) InitPlugin(_ context.Context, _ *empty.Empty) (*api.InitPluginResponse, error) {
+func (s *server) InitPlugin(_ context.Context, _ *empty.Empty) (*core.InitPluginResponse, error) {
 	s.reset()
 
 	config, err := s.impl.Init()
@@ -86,7 +87,7 @@ func (s *server) InitPlugin(_ context.Context, _ *empty.Empty) (*api.InitPluginR
 		return nil, fmt.Errorf("could not initialize plugin: %w", err)
 	}
 
-	return &api.InitPluginResponse{Config: config}, nil
+	return &core.InitPluginResponse{Config: config}, nil
 }
 
 func (s *server) ResetPlugin(_ context.Context, _ *empty.Empty) (*empty.Empty, error) {
@@ -96,28 +97,28 @@ func (s *server) ResetPlugin(_ context.Context, _ *empty.Empty) (*empty.Empty, e
 	return &empty.Empty{}, nil
 }
 
-func (s *server) GetImage(_ context.Context, request *api.GetImageRequest) (*api.GetImageResponse, error) {
+func (s *server) GetImage(_ context.Context, request *runtime.GetImageRequest) (*runtime.GetImageResponse, error) {
 	id, err := s.impl.ResolveImage(request.ImageSpec)
 	if err != nil {
 		return nil, fmt.Errorf("could not resolve image: %w", err)
 	}
 
-	return &api.GetImageResponse{ImageId: id}, nil
+	return &runtime.GetImageResponse{ImageId: id}, nil
 }
 
 func (s *server) CreateContainer(
 	_ context.Context,
-	config *api.CreateContainerRequest,
-) (*api.CreateContainerResponse, error) {
+	config *runtime.CreateContainerRequest,
+) (*runtime.CreateContainerResponse, error) {
 	id, err := s.impl.CreateContainer(config.Config, config.Tty, config.Stdio)
 	if err != nil {
 		return nil, fmt.Errorf("could not create container: %w", err)
 	}
 
-	return &api.CreateContainerResponse{ContainerId: id}, nil
+	return &runtime.CreateContainerResponse{ContainerId: id}, nil
 }
 
-func (s *server) StartContainer(_ context.Context, request *api.StartContainerRequest) (*empty.Empty, error) {
+func (s *server) StartContainer(_ context.Context, request *runtime.StartContainerRequest) (*empty.Empty, error) {
 	if err := s.impl.StartContainer(request.ContainerId); err != nil {
 		return nil, fmt.Errorf("could not start container: %w", err)
 	}
@@ -125,7 +126,7 @@ func (s *server) StartContainer(_ context.Context, request *api.StartContainerRe
 	return &empty.Empty{}, nil
 }
 
-func (s *server) DeleteContainer(_ context.Context, request *api.DeleteContainerRequest) (*empty.Empty, error) {
+func (s *server) DeleteContainer(_ context.Context, request *runtime.DeleteContainerRequest) (*empty.Empty, error) {
 	if err := s.impl.DeleteContainer(request.ContainerId); err != nil {
 		return nil, fmt.Errorf("could not delete container: %w", err)
 	}
@@ -133,7 +134,7 @@ func (s *server) DeleteContainer(_ context.Context, request *api.DeleteContainer
 	return &empty.Empty{}, nil
 }
 
-func (s *server) ResizeContainer(_ context.Context, request *api.ResizeContainerRequest) (*empty.Empty, error) {
+func (s *server) ResizeContainer(_ context.Context, request *runtime.ResizeContainerRequest) (*empty.Empty, error) {
 	if err := s.impl.ResizeContainer(request.ContainerId, request.Height, request.Width); err != nil {
 		return nil, fmt.Errorf("could not resize container: %w", err)
 	}
@@ -141,7 +142,7 @@ func (s *server) ResizeContainer(_ context.Context, request *api.ResizeContainer
 	return &empty.Empty{}, nil
 }
 
-func (s *server) KillContainer(_ context.Context, request *api.KillContainerRequest) (*empty.Empty, error) {
+func (s *server) KillContainer(_ context.Context, request *runtime.KillContainerRequest) (*empty.Empty, error) {
 	if err := s.impl.KillContainer(request.ContainerId, signalFromString(request.Signal)); err != nil {
 		return nil, fmt.Errorf("could not kill container: %w", err)
 	}
@@ -149,7 +150,7 @@ func (s *server) KillContainer(_ context.Context, request *api.KillContainerRequ
 	return &empty.Empty{}, nil
 }
 
-func (s *server) StreamInput(srv api.RuntimePlugin_StreamInputServer) error {
+func (s *server) StreamInput(srv runtime.Plugin_StreamInputServer) error {
 	req, err := srv.Recv()
 	if err != nil {
 		return fmt.Errorf("error during input stream: %w", err)
@@ -169,7 +170,7 @@ func (s *server) StreamInput(srv api.RuntimePlugin_StreamInputServer) error {
 	return nil
 }
 
-func (s *server) StreamOutput(request *api.StreamOutputRequest, srv api.RuntimePlugin_StreamOutputServer) error {
+func (s *server) StreamOutput(request *core.StreamOutputRequest, srv runtime.Plugin_StreamOutputServer) error {
 	id := request.Id
 
 	outputServer, err := s.stdoutServer(id)
@@ -186,9 +187,9 @@ func (s *server) StreamOutput(request *api.StreamOutputRequest, srv api.RuntimeP
 
 func (s *server) StreamContainer(
 	_ context.Context,
-	request *api.StreamContainerRequest,
-) (*api.StreamContainerResponse, error) {
-	resp := &api.StreamContainerResponse{}
+	request *runtime.StreamContainerRequest,
+) (*runtime.StreamContainerResponse, error) {
+	resp := &runtime.StreamContainerResponse{}
 
 	inReader, inWriter := io.Pipe()
 	outReader, outWriter := io.Pipe()

@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	api "github.com/wabenet/dodo-core/api/v1alpha4"
+	core "github.com/wabenet/dodo-core/api/core/v1alpha5"
 	dodo "github.com/wabenet/dodo-core/pkg/plugin"
 	"github.com/wabenet/dodo-core/pkg/plugin/builder"
 	plugintest "github.com/wabenet/dodo-core/pkg/plugin/test"
@@ -26,7 +26,7 @@ func TestCreateImage(t *testing.T) {
 	stderr := new(bytes.Buffer)
 
 	imageID, err := b.CreateImage(
-		&api.BuildInfo{ImageName: "testimage"},
+		&core.BuildInfo{ImageName: "testimage"},
 		&dodo.StreamConfig{
 			Stdout: stdout, Stderr: stderr,
 			TerminalHeight: 1, TerminalWidth: 1,

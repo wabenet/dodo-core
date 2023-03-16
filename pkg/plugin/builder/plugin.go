@@ -4,7 +4,8 @@ import (
 	"context"
 
 	"github.com/hashicorp/go-plugin"
-	api "github.com/wabenet/dodo-core/api/v1alpha4"
+	build "github.com/wabenet/dodo-core/api/build/v1alpha1"
+	core "github.com/wabenet/dodo-core/api/core/v1alpha5"
 	dodo "github.com/wabenet/dodo-core/pkg/plugin"
 	"google.golang.org/grpc"
 )
@@ -36,7 +37,7 @@ func (t pluginType) GRPCServer(p dodo.Plugin) (plugin.Plugin, error) {
 type ImageBuilder interface {
 	dodo.Plugin
 
-	CreateImage(*api.BuildInfo, *dodo.StreamConfig) (string, error)
+	CreateImage(*core.BuildInfo, *dodo.StreamConfig) (string, error)
 }
 
 type grpcPlugin struct {
@@ -45,11 +46,11 @@ type grpcPlugin struct {
 }
 
 func (p *grpcPlugin) GRPCClient(_ context.Context, _ *plugin.GRPCBroker, conn *grpc.ClientConn) (interface{}, error) {
-	return &client{builderClient: api.NewBuilderPluginClient(conn)}, nil
+	return &client{builderClient: build.NewPluginClient(conn)}, nil
 }
 
 func (p *grpcPlugin) GRPCServer(_ *plugin.GRPCBroker, s *grpc.Server) error {
-	api.RegisterBuilderPluginServer(s, NewGRPCServer(p.Impl))
+	build.RegisterPluginServer(s, NewGRPCServer(p.Impl))
 
 	return nil
 }

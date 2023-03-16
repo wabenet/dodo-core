@@ -8,7 +8,7 @@ import (
 	"io"
 
 	log "github.com/hashicorp/go-hclog"
-	api "github.com/wabenet/dodo-core/api/v1alpha4"
+	core "github.com/wabenet/dodo-core/api/core/v1alpha5"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -16,7 +16,7 @@ import (
 type StreamOutputClient struct{}
 
 type grpcOutputClient interface {
-	Recv() (*api.OutputData, error)
+	Recv() (*core.OutputData, error)
 }
 
 func NewStreamOutputClient() *StreamOutputClient {
@@ -39,17 +39,17 @@ func (*StreamOutputClient) StreamOutput(cl grpcOutputClient, stdout, stderr io.W
 		}
 
 		switch data.Channel {
-		case api.OutputData_STDOUT:
+		case core.OutputData_STDOUT:
 			if _, err := io.Copy(stdout, bytes.NewReader(data.Data)); err != nil {
 				log.L().Error("failed to copy all bytes", "err", err)
 			}
 
-		case api.OutputData_STDERR:
+		case core.OutputData_STDERR:
 			if _, err := io.Copy(stderr, bytes.NewReader(data.Data)); err != nil {
 				log.L().Error("failed to copy all bytes", "err", err)
 			}
 
-		case api.OutputData_INVALID:
+		case core.OutputData_INVALID:
 			log.L().Warn("unknown channel, dropping", "channel", data.Channel)
 
 			continue

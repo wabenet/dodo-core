@@ -5,7 +5,8 @@ import (
 	"os"
 
 	"github.com/hashicorp/go-plugin"
-	api "github.com/wabenet/dodo-core/api/v1alpha4"
+	core "github.com/wabenet/dodo-core/api/core/v1alpha5"
+	runtime "github.com/wabenet/dodo-core/api/runtime/v1alpha1"
 	dodo "github.com/wabenet/dodo-core/pkg/plugin"
 	"google.golang.org/grpc"
 )
@@ -38,7 +39,7 @@ type ContainerRuntime interface {
 	dodo.Plugin
 
 	ResolveImage(string) (string, error)
-	CreateContainer(*api.Backdrop, bool, bool) (string, error)
+	CreateContainer(*core.Backdrop, bool, bool) (string, error)
 	StartContainer(string) error
 	DeleteContainer(string) error
 	ResizeContainer(string, uint32, uint32) error
@@ -56,11 +57,11 @@ type grpcPlugin struct {
 }
 
 func (p *grpcPlugin) GRPCClient(_ context.Context, _ *plugin.GRPCBroker, conn *grpc.ClientConn) (interface{}, error) {
-	return &client{runtimeClient: api.NewRuntimePluginClient(conn)}, nil
+	return &client{runtimeClient: runtime.NewPluginClient(conn)}, nil
 }
 
 func (p *grpcPlugin) GRPCServer(_ *plugin.GRPCBroker, s *grpc.Server) error {
-	api.RegisterRuntimePluginServer(s, NewGRPCServer(p.Impl))
+	runtime.RegisterPluginServer(s, NewGRPCServer(p.Impl))
 
 	return nil
 }

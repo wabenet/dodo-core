@@ -4,7 +4,7 @@ import (
 	"io"
 	"os"
 
-	api "github.com/wabenet/dodo-core/api/v1alpha4"
+	core "github.com/wabenet/dodo-core/api/core/v1alpha5"
 	dodo "github.com/wabenet/dodo-core/pkg/plugin"
 	"github.com/wabenet/dodo-core/pkg/plugin/runtime"
 )
@@ -17,9 +17,9 @@ func (r *DummyRuntime) Type() dodo.Type {
 	return runtime.Type
 }
 
-func (r *DummyRuntime) PluginInfo() *api.PluginInfo {
-	return &api.PluginInfo{
-		Name: &api.PluginName{Type: runtime.Type.String(), Name: "dummy"},
+func (r *DummyRuntime) PluginInfo() *core.PluginInfo {
+	return &core.PluginInfo{
+		Name: &core.PluginName{Type: runtime.Type.String(), Name: "dummy"},
 	}
 }
 
@@ -33,7 +33,7 @@ func (r *DummyRuntime) ResolveImage(_ string) (string, error) {
 	return "", nil
 }
 
-func (r *DummyRuntime) CreateContainer(_ *api.Backdrop, _, _ bool) (string, error) {
+func (r *DummyRuntime) CreateContainer(_ *core.Backdrop, _, _ bool) (string, error) {
 	return "", nil
 }
 
@@ -67,9 +67,9 @@ func (r *ErrorRuntime) Type() dodo.Type {
 	return runtime.Type
 }
 
-func (r *ErrorRuntime) PluginInfo() *api.PluginInfo {
-	return &api.PluginInfo{
-		Name: &api.PluginName{Type: runtime.Type.String(), Name: "error"},
+func (r *ErrorRuntime) PluginInfo() *core.PluginInfo {
+	return &core.PluginInfo{
+		Name: &core.PluginName{Type: runtime.Type.String(), Name: "error"},
 	}
 }
 
@@ -83,7 +83,7 @@ func (r *ErrorRuntime) ResolveImage(_ string) (string, error) {
 	return "", nil
 }
 
-func (r *ErrorRuntime) CreateContainer(_ *api.Backdrop, _, _ bool) (string, error) {
+func (r *ErrorRuntime) CreateContainer(_ *core.Backdrop, _, _ bool) (string, error) {
 	return "", nil
 }
 
@@ -118,9 +118,9 @@ func (r *EchoRuntime) Type() dodo.Type {
 	return runtime.Type
 }
 
-func (r *EchoRuntime) PluginInfo() *api.PluginInfo {
-	return &api.PluginInfo{
-		Name: &api.PluginName{Type: runtime.Type.String(), Name: "echo"},
+func (r *EchoRuntime) PluginInfo() *core.PluginInfo {
+	return &core.PluginInfo{
+		Name: &core.PluginName{Type: runtime.Type.String(), Name: "echo"},
 	}
 }
 
@@ -134,7 +134,7 @@ func (r *EchoRuntime) ResolveImage(_ string) (string, error) {
 	return "", nil
 }
 
-func (r *EchoRuntime) CreateContainer(_ *api.Backdrop, _, _ bool) (string, error) {
+func (r *EchoRuntime) CreateContainer(_ *core.Backdrop, _, _ bool) (string, error) {
 	return "", nil
 }
 

@@ -4,7 +4,8 @@ import (
 	"context"
 
 	"github.com/hashicorp/go-plugin"
-	api "github.com/wabenet/dodo-core/api/v1alpha4"
+	configuration "github.com/wabenet/dodo-core/api/configuration/v1alpha1"
+	core "github.com/wabenet/dodo-core/api/core/v1alpha5"
 	dodo "github.com/wabenet/dodo-core/pkg/plugin"
 	"google.golang.org/grpc"
 )
@@ -36,8 +37,8 @@ func (t pluginType) GRPCServer(p dodo.Plugin) (plugin.Plugin, error) {
 type Configuration interface {
 	dodo.Plugin
 
-	ListBackdrops() ([]*api.Backdrop, error)
-	GetBackdrop(string) (*api.Backdrop, error)
+	ListBackdrops() ([]*core.Backdrop, error)
+	GetBackdrop(string) (*core.Backdrop, error)
 }
 
 type grpcPlugin struct {
@@ -46,11 +47,11 @@ type grpcPlugin struct {
 }
 
 func (p *grpcPlugin) GRPCClient(_ context.Context, _ *plugin.GRPCBroker, conn *grpc.ClientConn) (interface{}, error) {
-	return &client{configClient: api.NewConfigurationPluginClient(conn)}, nil
+	return &client{configClient: configuration.NewPluginClient(conn)}, nil
 }
 
 func (p *grpcPlugin) GRPCServer(_ *plugin.GRPCBroker, s *grpc.Server) error {
-	api.RegisterConfigurationPluginServer(s, NewGRPCServer(p.Impl))
+	configuration.RegisterPluginServer(s, NewGRPCServer(p.Impl))
 
 	return nil
 }

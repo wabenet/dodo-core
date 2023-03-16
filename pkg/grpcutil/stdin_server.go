@@ -9,7 +9,7 @@ import (
 
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/hashicorp/go-hclog"
-	api "github.com/wabenet/dodo-core/api/v1alpha4"
+	core "github.com/wabenet/dodo-core/api/core/v1alpha5"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -22,7 +22,7 @@ type StreamInputServer struct {
 }
 
 type grpcInputServer interface {
-	Recv() (*api.InputData, error)
+	Recv() (*core.InputData, error)
 	SendAndClose(*empty.Empty) error
 }
 

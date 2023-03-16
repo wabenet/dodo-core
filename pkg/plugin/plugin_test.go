@@ -2,7 +2,7 @@ package plugin_test
 
 import (
 	"github.com/hashicorp/go-plugin"
-	api "github.com/wabenet/dodo-core/api/v1alpha4"
+	core "github.com/wabenet/dodo-core/api/core/v1alpha5"
 	dodo "github.com/wabenet/dodo-core/pkg/plugin"
 )
 
@@ -44,9 +44,9 @@ func (typeB) GRPCServer(p dodo.Plugin) (plugin.Plugin, error) {
 	return nil, dodo.InvalidError{}
 }
 
-func (p pluginA) PluginInfo() *api.PluginInfo {
-	return &api.PluginInfo{
-		Name: &api.PluginName{
+func (p pluginA) PluginInfo() *core.PluginInfo {
+	return &core.PluginInfo{
+		Name: &core.PluginName{
 			Name: string(p),
 			Type: p.Type().String(),
 		},
@@ -63,13 +63,13 @@ func (pluginA) Type() dodo.Type {
 	return typeAImpl
 }
 
-func (p pluginB) PluginInfo() *api.PluginInfo {
-	return &api.PluginInfo{
-		Name: &api.PluginName{
+func (p pluginB) PluginInfo() *core.PluginInfo {
+	return &core.PluginInfo{
+		Name: &core.PluginName{
 			Name: string(p),
 			Type: p.Type().String(),
 		},
-		Dependencies: []*api.PluginName{
+		Dependencies: []*core.PluginName{
 			pluginAImpl.PluginInfo().Name,
 		},
 	}

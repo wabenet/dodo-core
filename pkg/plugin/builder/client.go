@@ -9,7 +9,8 @@ import (
 
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/hashicorp/go-hclog"
-	api "github.com/wabenet/dodo-core/api/v1alpha4"
+	build "github.com/wabenet/dodo-core/api/build/v1alpha1"
+	core "github.com/wabenet/dodo-core/api/core/v1alpha5"
 	"github.com/wabenet/dodo-core/pkg/grpcutil"
 	"github.com/wabenet/dodo-core/pkg/plugin"
 	"golang.org/x/sync/errgroup"
@@ -20,11 +21,11 @@ const lenStreamID = 32
 var _ ImageBuilder = &client{}
 
 type client struct {
-	builderClient api.BuilderPluginClient
+	builderClient build.PluginClient
 	stdout        *grpcutil.StreamOutputClient
 }
 
-func NewGRPCClient(c api.BuilderPluginClient) ImageBuilder {
+func NewGRPCClient(c build.PluginClient) ImageBuilder {
 	return &client{
 		builderClient: c,
 		stdout:        grpcutil.NewStreamOutputClient(),
@@ -35,11 +36,11 @@ func (c *client) Type() plugin.Type {
 	return Type
 }
 
-func (c *client) PluginInfo() *api.PluginInfo {
+func (c *client) PluginInfo() *core.PluginInfo {
 	info, err := c.builderClient.GetPluginInfo(context.Background(), &empty.Empty{})
 	if err != nil {
-		return &api.PluginInfo{
-			Name:   &api.PluginName{Type: Type.String(), Name: plugin.FailedPlugin},
+		return &core.PluginInfo{
+			Name:   &core.PluginName{Type: Type.String(), Name: plugin.FailedPlugin},
 			Fields: map[string]string{"error": err.Error()},
 		}
 	}
@@ -63,9 +64,9 @@ func (c *client) Cleanup() {
 	}
 }
 
-func (c *client) CreateImage(config *api.BuildInfo, stream *plugin.StreamConfig) (string, error) {
+func (c *client) CreateImage(config *core.BuildInfo, stream *plugin.StreamConfig) (string, error) {
 	if stream == nil {
-		result, err := c.builderClient.CreateImage(context.Background(), &api.CreateImageRequest{
+		result, err := c.builderClient.CreateImage(context.Background(), &build.CreateImageRequest{
 			Config: config,
 			Height: 0,
 			Width:  0,
@@ -90,7 +91,7 @@ func (c *client) CreateImage(config *api.BuildInfo, stream *plugin.StreamConfig)
 	eg.Go(func() error { return c.copyOutputClientToStdout(streamID, stream.Stdout, stream.Stderr) })
 
 	eg.Go(func() error {
-		result, err := c.builderClient.CreateImage(context.Background(), &api.CreateImageRequest{
+		result, err := c.builderClient.CreateImage(context.Background(), &build.CreateImageRequest{
 			StreamId: streamID,
 			Config:   config,
 			Height:   stream.TerminalHeight,
@@ -115,7 +116,7 @@ func (c *client) CreateImage(config *api.BuildInfo, stream *plugin.StreamConfig)
 func (c *client) copyOutputClientToStdout(streamID string, stdout, stderr io.Writer) error {
 	outputClient, err := c.builderClient.StreamOutput(
 		context.Background(),
-		&api.StreamOutputRequest{Id: streamID},
+		&core.StreamOutputRequest{Id: streamID},
 	)
 	if err != nil {
 		return fmt.Errorf("could not stream runtime output: %w", err)

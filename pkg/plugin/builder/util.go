@@ -2,7 +2,7 @@ package builder
 
 import (
 	log "github.com/hashicorp/go-hclog"
-	api "github.com/wabenet/dodo-core/api/v1alpha4"
+	core "github.com/wabenet/dodo-core/api/core/v1alpha5"
 	"github.com/wabenet/dodo-core/pkg/plugin"
 )
 
@@ -20,6 +20,6 @@ func GetByName(m plugin.Manager, name string) (ImageBuilder, error) {
 	}
 
 	return nil, plugin.NotFoundError{
-		Plugin: &api.PluginName{Type: Type.String(), Name: name},
+		Plugin: &core.PluginName{Type: Type.String(), Name: name},
 	}
 }

@@ -8,7 +8,8 @@ import (
 
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/hashicorp/go-hclog"
-	api "github.com/wabenet/dodo-core/api/v1alpha4"
+	core "github.com/wabenet/dodo-core/api/core/v1alpha5"
+	runtime "github.com/wabenet/dodo-core/api/runtime/v1alpha1"
 	"github.com/wabenet/dodo-core/pkg/grpcutil"
 	"github.com/wabenet/dodo-core/pkg/ioutil"
 	"github.com/wabenet/dodo-core/pkg/plugin"
@@ -18,12 +19,12 @@ import (
 var _ ContainerRuntime = &client{}
 
 type client struct {
-	runtimeClient api.RuntimePluginClient
+	runtimeClient runtime.PluginClient
 	stdin         *grpcutil.StreamInputClient
 	stdout        *grpcutil.StreamOutputClient
 }
 
-func NewGRPCClient(c api.RuntimePluginClient) ContainerRuntime {
+func NewGRPCClient(c runtime.PluginClient) ContainerRuntime {
 	return &client{
 		runtimeClient: c,
 		stdin:         grpcutil.NewStreamInputClient(),
@@ -32,12 +33,12 @@ func NewGRPCClient(c api.RuntimePluginClient) ContainerRuntime {
 }
 
 type streamInputClient struct {
-	client api.RuntimePlugin_StreamInputClient
+	client runtime.Plugin_StreamInputClient
 }
 
-func (s *streamInputClient) Send(data *api.InputData) error {
-	if err := s.client.Send(&api.StreamInputRequest{
-		InputRequestType: &api.StreamInputRequest_InputData{InputData: data},
+func (s *streamInputClient) Send(data *core.InputData) error {
+	if err := s.client.Send(&core.StreamInputRequest{
+		InputRequestType: &core.StreamInputRequest_InputData{InputData: data},
 	}); err != nil {
 		return fmt.Errorf("error wrapping Send call: %w", err)
 	}
@@ -58,11 +59,11 @@ func (c *client) Type() plugin.Type {
 	return Type
 }
 
-func (c *client) PluginInfo() *api.PluginInfo {
+func (c *client) PluginInfo() *core.PluginInfo {
 	info, err := c.runtimeClient.GetPluginInfo(context.Background(), &empty.Empty{})
 	if err != nil {
-		return &api.PluginInfo{
-			Name:   &api.PluginName{Type: Type.String(), Name: plugin.FailedPlugin},
+		return &core.PluginInfo{
+			Name:   &core.PluginName{Type: Type.String(), Name: plugin.FailedPlugin},
 			Fields: map[string]string{"error": err.Error()},
 		}
 	}
@@ -87,7 +88,7 @@ func (c *client) Cleanup() {
 }
 
 func (c *client) ResolveImage(spec string) (string, error) {
-	img, err := c.runtimeClient.GetImage(context.Background(), &api.GetImageRequest{ImageSpec: spec})
+	img, err := c.runtimeClient.GetImage(context.Background(), &runtime.GetImageRequest{ImageSpec: spec})
 	if err != nil {
 		return "", fmt.Errorf("could not resolve image: %w", err)
 	}
@@ -95,8 +96,8 @@ func (c *client) ResolveImage(spec string) (string, error) {
 	return img.ImageId, nil
 }
 
-func (c *client) CreateContainer(config *api.Backdrop, tty, stdio bool) (string, error) {
-	resp, err := c.runtimeClient.CreateContainer(context.Background(), &api.CreateContainerRequest{
+func (c *client) CreateContainer(config *core.Backdrop, tty, stdio bool) (string, error) {
+	resp, err := c.runtimeClient.CreateContainer(context.Background(), &runtime.CreateContainerRequest{
 		Config: config,
 		Tty:    tty,
 		Stdio:  stdio,
@@ -111,7 +112,7 @@ func (c *client) CreateContainer(config *api.Backdrop, tty, stdio bool) (string,
 func (c *client) StartContainer(id string) error {
 	if _, err := c.runtimeClient.StartContainer(
 		context.Background(),
-		&api.StartContainerRequest{ContainerId: id},
+		&runtime.StartContainerRequest{ContainerId: id},
 	); err != nil {
 		return fmt.Errorf("could not start container: %w", err)
 	}
@@ -122,7 +123,7 @@ func (c *client) StartContainer(id string) error {
 func (c *client) DeleteContainer(id string) error {
 	if _, err := c.runtimeClient.DeleteContainer(
 		context.Background(),
-		&api.DeleteContainerRequest{ContainerId: id},
+		&runtime.DeleteContainerRequest{ContainerId: id},
 	); err != nil {
 		return fmt.Errorf("could not delete container: %w", err)
 	}
@@ -133,7 +134,7 @@ func (c *client) DeleteContainer(id string) error {
 func (c *client) ResizeContainer(id string, height, width uint32) error {
 	if _, err := c.runtimeClient.ResizeContainer(
 		context.Background(),
-		&api.ResizeContainerRequest{ContainerId: id, Height: height, Width: width},
+		&runtime.ResizeContainerRequest{ContainerId: id, Height: height, Width: width},
 	); err != nil {
 		return fmt.Errorf("could not resize container: %w", err)
 	}
@@ -144,7 +145,7 @@ func (c *client) ResizeContainer(id string, height, width uint32) error {
 func (c *client) KillContainer(id string, signal os.Signal) error {
 	if _, err := c.runtimeClient.KillContainer(
 		context.Background(),
-		&api.KillContainerRequest{ContainerId: id, Signal: signalToString(signal)},
+		&runtime.KillContainerRequest{ContainerId: id, Signal: signalToString(signal)},
 	); err != nil {
 		return fmt.Errorf("could not kill container: %w", err)
 	}
@@ -165,7 +166,7 @@ func (c *client) StreamContainer(id string, stream *plugin.StreamConfig) (*Resul
 	eg.Go(func() error {
 		defer inCancel()
 
-		r, err := c.runtimeClient.StreamContainer(context.Background(), &api.StreamContainerRequest{
+		r, err := c.runtimeClient.StreamContainer(context.Background(), &runtime.StreamContainerRequest{
 			ContainerId: id,
 			Height:      stream.TerminalHeight,
 			Width:       stream.TerminalWidth,
@@ -192,9 +193,9 @@ func (c *client) copyInputClientToStdin(containerID string, stdin io.Reader) err
 		return fmt.Errorf("could not stream runtime input: %w", err)
 	}
 
-	if err := inputClient.Send(&api.StreamInputRequest{
-		InputRequestType: &api.StreamInputRequest_InitialRequest{
-			InitialRequest: &api.InitialStreamInputRequest{Id: containerID},
+	if err := inputClient.Send(&core.StreamInputRequest{
+		InputRequestType: &core.StreamInputRequest_InitialRequest{
+			InitialRequest: &core.InitialStreamInputRequest{Id: containerID},
 		},
 	}); err != nil {
 		return fmt.Errorf("could not stream runtime input: %w", err)
@@ -210,7 +211,7 @@ func (c *client) copyInputClientToStdin(containerID string, stdin io.Reader) err
 func (c *client) copyOutputClientToStdout(containerID string, stdout, stderr io.Writer) error {
 	outputClient, err := c.runtimeClient.StreamOutput(
 		context.Background(),
-		&api.StreamOutputRequest{Id: containerID},
+		&core.StreamOutputRequest{Id: containerID},
 	)
 	if err != nil {
 		return fmt.Errorf("could not stream runtime output: %w", err)
