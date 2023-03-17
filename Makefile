@@ -26,7 +26,7 @@ test: api
 build: api
 
 .PHONY: api
-build: $(shell ls api/**/*.proto | sed 's|\.proto|.pb.go|g' | xargs)
+api: $(shell find api -name *.proto | sed 's|\.proto|.pb.go|g' | xargs)
 
 %.pb.go: %.proto
-	protoc -I . --go_out=plugins=grpc:. --go_opt=module=github.com/wabenet/dodo-core $<
+	protoc -I ./api --go_out=plugins=grpc:. --go_opt=module=github.com/wabenet/dodo-core $<
