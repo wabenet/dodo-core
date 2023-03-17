@@ -23,13 +23,13 @@ const (
 
 type Plugin interface {
 	PluginInfo() *core.PluginInfo
-	Init() (PluginConfig, error)
+	Init() (Config, error)
 	Cleanup()
 
 	Type() Type
 }
 
-type PluginConfig map[string]string
+type Config map[string]string
 
 type Type interface {
 	String() string

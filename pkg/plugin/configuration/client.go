@@ -37,7 +37,7 @@ func (c *client) PluginInfo() *core.PluginInfo {
 	return info
 }
 
-func (c *client) Init() (plugin.PluginConfig, error) {
+func (c *client) Init() (plugin.Config, error) {
 	resp, err := c.configClient.InitPlugin(context.Background(), &empty.Empty{})
 	if err != nil {
 		return nil, fmt.Errorf("could not initialize plugin: %w", err)

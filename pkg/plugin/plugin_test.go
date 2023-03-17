@@ -53,7 +53,7 @@ func (p pluginA) PluginInfo() *core.PluginInfo {
 	}
 }
 
-func (pluginA) Init() (dodo.PluginConfig, error) {
+func (pluginA) Init() (dodo.Config, error) {
 	return map[string]string{}, nil
 }
 
@@ -75,7 +75,7 @@ func (p pluginB) PluginInfo() *core.PluginInfo {
 	}
 }
 
-func (pluginB) Init() (dodo.PluginConfig, error) {
+func (pluginB) Init() (dodo.Config, error) {
 	return map[string]string{}, nil
 }
 

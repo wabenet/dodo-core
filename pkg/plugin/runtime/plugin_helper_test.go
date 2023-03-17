@@ -5,7 +5,7 @@ import (
 	"os"
 
 	core "github.com/wabenet/dodo-core/api/core/v1alpha5"
-	dodo "github.com/wabenet/dodo-core/pkg/plugin"
+	"github.com/wabenet/dodo-core/pkg/plugin"
 	"github.com/wabenet/dodo-core/pkg/plugin/runtime"
 )
 
@@ -13,7 +13,7 @@ var _ runtime.ContainerRuntime = &DummyRuntime{}
 
 type DummyRuntime struct{}
 
-func (r *DummyRuntime) Type() dodo.Type {
+func (r *DummyRuntime) Type() plugin.Type {
 	return runtime.Type
 }
 
@@ -23,7 +23,7 @@ func (r *DummyRuntime) PluginInfo() *core.PluginInfo {
 	}
 }
 
-func (r *DummyRuntime) Init() (dodo.PluginConfig, error) {
+func (r *DummyRuntime) Init() (plugin.Config, error) {
 	return map[string]string{}, nil
 }
 
@@ -53,7 +53,7 @@ func (r *DummyRuntime) KillContainer(_ string, _ os.Signal) error {
 	return nil
 }
 
-func (r *DummyRuntime) StreamContainer(_ string, stream *dodo.StreamConfig) (*runtime.Result, error) {
+func (r *DummyRuntime) StreamContainer(_ string, stream *plugin.StreamConfig) (*runtime.Result, error) {
 	stream.Stdout.Write([]byte("This goes to stdout"))
 
 	return &runtime.Result{ExitCode: 0}, nil
@@ -63,7 +63,7 @@ var _ runtime.ContainerRuntime = &ErrorRuntime{}
 
 type ErrorRuntime struct{}
 
-func (r *ErrorRuntime) Type() dodo.Type {
+func (r *ErrorRuntime) Type() plugin.Type {
 	return runtime.Type
 }
 
@@ -73,7 +73,7 @@ func (r *ErrorRuntime) PluginInfo() *core.PluginInfo {
 	}
 }
 
-func (r *ErrorRuntime) Init() (dodo.PluginConfig, error) {
+func (r *ErrorRuntime) Init() (plugin.Config, error) {
 	return map[string]string{}, nil
 }
 
@@ -103,7 +103,7 @@ func (r *ErrorRuntime) KillContainer(_ string, _ os.Signal) error {
 	return nil
 }
 
-func (r *ErrorRuntime) StreamContainer(_ string, stream *dodo.StreamConfig) (*runtime.Result, error) {
+func (r *ErrorRuntime) StreamContainer(_ string, stream *plugin.StreamConfig) (*runtime.Result, error) {
 	stream.Stdout.Write([]byte("This goes to stdout"))
 	stream.Stderr.Write([]byte("This goes to stderr"))
 
@@ -114,7 +114,7 @@ var _ runtime.ContainerRuntime = &EchoRuntime{}
 
 type EchoRuntime struct{}
 
-func (r *EchoRuntime) Type() dodo.Type {
+func (r *EchoRuntime) Type() plugin.Type {
 	return runtime.Type
 }
 
@@ -124,7 +124,7 @@ func (r *EchoRuntime) PluginInfo() *core.PluginInfo {
 	}
 }
 
-func (r *EchoRuntime) Init() (dodo.PluginConfig, error) {
+func (r *EchoRuntime) Init() (plugin.Config, error) {
 	return map[string]string{}, nil
 }
 
@@ -154,7 +154,7 @@ func (r *EchoRuntime) KillContainer(_ string, _ os.Signal) error {
 	return nil
 }
 
-func (r *EchoRuntime) StreamContainer(_ string, stream *dodo.StreamConfig) (*runtime.Result, error) {
+func (r *EchoRuntime) StreamContainer(_ string, stream *plugin.StreamConfig) (*runtime.Result, error) {
 	io.Copy(stream.Stdout, stream.Stdin)
 
 	return &runtime.Result{ExitCode: 0}, nil
