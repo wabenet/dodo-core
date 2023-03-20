@@ -14,6 +14,7 @@ import (
 	"github.com/wabenet/dodo-core/pkg/ioutil"
 	"github.com/wabenet/dodo-core/pkg/plugin"
 	"golang.org/x/sync/errgroup"
+	"google.golang.org/grpc"
 )
 
 var _ ContainerRuntime = &client{}
@@ -24,9 +25,9 @@ type client struct {
 	stdout        *grpcutil.StreamOutputClient
 }
 
-func NewGRPCClient(c runtime.PluginClient) ContainerRuntime {
+func NewGRPCClient(conn grpc.ClientConnInterface) ContainerRuntime {
 	return &client{
-		runtimeClient: c,
+		runtimeClient: runtime.NewPluginClient(conn),
 		stdin:         grpcutil.NewStreamInputClient(),
 		stdout:        grpcutil.NewStreamOutputClient(),
 	}

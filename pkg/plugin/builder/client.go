@@ -14,6 +14,7 @@ import (
 	"github.com/wabenet/dodo-core/pkg/grpcutil"
 	"github.com/wabenet/dodo-core/pkg/plugin"
 	"golang.org/x/sync/errgroup"
+	"google.golang.org/grpc"
 )
 
 const lenStreamID = 32
@@ -25,9 +26,9 @@ type client struct {
 	stdout        *grpcutil.StreamOutputClient
 }
 
-func NewGRPCClient(c build.PluginClient) ImageBuilder {
+func NewGRPCClient(conn grpc.ClientConnInterface) ImageBuilder {
 	return &client{
-		builderClient: c,
+		builderClient: build.NewPluginClient(conn),
 		stdout:        grpcutil.NewStreamOutputClient(),
 	}
 }

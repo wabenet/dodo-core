@@ -9,6 +9,7 @@ import (
 	configuration "github.com/wabenet/dodo-core/api/configuration/v1alpha1"
 	core "github.com/wabenet/dodo-core/api/core/v1alpha5"
 	"github.com/wabenet/dodo-core/pkg/plugin"
+	"google.golang.org/grpc"
 )
 
 var _ Configuration = &client{}
@@ -17,8 +18,8 @@ type client struct {
 	configClient configuration.PluginClient
 }
 
-func NewGRPCClient(c configuration.PluginClient) Configuration {
-	return &client{configClient: c}
+func NewGRPCClient(conn grpc.ClientConnInterface) Configuration {
+	return &client{configClient: configuration.NewPluginClient(conn)}
 }
 
 func (c *client) Type() plugin.Type {
