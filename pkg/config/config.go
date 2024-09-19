@@ -20,9 +20,11 @@ const (
 	ConfKeyLogLevel    = "log-level"
 	ConfKeyLogFile     = "log-file"
 	ConfKeyAppDir      = "app-dir"
+	ConfKeyCRIEndpoint = "cri-endpoint"
 
-	DefaultLogLevel = "INFO"
-	DefaultAppDir   = "/var/lib/dodo"
+	DefaultLogLevel    = "INFO"
+	DefaultAppDir      = "/var/lib/dodo"
+	DefaultCRIEndpoint = "/run/containerd/containerd.sock"
 
 	permConfigDir = 0o700
 	permLogFile   = 0o666
@@ -38,6 +40,7 @@ func Configure() {
 
 	viper.SetDefault(ConfKeyConfigFiles, discoverConfigFiles())
 	viper.SetDefault(ConfKeyLogLevel, DefaultLogLevel)
+	viper.SetDefault(ConfKeyCRIEndpoint, DefaultCRIEndpoint)
 
 	if user, err := user.Current(); err == nil && user.HomeDir != "" {
 		dotDir := filepath.Join(user.HomeDir, fmt.Sprintf(".%s", Name))
@@ -67,6 +70,10 @@ func GetAppDir() string {
 
 func GetPluginDir() string {
 	return filepath.Join(GetAppDir(), "plugins")
+}
+
+func GetCRIEndpoint() string {
+	return viper.GetString(ConfKeyCRIEndpoint)
 }
 
 func LogLevel() log.Level {

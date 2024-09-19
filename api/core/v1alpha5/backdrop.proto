@@ -54,8 +54,8 @@ message DeviceMapping {
 }
 
 message PortBinding {
-  string target = 1;
-  string published = 2;
+  int32  target = 1;
+  int32  published = 2;
   string protocol = 3;
   string host_ip = 4;
 }
