@@ -3,22 +3,53 @@ linters:
   enable-all: true
   disable:
     - exhaustruct
-    - exhaustivestruct
     - godox
-    - ireturn # TODO: this needs a separate cleanup
-    - varnamelen # TODO: consider if we should actually follow this practice
-    - nosnakecase #TODO: these are there because grpc generated structs
-
-linters-settings:
-  gofumpt:
-    extra-rules: true
-  gomnd:
-    ignored-numbers: [1,2,3]
 
 issues:
+  new: true
+  new-from-rev: HEAD
   exclude-rules:
     - path: _test.go
       linters:
         - errcheck
         - gochecknoglobals
         - unused
+
+linters-settings:
+  gofumpt:
+    extra-rules: true
+
+  gomnd:
+    ignored-numbers: [1,2,3]
+
+  varnamelen:
+    ignore-names: [err, ok]
+
+  wrapcheck:
+    ignorePackageGlobs:
+      - "github.com/hashicorp/go-multierror"
+
+  depguard:
+    rules:
+      main:
+        files:
+          - "$all"
+          - "!$test"
+        allow:
+          - "$gostd"
+          - "github.com/wabenet"
+          - "github.com/hashicorp"
+          - "github.com/spf13/cobra"
+          - "github.com/spf13/viper"
+          - "google.golang.org/grpc"
+          - "google.golang.org/protobuf"
+          - "github.com/golang/protobuf"
+        deny:
+          - pkg: reflect
+            desc: Please don't use reflect package
+      test:
+        files:
+          - "$test"
+        allow:
+          - "$gostd"
+          - "github.com/stretchr/testify"
