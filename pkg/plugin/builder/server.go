@@ -64,7 +64,7 @@ func (s *server) ResetPlugin(_ context.Context, _ *empty.Empty) (*empty.Empty, e
 }
 
 func (s *server) StreamOutput(request *core.StreamOutputRequest, srv build.Plugin_StreamOutputServer) error {
-	id := request.Id
+	id := request.GetId()
 
 	outputServer, err := s.stdoutServer(id)
 	if err != nil {
@@ -81,8 +81,8 @@ func (s *server) StreamOutput(request *core.StreamOutputRequest, srv build.Plugi
 func (s *server) CreateImage(_ context.Context, request *build.CreateImageRequest) (*build.CreateImageResponse, error) {
 	resp := &build.CreateImageResponse{}
 
-	if request.Height == 0 && request.Width == 0 {
-		id, err := s.impl.CreateImage(request.Config, nil)
+	if request.GetHeight() == 0 && request.GetWidth() == 0 {
+		id, err := s.impl.CreateImage(request.GetConfig(), nil)
 		if err != nil {
 			return nil, fmt.Errorf("could not build image: %w", err)
 		}
@@ -95,7 +95,7 @@ func (s *server) CreateImage(_ context.Context, request *build.CreateImageReques
 	outReader, outWriter := io.Pipe()
 	errReader, errWriter := io.Pipe()
 
-	outputServer, err := s.stdoutServer(request.StreamId)
+	outputServer, err := s.stdoutServer(request.GetStreamId())
 	if err != nil {
 		return nil, fmt.Errorf("could not find stream output server: %w", err)
 	}
@@ -108,17 +108,17 @@ func (s *server) CreateImage(_ context.Context, request *build.CreateImageReques
 		defer outWriter.Close()
 		defer errWriter.Close()
 
-		id, err := s.impl.CreateImage(request.Config, &plugin.StreamConfig{
+		imageID, err := s.impl.CreateImage(request.GetConfig(), &plugin.StreamConfig{
 			Stdout:         outWriter,
 			Stderr:         errWriter,
-			TerminalHeight: request.Height,
-			TerminalWidth:  request.Width,
+			TerminalHeight: request.GetHeight(),
+			TerminalWidth:  request.GetWidth(),
 		})
 		if err != nil {
 			return fmt.Errorf("could not build image: %w", err)
 		}
 
-		resp.ImageId = id
+		resp.ImageId = imageID
 
 		return nil
 	})

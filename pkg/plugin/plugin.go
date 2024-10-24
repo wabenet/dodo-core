@@ -34,7 +34,7 @@ type Config map[string]string
 type Type interface {
 	String() string
 	GRPCClient() (plugin.Plugin, error)
-	GRPCServer(Plugin) (plugin.Plugin, error)
+	GRPCServer(p Plugin) (plugin.Plugin, error)
 }
 
 type StreamConfig struct {
@@ -57,8 +57,8 @@ type NotFoundError struct {
 func (e NotFoundError) Error() string {
 	return fmt.Sprintf(
 		"could not find plugin '%s' of type %s",
-		e.Plugin.Name,
-		e.Plugin.Type,
+		e.Plugin.GetName(),
+		e.Plugin.GetType(),
 	)
 }
 
@@ -74,8 +74,8 @@ func (e InvalidError) Error() string {
 
 	return fmt.Sprintf(
 		"invalid plugin '%s' of type %s: %s",
-		e.Plugin.Name,
-		e.Plugin.Type,
+		e.Plugin.GetName(),
+		e.Plugin.GetType(),
 		e.Message,
 	)
 }
@@ -103,13 +103,13 @@ func (m Manager) RegisterPluginTypes(ts ...Type) {
 
 func (m Manager) IncludePlugins(ps ...Plugin) {
 	for _, p := range ps {
-		name := p.PluginInfo().Name
+		name := p.PluginInfo().GetName()
 
-		if m.plugins[name.Type] == nil {
-			m.plugins[name.Type] = map[string]Plugin{}
+		if m.plugins[name.GetType()] == nil {
+			m.plugins[name.GetType()] = map[string]Plugin{}
 		}
 
-		m.plugins[name.Type][name.Name] = p
+		m.plugins[name.GetType()][name.GetName()] = p
 	}
 }
 
@@ -122,7 +122,7 @@ func (m Manager) ServePlugins(plugins ...Plugin) error {
 			return fmt.Errorf("could not instantiate GRPC Server: %w", err)
 		}
 
-		pluginMap[p.PluginInfo().Name.Type] = s
+		pluginMap[p.PluginInfo().GetName().GetType()] = s
 	}
 
 	plugin.Serve(&plugin.ServeConfig{
@@ -199,25 +199,25 @@ func (m Manager) findPlugins() {
 				continue
 			}
 
-			name := p.PluginInfo().Name
+			name := p.PluginInfo().GetName()
 
-			if m.plugins[name.Type] == nil {
-				m.plugins[name.Type] = map[string]Plugin{}
+			if m.plugins[name.GetType()] == nil {
+				m.plugins[name.GetType()] = map[string]Plugin{}
 			}
 
-			m.plugins[name.Type][name.Name] = p
+			m.plugins[name.GetType()][name.GetName()] = p
 		}
 	}
 }
 
 func (m Manager) initPlugin(p Plugin) {
 	info := p.PluginInfo()
-	logger := log.L().With("name", info.Name.Name, "type", info.Name.Type)
-	logger = augmentLogger(logger, info.Fields)
+	logger := log.L().With("name", info.GetName().GetName(), "type", info.GetName().GetType())
+	logger = augmentLogger(logger, info.GetFields())
 
 	if config, err := p.Init(); err != nil {
 		logger.Warn("could not load plugin", "error", err)
-		delete(m.plugins[info.Name.Type], info.Name.Name)
+		delete(m.plugins[info.GetName().GetType()], info.GetName().GetName())
 	} else {
 		augmentLogger(logger, config).Info("loaded plugin")
 	}

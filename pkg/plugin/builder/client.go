@@ -55,7 +55,7 @@ func (c *client) Init() (plugin.Config, error) {
 		return nil, fmt.Errorf("could not initialize plugin: %w", err)
 	}
 
-	return resp.Config, nil
+	return resp.GetConfig(), nil
 }
 
 func (c *client) Cleanup() {
@@ -76,7 +76,7 @@ func (c *client) CreateImage(config *core.BuildInfo, stream *plugin.StreamConfig
 			return "", fmt.Errorf("could not build image: %w", err)
 		}
 
-		return result.ImageId, nil
+		return result.GetImageId(), nil
 	}
 
 	b := make([]byte, lenStreamID)
@@ -102,7 +102,7 @@ func (c *client) CreateImage(config *core.BuildInfo, stream *plugin.StreamConfig
 			return fmt.Errorf("could not build image: %w", err)
 		}
 
-		imageID = result.ImageId
+		imageID = result.GetImageId()
 
 		return nil
 	})

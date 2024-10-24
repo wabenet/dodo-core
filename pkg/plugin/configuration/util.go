@@ -88,9 +88,9 @@ func FindBuildConfig(m plugin.Manager, name string, overrides *core.BuildInfo) (
 		}
 
 		for _, conf := range confs {
-			if conf.BuildInfo != nil && conf.BuildInfo.ImageName == name {
+			if conf.GetBuildInfo() != nil && conf.GetBuildInfo().GetImageName() == name {
 				config := &core.BuildInfo{}
-				MergeBuildInfo(config, conf.BuildInfo)
+				MergeBuildInfo(config, conf.GetBuildInfo())
 				MergeBuildInfo(config, overrides)
 
 				if err := ValidateBuildInfo(config); err != nil {
@@ -108,113 +108,113 @@ func FindBuildConfig(m plugin.Manager, name string, overrides *core.BuildInfo) (
 }
 
 func MergeBackdrop(target, source *core.Backdrop) {
-	if len(source.Name) > 0 {
-		target.Name = source.Name
+	if len(source.GetName()) > 0 {
+		target.Name = source.GetName()
 	}
 
-	target.Aliases = append(target.Aliases, source.Aliases...)
+	target.Aliases = append(target.GetAliases(), source.GetAliases()...)
 
-	if len(source.ImageId) > 0 {
-		target.ImageId = source.ImageId
+	if len(source.GetImageId()) > 0 {
+		target.ImageId = source.GetImageId()
 	}
 
-	if len(source.Runtime) > 0 {
-		target.Runtime = source.Runtime
+	if len(source.GetRuntime()) > 0 {
+		target.Runtime = source.GetRuntime()
 	}
 
-	if source.Entrypoint != nil {
-		if source.Entrypoint.Interactive {
+	if source.GetEntrypoint() != nil {
+		if source.GetEntrypoint().GetInteractive() {
 			target.Entrypoint.Interactive = true
 		}
 
-		if len(source.Entrypoint.Interpreter) > 0 {
-			target.Entrypoint.Interpreter = source.Entrypoint.Interpreter
+		if len(source.GetEntrypoint().GetInterpreter()) > 0 {
+			target.Entrypoint.Interpreter = source.GetEntrypoint().GetInterpreter()
 		}
 
-		if len(source.Entrypoint.Script) > 0 {
-			target.Entrypoint.Script = source.Entrypoint.Script
+		if len(source.GetEntrypoint().GetScript()) > 0 {
+			target.Entrypoint.Script = source.GetEntrypoint().GetScript()
 		}
 
-		if len(source.Entrypoint.Arguments) > 0 {
-			target.Entrypoint.Arguments = source.Entrypoint.Arguments
+		if len(source.GetEntrypoint().GetArguments()) > 0 {
+			target.Entrypoint.Arguments = source.GetEntrypoint().GetArguments()
 		}
 	}
 
-	if len(source.ContainerName) > 0 {
-		target.ContainerName = source.ContainerName
+	if len(source.GetContainerName()) > 0 {
+		target.ContainerName = source.GetContainerName()
 	}
 
-	target.Environment = append(target.Environment, source.Environment...)
+	target.Environment = append(target.GetEnvironment(), source.GetEnvironment()...)
 
-	if len(source.User) > 0 {
-		target.User = source.User
+	if len(source.GetUser()) > 0 {
+		target.User = source.GetUser()
 	}
 
-	target.Volumes = append(target.Volumes, source.Volumes...)
-	target.Devices = append(target.Devices, source.Devices...)
-	target.Ports = append(target.Ports, source.Ports...)
-	target.Capabilities = append(target.Capabilities, source.Capabilities...)
+	target.Volumes = append(target.GetVolumes(), source.GetVolumes()...)
+	target.Devices = append(target.GetDevices(), source.GetDevices()...)
+	target.Ports = append(target.GetPorts(), source.GetPorts()...)
+	target.Capabilities = append(target.GetCapabilities(), source.GetCapabilities()...)
 
-	if len(source.WorkingDir) > 0 {
-		target.WorkingDir = source.WorkingDir
+	if len(source.GetWorkingDir()) > 0 {
+		target.WorkingDir = source.GetWorkingDir()
 	}
 
-	if source.BuildInfo != nil {
-		if target.BuildInfo == nil {
-			target.BuildInfo = source.BuildInfo
+	if source.GetBuildInfo() != nil {
+		if target.GetBuildInfo() == nil {
+			target.BuildInfo = source.GetBuildInfo()
 		} else {
-			MergeBuildInfo(target.BuildInfo, source.BuildInfo)
+			MergeBuildInfo(target.GetBuildInfo(), source.GetBuildInfo())
 		}
 	}
 }
 
 func MergeBuildInfo(target, source *core.BuildInfo) {
-	if len(source.Builder) > 0 {
-		target.Builder = source.Builder
+	if len(source.GetBuilder()) > 0 {
+		target.Builder = source.GetBuilder()
 	}
 
-	if len(source.ImageName) > 0 {
-		target.ImageName = source.ImageName
+	if len(source.GetImageName()) > 0 {
+		target.ImageName = source.GetImageName()
 	}
 
-	if len(source.Context) > 0 {
-		target.Context = source.Context
+	if len(source.GetContext()) > 0 {
+		target.Context = source.GetContext()
 	}
 
-	if len(source.Dockerfile) > 0 {
-		target.Dockerfile = source.Dockerfile
+	if len(source.GetDockerfile()) > 0 {
+		target.Dockerfile = source.GetDockerfile()
 	}
 
-	if len(source.InlineDockerfile) > 0 {
-		target.InlineDockerfile = source.InlineDockerfile
+	if len(source.GetInlineDockerfile()) > 0 {
+		target.InlineDockerfile = source.GetInlineDockerfile()
 	}
 
-	target.Arguments = append(target.Arguments, source.Arguments...)
-	target.Secrets = append(target.Secrets, source.Secrets...)
-	target.SshAgents = append(target.SshAgents, source.SshAgents...)
+	target.Arguments = append(target.GetArguments(), source.GetArguments()...)
+	target.Secrets = append(target.GetSecrets(), source.GetSecrets()...)
+	target.SshAgents = append(target.GetSshAgents(), source.GetSshAgents()...)
 
-	if source.NoCache {
+	if source.GetNoCache() {
 		target.NoCache = true
 	}
 
-	if source.ForceRebuild {
+	if source.GetForceRebuild() {
 		target.ForceRebuild = true
 	}
 
-	if source.ForcePull {
+	if source.GetForcePull() {
 		target.ForcePull = true
 	}
 
-	target.Dependencies = append(target.Dependencies, source.Dependencies...)
+	target.Dependencies = append(target.GetDependencies(), source.GetDependencies()...)
 }
 
 func ValidateBackdrop(b *core.Backdrop) error {
-	if b.ImageId == "" && b.BuildInfo == nil {
-		return InvalidError{Name: b.Name, Message: "neither image nor build configured"}
+	if b.GetImageId() == "" && b.GetBuildInfo() == nil {
+		return InvalidError{Name: b.GetName(), Message: "neither image nor build configured"}
 	}
 
-	if b.BuildInfo != nil {
-		if err := ValidateBuildInfo(b.BuildInfo); err != nil {
+	if b.GetBuildInfo() != nil {
+		if err := ValidateBuildInfo(b.GetBuildInfo()); err != nil {
 			return err
 		}
 	}

@@ -78,7 +78,7 @@ func (c *client) Init() (plugin.Config, error) {
 		return nil, fmt.Errorf("could not initialize plugin: %w", err)
 	}
 
-	return resp.Config, nil
+	return resp.GetConfig(), nil
 }
 
 func (c *client) Cleanup() {
@@ -94,7 +94,7 @@ func (c *client) ResolveImage(spec string) (string, error) {
 		return "", fmt.Errorf("could not resolve image: %w", err)
 	}
 
-	return img.ImageId, nil
+	return img.GetImageId(), nil
 }
 
 func (c *client) CreateContainer(config *core.Backdrop, tty, stdio bool) (string, error) {
@@ -107,7 +107,7 @@ func (c *client) CreateContainer(config *core.Backdrop, tty, stdio bool) (string
 		return "", fmt.Errorf("could not create container: %w", err)
 	}
 
-	return resp.ContainerId, nil
+	return resp.GetContainerId(), nil
 }
 
 func (c *client) StartContainer(id string) error {
@@ -176,7 +176,7 @@ func (c *client) StreamContainer(id string, stream *plugin.StreamConfig) (*Resul
 			return fmt.Errorf("could not stream container: %w", err)
 		}
 
-		result.ExitCode = int(r.ExitCode)
+		result.ExitCode = int(r.GetExitCode())
 
 		return nil
 	})

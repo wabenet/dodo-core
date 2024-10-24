@@ -70,7 +70,7 @@ func (p pluginB) PluginInfo() *core.PluginInfo {
 			Type: p.Type().String(),
 		},
 		Dependencies: []*core.PluginName{
-			pluginAImpl.PluginInfo().Name,
+			pluginAImpl.PluginInfo().GetName(),
 		},
 	}
 }
@@ -89,8 +89,8 @@ func populatePluginMap() map[string]map[string]dodo.Plugin {
 	pluginMap := map[string]map[string]dodo.Plugin{}
 	pluginMap[typeAImpl.String()] = map[string]dodo.Plugin{}
 	pluginMap[typeBImpl.String()] = map[string]dodo.Plugin{}
-	pluginMap[typeAImpl.String()][pluginAImpl.PluginInfo().Name.Name] = pluginAImpl
-	pluginMap[typeBImpl.String()][pluginBImpl.PluginInfo().Name.Name] = pluginBImpl
+	pluginMap[typeAImpl.String()][pluginAImpl.PluginInfo().GetName().GetName()] = pluginAImpl
+	pluginMap[typeBImpl.String()][pluginBImpl.PluginInfo().GetName().GetName()] = pluginBImpl
 
 	return pluginMap
 }

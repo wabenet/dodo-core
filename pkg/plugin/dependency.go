@@ -29,7 +29,7 @@ type dependency struct {
 }
 
 func asDependency(name *core.PluginName) dependency {
-	return dependency{n: name.Name, t: name.Type}
+	return dependency{n: name.GetName(), t: name.GetType()}
 }
 
 func ResolveDependencies(pluginMap map[string]map[string]Plugin) []Plugin {
@@ -45,11 +45,11 @@ func ResolveDependencies(pluginMap map[string]map[string]Plugin) []Plugin {
 			}
 
 			deps := mapset.NewSet()
-			key := asDependency(info.Name)
+			key := asDependency(info.GetName())
 
 			names[key] = p
 
-			for _, dep := range info.Dependencies {
+			for _, dep := range info.GetDependencies() {
 				deps.Add(asDependency(dep))
 			}
 

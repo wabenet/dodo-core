@@ -44,7 +44,7 @@ func (c *client) Init() (plugin.Config, error) {
 		return nil, fmt.Errorf("could not initialize plugin: %w", err)
 	}
 
-	return resp.Config, nil
+	return resp.GetConfig(), nil
 }
 
 func (c *client) Cleanup() {
@@ -60,7 +60,7 @@ func (c *client) ListBackdrops() ([]*core.Backdrop, error) {
 		return []*core.Backdrop{}, fmt.Errorf("could not list backdrops: %w", err)
 	}
 
-	return response.Backdrops, nil
+	return response.GetBackdrops(), nil
 }
 
 func (c *client) GetBackdrop(alias string) (*core.Backdrop, error) {

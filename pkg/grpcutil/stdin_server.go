@@ -23,7 +23,7 @@ type StreamInputServer struct {
 
 type grpcInputServer interface {
 	Recv() (*core.InputData, error)
-	SendAndClose(*empty.Empty) error
+	SendAndClose(_ *empty.Empty) error
 }
 
 func NewStreamInputServer() *StreamInputServer {
@@ -80,7 +80,7 @@ func (s *StreamInputServer) ReceiveFrom(srv grpcInputServer) error {
 			return fmt.Errorf("error receiving build input from client: %w", err)
 		}
 
-		s.stdinCh <- data.Data
+		s.stdinCh <- data.GetData()
 	}
 }
 

@@ -98,7 +98,7 @@ func (s *server) ResetPlugin(_ context.Context, _ *empty.Empty) (*empty.Empty, e
 }
 
 func (s *server) GetImage(_ context.Context, request *runtime.GetImageRequest) (*runtime.GetImageResponse, error) {
-	id, err := s.impl.ResolveImage(request.ImageSpec)
+	id, err := s.impl.ResolveImage(request.GetImageSpec())
 	if err != nil {
 		return nil, fmt.Errorf("could not resolve image: %w", err)
 	}
@@ -110,7 +110,7 @@ func (s *server) CreateContainer(
 	_ context.Context,
 	config *runtime.CreateContainerRequest,
 ) (*runtime.CreateContainerResponse, error) {
-	id, err := s.impl.CreateContainer(config.Config, config.Tty, config.Stdio)
+	id, err := s.impl.CreateContainer(config.GetConfig(), config.GetTty(), config.GetStdio())
 	if err != nil {
 		return nil, fmt.Errorf("could not create container: %w", err)
 	}
@@ -119,7 +119,7 @@ func (s *server) CreateContainer(
 }
 
 func (s *server) StartContainer(_ context.Context, request *runtime.StartContainerRequest) (*empty.Empty, error) {
-	if err := s.impl.StartContainer(request.ContainerId); err != nil {
+	if err := s.impl.StartContainer(request.GetContainerId()); err != nil {
 		return nil, fmt.Errorf("could not start container: %w", err)
 	}
 
@@ -127,7 +127,7 @@ func (s *server) StartContainer(_ context.Context, request *runtime.StartContain
 }
 
 func (s *server) DeleteContainer(_ context.Context, request *runtime.DeleteContainerRequest) (*empty.Empty, error) {
-	if err := s.impl.DeleteContainer(request.ContainerId); err != nil {
+	if err := s.impl.DeleteContainer(request.GetContainerId()); err != nil {
 		return nil, fmt.Errorf("could not delete container: %w", err)
 	}
 
@@ -135,7 +135,7 @@ func (s *server) DeleteContainer(_ context.Context, request *runtime.DeleteConta
 }
 
 func (s *server) ResizeContainer(_ context.Context, request *runtime.ResizeContainerRequest) (*empty.Empty, error) {
-	if err := s.impl.ResizeContainer(request.ContainerId, request.Height, request.Width); err != nil {
+	if err := s.impl.ResizeContainer(request.GetContainerId(), request.GetHeight(), request.GetWidth()); err != nil {
 		return nil, fmt.Errorf("could not resize container: %w", err)
 	}
 
@@ -143,7 +143,7 @@ func (s *server) ResizeContainer(_ context.Context, request *runtime.ResizeConta
 }
 
 func (s *server) KillContainer(_ context.Context, request *runtime.KillContainerRequest) (*empty.Empty, error) {
-	if err := s.impl.KillContainer(request.ContainerId, signalFromString(request.Signal)); err != nil {
+	if err := s.impl.KillContainer(request.GetContainerId(), signalFromString(request.GetSignal())); err != nil {
 		return nil, fmt.Errorf("could not kill container: %w", err)
 	}
 
@@ -156,7 +156,7 @@ func (s *server) StreamInput(srv runtime.Plugin_StreamInputServer) error {
 		return fmt.Errorf("error during input stream: %w", err)
 	}
 
-	id := req.GetInitialRequest().Id
+	id := req.GetInitialRequest().GetId()
 
 	inputServer, err := s.stdinServer(id)
 	if err != nil {
@@ -171,7 +171,7 @@ func (s *server) StreamInput(srv runtime.Plugin_StreamInputServer) error {
 }
 
 func (s *server) StreamOutput(request *core.StreamOutputRequest, srv runtime.Plugin_StreamOutputServer) error {
-	id := request.Id
+	id := request.GetId()
 
 	outputServer, err := s.stdoutServer(id)
 	if err != nil {
@@ -195,12 +195,12 @@ func (s *server) StreamContainer(
 	outReader, outWriter := io.Pipe()
 	errReader, errWriter := io.Pipe()
 
-	inputServer, err := s.stdinServer(request.ContainerId)
+	inputServer, err := s.stdinServer(request.GetContainerId())
 	if err != nil {
 		return nil, fmt.Errorf("could not find stream input server: %w", err)
 	}
 
-	outputServer, err := s.stdoutServer(request.ContainerId)
+	outputServer, err := s.stdoutServer(request.GetContainerId())
 	if err != nil {
 		return nil, fmt.Errorf("could not find stream output server: %w", err)
 	}
@@ -215,18 +215,18 @@ func (s *server) StreamContainer(
 		defer errWriter.Close()
 		defer inputServer.Close()
 
-		r, err := s.impl.StreamContainer(request.ContainerId, &plugin.StreamConfig{
+		streamResp, err := s.impl.StreamContainer(request.GetContainerId(), &plugin.StreamConfig{
 			Stdin:          inReader,
 			Stdout:         outWriter,
 			Stderr:         errWriter,
-			TerminalHeight: request.Height,
-			TerminalWidth:  request.Width,
+			TerminalHeight: request.GetHeight(),
+			TerminalWidth:  request.GetWidth(),
 		})
 		if err != nil {
 			return fmt.Errorf("could not stream container: %w", err)
 		}
 
-		resp.ExitCode = int64(r.ExitCode)
+		resp.ExitCode = int64(streamResp.ExitCode)
 
 		return nil
 	})
@@ -255,7 +255,7 @@ func copyOutputServerToStdout(outputServer *grpcutil.StreamOutputServer, stdout,
 }
 
 func (s *server) CreateVolume(_ context.Context, request *runtime.CreateVolumeRequest) (*empty.Empty, error) {
-	if err := s.impl.CreateVolume(request.Name); err != nil {
+	if err := s.impl.CreateVolume(request.GetName()); err != nil {
 		return nil, fmt.Errorf("could create volume: %w", err)
 	}
 
@@ -263,7 +263,7 @@ func (s *server) CreateVolume(_ context.Context, request *runtime.CreateVolumeRe
 }
 
 func (s *server) DeleteVolume(_ context.Context, request *runtime.DeleteVolumeRequest) (*empty.Empty, error) {
-	if err := s.impl.CreateVolume(request.Name); err != nil {
+	if err := s.impl.CreateVolume(request.GetName()); err != nil {
 		return nil, fmt.Errorf("could delete volume: %w", err)
 	}
 

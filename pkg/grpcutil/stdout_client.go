@@ -38,19 +38,19 @@ func (*StreamOutputClient) StreamOutput(cl grpcOutputClient, stdout, stderr io.W
 			return fmt.Errorf("error receiving data: %w", err)
 		}
 
-		switch data.Channel {
+		switch data.GetChannel() {
 		case core.OutputData_STDOUT:
-			if _, err := io.Copy(stdout, bytes.NewReader(data.Data)); err != nil {
+			if _, err := io.Copy(stdout, bytes.NewReader(data.GetData())); err != nil {
 				log.L().Error("failed to copy all bytes", "err", err)
 			}
 
 		case core.OutputData_STDERR:
-			if _, err := io.Copy(stderr, bytes.NewReader(data.Data)); err != nil {
+			if _, err := io.Copy(stderr, bytes.NewReader(data.GetData())); err != nil {
 				log.L().Error("failed to copy all bytes", "err", err)
 			}
 
 		case core.OutputData_INVALID:
-			log.L().Warn("unknown channel, dropping", "channel", data.Channel)
+			log.L().Warn("unknown channel, dropping", "channel", data.GetChannel())
 
 			continue
 		}

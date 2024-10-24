@@ -17,7 +17,7 @@ type StreamOutputServer struct {
 }
 
 type grpcOutputServer interface {
-	Send(*core.OutputData) error
+	Send(data *core.OutputData) error
 	Context() context.Context
 }
 
@@ -88,7 +88,7 @@ func (s *StreamOutputServer) SendTo(srv grpcOutputServer) error {
 			return nil
 		}
 
-		if len(data.Data) == 0 {
+		if len(data.GetData()) == 0 {
 			continue
 		}
 

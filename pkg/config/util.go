@@ -124,7 +124,7 @@ func ParsePortBinding(spec string) (*api.PortBinding, error) {
 		return nil, fmt.Errorf("%s: %w", spec, ErrPortFormat)
 	}
 
-	switch values := strings.SplitN(port.Target, "/", 2); len(values) {
+	switch values := strings.SplitN(port.GetTarget(), "/", 2); len(values) {
 	case 1:
 		port.Target = values[0]
 	case 2:

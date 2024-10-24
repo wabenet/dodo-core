@@ -27,7 +27,7 @@ func (t pluginType) GRPCServer(p dodo.Plugin) (plugin.Plugin, error) {
 	rt, ok := p.(ContainerRuntime)
 	if !ok {
 		return nil, dodo.InvalidError{
-			Plugin:  p.PluginInfo().Name,
+			Plugin:  p.PluginInfo().GetName(),
 			Message: "plugin does not implement ContainerRuntime API",
 		}
 	}
@@ -38,15 +38,15 @@ func (t pluginType) GRPCServer(p dodo.Plugin) (plugin.Plugin, error) {
 type ContainerRuntime interface {
 	dodo.Plugin
 
-	ResolveImage(string) (string, error)
-	CreateContainer(*core.Backdrop, bool, bool) (string, error)
-	StartContainer(string) error
-	DeleteContainer(string) error
-	ResizeContainer(string, uint32, uint32) error
-	KillContainer(string, os.Signal) error
-	StreamContainer(string, *dodo.StreamConfig) (*Result, error)
-	CreateVolume(string) error
-	DeleteVolume(string) error
+	ResolveImage(spec string) (string, error)
+	CreateContainer(backdrop *core.Backdrop, tty, stdio bool) (string, error)
+	StartContainer(id string) error
+	DeleteContainer(id string) error
+	ResizeContainer(id string, height, width uint32) error
+	KillContainer(id string, signal os.Signal) error
+	StreamContainer(id string, streamConfig *dodo.StreamConfig) (*Result, error)
+	CreateVolume(name string) error
+	DeleteVolume(name string) error
 }
 
 type Result struct {

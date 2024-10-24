@@ -30,5 +30,5 @@ func (b *DummyBuilder) CreateImage(config *core.BuildInfo, stream *plugin.Stream
 	stream.Stdout.Write([]byte("This goes to stdout"))
 	stream.Stderr.Write([]byte("This goes to stderr"))
 
-	return config.ImageName, nil
+	return config.GetImageName(), nil
 }

@@ -14,7 +14,7 @@ import (
 type StreamInputClient struct{}
 
 type grpcInputClient interface {
-	Send(*core.InputData) error
+	Send(data *core.InputData) error
 	CloseAndRecv() (*empty.Empty, error)
 }
 

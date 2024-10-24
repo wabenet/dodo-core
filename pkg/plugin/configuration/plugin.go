@@ -26,7 +26,7 @@ func (t pluginType) GRPCServer(p dodo.Plugin) (plugin.Plugin, error) {
 	config, ok := p.(Configuration)
 	if !ok {
 		return nil, dodo.InvalidError{
-			Plugin:  p.PluginInfo().Name,
+			Plugin:  p.PluginInfo().GetName(),
 			Message: "plugin does not implement Configuration API",
 		}
 	}
@@ -38,7 +38,7 @@ type Configuration interface {
 	dodo.Plugin
 
 	ListBackdrops() ([]*core.Backdrop, error)
-	GetBackdrop(string) (*core.Backdrop, error)
+	GetBackdrop(name string) (*core.Backdrop, error)
 }
 
 type grpcPlugin struct {
