@@ -9,7 +9,7 @@ import (
 
 	"github.com/golang/protobuf/ptypes/empty"
 	core "github.com/wabenet/dodo-core/api/core/v1alpha5"
-	runtime "github.com/wabenet/dodo-core/api/runtime/v1alpha1"
+	runtime "github.com/wabenet/dodo-core/api/runtime/v1alpha2"
 	"github.com/wabenet/dodo-core/pkg/grpcutil"
 	"github.com/wabenet/dodo-core/pkg/plugin"
 	"golang.org/x/sync/errgroup"
@@ -252,4 +252,20 @@ func copyOutputServerToStdout(outputServer *grpcutil.StreamOutputServer, stdout,
 	}
 
 	return nil
+}
+
+func (s *server) CreateVolume(_ context.Context, request *runtime.CreateVolumeRequest) (*empty.Empty, error) {
+	if err := s.impl.CreateVolume(request.Name); err != nil {
+		return nil, fmt.Errorf("could create volume: %w", err)
+	}
+
+	return &empty.Empty{}, nil
+}
+
+func (s *server) DeleteVolume(_ context.Context, request *runtime.DeleteVolumeRequest) (*empty.Empty, error) {
+	if err := s.impl.CreateVolume(request.Name); err != nil {
+		return nil, fmt.Errorf("could delete volume: %w", err)
+	}
+
+	return &empty.Empty{}, nil
 }

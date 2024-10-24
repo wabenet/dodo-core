@@ -59,6 +59,14 @@ func (r *DummyRuntime) StreamContainer(_ string, stream *plugin.StreamConfig) (*
 	return &runtime.Result{ExitCode: 0}, nil
 }
 
+func (r *DummyRuntime) CreateVolume(_ string) error {
+	return nil
+}
+
+func (r *DummyRuntime) DeleteVolume(_ string) error {
+	return nil
+}
+
 var _ runtime.ContainerRuntime = &ErrorRuntime{}
 
 type ErrorRuntime struct{}
@@ -110,6 +118,14 @@ func (r *ErrorRuntime) StreamContainer(_ string, stream *plugin.StreamConfig) (*
 	return &runtime.Result{ExitCode: 1}, nil
 }
 
+func (r *ErrorRuntime) CreateVolume(_ string) error {
+	return nil
+}
+
+func (r *ErrorRuntime) DeleteVolume(_ string) error {
+	return nil
+}
+
 var _ runtime.ContainerRuntime = &EchoRuntime{}
 
 type EchoRuntime struct{}
@@ -158,4 +174,12 @@ func (r *EchoRuntime) StreamContainer(_ string, stream *plugin.StreamConfig) (*r
 	io.Copy(stream.Stdout, stream.Stdin)
 
 	return &runtime.Result{ExitCode: 0}, nil
+}
+
+func (r *EchoRuntime) CreateVolume(_ string) error {
+	return nil
+}
+
+func (r *EchoRuntime) DeleteVolume(_ string) error {
+	return nil
 }

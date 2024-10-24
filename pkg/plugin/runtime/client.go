@@ -9,7 +9,7 @@ import (
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/hashicorp/go-hclog"
 	core "github.com/wabenet/dodo-core/api/core/v1alpha5"
-	runtime "github.com/wabenet/dodo-core/api/runtime/v1alpha1"
+	runtime "github.com/wabenet/dodo-core/api/runtime/v1alpha2"
 	"github.com/wabenet/dodo-core/pkg/grpcutil"
 	"github.com/wabenet/dodo-core/pkg/ioutil"
 	"github.com/wabenet/dodo-core/pkg/plugin"
@@ -220,6 +220,28 @@ func (c *client) copyOutputClientToStdout(containerID string, stdout, stderr io.
 
 	if err := c.stdout.StreamOutput(outputClient, stdout, stderr); err != nil {
 		return fmt.Errorf("could not stream runtime output: %w", err)
+	}
+
+	return nil
+}
+
+func (c *client) CreateVolume(name string) error {
+	if _, err := c.runtimeClient.CreateVolume(
+		context.Background(),
+		&runtime.CreateVolumeRequest{Name: name},
+	); err != nil {
+		return fmt.Errorf("could not create volume: %w", err)
+	}
+
+	return nil
+}
+
+func (c *client) DeleteVolume(name string) error {
+	if _, err := c.runtimeClient.DeleteVolume(
+		context.Background(),
+		&runtime.DeleteVolumeRequest{Name: name},
+	); err != nil {
+		return fmt.Errorf("could not delete volume: %w", err)
 	}
 
 	return nil

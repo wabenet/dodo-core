@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package com.wabenet.dodo.runtime.v1alpha1;
 
-option go_package = "github.com/wabenet/dodo-core/api/runtime/v1alpha1";
+option go_package = "github.com/wabenet/dodo-core/api/runtime/v1alpha2";
 
 import "google/protobuf/empty.proto";
 import "core/v1alpha5/plugin.proto";
@@ -22,6 +22,9 @@ service Plugin {
   rpc StreamContainer(StreamContainerRequest) returns (StreamContainerResponse);
   rpc ResizeContainer(ResizeContainerRequest) returns (google.protobuf.Empty);
   rpc KillContainer(KillContainerRequest) returns (google.protobuf.Empty);
+
+  rpc CreateVolume(CreateVolumeRequest) returns (google.protobuf.Empty);
+  rpc DeleteVolume(DeleteVolumeRequest) returns (google.protobuf.Empty);
 
   rpc GetImage(GetImageRequest) returns (GetImageResponse);
 }
@@ -68,6 +71,14 @@ message KillContainerRequest {
 message StreamContainerResponse {
   int64 exitCode = 1;
   string message = 2;
+}
+
+message CreateVolumeRequest {
+  string name = 1;
+}
+
+message DeleteVolumeRequest {
+  string name = 1;
 }
 
 message GetImageResponse {

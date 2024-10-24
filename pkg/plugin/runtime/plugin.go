@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/go-plugin"
 	core "github.com/wabenet/dodo-core/api/core/v1alpha5"
-	runtime "github.com/wabenet/dodo-core/api/runtime/v1alpha1"
+	runtime "github.com/wabenet/dodo-core/api/runtime/v1alpha2"
 	dodo "github.com/wabenet/dodo-core/pkg/plugin"
 	"google.golang.org/grpc"
 )
@@ -45,6 +45,8 @@ type ContainerRuntime interface {
 	ResizeContainer(string, uint32, uint32) error
 	KillContainer(string, os.Signal) error
 	StreamContainer(string, *dodo.StreamConfig) (*Result, error)
+	CreateVolume(string) error
+	DeleteVolume(string) error
 }
 
 type Result struct {
