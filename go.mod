@@ -11,7 +11,7 @@ require (
 	github.com/moby/term v0.5.0
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/viper v1.19.0
-	github.com/stretchr/testify v1.9.0
+	github.com/stretchr/testify v1.10.0
 	golang.org/x/sync v0.8.0
 	google.golang.org/grpc v1.66.2
 	google.golang.org/protobuf v1.34.2
