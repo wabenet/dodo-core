@@ -8,7 +8,7 @@ import (
 	"sync"
 
 	"github.com/golang/protobuf/ptypes/empty"
-	core "github.com/wabenet/dodo-core/api/core/v1alpha5"
+	core "github.com/wabenet/dodo-core/api/core/v1alpha6"
 	runtime "github.com/wabenet/dodo-core/api/runtime/v1alpha2"
 	"github.com/wabenet/dodo-core/pkg/grpcutil"
 	"github.com/wabenet/dodo-core/pkg/plugin"
@@ -265,6 +265,18 @@ func (s *server) CreateVolume(_ context.Context, request *runtime.CreateVolumeRe
 func (s *server) DeleteVolume(_ context.Context, request *runtime.DeleteVolumeRequest) (*empty.Empty, error) {
 	if err := s.impl.CreateVolume(request.GetName()); err != nil {
 		return nil, fmt.Errorf("could delete volume: %w", err)
+	}
+
+	return &empty.Empty{}, nil
+}
+
+func (s *server) WriteFile(_ context.Context, request *runtime.WriteFileRequest) (*empty.Empty, error) {
+	if err := s.impl.WriteFile(
+		request.GetContainerId(),
+		request.GetFilePath(),
+		[]byte(request.GetContents()),
+	); err != nil {
+		return nil, fmt.Errorf("could not write file: %w", err)
 	}
 
 	return &empty.Empty{}, nil

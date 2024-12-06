@@ -52,4 +52,5 @@ linters-settings:
           - "$test"
         allow:
           - "$gostd"
+          - "github.com/wabenet"
           - "github.com/stretchr/testify"

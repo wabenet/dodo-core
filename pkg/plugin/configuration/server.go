@@ -6,7 +6,7 @@ import (
 
 	"github.com/golang/protobuf/ptypes/empty"
 	configuration "github.com/wabenet/dodo-core/api/configuration/v1alpha1"
-	core "github.com/wabenet/dodo-core/api/core/v1alpha5"
+	core "github.com/wabenet/dodo-core/api/core/v1alpha6"
 )
 
 type server struct {

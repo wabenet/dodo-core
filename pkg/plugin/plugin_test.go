@@ -2,7 +2,7 @@ package plugin_test
 
 import (
 	"github.com/hashicorp/go-plugin"
-	core "github.com/wabenet/dodo-core/api/core/v1alpha5"
+	core "github.com/wabenet/dodo-core/api/core/v1alpha6"
 	dodo "github.com/wabenet/dodo-core/pkg/plugin"
 )
 

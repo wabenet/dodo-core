@@ -1,26 +1,26 @@
 syntax = "proto3";
 
-package com.wabenet.dodo.core.v1alpha5;
+package com.wabenet.dodo.core.v1alpha6;
 
 option go_package = "github.com/wabenet/dodo-core/api/build/v1alpha1";
 
 import "google/protobuf/empty.proto";
-import "core/v1alpha5/plugin.proto";
-import "core/v1alpha5/build.proto";
+import "core/v1alpha6/plugin.proto";
+import "core/v1alpha6/build.proto";
 
 service Plugin {
-  rpc GetPluginInfo(google.protobuf.Empty) returns (com.wabenet.dodo.core.v1alpha5.PluginInfo);
-  rpc InitPlugin(google.protobuf.Empty) returns (com.wabenet.dodo.core.v1alpha5.InitPluginResponse);
+  rpc GetPluginInfo(google.protobuf.Empty) returns (com.wabenet.dodo.core.v1alpha6.PluginInfo);
+  rpc InitPlugin(google.protobuf.Empty) returns (com.wabenet.dodo.core.v1alpha6.InitPluginResponse);
   rpc ResetPlugin(google.protobuf.Empty) returns (google.protobuf.Empty);
 
-  rpc StreamOutput(com.wabenet.dodo.core.v1alpha5.StreamOutputRequest) returns (stream com.wabenet.dodo.core.v1alpha5.OutputData);
+  rpc StreamOutput(com.wabenet.dodo.core.v1alpha6.StreamOutputRequest) returns (stream com.wabenet.dodo.core.v1alpha6.OutputData);
 
   rpc CreateImage(CreateImageRequest) returns (CreateImageResponse);
 }
 
 message CreateImageRequest {
   string stream_id = 1;
-  com.wabenet.dodo.core.v1alpha5.BuildInfo config = 2;
+  com.wabenet.dodo.core.v1alpha6.BuildInfo config = 2;
   uint32 height = 3;
   uint32 width = 4;
 }

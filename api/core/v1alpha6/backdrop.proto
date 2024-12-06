@@ -1,10 +1,10 @@
 syntax = "proto3";
 
-package com.wabenet.dodo.core.v1alpha5;
+package com.wabenet.dodo.core.v1alpha6;
 
-option go_package = "github.com/wabenet/dodo-core/api/core/v1alpha5";
+option go_package = "github.com/wabenet/dodo-core/api/core/v1alpha6";
 
-import "core/v1alpha5/build.proto";
+import "core/v1alpha6/build.proto";
 
 message Backdrop {
   string name = 1;
@@ -19,13 +19,14 @@ message Backdrop {
   repeated VolumeMount volumes = 8;
   repeated DeviceMapping devices = 9;
   repeated PortBinding ports = 10;
+  repeated FileUpload files = 11;
 
-  repeated string capabilities = 11;
+  repeated string capabilities = 12;
 
-  string user = 12;
-  string working_dir = 13;
+  string user = 13;
+  string working_dir = 14;
 
-  com.wabenet.dodo.core.v1alpha5.BuildInfo build_info = 14;
+  com.wabenet.dodo.core.v1alpha6.BuildInfo build_info = 15;
 }
 
 message Entrypoint {
@@ -58,4 +59,9 @@ message PortBinding {
   string published = 2;
   string protocol = 3;
   string host_ip = 4;
+}
+
+message FileUpload {
+  string path = 1;
+  string contents = 2;
 }

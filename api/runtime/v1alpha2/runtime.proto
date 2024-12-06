@@ -5,16 +5,16 @@ package com.wabenet.dodo.runtime.v1alpha1;
 option go_package = "github.com/wabenet/dodo-core/api/runtime/v1alpha2";
 
 import "google/protobuf/empty.proto";
-import "core/v1alpha5/plugin.proto";
-import "core/v1alpha5/backdrop.proto";
+import "core/v1alpha6/plugin.proto";
+import "core/v1alpha6/backdrop.proto";
 
 service Plugin {
-  rpc GetPluginInfo(google.protobuf.Empty) returns (com.wabenet.dodo.core.v1alpha5.PluginInfo);
-  rpc InitPlugin(google.protobuf.Empty) returns (com.wabenet.dodo.core.v1alpha5.InitPluginResponse);
+  rpc GetPluginInfo(google.protobuf.Empty) returns (com.wabenet.dodo.core.v1alpha6.PluginInfo);
+  rpc InitPlugin(google.protobuf.Empty) returns (com.wabenet.dodo.core.v1alpha6.InitPluginResponse);
   rpc ResetPlugin(google.protobuf.Empty) returns (google.protobuf.Empty);
 
-  rpc StreamInput(stream com.wabenet.dodo.core.v1alpha5.StreamInputRequest) returns (google.protobuf.Empty);
-  rpc StreamOutput(com.wabenet.dodo.core.v1alpha5.StreamOutputRequest) returns (stream com.wabenet.dodo.core.v1alpha5.OutputData);
+  rpc StreamInput(stream com.wabenet.dodo.core.v1alpha6.StreamInputRequest) returns (google.protobuf.Empty);
+  rpc StreamOutput(com.wabenet.dodo.core.v1alpha6.StreamOutputRequest) returns (stream com.wabenet.dodo.core.v1alpha6.OutputData);
 
   rpc CreateContainer(CreateContainerRequest) returns (CreateContainerResponse);
   rpc DeleteContainer(DeleteContainerRequest) returns (google.protobuf.Empty);
@@ -25,6 +25,8 @@ service Plugin {
 
   rpc CreateVolume(CreateVolumeRequest) returns (google.protobuf.Empty);
   rpc DeleteVolume(DeleteVolumeRequest) returns (google.protobuf.Empty);
+
+  rpc WriteFile(WriteFileRequest) returns (google.protobuf.Empty);
 
   rpc GetImage(GetImageRequest) returns (GetImageResponse);
 }
@@ -38,7 +40,7 @@ message GetImageRequest {
 }
 
 message CreateContainerRequest {
-  com.wabenet.dodo.core.v1alpha5.Backdrop config = 1;
+  com.wabenet.dodo.core.v1alpha6.Backdrop config = 1;
   bool tty = 2;
   bool stdio = 3;
 }
@@ -79,6 +81,12 @@ message CreateVolumeRequest {
 
 message DeleteVolumeRequest {
   string name = 1;
+}
+
+message WriteFileRequest {
+  string container_id = 1;
+  string file_path = 2;
+  string contents = 3;
 }
 
 message GetImageResponse {

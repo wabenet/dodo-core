@@ -4,7 +4,7 @@ import (
 	"io"
 	"os"
 
-	core "github.com/wabenet/dodo-core/api/core/v1alpha5"
+	core "github.com/wabenet/dodo-core/api/core/v1alpha6"
 	"github.com/wabenet/dodo-core/pkg/plugin"
 	"github.com/wabenet/dodo-core/pkg/plugin/runtime"
 )
@@ -67,6 +67,10 @@ func (r *DummyRuntime) DeleteVolume(_ string) error {
 	return nil
 }
 
+func (r *DummyRuntime) WriteFile(_, _ string, _ []byte) error {
+	return nil
+}
+
 var _ runtime.ContainerRuntime = &ErrorRuntime{}
 
 type ErrorRuntime struct{}
@@ -126,6 +130,10 @@ func (r *ErrorRuntime) DeleteVolume(_ string) error {
 	return nil
 }
 
+func (r *ErrorRuntime) WriteFile(_, _ string, _ []byte) error {
+	return nil
+}
+
 var _ runtime.ContainerRuntime = &EchoRuntime{}
 
 type EchoRuntime struct{}
@@ -181,5 +189,9 @@ func (r *EchoRuntime) CreateVolume(_ string) error {
 }
 
 func (r *EchoRuntime) DeleteVolume(_ string) error {
+	return nil
+}
+
+func (r *EchoRuntime) WriteFile(_, _ string, _ []byte) error {
 	return nil
 }

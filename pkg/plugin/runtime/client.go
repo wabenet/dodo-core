@@ -8,7 +8,7 @@ import (
 
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/hashicorp/go-hclog"
-	core "github.com/wabenet/dodo-core/api/core/v1alpha5"
+	core "github.com/wabenet/dodo-core/api/core/v1alpha6"
 	runtime "github.com/wabenet/dodo-core/api/runtime/v1alpha2"
 	"github.com/wabenet/dodo-core/pkg/grpcutil"
 	"github.com/wabenet/dodo-core/pkg/ioutil"
@@ -242,6 +242,21 @@ func (c *client) DeleteVolume(name string) error {
 		&runtime.DeleteVolumeRequest{Name: name},
 	); err != nil {
 		return fmt.Errorf("could not delete volume: %w", err)
+	}
+
+	return nil
+}
+
+func (c *client) WriteFile(containerID, path string, contents []byte) error {
+	if _, err := c.runtimeClient.WriteFile(
+		context.Background(),
+		&runtime.WriteFileRequest{
+			ContainerId: containerID,
+			FilePath:    path,
+			Contents:    string(contents),
+		},
+	); err != nil {
+		return fmt.Errorf("could not write file: %w", err)
 	}
 
 	return nil

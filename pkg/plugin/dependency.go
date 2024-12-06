@@ -6,7 +6,7 @@ import (
 
 	mapset "github.com/deckarep/golang-set"
 	log "github.com/hashicorp/go-hclog"
-	core "github.com/wabenet/dodo-core/api/core/v1alpha5"
+	core "github.com/wabenet/dodo-core/api/core/v1alpha6"
 )
 
 type CircularDependencyError struct {
