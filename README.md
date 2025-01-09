@@ -4,14 +4,14 @@
 ![codeclimate](https://img.shields.io/codeclimate/maintainability/wabenet/dodo-core?logo=codeclimate)
 ![license](https://img.shields.io/github/license/wabenet/dodo-core)
 
-# dodo core plugin
+# dodo-core
 
 This repository contains the core components and plugin system for the dodo project.
 
 ## license & authors
 
 ```text
-Copyright 2022 Ole Claussen
+Copyright 2025 Ole Claussen
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

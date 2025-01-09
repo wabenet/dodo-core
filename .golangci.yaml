@@ -19,7 +19,7 @@ linters-settings:
   gofumpt:
     extra-rules: true
 
-  gomnd:
+  mnd:
     ignored-numbers: [1,2,3]
 
   varnamelen:
