@@ -2,9 +2,9 @@
 // versions:
 // 	protoc-gen-go v1.33.0
 // 	protoc        v3.21.12
-// source: core/v1alpha6/backdrop.proto
+// source: core/v1alpha7/backdrop.proto
 
-package v1alpha6
+package v1alpha7
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -45,7 +45,7 @@ type Backdrop struct {
 func (x *Backdrop) Reset() {
 	*x = Backdrop{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_core_v1alpha6_backdrop_proto_msgTypes[0]
+		mi := &file_core_v1alpha7_backdrop_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -58,7 +58,7 @@ func (x *Backdrop) String() string {
 func (*Backdrop) ProtoMessage() {}
 
 func (x *Backdrop) ProtoReflect() protoreflect.Message {
-	mi := &file_core_v1alpha6_backdrop_proto_msgTypes[0]
+	mi := &file_core_v1alpha7_backdrop_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -71,7 +71,7 @@ func (x *Backdrop) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Backdrop.ProtoReflect.Descriptor instead.
 func (*Backdrop) Descriptor() ([]byte, []int) {
-	return file_core_v1alpha6_backdrop_proto_rawDescGZIP(), []int{0}
+	return file_core_v1alpha7_backdrop_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Backdrop) GetName() string {
@@ -193,7 +193,7 @@ type Entrypoint struct {
 func (x *Entrypoint) Reset() {
 	*x = Entrypoint{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_core_v1alpha6_backdrop_proto_msgTypes[1]
+		mi := &file_core_v1alpha7_backdrop_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -206,7 +206,7 @@ func (x *Entrypoint) String() string {
 func (*Entrypoint) ProtoMessage() {}
 
 func (x *Entrypoint) ProtoReflect() protoreflect.Message {
-	mi := &file_core_v1alpha6_backdrop_proto_msgTypes[1]
+	mi := &file_core_v1alpha7_backdrop_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -219,7 +219,7 @@ func (x *Entrypoint) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Entrypoint.ProtoReflect.Descriptor instead.
 func (*Entrypoint) Descriptor() ([]byte, []int) {
-	return file_core_v1alpha6_backdrop_proto_rawDescGZIP(), []int{1}
+	return file_core_v1alpha7_backdrop_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *Entrypoint) GetInteractive() bool {
@@ -262,7 +262,7 @@ type EnvironmentVariable struct {
 func (x *EnvironmentVariable) Reset() {
 	*x = EnvironmentVariable{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_core_v1alpha6_backdrop_proto_msgTypes[2]
+		mi := &file_core_v1alpha7_backdrop_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -275,7 +275,7 @@ func (x *EnvironmentVariable) String() string {
 func (*EnvironmentVariable) ProtoMessage() {}
 
 func (x *EnvironmentVariable) ProtoReflect() protoreflect.Message {
-	mi := &file_core_v1alpha6_backdrop_proto_msgTypes[2]
+	mi := &file_core_v1alpha7_backdrop_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -288,7 +288,7 @@ func (x *EnvironmentVariable) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EnvironmentVariable.ProtoReflect.Descriptor instead.
 func (*EnvironmentVariable) Descriptor() ([]byte, []int) {
-	return file_core_v1alpha6_backdrop_proto_rawDescGZIP(), []int{2}
+	return file_core_v1alpha7_backdrop_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *EnvironmentVariable) GetKey() string {
@@ -318,7 +318,7 @@ type VolumeMount struct {
 func (x *VolumeMount) Reset() {
 	*x = VolumeMount{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_core_v1alpha6_backdrop_proto_msgTypes[3]
+		mi := &file_core_v1alpha7_backdrop_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -331,7 +331,7 @@ func (x *VolumeMount) String() string {
 func (*VolumeMount) ProtoMessage() {}
 
 func (x *VolumeMount) ProtoReflect() protoreflect.Message {
-	mi := &file_core_v1alpha6_backdrop_proto_msgTypes[3]
+	mi := &file_core_v1alpha7_backdrop_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -344,7 +344,7 @@ func (x *VolumeMount) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use VolumeMount.ProtoReflect.Descriptor instead.
 func (*VolumeMount) Descriptor() ([]byte, []int) {
-	return file_core_v1alpha6_backdrop_proto_rawDescGZIP(), []int{3}
+	return file_core_v1alpha7_backdrop_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *VolumeMount) GetSource() string {
@@ -382,7 +382,7 @@ type DeviceMapping struct {
 func (x *DeviceMapping) Reset() {
 	*x = DeviceMapping{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_core_v1alpha6_backdrop_proto_msgTypes[4]
+		mi := &file_core_v1alpha7_backdrop_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -395,7 +395,7 @@ func (x *DeviceMapping) String() string {
 func (*DeviceMapping) ProtoMessage() {}
 
 func (x *DeviceMapping) ProtoReflect() protoreflect.Message {
-	mi := &file_core_v1alpha6_backdrop_proto_msgTypes[4]
+	mi := &file_core_v1alpha7_backdrop_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -408,7 +408,7 @@ func (x *DeviceMapping) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeviceMapping.ProtoReflect.Descriptor instead.
 func (*DeviceMapping) Descriptor() ([]byte, []int) {
-	return file_core_v1alpha6_backdrop_proto_rawDescGZIP(), []int{4}
+	return file_core_v1alpha7_backdrop_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *DeviceMapping) GetCgroupRule() string {
@@ -453,7 +453,7 @@ type PortBinding struct {
 func (x *PortBinding) Reset() {
 	*x = PortBinding{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_core_v1alpha6_backdrop_proto_msgTypes[5]
+		mi := &file_core_v1alpha7_backdrop_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -466,7 +466,7 @@ func (x *PortBinding) String() string {
 func (*PortBinding) ProtoMessage() {}
 
 func (x *PortBinding) ProtoReflect() protoreflect.Message {
-	mi := &file_core_v1alpha6_backdrop_proto_msgTypes[5]
+	mi := &file_core_v1alpha7_backdrop_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -479,7 +479,7 @@ func (x *PortBinding) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PortBinding.ProtoReflect.Descriptor instead.
 func (*PortBinding) Descriptor() ([]byte, []int) {
-	return file_core_v1alpha6_backdrop_proto_rawDescGZIP(), []int{5}
+	return file_core_v1alpha7_backdrop_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *PortBinding) GetTarget() string {
@@ -522,7 +522,7 @@ type FileUpload struct {
 func (x *FileUpload) Reset() {
 	*x = FileUpload{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_core_v1alpha6_backdrop_proto_msgTypes[6]
+		mi := &file_core_v1alpha7_backdrop_proto_msgTypes[6]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -535,7 +535,7 @@ func (x *FileUpload) String() string {
 func (*FileUpload) ProtoMessage() {}
 
 func (x *FileUpload) ProtoReflect() protoreflect.Message {
-	mi := &file_core_v1alpha6_backdrop_proto_msgTypes[6]
+	mi := &file_core_v1alpha7_backdrop_proto_msgTypes[6]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -548,7 +548,7 @@ func (x *FileUpload) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FileUpload.ProtoReflect.Descriptor instead.
 func (*FileUpload) Descriptor() ([]byte, []int) {
-	return file_core_v1alpha6_backdrop_proto_rawDescGZIP(), []int{6}
+	return file_core_v1alpha7_backdrop_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *FileUpload) GetPath() string {
@@ -565,14 +565,14 @@ func (x *FileUpload) GetContents() string {
 	return ""
 }
 
-var File_core_v1alpha6_backdrop_proto protoreflect.FileDescriptor
+var File_core_v1alpha7_backdrop_proto protoreflect.FileDescriptor
 
-var file_core_v1alpha6_backdrop_proto_rawDesc = []byte{
-	0x0a, 0x1c, 0x63, 0x6f, 0x72, 0x65, 0x2f, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x36, 0x2f,
+var file_core_v1alpha7_backdrop_proto_rawDesc = []byte{
+	0x0a, 0x1c, 0x63, 0x6f, 0x72, 0x65, 0x2f, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x37, 0x2f,
 	0x62, 0x61, 0x63, 0x6b, 0x64, 0x72, 0x6f, 0x70, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x1e,
 	0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65, 0x6e, 0x65, 0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f,
-	0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x36, 0x1a, 0x19,
-	0x63, 0x6f, 0x72, 0x65, 0x2f, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x36, 0x2f, 0x62, 0x75,
+	0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x37, 0x1a, 0x19,
+	0x63, 0x6f, 0x72, 0x65, 0x2f, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x37, 0x2f, 0x62, 0x75,
 	0x69, 0x6c, 0x64, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0xef, 0x05, 0x0a, 0x08, 0x42, 0x61,
 	0x63, 0x6b, 0x64, 0x72, 0x6f, 0x70, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01,
 	0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x18, 0x0a, 0x07, 0x61, 0x6c,
@@ -586,30 +586,30 @@ var file_core_v1alpha6_backdrop_proto_rawDesc = []byte{
 	0x12, 0x4a, 0x0a, 0x0a, 0x65, 0x6e, 0x74, 0x72, 0x79, 0x70, 0x6f, 0x69, 0x6e, 0x74, 0x18, 0x06,
 	0x20, 0x01, 0x28, 0x0b, 0x32, 0x2a, 0x2e, 0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65, 0x6e,
 	0x65, 0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61,
-	0x6c, 0x70, 0x68, 0x61, 0x36, 0x2e, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x70, 0x6f, 0x69, 0x6e, 0x74,
+	0x6c, 0x70, 0x68, 0x61, 0x37, 0x2e, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x70, 0x6f, 0x69, 0x6e, 0x74,
 	0x52, 0x0a, 0x65, 0x6e, 0x74, 0x72, 0x79, 0x70, 0x6f, 0x69, 0x6e, 0x74, 0x12, 0x55, 0x0a, 0x0b,
 	0x65, 0x6e, 0x76, 0x69, 0x72, 0x6f, 0x6e, 0x6d, 0x65, 0x6e, 0x74, 0x18, 0x07, 0x20, 0x03, 0x28,
 	0x0b, 0x32, 0x33, 0x2e, 0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65, 0x6e, 0x65, 0x74, 0x2e,
 	0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68,
-	0x61, 0x36, 0x2e, 0x45, 0x6e, 0x76, 0x69, 0x72, 0x6f, 0x6e, 0x6d, 0x65, 0x6e, 0x74, 0x56, 0x61,
+	0x61, 0x37, 0x2e, 0x45, 0x6e, 0x76, 0x69, 0x72, 0x6f, 0x6e, 0x6d, 0x65, 0x6e, 0x74, 0x56, 0x61,
 	0x72, 0x69, 0x61, 0x62, 0x6c, 0x65, 0x52, 0x0b, 0x65, 0x6e, 0x76, 0x69, 0x72, 0x6f, 0x6e, 0x6d,
 	0x65, 0x6e, 0x74, 0x12, 0x45, 0x0a, 0x07, 0x76, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x73, 0x18, 0x08,
 	0x20, 0x03, 0x28, 0x0b, 0x32, 0x2b, 0x2e, 0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65, 0x6e,
 	0x65, 0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61,
-	0x6c, 0x70, 0x68, 0x61, 0x36, 0x2e, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x4d, 0x6f, 0x75, 0x6e,
+	0x6c, 0x70, 0x68, 0x61, 0x37, 0x2e, 0x56, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x4d, 0x6f, 0x75, 0x6e,
 	0x74, 0x52, 0x07, 0x76, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x73, 0x12, 0x47, 0x0a, 0x07, 0x64, 0x65,
 	0x76, 0x69, 0x63, 0x65, 0x73, 0x18, 0x09, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x2d, 0x2e, 0x63, 0x6f,
 	0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65, 0x6e, 0x65, 0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63,
-	0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x36, 0x2e, 0x44, 0x65, 0x76,
+	0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x37, 0x2e, 0x44, 0x65, 0x76,
 	0x69, 0x63, 0x65, 0x4d, 0x61, 0x70, 0x70, 0x69, 0x6e, 0x67, 0x52, 0x07, 0x64, 0x65, 0x76, 0x69,
 	0x63, 0x65, 0x73, 0x12, 0x41, 0x0a, 0x05, 0x70, 0x6f, 0x72, 0x74, 0x73, 0x18, 0x0a, 0x20, 0x03,
 	0x28, 0x0b, 0x32, 0x2b, 0x2e, 0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65, 0x6e, 0x65, 0x74,
 	0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x61, 0x6c, 0x70,
-	0x68, 0x61, 0x36, 0x2e, 0x50, 0x6f, 0x72, 0x74, 0x42, 0x69, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x52,
+	0x68, 0x61, 0x37, 0x2e, 0x50, 0x6f, 0x72, 0x74, 0x42, 0x69, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x52,
 	0x05, 0x70, 0x6f, 0x72, 0x74, 0x73, 0x12, 0x40, 0x0a, 0x05, 0x66, 0x69, 0x6c, 0x65, 0x73, 0x18,
 	0x0b, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x2a, 0x2e, 0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65,
 	0x6e, 0x65, 0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31,
-	0x61, 0x6c, 0x70, 0x68, 0x61, 0x36, 0x2e, 0x46, 0x69, 0x6c, 0x65, 0x55, 0x70, 0x6c, 0x6f, 0x61,
+	0x61, 0x6c, 0x70, 0x68, 0x61, 0x37, 0x2e, 0x46, 0x69, 0x6c, 0x65, 0x55, 0x70, 0x6c, 0x6f, 0x61,
 	0x64, 0x52, 0x05, 0x66, 0x69, 0x6c, 0x65, 0x73, 0x12, 0x22, 0x0a, 0x0c, 0x63, 0x61, 0x70, 0x61,
 	0x62, 0x69, 0x6c, 0x69, 0x74, 0x69, 0x65, 0x73, 0x18, 0x0c, 0x20, 0x03, 0x28, 0x09, 0x52, 0x0c,
 	0x63, 0x61, 0x70, 0x61, 0x62, 0x69, 0x6c, 0x69, 0x74, 0x69, 0x65, 0x73, 0x12, 0x12, 0x0a, 0x04,
@@ -619,7 +619,7 @@ var file_core_v1alpha6_backdrop_proto_rawDesc = []byte{
 	0x72, 0x12, 0x48, 0x0a, 0x0a, 0x62, 0x75, 0x69, 0x6c, 0x64, 0x5f, 0x69, 0x6e, 0x66, 0x6f, 0x18,
 	0x0f, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x29, 0x2e, 0x63, 0x6f, 0x6d, 0x2e, 0x77, 0x61, 0x62, 0x65,
 	0x6e, 0x65, 0x74, 0x2e, 0x64, 0x6f, 0x64, 0x6f, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31,
-	0x61, 0x6c, 0x70, 0x68, 0x61, 0x36, 0x2e, 0x42, 0x75, 0x69, 0x6c, 0x64, 0x49, 0x6e, 0x66, 0x6f,
+	0x61, 0x6c, 0x70, 0x68, 0x61, 0x37, 0x2e, 0x42, 0x75, 0x69, 0x6c, 0x64, 0x49, 0x6e, 0x66, 0x6f,
 	0x52, 0x09, 0x62, 0x75, 0x69, 0x6c, 0x64, 0x49, 0x6e, 0x66, 0x6f, 0x22, 0x86, 0x01, 0x0a, 0x0a,
 	0x45, 0x6e, 0x74, 0x72, 0x79, 0x70, 0x6f, 0x69, 0x6e, 0x74, 0x12, 0x20, 0x0a, 0x0b, 0x69, 0x6e,
 	0x74, 0x65, 0x72, 0x61, 0x63, 0x74, 0x69, 0x76, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x52,
@@ -661,41 +661,41 @@ var file_core_v1alpha6_backdrop_proto_rawDesc = []byte{
 	0x09, 0x52, 0x08, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x73, 0x42, 0x30, 0x5a, 0x2e, 0x67,
 	0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x77, 0x61, 0x62, 0x65, 0x6e, 0x65,
 	0x74, 0x2f, 0x64, 0x6f, 0x64, 0x6f, 0x2d, 0x63, 0x6f, 0x72, 0x65, 0x2f, 0x61, 0x70, 0x69, 0x2f,
-	0x63, 0x6f, 0x72, 0x65, 0x2f, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x36, 0x62, 0x06, 0x70,
+	0x63, 0x6f, 0x72, 0x65, 0x2f, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x37, 0x62, 0x06, 0x70,
 	0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
-	file_core_v1alpha6_backdrop_proto_rawDescOnce sync.Once
-	file_core_v1alpha6_backdrop_proto_rawDescData = file_core_v1alpha6_backdrop_proto_rawDesc
+	file_core_v1alpha7_backdrop_proto_rawDescOnce sync.Once
+	file_core_v1alpha7_backdrop_proto_rawDescData = file_core_v1alpha7_backdrop_proto_rawDesc
 )
 
-func file_core_v1alpha6_backdrop_proto_rawDescGZIP() []byte {
-	file_core_v1alpha6_backdrop_proto_rawDescOnce.Do(func() {
-		file_core_v1alpha6_backdrop_proto_rawDescData = protoimpl.X.CompressGZIP(file_core_v1alpha6_backdrop_proto_rawDescData)
+func file_core_v1alpha7_backdrop_proto_rawDescGZIP() []byte {
+	file_core_v1alpha7_backdrop_proto_rawDescOnce.Do(func() {
+		file_core_v1alpha7_backdrop_proto_rawDescData = protoimpl.X.CompressGZIP(file_core_v1alpha7_backdrop_proto_rawDescData)
 	})
-	return file_core_v1alpha6_backdrop_proto_rawDescData
+	return file_core_v1alpha7_backdrop_proto_rawDescData
 }
 
-var file_core_v1alpha6_backdrop_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
-var file_core_v1alpha6_backdrop_proto_goTypes = []interface{}{
-	(*Backdrop)(nil),            // 0: com.wabenet.dodo.core.v1alpha6.Backdrop
-	(*Entrypoint)(nil),          // 1: com.wabenet.dodo.core.v1alpha6.Entrypoint
-	(*EnvironmentVariable)(nil), // 2: com.wabenet.dodo.core.v1alpha6.EnvironmentVariable
-	(*VolumeMount)(nil),         // 3: com.wabenet.dodo.core.v1alpha6.VolumeMount
-	(*DeviceMapping)(nil),       // 4: com.wabenet.dodo.core.v1alpha6.DeviceMapping
-	(*PortBinding)(nil),         // 5: com.wabenet.dodo.core.v1alpha6.PortBinding
-	(*FileUpload)(nil),          // 6: com.wabenet.dodo.core.v1alpha6.FileUpload
-	(*BuildInfo)(nil),           // 7: com.wabenet.dodo.core.v1alpha6.BuildInfo
+var file_core_v1alpha7_backdrop_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_core_v1alpha7_backdrop_proto_goTypes = []interface{}{
+	(*Backdrop)(nil),            // 0: com.wabenet.dodo.core.v1alpha7.Backdrop
+	(*Entrypoint)(nil),          // 1: com.wabenet.dodo.core.v1alpha7.Entrypoint
+	(*EnvironmentVariable)(nil), // 2: com.wabenet.dodo.core.v1alpha7.EnvironmentVariable
+	(*VolumeMount)(nil),         // 3: com.wabenet.dodo.core.v1alpha7.VolumeMount
+	(*DeviceMapping)(nil),       // 4: com.wabenet.dodo.core.v1alpha7.DeviceMapping
+	(*PortBinding)(nil),         // 5: com.wabenet.dodo.core.v1alpha7.PortBinding
+	(*FileUpload)(nil),          // 6: com.wabenet.dodo.core.v1alpha7.FileUpload
+	(*BuildInfo)(nil),           // 7: com.wabenet.dodo.core.v1alpha7.BuildInfo
 }
-var file_core_v1alpha6_backdrop_proto_depIdxs = []int32{
-	1, // 0: com.wabenet.dodo.core.v1alpha6.Backdrop.entrypoint:type_name -> com.wabenet.dodo.core.v1alpha6.Entrypoint
-	2, // 1: com.wabenet.dodo.core.v1alpha6.Backdrop.environment:type_name -> com.wabenet.dodo.core.v1alpha6.EnvironmentVariable
-	3, // 2: com.wabenet.dodo.core.v1alpha6.Backdrop.volumes:type_name -> com.wabenet.dodo.core.v1alpha6.VolumeMount
-	4, // 3: com.wabenet.dodo.core.v1alpha6.Backdrop.devices:type_name -> com.wabenet.dodo.core.v1alpha6.DeviceMapping
-	5, // 4: com.wabenet.dodo.core.v1alpha6.Backdrop.ports:type_name -> com.wabenet.dodo.core.v1alpha6.PortBinding
-	6, // 5: com.wabenet.dodo.core.v1alpha6.Backdrop.files:type_name -> com.wabenet.dodo.core.v1alpha6.FileUpload
-	7, // 6: com.wabenet.dodo.core.v1alpha6.Backdrop.build_info:type_name -> com.wabenet.dodo.core.v1alpha6.BuildInfo
+var file_core_v1alpha7_backdrop_proto_depIdxs = []int32{
+	1, // 0: com.wabenet.dodo.core.v1alpha7.Backdrop.entrypoint:type_name -> com.wabenet.dodo.core.v1alpha7.Entrypoint
+	2, // 1: com.wabenet.dodo.core.v1alpha7.Backdrop.environment:type_name -> com.wabenet.dodo.core.v1alpha7.EnvironmentVariable
+	3, // 2: com.wabenet.dodo.core.v1alpha7.Backdrop.volumes:type_name -> com.wabenet.dodo.core.v1alpha7.VolumeMount
+	4, // 3: com.wabenet.dodo.core.v1alpha7.Backdrop.devices:type_name -> com.wabenet.dodo.core.v1alpha7.DeviceMapping
+	5, // 4: com.wabenet.dodo.core.v1alpha7.Backdrop.ports:type_name -> com.wabenet.dodo.core.v1alpha7.PortBinding
+	6, // 5: com.wabenet.dodo.core.v1alpha7.Backdrop.files:type_name -> com.wabenet.dodo.core.v1alpha7.FileUpload
+	7, // 6: com.wabenet.dodo.core.v1alpha7.Backdrop.build_info:type_name -> com.wabenet.dodo.core.v1alpha7.BuildInfo
 	7, // [7:7] is the sub-list for method output_type
 	7, // [7:7] is the sub-list for method input_type
 	7, // [7:7] is the sub-list for extension type_name
@@ -703,14 +703,14 @@ var file_core_v1alpha6_backdrop_proto_depIdxs = []int32{
 	0, // [0:7] is the sub-list for field type_name
 }
 
-func init() { file_core_v1alpha6_backdrop_proto_init() }
-func file_core_v1alpha6_backdrop_proto_init() {
-	if File_core_v1alpha6_backdrop_proto != nil {
+func init() { file_core_v1alpha7_backdrop_proto_init() }
+func file_core_v1alpha7_backdrop_proto_init() {
+	if File_core_v1alpha7_backdrop_proto != nil {
 		return
 	}
-	file_core_v1alpha6_build_proto_init()
+	file_core_v1alpha7_build_proto_init()
 	if !protoimpl.UnsafeEnabled {
-		file_core_v1alpha6_backdrop_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
+		file_core_v1alpha7_backdrop_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Backdrop); i {
 			case 0:
 				return &v.state
@@ -722,7 +722,7 @@ func file_core_v1alpha6_backdrop_proto_init() {
 				return nil
 			}
 		}
-		file_core_v1alpha6_backdrop_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
+		file_core_v1alpha7_backdrop_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Entrypoint); i {
 			case 0:
 				return &v.state
@@ -734,7 +734,7 @@ func file_core_v1alpha6_backdrop_proto_init() {
 				return nil
 			}
 		}
-		file_core_v1alpha6_backdrop_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+		file_core_v1alpha7_backdrop_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*EnvironmentVariable); i {
 			case 0:
 				return &v.state
@@ -746,7 +746,7 @@ func file_core_v1alpha6_backdrop_proto_init() {
 				return nil
 			}
 		}
-		file_core_v1alpha6_backdrop_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+		file_core_v1alpha7_backdrop_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*VolumeMount); i {
 			case 0:
 				return &v.state
@@ -758,7 +758,7 @@ func file_core_v1alpha6_backdrop_proto_init() {
 				return nil
 			}
 		}
-		file_core_v1alpha6_backdrop_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+		file_core_v1alpha7_backdrop_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeviceMapping); i {
 			case 0:
 				return &v.state
@@ -770,7 +770,7 @@ func file_core_v1alpha6_backdrop_proto_init() {
 				return nil
 			}
 		}
-		file_core_v1alpha6_backdrop_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+		file_core_v1alpha7_backdrop_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*PortBinding); i {
 			case 0:
 				return &v.state
@@ -782,7 +782,7 @@ func file_core_v1alpha6_backdrop_proto_init() {
 				return nil
 			}
 		}
-		file_core_v1alpha6_backdrop_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+		file_core_v1alpha7_backdrop_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*FileUpload); i {
 			case 0:
 				return &v.state
@@ -799,18 +799,18 @@ func file_core_v1alpha6_backdrop_proto_init() {
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: file_core_v1alpha6_backdrop_proto_rawDesc,
+			RawDescriptor: file_core_v1alpha7_backdrop_proto_rawDesc,
 			NumEnums:      0,
 			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_core_v1alpha6_backdrop_proto_goTypes,
-		DependencyIndexes: file_core_v1alpha6_backdrop_proto_depIdxs,
-		MessageInfos:      file_core_v1alpha6_backdrop_proto_msgTypes,
+		GoTypes:           file_core_v1alpha7_backdrop_proto_goTypes,
+		DependencyIndexes: file_core_v1alpha7_backdrop_proto_depIdxs,
+		MessageInfos:      file_core_v1alpha7_backdrop_proto_msgTypes,
 	}.Build()
-	File_core_v1alpha6_backdrop_proto = out.File
-	file_core_v1alpha6_backdrop_proto_rawDesc = nil
-	file_core_v1alpha6_backdrop_proto_goTypes = nil
-	file_core_v1alpha6_backdrop_proto_depIdxs = nil
+	File_core_v1alpha7_backdrop_proto = out.File
+	file_core_v1alpha7_backdrop_proto_rawDesc = nil
+	file_core_v1alpha7_backdrop_proto_goTypes = nil
+	file_core_v1alpha7_backdrop_proto_depIdxs = nil
 }

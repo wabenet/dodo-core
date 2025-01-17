@@ -5,7 +5,7 @@ import (
 
 	log "github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-multierror"
-	core "github.com/wabenet/dodo-core/api/core/v1alpha6"
+	core "github.com/wabenet/dodo-core/api/core/v1alpha7"
 	"github.com/wabenet/dodo-core/pkg/plugin"
 )
 

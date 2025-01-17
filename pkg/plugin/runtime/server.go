@@ -8,7 +8,7 @@ import (
 	"sync"
 
 	"github.com/golang/protobuf/ptypes/empty"
-	core "github.com/wabenet/dodo-core/api/core/v1alpha6"
+	pluginapi "github.com/wabenet/dodo-core/api/plugin/v1alpha1"
 	runtime "github.com/wabenet/dodo-core/api/runtime/v1alpha2"
 	"github.com/wabenet/dodo-core/pkg/grpcutil"
 	"github.com/wabenet/dodo-core/pkg/plugin"
@@ -58,7 +58,7 @@ type streamInputServer struct {
 	server runtime.Plugin_StreamInputServer
 }
 
-func (s *streamInputServer) Recv() (*core.InputData, error) {
+func (s *streamInputServer) Recv() (*pluginapi.InputData, error) {
 	d, err := s.server.Recv()
 	if err != nil {
 		return nil, fmt.Errorf("error wrapping Recv call: %w", err)
@@ -75,11 +75,11 @@ func (s *streamInputServer) SendAndClose(e *empty.Empty) error {
 	return nil
 }
 
-func (s *server) GetPluginInfo(_ context.Context, _ *empty.Empty) (*core.PluginInfo, error) {
+func (s *server) GetPluginInfo(_ context.Context, _ *empty.Empty) (*pluginapi.PluginInfo, error) {
 	return s.impl.PluginInfo(), nil
 }
 
-func (s *server) InitPlugin(_ context.Context, _ *empty.Empty) (*core.InitPluginResponse, error) {
+func (s *server) InitPlugin(_ context.Context, _ *empty.Empty) (*pluginapi.InitPluginResponse, error) {
 	s.reset()
 
 	config, err := s.impl.Init()
@@ -87,7 +87,7 @@ func (s *server) InitPlugin(_ context.Context, _ *empty.Empty) (*core.InitPlugin
 		return nil, fmt.Errorf("could not initialize plugin: %w", err)
 	}
 
-	return &core.InitPluginResponse{Config: config}, nil
+	return &pluginapi.InitPluginResponse{Config: config}, nil
 }
 
 func (s *server) ResetPlugin(_ context.Context, _ *empty.Empty) (*empty.Empty, error) {
@@ -170,7 +170,7 @@ func (s *server) StreamInput(srv runtime.Plugin_StreamInputServer) error {
 	return nil
 }
 
-func (s *server) StreamOutput(request *core.StreamOutputRequest, srv runtime.Plugin_StreamOutputServer) error {
+func (s *server) StreamOutput(request *pluginapi.StreamOutputRequest, srv runtime.Plugin_StreamOutputServer) error {
 	id := request.GetId()
 
 	outputServer, err := s.stdoutServer(id)

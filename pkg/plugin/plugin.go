@@ -10,7 +10,7 @@ import (
 
 	log "github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
-	core "github.com/wabenet/dodo-core/api/core/v1alpha6"
+	api "github.com/wabenet/dodo-core/api/plugin/v1alpha1"
 	"github.com/wabenet/dodo-core/pkg/config"
 )
 
@@ -18,11 +18,10 @@ const (
 	ProtocolVersion  = 1
 	MagicCookieKey   = "DODO_PLUGIN"
 	MagicCookieValue = "69318785-d741-4150-ac91-8f03fa703530"
-	FailedPlugin     = "error"
 )
 
 type Plugin interface {
-	PluginInfo() *core.PluginInfo
+	PluginInfo() *api.PluginInfo
 	Init() (Config, error)
 	Cleanup()
 
@@ -50,34 +49,12 @@ type Manager struct {
 	plugins     map[string]map[string]Plugin
 }
 
-type NotFoundError struct {
-	Plugin *core.PluginName
+func MkName(t Type, name string) *api.PluginName {
+	return &api.PluginName{Type: t.String(), Name: name}
 }
 
-func (e NotFoundError) Error() string {
-	return fmt.Sprintf(
-		"could not find plugin '%s' of type %s",
-		e.Plugin.GetName(),
-		e.Plugin.GetType(),
-	)
-}
-
-type InvalidError struct {
-	Plugin  *core.PluginName
-	Message string
-}
-
-func (e InvalidError) Error() string {
-	if e.Plugin == nil {
-		return fmt.Sprintf("invalid unknown plugin encountered: %s", e.Message)
-	}
-
-	return fmt.Sprintf(
-		"invalid plugin '%s' of type %s: %s",
-		e.Plugin.GetName(),
-		e.Plugin.GetType(),
-		e.Message,
-	)
+func MkInfo(t Type, name string) *api.PluginInfo {
+	return &api.PluginInfo{Name: MkName(t, name)}
 }
 
 func Init() Manager {
@@ -258,7 +235,7 @@ func loadGRPCPlugin(path, pluginType string, grpcPlugin plugin.Plugin) (Plugin, 
 	client.Kill()
 
 	return nil, InvalidError{
-		Plugin:  &core.PluginName{Type: pluginType, Name: path}, // TODO: name?
+		Plugin:  &api.PluginName{Type: pluginType, Name: path}, // TODO: name?
 		Message: "does not implement Plugin interface",
 	}
 }

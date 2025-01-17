@@ -10,7 +10,8 @@ import (
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/hashicorp/go-hclog"
 	build "github.com/wabenet/dodo-core/api/build/v1alpha1"
-	core "github.com/wabenet/dodo-core/api/core/v1alpha6"
+	core "github.com/wabenet/dodo-core/api/core/v1alpha7"
+	pluginapi "github.com/wabenet/dodo-core/api/plugin/v1alpha1"
 	"github.com/wabenet/dodo-core/pkg/grpcutil"
 	"github.com/wabenet/dodo-core/pkg/plugin"
 	"golang.org/x/sync/errgroup"
@@ -37,13 +38,10 @@ func (c *client) Type() plugin.Type {
 	return Type
 }
 
-func (c *client) PluginInfo() *core.PluginInfo {
+func (c *client) PluginInfo() *pluginapi.PluginInfo {
 	info, err := c.builderClient.GetPluginInfo(context.Background(), &empty.Empty{})
 	if err != nil {
-		return &core.PluginInfo{
-			Name:   &core.PluginName{Type: Type.String(), Name: plugin.FailedPlugin},
-			Fields: map[string]string{"error": err.Error()},
-		}
+		return plugin.NewFailedPluginInfo(Type, err)
 	}
 
 	return info
@@ -117,7 +115,7 @@ func (c *client) CreateImage(config *core.BuildInfo, stream *plugin.StreamConfig
 func (c *client) copyOutputClientToStdout(streamID string, stdout, stderr io.Writer) error {
 	outputClient, err := c.builderClient.StreamOutput(
 		context.Background(),
-		&core.StreamOutputRequest{Id: streamID},
+		&pluginapi.StreamOutputRequest{Id: streamID},
 	)
 	if err != nil {
 		return fmt.Errorf("could not stream runtime output: %w", err)

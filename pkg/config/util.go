@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	api "github.com/wabenet/dodo-core/api/core/v1alpha6"
+	api "github.com/wabenet/dodo-core/api/core/v1alpha7"
 )
 
 type FormatError string

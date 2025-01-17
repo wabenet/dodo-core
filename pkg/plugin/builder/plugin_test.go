@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	core "github.com/wabenet/dodo-core/api/core/v1alpha6"
+	core "github.com/wabenet/dodo-core/api/core/v1alpha7"
 	dodo "github.com/wabenet/dodo-core/pkg/plugin"
 	"github.com/wabenet/dodo-core/pkg/plugin/builder"
 	plugintest "github.com/wabenet/dodo-core/pkg/plugin/test"

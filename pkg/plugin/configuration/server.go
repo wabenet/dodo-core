@@ -6,7 +6,8 @@ import (
 
 	"github.com/golang/protobuf/ptypes/empty"
 	configuration "github.com/wabenet/dodo-core/api/configuration/v1alpha1"
-	core "github.com/wabenet/dodo-core/api/core/v1alpha6"
+	core "github.com/wabenet/dodo-core/api/core/v1alpha7"
+	pluginapi "github.com/wabenet/dodo-core/api/plugin/v1alpha1"
 )
 
 type server struct {
@@ -17,17 +18,17 @@ func NewGRPCServer(impl Configuration) configuration.PluginServer {
 	return &server{impl: impl}
 }
 
-func (s *server) GetPluginInfo(_ context.Context, _ *empty.Empty) (*core.PluginInfo, error) {
+func (s *server) GetPluginInfo(_ context.Context, _ *empty.Empty) (*pluginapi.PluginInfo, error) {
 	return s.impl.PluginInfo(), nil
 }
 
-func (s *server) InitPlugin(_ context.Context, _ *empty.Empty) (*core.InitPluginResponse, error) {
+func (s *server) InitPlugin(_ context.Context, _ *empty.Empty) (*pluginapi.InitPluginResponse, error) {
 	config, err := s.impl.Init()
 	if err != nil {
 		return nil, fmt.Errorf("could not initialize plugin: %w", err)
 	}
 
-	return &core.InitPluginResponse{Config: config}, nil
+	return &pluginapi.InitPluginResponse{Config: config}, nil
 }
 
 func (s *server) ResetPlugin(_ context.Context, _ *empty.Empty) (*empty.Empty, error) {

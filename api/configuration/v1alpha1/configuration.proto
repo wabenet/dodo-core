@@ -5,20 +5,20 @@ package com.wabenet.dodo.configuration.v1alpha1;
 option go_package = "github.com/wabenet/dodo-core/api/configuration/v1alpha1";
 
 import "google/protobuf/empty.proto";
-import "core/v1alpha6/plugin.proto";
-import "core/v1alpha6/backdrop.proto";
+import "plugin/v1alpha1/plugin.proto";
+import "core/v1alpha7/backdrop.proto";
 
 service Plugin {
-  rpc GetPluginInfo(google.protobuf.Empty) returns (com.wabenet.dodo.core.v1alpha6.PluginInfo);
-  rpc InitPlugin(google.protobuf.Empty) returns (com.wabenet.dodo.core.v1alpha6.InitPluginResponse);
+  rpc GetPluginInfo(google.protobuf.Empty) returns (com.wabenet.dodo.plugin.v1alpha1.PluginInfo);
+  rpc InitPlugin(google.protobuf.Empty) returns (com.wabenet.dodo.plugin.v1alpha1.InitPluginResponse);
   rpc ResetPlugin(google.protobuf.Empty) returns (google.protobuf.Empty);
 
   rpc ListBackdrops(google.protobuf.Empty) returns (ListBackdropsResponse);
-  rpc GetBackdrop(GetBackdropRequest) returns (com.wabenet.dodo.core.v1alpha6.Backdrop);
+  rpc GetBackdrop(GetBackdropRequest) returns (com.wabenet.dodo.core.v1alpha7.Backdrop);
 }
 
 message ListBackdropsResponse {
-  repeated com.wabenet.dodo.core.v1alpha6.Backdrop backdrops = 1;
+  repeated com.wabenet.dodo.core.v1alpha7.Backdrop backdrops = 1;
 }
 
 message GetBackdropRequest {

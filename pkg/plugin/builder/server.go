@@ -9,7 +9,7 @@ import (
 
 	"github.com/golang/protobuf/ptypes/empty"
 	build "github.com/wabenet/dodo-core/api/build/v1alpha1"
-	core "github.com/wabenet/dodo-core/api/core/v1alpha6"
+	pluginapi "github.com/wabenet/dodo-core/api/plugin/v1alpha1"
 	"github.com/wabenet/dodo-core/pkg/grpcutil"
 	"github.com/wabenet/dodo-core/pkg/plugin"
 	"golang.org/x/sync/errgroup"
@@ -41,11 +41,11 @@ func (s *server) stdoutServer(streamID string) (*grpcutil.StreamOutputServer, er
 	return result, nil
 }
 
-func (s *server) GetPluginInfo(_ context.Context, _ *empty.Empty) (*core.PluginInfo, error) {
+func (s *server) GetPluginInfo(_ context.Context, _ *empty.Empty) (*pluginapi.PluginInfo, error) {
 	return s.impl.PluginInfo(), nil
 }
 
-func (s *server) InitPlugin(_ context.Context, _ *empty.Empty) (*core.InitPluginResponse, error) {
+func (s *server) InitPlugin(_ context.Context, _ *empty.Empty) (*pluginapi.InitPluginResponse, error) {
 	s.reset()
 
 	config, err := s.impl.Init()
@@ -53,7 +53,7 @@ func (s *server) InitPlugin(_ context.Context, _ *empty.Empty) (*core.InitPlugin
 		return nil, fmt.Errorf("could not initialize plugin: %w", err)
 	}
 
-	return &core.InitPluginResponse{Config: config}, nil
+	return &pluginapi.InitPluginResponse{Config: config}, nil
 }
 
 func (s *server) ResetPlugin(_ context.Context, _ *empty.Empty) (*empty.Empty, error) {
@@ -63,7 +63,7 @@ func (s *server) ResetPlugin(_ context.Context, _ *empty.Empty) (*empty.Empty, e
 	return &empty.Empty{}, nil
 }
 
-func (s *server) StreamOutput(request *core.StreamOutputRequest, srv build.Plugin_StreamOutputServer) error {
+func (s *server) StreamOutput(request *pluginapi.StreamOutputRequest, srv build.Plugin_StreamOutputServer) error {
 	id := request.GetId()
 
 	outputServer, err := s.stdoutServer(id)

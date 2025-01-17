@@ -5,7 +5,7 @@ import (
 
 	"github.com/hashicorp/go-plugin"
 	build "github.com/wabenet/dodo-core/api/build/v1alpha1"
-	core "github.com/wabenet/dodo-core/api/core/v1alpha6"
+	core "github.com/wabenet/dodo-core/api/core/v1alpha7"
 	dodo "github.com/wabenet/dodo-core/pkg/plugin"
 	"google.golang.org/grpc"
 )

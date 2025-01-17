@@ -8,7 +8,8 @@ import (
 
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/hashicorp/go-hclog"
-	core "github.com/wabenet/dodo-core/api/core/v1alpha6"
+	core "github.com/wabenet/dodo-core/api/core/v1alpha7"
+	pluginapi "github.com/wabenet/dodo-core/api/plugin/v1alpha1"
 	runtime "github.com/wabenet/dodo-core/api/runtime/v1alpha2"
 	"github.com/wabenet/dodo-core/pkg/grpcutil"
 	"github.com/wabenet/dodo-core/pkg/ioutil"
@@ -37,9 +38,9 @@ type streamInputClient struct {
 	client runtime.Plugin_StreamInputClient
 }
 
-func (s *streamInputClient) Send(data *core.InputData) error {
-	if err := s.client.Send(&core.StreamInputRequest{
-		InputRequestType: &core.StreamInputRequest_InputData{InputData: data},
+func (s *streamInputClient) Send(data *pluginapi.InputData) error {
+	if err := s.client.Send(&pluginapi.StreamInputRequest{
+		InputRequestType: &pluginapi.StreamInputRequest_InputData{InputData: data},
 	}); err != nil {
 		return fmt.Errorf("error wrapping Send call: %w", err)
 	}
@@ -60,13 +61,10 @@ func (c *client) Type() plugin.Type {
 	return Type
 }
 
-func (c *client) PluginInfo() *core.PluginInfo {
+func (c *client) PluginInfo() *pluginapi.PluginInfo {
 	info, err := c.runtimeClient.GetPluginInfo(context.Background(), &empty.Empty{})
 	if err != nil {
-		return &core.PluginInfo{
-			Name:   &core.PluginName{Type: Type.String(), Name: plugin.FailedPlugin},
-			Fields: map[string]string{"error": err.Error()},
-		}
+		return plugin.NewFailedPluginInfo(Type, err)
 	}
 
 	return info
@@ -194,9 +192,9 @@ func (c *client) copyInputClientToStdin(containerID string, stdin io.Reader) err
 		return fmt.Errorf("could not stream runtime input: %w", err)
 	}
 
-	if err := inputClient.Send(&core.StreamInputRequest{
-		InputRequestType: &core.StreamInputRequest_InitialRequest{
-			InitialRequest: &core.InitialStreamInputRequest{Id: containerID},
+	if err := inputClient.Send(&pluginapi.StreamInputRequest{
+		InputRequestType: &pluginapi.StreamInputRequest_InitialRequest{
+			InitialRequest: &pluginapi.InitialStreamInputRequest{Id: containerID},
 		},
 	}); err != nil {
 		return fmt.Errorf("could not stream runtime input: %w", err)
@@ -212,7 +210,7 @@ func (c *client) copyInputClientToStdin(containerID string, stdin io.Reader) err
 func (c *client) copyOutputClientToStdout(containerID string, stdout, stderr io.Writer) error {
 	outputClient, err := c.runtimeClient.StreamOutput(
 		context.Background(),
-		&core.StreamOutputRequest{Id: containerID},
+		&pluginapi.StreamOutputRequest{Id: containerID},
 	)
 	if err != nil {
 		return fmt.Errorf("could not stream runtime output: %w", err)

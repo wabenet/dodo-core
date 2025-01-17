@@ -2,7 +2,6 @@ package runtime
 
 import (
 	log "github.com/hashicorp/go-hclog"
-	core "github.com/wabenet/dodo-core/api/core/v1alpha6"
 	"github.com/wabenet/dodo-core/pkg/plugin"
 )
 
@@ -19,7 +18,5 @@ func GetByName(m plugin.Manager, name string) (ContainerRuntime, error) {
 		}
 	}
 
-	return nil, plugin.NotFoundError{
-		Plugin: &core.PluginName{Type: Type.String(), Name: name},
-	}
+	return nil, plugin.NewNotFoundError(Type, name)
 }

@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"io"
 
-	core "github.com/wabenet/dodo-core/api/core/v1alpha6"
+	api "github.com/wabenet/dodo-core/api/plugin/v1alpha1"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -17,7 +17,7 @@ type StreamOutputServer struct {
 }
 
 type grpcOutputServer interface {
-	Send(data *core.OutputData) error
+	Send(data *api.OutputData) error
 	Context() context.Context
 }
 
@@ -52,7 +52,7 @@ func (s *StreamOutputServer) ReadFrom(stdout, stderr io.Reader) error {
 }
 
 func (s *StreamOutputServer) SendTo(srv grpcOutputServer) error {
-	var data core.OutputData
+	var data api.OutputData
 
 	defer func() {
 		s.outputDone <- nil
@@ -72,7 +72,7 @@ func (s *StreamOutputServer) SendTo(srv grpcOutputServer) error {
 			}
 
 			data.Data = d
-			data.Channel = core.OutputData_STDOUT
+			data.Channel = api.OutputData_STDOUT
 
 		case d, ok := <-s.stderrCh:
 			if !ok {
@@ -82,7 +82,7 @@ func (s *StreamOutputServer) SendTo(srv grpcOutputServer) error {
 			}
 
 			data.Data = d
-			data.Channel = core.OutputData_STDERR
+			data.Channel = api.OutputData_STDERR
 
 		case <-srv.Context().Done():
 			return nil

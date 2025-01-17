@@ -4,7 +4,8 @@ import (
 	"io"
 	"os"
 
-	core "github.com/wabenet/dodo-core/api/core/v1alpha6"
+	core "github.com/wabenet/dodo-core/api/core/v1alpha7"
+	pluginapi "github.com/wabenet/dodo-core/api/plugin/v1alpha1"
 	"github.com/wabenet/dodo-core/pkg/plugin"
 	"github.com/wabenet/dodo-core/pkg/plugin/runtime"
 )
@@ -17,10 +18,8 @@ func (r *DummyRuntime) Type() plugin.Type {
 	return runtime.Type
 }
 
-func (r *DummyRuntime) PluginInfo() *core.PluginInfo {
-	return &core.PluginInfo{
-		Name: &core.PluginName{Type: runtime.Type.String(), Name: "dummy"},
-	}
+func (r *DummyRuntime) PluginInfo() *pluginapi.PluginInfo {
+	return plugin.MkInfo(runtime.Type, "dummy")
 }
 
 func (r *DummyRuntime) Init() (plugin.Config, error) {
@@ -79,9 +78,9 @@ func (r *ErrorRuntime) Type() plugin.Type {
 	return runtime.Type
 }
 
-func (r *ErrorRuntime) PluginInfo() *core.PluginInfo {
-	return &core.PluginInfo{
-		Name: &core.PluginName{Type: runtime.Type.String(), Name: "error"},
+func (r *ErrorRuntime) PluginInfo() *pluginapi.PluginInfo {
+	return &pluginapi.PluginInfo{
+		Name: &pluginapi.PluginName{Type: runtime.Type.String(), Name: "error"},
 	}
 }
 
@@ -142,9 +141,9 @@ func (r *EchoRuntime) Type() plugin.Type {
 	return runtime.Type
 }
 
-func (r *EchoRuntime) PluginInfo() *core.PluginInfo {
-	return &core.PluginInfo{
-		Name: &core.PluginName{Type: runtime.Type.String(), Name: "echo"},
+func (r *EchoRuntime) PluginInfo() *pluginapi.PluginInfo {
+	return &pluginapi.PluginInfo{
+		Name: &pluginapi.PluginName{Type: runtime.Type.String(), Name: "echo"},
 	}
 }
 

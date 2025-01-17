@@ -6,7 +6,7 @@ import (
 
 	mapset "github.com/deckarep/golang-set"
 	log "github.com/hashicorp/go-hclog"
-	core "github.com/wabenet/dodo-core/api/core/v1alpha6"
+	api "github.com/wabenet/dodo-core/api/plugin/v1alpha1"
 )
 
 type CircularDependencyError struct {
@@ -28,7 +28,7 @@ type dependency struct {
 	t string
 }
 
-func asDependency(name *core.PluginName) dependency {
+func asDependency(name *api.PluginName) dependency {
 	return dependency{n: name.GetName(), t: name.GetType()}
 }
 

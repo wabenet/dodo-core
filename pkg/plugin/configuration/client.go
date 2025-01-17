@@ -7,7 +7,8 @@ import (
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/hashicorp/go-hclog"
 	configuration "github.com/wabenet/dodo-core/api/configuration/v1alpha1"
-	core "github.com/wabenet/dodo-core/api/core/v1alpha6"
+	core "github.com/wabenet/dodo-core/api/core/v1alpha7"
+	pluginapi "github.com/wabenet/dodo-core/api/plugin/v1alpha1"
 	"github.com/wabenet/dodo-core/pkg/plugin"
 	"google.golang.org/grpc"
 )
@@ -26,11 +27,11 @@ func (c *client) Type() plugin.Type {
 	return Type
 }
 
-func (c *client) PluginInfo() *core.PluginInfo {
+func (c *client) PluginInfo() *pluginapi.PluginInfo {
 	info, err := c.configClient.GetPluginInfo(context.Background(), &empty.Empty{})
 	if err != nil {
-		return &core.PluginInfo{
-			Name:   &core.PluginName{Type: Type.String(), Name: plugin.FailedPlugin},
+		return &pluginapi.PluginInfo{
+			Name:   plugin.MkName(Type, plugin.FailedPlugin),
 			Fields: map[string]string{"error": err.Error()},
 		}
 	}
