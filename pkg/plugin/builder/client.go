@@ -9,8 +9,7 @@ import (
 
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/hashicorp/go-hclog"
-	build "github.com/wabenet/dodo-core/api/build/v1alpha1"
-	core "github.com/wabenet/dodo-core/api/core/v1alpha7"
+	api "github.com/wabenet/dodo-core/api/build/v1alpha2"
 	pluginapi "github.com/wabenet/dodo-core/api/plugin/v1alpha1"
 	"github.com/wabenet/dodo-core/pkg/grpcutil"
 	"github.com/wabenet/dodo-core/pkg/plugin"
@@ -20,25 +19,25 @@ import (
 
 const lenStreamID = 32
 
-var _ ImageBuilder = &client{}
+var _ ImageBuilder = &Client{}
 
-type client struct {
-	builderClient build.PluginClient
+type Client struct {
+	builderClient api.PluginClient
 	stdout        *grpcutil.StreamOutputClient
 }
 
-func NewGRPCClient(conn grpc.ClientConnInterface) ImageBuilder {
-	return &client{
-		builderClient: build.NewPluginClient(conn),
+func NewGRPCClient(conn grpc.ClientConnInterface) *Client {
+	return &Client{
+		builderClient: api.NewPluginClient(conn),
 		stdout:        grpcutil.NewStreamOutputClient(),
 	}
 }
 
-func (c *client) Type() plugin.Type {
+func (c *Client) Type() plugin.Type { //nolint:ireturn
 	return Type
 }
 
-func (c *client) PluginInfo() *pluginapi.PluginInfo {
+func (c *Client) PluginInfo() *pluginapi.PluginInfo {
 	info, err := c.builderClient.GetPluginInfo(context.Background(), &empty.Empty{})
 	if err != nil {
 		return plugin.NewFailedPluginInfo(Type, err)
@@ -47,7 +46,7 @@ func (c *client) PluginInfo() *pluginapi.PluginInfo {
 	return info
 }
 
-func (c *client) Init() (plugin.Config, error) {
+func (c *Client) Init() (plugin.Config, error) {
 	resp, err := c.builderClient.InitPlugin(context.Background(), &empty.Empty{})
 	if err != nil {
 		return nil, fmt.Errorf("could not initialize plugin: %w", err)
@@ -56,16 +55,16 @@ func (c *client) Init() (plugin.Config, error) {
 	return resp.GetConfig(), nil
 }
 
-func (c *client) Cleanup() {
+func (c *Client) Cleanup() {
 	_, err := c.builderClient.ResetPlugin(context.Background(), &empty.Empty{})
 	if err != nil {
 		log.L().Error("plugin reset error", "error", err)
 	}
 }
 
-func (c *client) CreateImage(config *core.BuildInfo, stream *plugin.StreamConfig) (string, error) {
+func (c *Client) CreateImage(config *api.BuildConfig, stream *plugin.StreamConfig) (string, error) {
 	if stream == nil {
-		result, err := c.builderClient.CreateImage(context.Background(), &build.CreateImageRequest{
+		result, err := c.builderClient.CreateImage(context.Background(), &api.CreateImageRequest{
 			Config: config,
 			Height: 0,
 			Width:  0,
@@ -90,7 +89,7 @@ func (c *client) CreateImage(config *core.BuildInfo, stream *plugin.StreamConfig
 	eg.Go(func() error { return c.copyOutputClientToStdout(streamID, stream.Stdout, stream.Stderr) })
 
 	eg.Go(func() error {
-		result, err := c.builderClient.CreateImage(context.Background(), &build.CreateImageRequest{
+		result, err := c.builderClient.CreateImage(context.Background(), &api.CreateImageRequest{
 			StreamId: streamID,
 			Config:   config,
 			Height:   stream.TerminalHeight,
@@ -112,7 +111,7 @@ func (c *client) CreateImage(config *core.BuildInfo, stream *plugin.StreamConfig
 	return imageID, nil
 }
 
-func (c *client) copyOutputClientToStdout(streamID string, stdout, stderr io.Writer) error {
+func (c *Client) copyOutputClientToStdout(streamID string, stdout, stderr io.Writer) error {
 	outputClient, err := c.builderClient.StreamOutput(
 		context.Background(),
 		&pluginapi.StreamOutputRequest{Id: streamID},

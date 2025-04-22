@@ -1,12 +1,11 @@
 syntax = "proto3";
 
-package com.wabenet.dodo.build.v1alpha1;
+package com.wabenet.dodo.build.v1alpha2;
 
-option go_package = "github.com/wabenet/dodo-core/api/build/v1alpha1";
+option go_package = "github.com/wabenet/dodo-core/api/build/v1alpha2;build";
 
 import "google/protobuf/empty.proto";
 import "plugin/v1alpha1/plugin.proto";
-import "core/v1alpha7/build.proto";
 
 service Plugin {
   rpc GetPluginInfo(google.protobuf.Empty) returns (com.wabenet.dodo.plugin.v1alpha1.PluginInfo);
@@ -20,11 +19,43 @@ service Plugin {
 
 message CreateImageRequest {
   string stream_id = 1;
-  com.wabenet.dodo.core.v1alpha7.BuildInfo config = 2;
+  BuildConfig config = 2;
   uint32 height = 3;
   uint32 width = 4;
 }
 
 message CreateImageResponse {
   string image_id = 1;
+}
+
+message BuildConfig {
+  string image_name = 2;
+  string context = 3;
+  string dockerfile = 4;
+  repeated string inline_dockerfile = 5;
+
+  repeated BuildArgument arguments = 6;
+  repeated BuildSecret secrets = 7;
+  repeated SshAgent ssh_agents = 8;
+
+  bool no_cache = 9;
+  bool force_rebuild = 10;
+  bool force_pull = 11;
+
+  repeated string dependencies = 12;
+}
+
+message BuildArgument {
+  string key = 1;
+  string value = 2;
+}
+
+message BuildSecret {
+  string id = 1;
+  string path = 2;
+}
+
+message SshAgent {
+  string id = 1;
+  string identity_file = 2;
 }

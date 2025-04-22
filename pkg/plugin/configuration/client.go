@@ -6,28 +6,27 @@ import (
 
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/hashicorp/go-hclog"
-	configuration "github.com/wabenet/dodo-core/api/configuration/v1alpha1"
-	core "github.com/wabenet/dodo-core/api/core/v1alpha7"
+	api "github.com/wabenet/dodo-core/api/configuration/v1alpha2"
 	pluginapi "github.com/wabenet/dodo-core/api/plugin/v1alpha1"
 	"github.com/wabenet/dodo-core/pkg/plugin"
 	"google.golang.org/grpc"
 )
 
-var _ Configuration = &client{}
+var _ Configuration = &Client{}
 
-type client struct {
-	configClient configuration.PluginClient
+type Client struct {
+	configClient api.PluginClient
 }
 
 func NewGRPCClient(conn grpc.ClientConnInterface) Configuration {
-	return &client{configClient: configuration.NewPluginClient(conn)}
+	return &Client{configClient: api.NewPluginClient(conn)}
 }
 
-func (c *client) Type() plugin.Type {
+func (c *Client) Type() plugin.Type { //nolint:ireturn
 	return Type
 }
 
-func (c *client) PluginInfo() *pluginapi.PluginInfo {
+func (c *Client) PluginInfo() *pluginapi.PluginInfo {
 	info, err := c.configClient.GetPluginInfo(context.Background(), &empty.Empty{})
 	if err != nil {
 		return &pluginapi.PluginInfo{
@@ -39,7 +38,7 @@ func (c *client) PluginInfo() *pluginapi.PluginInfo {
 	return info
 }
 
-func (c *client) Init() (plugin.Config, error) {
+func (c *Client) Init() (plugin.Config, error) {
 	resp, err := c.configClient.InitPlugin(context.Background(), &empty.Empty{})
 	if err != nil {
 		return nil, fmt.Errorf("could not initialize plugin: %w", err)
@@ -48,27 +47,27 @@ func (c *client) Init() (plugin.Config, error) {
 	return resp.GetConfig(), nil
 }
 
-func (c *client) Cleanup() {
+func (c *Client) Cleanup() {
 	_, err := c.configClient.ResetPlugin(context.Background(), &empty.Empty{})
 	if err != nil {
 		log.L().Error("plugin reset error", "error", err)
 	}
 }
 
-func (c *client) ListBackdrops() ([]*core.Backdrop, error) {
+func (c *Client) ListBackdrops() ([]*api.Backdrop, error) {
 	response, err := c.configClient.ListBackdrops(context.Background(), &empty.Empty{})
 	if err != nil {
-		return []*core.Backdrop{}, fmt.Errorf("could not list backdrops: %w", err)
+		return []*api.Backdrop{}, fmt.Errorf("could not list backdrops: %w", err)
 	}
 
 	return response.GetBackdrops(), nil
 }
 
-func (c *client) GetBackdrop(alias string) (*core.Backdrop, error) {
-	response, err := c.configClient.GetBackdrop(context.Background(), &configuration.GetBackdropRequest{Alias: alias})
+func (c *Client) GetBackdrop(alias string) (*api.Backdrop, error) {
+	response, err := c.configClient.GetBackdrop(context.Background(), &api.GetBackdropRequest{Alias: alias})
 	if err != nil {
 		return nil, fmt.Errorf("could not get backdrop: %w", err)
 	}
 
-	return response, nil
+	return response.GetBackdrop(), nil
 }

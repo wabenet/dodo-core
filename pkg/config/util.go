@@ -5,7 +5,8 @@ import (
 	"os"
 	"strings"
 
-	api "github.com/wabenet/dodo-core/api/core/v1alpha7"
+	build "github.com/wabenet/dodo-core/api/build/v1alpha2"
+	runtime "github.com/wabenet/dodo-core/api/runtime/v1alpha2"
 )
 
 type FormatError string
@@ -23,8 +24,8 @@ const (
 	ErrSSHAgentFormat    FormatError = "invalid ssh agent format"
 )
 
-func ParseBuildArgument(spec string) (*api.BuildArgument, error) {
-	arg := &api.BuildArgument{}
+func ParseBuildArgument(spec string) (*build.BuildArgument, error) {
+	arg := &build.BuildArgument{}
 
 	switch values := strings.SplitN(spec, "=", 2); len(values) {
 	case 0:
@@ -42,52 +43,72 @@ func ParseBuildArgument(spec string) (*api.BuildArgument, error) {
 	return arg, nil
 }
 
-func ParseDeviceMapping(spec string) (*api.DeviceMapping, error) {
-	dev := &api.DeviceMapping{}
+func ParseDeviceMount(spec string) (*runtime.Mount, error) {
+	dev := &runtime.DeviceMount{}
 
 	switch values := strings.SplitN(spec, ":", 3); len(values) {
 	case 0:
 		return nil, fmt.Errorf("%s: %w", spec, ErrDeviceFormat)
 	case 1:
-		dev.Source = values[0]
+		dev.HostPath = values[0]
 	case 2:
-		dev.Source = values[0]
-		dev.Target = values[1]
+		dev.HostPath = values[0]
+		dev.ContainerPath = values[1]
 	case 3:
-		dev.Source = values[0]
-		dev.Target = values[1]
+		dev.HostPath = values[0]
+		dev.ContainerPath = values[1]
 		dev.Permissions = values[2]
 	default:
 		return nil, fmt.Errorf("%s: %w", spec, ErrDeviceFormat)
 	}
 
-	return dev, nil
+	return &runtime.Mount{
+		Type: &runtime.Mount_Device{Device: dev},
+	}, nil
 }
 
-func ParseVolumeMount(spec string) (*api.VolumeMount, error) {
-	vol := &api.VolumeMount{}
+func ParseBindMount(spec string) (*runtime.Mount, error) {
+	var source, target string
+	var readonly bool
 
 	switch values := strings.SplitN(spec, ":", 3); len(values) {
 	case 0:
 		return nil, fmt.Errorf("%s: %w", spec, ErrVolumeFormat)
 	case 1:
-		vol.Source = values[0]
+		source = values[0]
 	case 2:
-		vol.Source = values[0]
-		vol.Target = values[1]
+		source = values[0]
+		target = values[1]
 	case 3:
-		vol.Source = values[0]
-		vol.Target = values[1]
-		vol.Readonly = (values[2] == "ro")
+		source = values[0]
+		target = values[1]
+		readonly = (values[2] == "ro")
 	default:
 		return nil, fmt.Errorf("%s: %w", spec, ErrVolumeFormat)
 	}
 
-	return vol, nil
+	// If source is an absolute path, assume bind mount, otherwise assume a volume
+	if source[0] == '/' {
+		return &runtime.Mount{
+			Type: &runtime.Mount_Bind{Bind: &runtime.BindMount{
+				HostPath:      source,
+				ContainerPath: target,
+				Readonly:      readonly,
+			}},
+		}, nil
+	} else {
+		return &runtime.Mount{
+			Type: &runtime.Mount_Volume{Volume: &runtime.VolumeMount{
+				VolumeName:    source,
+				ContainerPath: target,
+				Readonly:      readonly,
+			}},
+		}, nil
+	}
 }
 
-func ParseEnvironmentVariable(spec string) (*api.EnvironmentVariable, error) {
-	env := &api.EnvironmentVariable{}
+func ParseEnvironmentVariable(spec string) (*runtime.EnvironmentVariable, error) {
+	env := &runtime.EnvironmentVariable{}
 
 	switch values := strings.SplitN(spec, "=", 2); len(values) {
 	case 0:
@@ -105,30 +126,30 @@ func ParseEnvironmentVariable(spec string) (*api.EnvironmentVariable, error) {
 	return env, nil
 }
 
-func ParsePortBinding(spec string) (*api.PortBinding, error) {
-	port := &api.PortBinding{}
+func ParsePortBinding(spec string) (*runtime.PortBinding, error) {
+	port := &runtime.PortBinding{}
 
 	switch values := strings.SplitN(spec, ":", 3); len(values) {
 	case 0:
 		return nil, fmt.Errorf("%s: %w", spec, ErrPortFormat)
 	case 1:
-		port.Target = values[0]
+		port.ContainerPort = values[0]
 	case 2:
-		port.Published = values[0]
-		port.Target = values[1]
+		port.HostPort = values[0]
+		port.ContainerPort = values[1]
 	case 3:
 		port.HostIp = values[0]
-		port.Published = values[1]
-		port.Target = values[2]
+		port.HostPort = values[1]
+		port.ContainerPort = values[2]
 	default:
 		return nil, fmt.Errorf("%s: %w", spec, ErrPortFormat)
 	}
 
-	switch values := strings.SplitN(port.GetTarget(), "/", 2); len(values) {
+	switch values := strings.SplitN(port.GetHostPort(), "/", 2); len(values) {
 	case 1:
-		port.Target = values[0]
+		port.HostPort = values[0]
 	case 2:
-		port.Target = values[0]
+		port.HostPort = values[0]
 		port.Protocol = values[1]
 	default:
 		return nil, fmt.Errorf("%s: %w", spec, ErrPortFormat)
@@ -137,8 +158,8 @@ func ParsePortBinding(spec string) (*api.PortBinding, error) {
 	return port, nil
 }
 
-func ParseSSHAgent(spec string) (*api.SshAgent, error) {
-	agent := &api.SshAgent{}
+func ParseSSHAgent(spec string) (*build.SshAgent, error) {
+	agent := &build.SshAgent{}
 
 	switch values := strings.SplitN(spec, "=", 2); len(values) {
 	case 2:

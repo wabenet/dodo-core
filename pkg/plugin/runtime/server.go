@@ -9,7 +9,7 @@ import (
 
 	"github.com/golang/protobuf/ptypes/empty"
 	pluginapi "github.com/wabenet/dodo-core/api/plugin/v1alpha1"
-	runtime "github.com/wabenet/dodo-core/api/runtime/v1alpha2"
+	api "github.com/wabenet/dodo-core/api/runtime/v1alpha2"
 	"github.com/wabenet/dodo-core/pkg/grpcutil"
 	"github.com/wabenet/dodo-core/pkg/plugin"
 	"golang.org/x/sync/errgroup"
@@ -17,22 +17,22 @@ import (
 
 var ErrUnexpectedMapType = errors.New("unexpected map type for stdio streaming server")
 
-type server struct {
+type Server struct {
 	impl   ContainerRuntime
 	stdin  sync.Map
 	stdout sync.Map
 }
 
-func NewGRPCServer(impl ContainerRuntime) runtime.PluginServer {
-	return &server{impl: impl}
+func NewGRPCServer(impl ContainerRuntime) *Server {
+	return &Server{impl: impl}
 }
 
-func (s *server) reset() {
+func (s *Server) reset() {
 	s.stdin = sync.Map{}
 	s.stdout = sync.Map{}
 }
 
-func (s *server) stdinServer(containerID string) (*grpcutil.StreamInputServer, error) {
+func (s *Server) stdinServer(containerID string) (*grpcutil.StreamInputServer, error) {
 	inputServer, _ := s.stdin.LoadOrStore(containerID, grpcutil.NewStreamInputServer())
 
 	result, ok := inputServer.(*grpcutil.StreamInputServer)
@@ -43,7 +43,7 @@ func (s *server) stdinServer(containerID string) (*grpcutil.StreamInputServer, e
 	return result, nil
 }
 
-func (s *server) stdoutServer(containerID string) (*grpcutil.StreamOutputServer, error) {
+func (s *Server) stdoutServer(containerID string) (*grpcutil.StreamOutputServer, error) {
 	outputServer, _ := s.stdout.LoadOrStore(containerID, grpcutil.NewStreamOutputServer())
 
 	result, ok := outputServer.(*grpcutil.StreamOutputServer)
@@ -55,7 +55,7 @@ func (s *server) stdoutServer(containerID string) (*grpcutil.StreamOutputServer,
 }
 
 type streamInputServer struct {
-	server runtime.Plugin_StreamInputServer
+	server api.Plugin_StreamInputServer
 }
 
 func (s *streamInputServer) Recv() (*pluginapi.InputData, error) {
@@ -75,11 +75,11 @@ func (s *streamInputServer) SendAndClose(e *empty.Empty) error {
 	return nil
 }
 
-func (s *server) GetPluginInfo(_ context.Context, _ *empty.Empty) (*pluginapi.PluginInfo, error) {
+func (s *Server) GetPluginInfo(_ context.Context, _ *empty.Empty) (*pluginapi.PluginInfo, error) {
 	return s.impl.PluginInfo(), nil
 }
 
-func (s *server) InitPlugin(_ context.Context, _ *empty.Empty) (*pluginapi.InitPluginResponse, error) {
+func (s *Server) InitPlugin(_ context.Context, _ *empty.Empty) (*pluginapi.InitPluginResponse, error) {
 	s.reset()
 
 	config, err := s.impl.Init()
@@ -90,35 +90,35 @@ func (s *server) InitPlugin(_ context.Context, _ *empty.Empty) (*pluginapi.InitP
 	return &pluginapi.InitPluginResponse{Config: config}, nil
 }
 
-func (s *server) ResetPlugin(_ context.Context, _ *empty.Empty) (*empty.Empty, error) {
+func (s *Server) ResetPlugin(_ context.Context, _ *empty.Empty) (*empty.Empty, error) {
 	s.reset()
 	s.impl.Cleanup()
 
 	return &empty.Empty{}, nil
 }
 
-func (s *server) GetImage(_ context.Context, request *runtime.GetImageRequest) (*runtime.GetImageResponse, error) {
+func (s *Server) GetImage(_ context.Context, request *api.GetImageRequest) (*api.GetImageResponse, error) {
 	id, err := s.impl.ResolveImage(request.GetImageSpec())
 	if err != nil {
 		return nil, fmt.Errorf("could not resolve image: %w", err)
 	}
 
-	return &runtime.GetImageResponse{ImageId: id}, nil
+	return &api.GetImageResponse{ImageId: id}, nil
 }
 
-func (s *server) CreateContainer(
+func (s *Server) CreateContainer(
 	_ context.Context,
-	config *runtime.CreateContainerRequest,
-) (*runtime.CreateContainerResponse, error) {
-	id, err := s.impl.CreateContainer(config.GetConfig(), config.GetTty(), config.GetStdio())
+	config *api.CreateContainerRequest,
+) (*api.CreateContainerResponse, error) {
+	id, err := s.impl.CreateContainer(config.GetConfig())
 	if err != nil {
 		return nil, fmt.Errorf("could not create container: %w", err)
 	}
 
-	return &runtime.CreateContainerResponse{ContainerId: id}, nil
+	return &api.CreateContainerResponse{ContainerId: id}, nil
 }
 
-func (s *server) StartContainer(_ context.Context, request *runtime.StartContainerRequest) (*empty.Empty, error) {
+func (s *Server) StartContainer(_ context.Context, request *api.StartContainerRequest) (*empty.Empty, error) {
 	if err := s.impl.StartContainer(request.GetContainerId()); err != nil {
 		return nil, fmt.Errorf("could not start container: %w", err)
 	}
@@ -126,7 +126,7 @@ func (s *server) StartContainer(_ context.Context, request *runtime.StartContain
 	return &empty.Empty{}, nil
 }
 
-func (s *server) DeleteContainer(_ context.Context, request *runtime.DeleteContainerRequest) (*empty.Empty, error) {
+func (s *Server) DeleteContainer(_ context.Context, request *api.DeleteContainerRequest) (*empty.Empty, error) {
 	if err := s.impl.DeleteContainer(request.GetContainerId()); err != nil {
 		return nil, fmt.Errorf("could not delete container: %w", err)
 	}
@@ -134,7 +134,7 @@ func (s *server) DeleteContainer(_ context.Context, request *runtime.DeleteConta
 	return &empty.Empty{}, nil
 }
 
-func (s *server) ResizeContainer(_ context.Context, request *runtime.ResizeContainerRequest) (*empty.Empty, error) {
+func (s *Server) ResizeContainer(_ context.Context, request *api.ResizeContainerRequest) (*empty.Empty, error) {
 	if err := s.impl.ResizeContainer(request.GetContainerId(), request.GetHeight(), request.GetWidth()); err != nil {
 		return nil, fmt.Errorf("could not resize container: %w", err)
 	}
@@ -142,7 +142,7 @@ func (s *server) ResizeContainer(_ context.Context, request *runtime.ResizeConta
 	return &empty.Empty{}, nil
 }
 
-func (s *server) KillContainer(_ context.Context, request *runtime.KillContainerRequest) (*empty.Empty, error) {
+func (s *Server) KillContainer(_ context.Context, request *api.KillContainerRequest) (*empty.Empty, error) {
 	if err := s.impl.KillContainer(request.GetContainerId(), signalFromString(request.GetSignal())); err != nil {
 		return nil, fmt.Errorf("could not kill container: %w", err)
 	}
@@ -150,7 +150,7 @@ func (s *server) KillContainer(_ context.Context, request *runtime.KillContainer
 	return &empty.Empty{}, nil
 }
 
-func (s *server) StreamInput(srv runtime.Plugin_StreamInputServer) error {
+func (s *Server) StreamInput(srv api.Plugin_StreamInputServer) error {
 	req, err := srv.Recv()
 	if err != nil {
 		return fmt.Errorf("error during input stream: %w", err)
@@ -170,7 +170,7 @@ func (s *server) StreamInput(srv runtime.Plugin_StreamInputServer) error {
 	return nil
 }
 
-func (s *server) StreamOutput(request *pluginapi.StreamOutputRequest, srv runtime.Plugin_StreamOutputServer) error {
+func (s *Server) StreamOutput(request *pluginapi.StreamOutputRequest, srv api.Plugin_StreamOutputServer) error {
 	id := request.GetId()
 
 	outputServer, err := s.stdoutServer(id)
@@ -185,11 +185,11 @@ func (s *server) StreamOutput(request *pluginapi.StreamOutputRequest, srv runtim
 	return nil
 }
 
-func (s *server) StreamContainer(
+func (s *Server) StreamContainer(
 	_ context.Context,
-	request *runtime.StreamContainerRequest,
-) (*runtime.StreamContainerResponse, error) {
-	resp := &runtime.StreamContainerResponse{}
+	request *api.StreamContainerRequest,
+) (*api.StreamContainerResponse, error) {
+	resp := &api.StreamContainerResponse{}
 
 	inReader, inWriter := io.Pipe()
 	outReader, outWriter := io.Pipe()
@@ -254,7 +254,7 @@ func copyOutputServerToStdout(outputServer *grpcutil.StreamOutputServer, stdout,
 	return nil
 }
 
-func (s *server) CreateVolume(_ context.Context, request *runtime.CreateVolumeRequest) (*empty.Empty, error) {
+func (s *Server) CreateVolume(_ context.Context, request *api.CreateVolumeRequest) (*empty.Empty, error) {
 	if err := s.impl.CreateVolume(request.GetName()); err != nil {
 		return nil, fmt.Errorf("could create volume: %w", err)
 	}
@@ -262,7 +262,7 @@ func (s *server) CreateVolume(_ context.Context, request *runtime.CreateVolumeRe
 	return &empty.Empty{}, nil
 }
 
-func (s *server) DeleteVolume(_ context.Context, request *runtime.DeleteVolumeRequest) (*empty.Empty, error) {
+func (s *Server) DeleteVolume(_ context.Context, request *api.DeleteVolumeRequest) (*empty.Empty, error) {
 	if err := s.impl.CreateVolume(request.GetName()); err != nil {
 		return nil, fmt.Errorf("could delete volume: %w", err)
 	}
@@ -270,7 +270,7 @@ func (s *server) DeleteVolume(_ context.Context, request *runtime.DeleteVolumeRe
 	return &empty.Empty{}, nil
 }
 
-func (s *server) WriteFile(_ context.Context, request *runtime.WriteFileRequest) (*empty.Empty, error) {
+func (s *Server) WriteFile(_ context.Context, request *api.WriteFileRequest) (*empty.Empty, error) {
 	if err := s.impl.WriteFile(
 		request.GetContainerId(),
 		request.GetFilePath(),

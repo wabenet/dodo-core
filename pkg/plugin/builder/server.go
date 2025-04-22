@@ -8,7 +8,7 @@ import (
 	"sync"
 
 	"github.com/golang/protobuf/ptypes/empty"
-	build "github.com/wabenet/dodo-core/api/build/v1alpha1"
+	api "github.com/wabenet/dodo-core/api/build/v1alpha2"
 	pluginapi "github.com/wabenet/dodo-core/api/plugin/v1alpha1"
 	"github.com/wabenet/dodo-core/pkg/grpcutil"
 	"github.com/wabenet/dodo-core/pkg/plugin"
@@ -17,20 +17,20 @@ import (
 
 var ErrUnexpectedMapType = errors.New("unexpected map type for stdio streaming server")
 
-type server struct {
+type Server struct {
 	impl   ImageBuilder
 	stdout sync.Map
 }
 
-func NewGRPCServer(impl ImageBuilder) build.PluginServer {
-	return &server{impl: impl}
+func NewGRPCServer(impl ImageBuilder) *Server {
+	return &Server{impl: impl}
 }
 
-func (s *server) reset() {
+func (s *Server) reset() {
 	s.stdout = sync.Map{}
 }
 
-func (s *server) stdoutServer(streamID string) (*grpcutil.StreamOutputServer, error) {
+func (s *Server) stdoutServer(streamID string) (*grpcutil.StreamOutputServer, error) {
 	outputServer, _ := s.stdout.LoadOrStore(streamID, grpcutil.NewStreamOutputServer())
 
 	result, ok := outputServer.(*grpcutil.StreamOutputServer)
@@ -41,11 +41,11 @@ func (s *server) stdoutServer(streamID string) (*grpcutil.StreamOutputServer, er
 	return result, nil
 }
 
-func (s *server) GetPluginInfo(_ context.Context, _ *empty.Empty) (*pluginapi.PluginInfo, error) {
+func (s *Server) GetPluginInfo(_ context.Context, _ *empty.Empty) (*pluginapi.PluginInfo, error) {
 	return s.impl.PluginInfo(), nil
 }
 
-func (s *server) InitPlugin(_ context.Context, _ *empty.Empty) (*pluginapi.InitPluginResponse, error) {
+func (s *Server) InitPlugin(_ context.Context, _ *empty.Empty) (*pluginapi.InitPluginResponse, error) {
 	s.reset()
 
 	config, err := s.impl.Init()
@@ -56,14 +56,14 @@ func (s *server) InitPlugin(_ context.Context, _ *empty.Empty) (*pluginapi.InitP
 	return &pluginapi.InitPluginResponse{Config: config}, nil
 }
 
-func (s *server) ResetPlugin(_ context.Context, _ *empty.Empty) (*empty.Empty, error) {
+func (s *Server) ResetPlugin(_ context.Context, _ *empty.Empty) (*empty.Empty, error) {
 	s.reset()
 	s.impl.Cleanup()
 
 	return &empty.Empty{}, nil
 }
 
-func (s *server) StreamOutput(request *pluginapi.StreamOutputRequest, srv build.Plugin_StreamOutputServer) error {
+func (s *Server) StreamOutput(request *pluginapi.StreamOutputRequest, srv api.Plugin_StreamOutputServer) error {
 	id := request.GetId()
 
 	outputServer, err := s.stdoutServer(id)
@@ -78,8 +78,8 @@ func (s *server) StreamOutput(request *pluginapi.StreamOutputRequest, srv build.
 	return nil
 }
 
-func (s *server) CreateImage(_ context.Context, request *build.CreateImageRequest) (*build.CreateImageResponse, error) {
-	resp := &build.CreateImageResponse{}
+func (s *Server) CreateImage(_ context.Context, request *api.CreateImageRequest) (*api.CreateImageResponse, error) {
+	resp := &api.CreateImageResponse{}
 
 	if request.GetHeight() == 0 && request.GetWidth() == 0 {
 		id, err := s.impl.CreateImage(request.GetConfig(), nil)

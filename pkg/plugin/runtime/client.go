@@ -8,9 +8,8 @@ import (
 
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/hashicorp/go-hclog"
-	core "github.com/wabenet/dodo-core/api/core/v1alpha7"
 	pluginapi "github.com/wabenet/dodo-core/api/plugin/v1alpha1"
-	runtime "github.com/wabenet/dodo-core/api/runtime/v1alpha2"
+	api "github.com/wabenet/dodo-core/api/runtime/v1alpha2"
 	"github.com/wabenet/dodo-core/pkg/grpcutil"
 	"github.com/wabenet/dodo-core/pkg/ioutil"
 	"github.com/wabenet/dodo-core/pkg/plugin"
@@ -18,24 +17,24 @@ import (
 	"google.golang.org/grpc"
 )
 
-var _ ContainerRuntime = &client{}
+var _ ContainerRuntime = &Client{}
 
-type client struct {
-	runtimeClient runtime.PluginClient
+type Client struct {
+	runtimeClient api.PluginClient
 	stdin         *grpcutil.StreamInputClient
 	stdout        *grpcutil.StreamOutputClient
 }
 
-func NewGRPCClient(conn grpc.ClientConnInterface) ContainerRuntime {
-	return &client{
-		runtimeClient: runtime.NewPluginClient(conn),
+func NewGRPCClient(conn grpc.ClientConnInterface) *Client {
+	return &Client{
+		runtimeClient: api.NewPluginClient(conn),
 		stdin:         grpcutil.NewStreamInputClient(),
 		stdout:        grpcutil.NewStreamOutputClient(),
 	}
 }
 
 type streamInputClient struct {
-	client runtime.Plugin_StreamInputClient
+	client api.Plugin_StreamInputClient
 }
 
 func (s *streamInputClient) Send(data *pluginapi.InputData) error {
@@ -57,11 +56,11 @@ func (s *streamInputClient) CloseAndRecv() (*empty.Empty, error) {
 	return e, nil
 }
 
-func (c *client) Type() plugin.Type {
+func (c *Client) Type() plugin.Type { //nolint:ireturn
 	return Type
 }
 
-func (c *client) PluginInfo() *pluginapi.PluginInfo {
+func (c *Client) PluginInfo() *pluginapi.PluginInfo {
 	info, err := c.runtimeClient.GetPluginInfo(context.Background(), &empty.Empty{})
 	if err != nil {
 		return plugin.NewFailedPluginInfo(Type, err)
@@ -70,7 +69,7 @@ func (c *client) PluginInfo() *pluginapi.PluginInfo {
 	return info
 }
 
-func (c *client) Init() (plugin.Config, error) {
+func (c *Client) Init() (plugin.Config, error) {
 	resp, err := c.runtimeClient.InitPlugin(context.Background(), &empty.Empty{})
 	if err != nil {
 		return nil, fmt.Errorf("could not initialize plugin: %w", err)
@@ -79,15 +78,15 @@ func (c *client) Init() (plugin.Config, error) {
 	return resp.GetConfig(), nil
 }
 
-func (c *client) Cleanup() {
+func (c *Client) Cleanup() {
 	_, err := c.runtimeClient.ResetPlugin(context.Background(), &empty.Empty{})
 	if err != nil {
 		log.L().Error("plugin reset error", "error", err)
 	}
 }
 
-func (c *client) ResolveImage(spec string) (string, error) {
-	img, err := c.runtimeClient.GetImage(context.Background(), &runtime.GetImageRequest{ImageSpec: spec})
+func (c *Client) ResolveImage(spec string) (string, error) {
+	img, err := c.runtimeClient.GetImage(context.Background(), &api.GetImageRequest{ImageSpec: spec})
 	if err != nil {
 		return "", fmt.Errorf("could not resolve image: %w", err)
 	}
@@ -95,12 +94,8 @@ func (c *client) ResolveImage(spec string) (string, error) {
 	return img.GetImageId(), nil
 }
 
-func (c *client) CreateContainer(config *core.Backdrop, tty, stdio bool) (string, error) {
-	resp, err := c.runtimeClient.CreateContainer(context.Background(), &runtime.CreateContainerRequest{
-		Config: config,
-		Tty:    tty,
-		Stdio:  stdio,
-	})
+func (c *Client) CreateContainer(config *api.ContainerConfig) (string, error) {
+	resp, err := c.runtimeClient.CreateContainer(context.Background(), &api.CreateContainerRequest{Config: config})
 	if err != nil {
 		return "", fmt.Errorf("could not create container: %w", err)
 	}
@@ -108,10 +103,10 @@ func (c *client) CreateContainer(config *core.Backdrop, tty, stdio bool) (string
 	return resp.GetContainerId(), nil
 }
 
-func (c *client) StartContainer(id string) error {
+func (c *Client) StartContainer(id string) error {
 	if _, err := c.runtimeClient.StartContainer(
 		context.Background(),
-		&runtime.StartContainerRequest{ContainerId: id},
+		&api.StartContainerRequest{ContainerId: id},
 	); err != nil {
 		return fmt.Errorf("could not start container: %w", err)
 	}
@@ -119,10 +114,10 @@ func (c *client) StartContainer(id string) error {
 	return nil
 }
 
-func (c *client) DeleteContainer(id string) error {
+func (c *Client) DeleteContainer(id string) error {
 	if _, err := c.runtimeClient.DeleteContainer(
 		context.Background(),
-		&runtime.DeleteContainerRequest{ContainerId: id},
+		&api.DeleteContainerRequest{ContainerId: id},
 	); err != nil {
 		return fmt.Errorf("could not delete container: %w", err)
 	}
@@ -130,10 +125,10 @@ func (c *client) DeleteContainer(id string) error {
 	return nil
 }
 
-func (c *client) ResizeContainer(id string, height, width uint32) error {
+func (c *Client) ResizeContainer(id string, height, width uint32) error {
 	if _, err := c.runtimeClient.ResizeContainer(
 		context.Background(),
-		&runtime.ResizeContainerRequest{ContainerId: id, Height: height, Width: width},
+		&api.ResizeContainerRequest{ContainerId: id, Height: height, Width: width},
 	); err != nil {
 		return fmt.Errorf("could not resize container: %w", err)
 	}
@@ -141,10 +136,10 @@ func (c *client) ResizeContainer(id string, height, width uint32) error {
 	return nil
 }
 
-func (c *client) KillContainer(id string, signal os.Signal) error {
+func (c *Client) KillContainer(id string, signal os.Signal) error {
 	if _, err := c.runtimeClient.KillContainer(
 		context.Background(),
-		&runtime.KillContainerRequest{ContainerId: id, Signal: signalToString(signal)},
+		&api.KillContainerRequest{ContainerId: id, Signal: signalToString(signal)},
 	); err != nil {
 		return fmt.Errorf("could not kill container: %w", err)
 	}
@@ -152,7 +147,7 @@ func (c *client) KillContainer(id string, signal os.Signal) error {
 	return nil
 }
 
-func (c *client) StreamContainer(id string, stream *plugin.StreamConfig) (*Result, error) {
+func (c *Client) StreamContainer(id string, stream *plugin.StreamConfig) (*Result, error) {
 	result := &Result{}
 	eg, _ := errgroup.WithContext(context.Background())
 
@@ -165,7 +160,7 @@ func (c *client) StreamContainer(id string, stream *plugin.StreamConfig) (*Resul
 	eg.Go(func() error {
 		defer inCancel()
 
-		r, err := c.runtimeClient.StreamContainer(context.Background(), &runtime.StreamContainerRequest{
+		resp, err := c.runtimeClient.StreamContainer(context.Background(), &api.StreamContainerRequest{
 			ContainerId: id,
 			Height:      stream.TerminalHeight,
 			Width:       stream.TerminalWidth,
@@ -174,7 +169,7 @@ func (c *client) StreamContainer(id string, stream *plugin.StreamConfig) (*Resul
 			return fmt.Errorf("could not stream container: %w", err)
 		}
 
-		result.ExitCode = int(r.GetExitCode())
+		result.ExitCode = int(resp.GetExitCode())
 
 		return nil
 	})
@@ -186,7 +181,7 @@ func (c *client) StreamContainer(id string, stream *plugin.StreamConfig) (*Resul
 	return result, nil
 }
 
-func (c *client) copyInputClientToStdin(containerID string, stdin io.Reader) error {
+func (c *Client) copyInputClientToStdin(containerID string, stdin io.Reader) error {
 	inputClient, err := c.runtimeClient.StreamInput(context.Background())
 	if err != nil {
 		return fmt.Errorf("could not stream runtime input: %w", err)
@@ -207,7 +202,7 @@ func (c *client) copyInputClientToStdin(containerID string, stdin io.Reader) err
 	return nil
 }
 
-func (c *client) copyOutputClientToStdout(containerID string, stdout, stderr io.Writer) error {
+func (c *Client) copyOutputClientToStdout(containerID string, stdout, stderr io.Writer) error {
 	outputClient, err := c.runtimeClient.StreamOutput(
 		context.Background(),
 		&pluginapi.StreamOutputRequest{Id: containerID},
@@ -223,10 +218,10 @@ func (c *client) copyOutputClientToStdout(containerID string, stdout, stderr io.
 	return nil
 }
 
-func (c *client) CreateVolume(name string) error {
+func (c *Client) CreateVolume(name string) error {
 	if _, err := c.runtimeClient.CreateVolume(
 		context.Background(),
-		&runtime.CreateVolumeRequest{Name: name},
+		&api.CreateVolumeRequest{Name: name},
 	); err != nil {
 		return fmt.Errorf("could not create volume: %w", err)
 	}
@@ -234,10 +229,10 @@ func (c *client) CreateVolume(name string) error {
 	return nil
 }
 
-func (c *client) DeleteVolume(name string) error {
+func (c *Client) DeleteVolume(name string) error {
 	if _, err := c.runtimeClient.DeleteVolume(
 		context.Background(),
-		&runtime.DeleteVolumeRequest{Name: name},
+		&api.DeleteVolumeRequest{Name: name},
 	); err != nil {
 		return fmt.Errorf("could not delete volume: %w", err)
 	}
@@ -245,10 +240,10 @@ func (c *client) DeleteVolume(name string) error {
 	return nil
 }
 
-func (c *client) WriteFile(containerID, path string, contents []byte) error {
+func (c *Client) WriteFile(containerID, path string, contents []byte) error {
 	if _, err := c.runtimeClient.WriteFile(
 		context.Background(),
-		&runtime.WriteFileRequest{
+		&api.WriteFileRequest{
 			ContainerId: containerID,
 			FilePath:    path,
 			Contents:    string(contents),

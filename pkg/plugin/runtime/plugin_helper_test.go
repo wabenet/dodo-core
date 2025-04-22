@@ -4,8 +4,8 @@ import (
 	"io"
 	"os"
 
-	core "github.com/wabenet/dodo-core/api/core/v1alpha7"
 	pluginapi "github.com/wabenet/dodo-core/api/plugin/v1alpha1"
+	api "github.com/wabenet/dodo-core/api/runtime/v1alpha2"
 	"github.com/wabenet/dodo-core/pkg/plugin"
 	"github.com/wabenet/dodo-core/pkg/plugin/runtime"
 )
@@ -32,7 +32,7 @@ func (r *DummyRuntime) ResolveImage(_ string) (string, error) {
 	return "", nil
 }
 
-func (r *DummyRuntime) CreateContainer(_ *core.Backdrop, _, _ bool) (string, error) {
+func (r *DummyRuntime) CreateContainer(_ *api.ContainerConfig) (string, error) {
 	return "", nil
 }
 
@@ -94,7 +94,7 @@ func (r *ErrorRuntime) ResolveImage(_ string) (string, error) {
 	return "", nil
 }
 
-func (r *ErrorRuntime) CreateContainer(_ *core.Backdrop, _, _ bool) (string, error) {
+func (r *ErrorRuntime) CreateContainer(_ *api.ContainerConfig) (string, error) {
 	return "", nil
 }
 
@@ -157,7 +157,7 @@ func (r *EchoRuntime) ResolveImage(_ string) (string, error) {
 	return "", nil
 }
 
-func (r *EchoRuntime) CreateContainer(_ *core.Backdrop, _, _ bool) (string, error) {
+func (r *EchoRuntime) CreateContainer(_ *api.ContainerConfig) (string, error) {
 	return "", nil
 }
 

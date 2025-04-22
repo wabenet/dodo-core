@@ -5,24 +5,23 @@ import (
 	"fmt"
 
 	"github.com/golang/protobuf/ptypes/empty"
-	configuration "github.com/wabenet/dodo-core/api/configuration/v1alpha1"
-	core "github.com/wabenet/dodo-core/api/core/v1alpha7"
+	api "github.com/wabenet/dodo-core/api/configuration/v1alpha2"
 	pluginapi "github.com/wabenet/dodo-core/api/plugin/v1alpha1"
 )
 
-type server struct {
+type Server struct {
 	impl Configuration
 }
 
-func NewGRPCServer(impl Configuration) configuration.PluginServer {
-	return &server{impl: impl}
+func NewGRPCServer(impl Configuration) *Server {
+	return &Server{impl: impl}
 }
 
-func (s *server) GetPluginInfo(_ context.Context, _ *empty.Empty) (*pluginapi.PluginInfo, error) {
+func (s *Server) GetPluginInfo(_ context.Context, _ *empty.Empty) (*pluginapi.PluginInfo, error) {
 	return s.impl.PluginInfo(), nil
 }
 
-func (s *server) InitPlugin(_ context.Context, _ *empty.Empty) (*pluginapi.InitPluginResponse, error) {
+func (s *Server) InitPlugin(_ context.Context, _ *empty.Empty) (*pluginapi.InitPluginResponse, error) {
 	config, err := s.impl.Init()
 	if err != nil {
 		return nil, fmt.Errorf("could not initialize plugin: %w", err)
@@ -31,26 +30,26 @@ func (s *server) InitPlugin(_ context.Context, _ *empty.Empty) (*pluginapi.InitP
 	return &pluginapi.InitPluginResponse{Config: config}, nil
 }
 
-func (s *server) ResetPlugin(_ context.Context, _ *empty.Empty) (*empty.Empty, error) {
+func (s *Server) ResetPlugin(_ context.Context, _ *empty.Empty) (*empty.Empty, error) {
 	s.impl.Cleanup()
 
 	return &empty.Empty{}, nil
 }
 
-func (s *server) ListBackdrops(_ context.Context, _ *empty.Empty) (*configuration.ListBackdropsResponse, error) {
+func (s *Server) ListBackdrops(_ context.Context, _ *empty.Empty) (*api.ListBackdropsResponse, error) {
 	backdrops, err := s.impl.ListBackdrops()
 	if err != nil {
 		return nil, fmt.Errorf("could not list backdrops: %w", err)
 	}
 
-	return &configuration.ListBackdropsResponse{Backdrops: backdrops}, nil
+	return &api.ListBackdropsResponse{Backdrops: backdrops}, nil
 }
 
-func (s *server) GetBackdrop(_ context.Context, request *configuration.GetBackdropRequest) (*core.Backdrop, error) {
-	response, err := s.impl.GetBackdrop(request.GetAlias())
+func (s *Server) GetBackdrop(_ context.Context, request *api.GetBackdropRequest) (*api.GetBackdropResponse, error) {
+	backdrop, err := s.impl.GetBackdrop(request.GetAlias())
 	if err != nil {
 		return nil, fmt.Errorf("could not get backdrop: %w", err)
 	}
 
-	return response, nil
+	return &api.GetBackdropResponse{Backdrop: backdrop}, nil
 }
