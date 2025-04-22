@@ -20,7 +20,7 @@ lint:
 
 .PHONY: test
 test: api
-	go test -cover -race ./pkg/...
+	go test -cover -race ./...
 
 .PHONY: build
 build: api
