@@ -82,7 +82,7 @@ func (s *Server) CreateImage(_ context.Context, request *api.CreateImageRequest)
 	resp := &api.CreateImageResponse{}
 
 	if request.GetHeight() == 0 && request.GetWidth() == 0 {
-		id, err := s.impl.CreateImage(request.GetConfig(), nil)
+		id, err := s.impl.CreateImage(BuildConfigFromProto(request.GetConfig()), nil)
 		if err != nil {
 			return nil, fmt.Errorf("could not build image: %w", err)
 		}
@@ -108,7 +108,7 @@ func (s *Server) CreateImage(_ context.Context, request *api.CreateImageRequest)
 		defer outWriter.Close()
 		defer errWriter.Close()
 
-		imageID, err := s.impl.CreateImage(request.GetConfig(), &plugin.StreamConfig{
+		imageID, err := s.impl.CreateImage(BuildConfigFromProto(request.GetConfig()), &plugin.StreamConfig{
 			Stdout:         outWriter,
 			Stderr:         errWriter,
 			TerminalHeight: request.GetHeight(),

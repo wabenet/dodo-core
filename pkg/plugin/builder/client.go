@@ -62,10 +62,10 @@ func (c *Client) Cleanup() {
 	}
 }
 
-func (c *Client) CreateImage(config *api.BuildConfig, stream *plugin.StreamConfig) (string, error) {
+func (c *Client) CreateImage(config BuildConfig, stream *plugin.StreamConfig) (string, error) {
 	if stream == nil {
 		result, err := c.builderClient.CreateImage(context.Background(), &api.CreateImageRequest{
-			Config: config,
+			Config: config.ToProto(),
 			Height: 0,
 			Width:  0,
 		})
@@ -91,7 +91,7 @@ func (c *Client) CreateImage(config *api.BuildConfig, stream *plugin.StreamConfi
 	eg.Go(func() error {
 		result, err := c.builderClient.CreateImage(context.Background(), &api.CreateImageRequest{
 			StreamId: streamID,
-			Config:   config,
+			Config:   config.ToProto(),
 			Height:   stream.TerminalHeight,
 			Width:    stream.TerminalWidth,
 		})

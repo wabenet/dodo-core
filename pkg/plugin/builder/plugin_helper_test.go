@@ -1,7 +1,6 @@
 package builder_test
 
 import (
-	api "github.com/wabenet/dodo-core/api/build/v1alpha2"
 	pluginapi "github.com/wabenet/dodo-core/api/plugin/v1alpha1"
 	"github.com/wabenet/dodo-core/pkg/plugin"
 	"github.com/wabenet/dodo-core/pkg/plugin/builder"
@@ -25,9 +24,9 @@ func (b *DummyBuilder) Init() (plugin.Config, error) {
 
 func (*DummyBuilder) Cleanup() {}
 
-func (b *DummyBuilder) CreateImage(config *api.BuildConfig, stream *plugin.StreamConfig) (string, error) {
+func (b *DummyBuilder) CreateImage(config builder.BuildConfig, stream *plugin.StreamConfig) (string, error) {
 	stream.Stdout.Write([]byte("This goes to stdout"))
 	stream.Stderr.Write([]byte("This goes to stderr"))
 
-	return config.GetImageName(), nil
+	return config.ImageName, nil
 }

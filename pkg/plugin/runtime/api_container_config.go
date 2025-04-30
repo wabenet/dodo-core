@@ -1,0 +1,180 @@
+package runtime
+
+import (
+	api "github.com/wabenet/dodo-core/api/runtime/v1alpha2"
+)
+
+type ContainerConfig struct {
+	Name  string
+	Image string
+
+	Process  Process
+	Terminal TerminalConfig
+
+	Environment  EnvironmentConfig
+	Ports        PortConfig
+	Mounts       MountConfig
+	Capabilities CapabilityConfig
+}
+
+func EmptyContainerConfig() ContainerConfig {
+	return ContainerConfig{
+		Process:      Process{},
+		Terminal:     TerminalConfig{},
+		Environment:  EnvironmentConfig{},
+		Ports:        PortConfig{},
+		Mounts:       MountConfig{},
+		Capabilities: CapabilityConfig{},
+	}
+}
+
+func MergeContainerConfig(first, second ContainerConfig) ContainerConfig {
+	result := first
+
+	if len(second.Name) > 0 {
+		result.Name = second.Name
+	}
+
+	if len(second.Image) > 0 {
+		result.Image = second.Image
+	}
+
+	result.Process = MergeProcess(first.Process, second.Process)
+	result.Terminal = MergeTerminalConfig(first.Terminal, second.Terminal)
+	result.Environment = MergeEnvironmentConfig(first.Environment, second.Environment)
+	result.Ports = MergePortConfig(first.Ports, second.Ports)
+	result.Mounts = MergeMountConfig(first.Mounts, second.Mounts)
+	result.Capabilities = MergeCapabilityConfig(first.Capabilities, second.Capabilities)
+
+	return result
+}
+
+func ContainerConfigFromProto(c *api.ContainerConfig) ContainerConfig {
+	return ContainerConfig{
+		Name:         c.GetName(),
+		Image:        c.GetImage(),
+		Process:      ProcessFromProto(c.GetProcess()),
+		Terminal:     TerminalConfigFromProto(c.GetTerminal()),
+		Environment:  EnvironmentConfigFromProto(c.GetEnvironment()),
+		Ports:        PortConfigFromProto(c.GetPorts()),
+		Mounts:       MountConfigFromProto(c.GetMounts()),
+		Capabilities: c.GetCapabilities(),
+	}
+}
+
+func (c ContainerConfig) ToProto() *api.ContainerConfig {
+	return &api.ContainerConfig{
+		Name:         c.Name,
+		Image:        c.Image,
+		Process:      c.Process.ToProto(),
+		Terminal:     c.Terminal.ToProto(),
+		Environment:  c.Environment.ToProto(),
+		Ports:        c.Ports.ToProto(),
+		Mounts:       c.Mounts.ToProto(),
+		Capabilities: c.Capabilities,
+	}
+}
+
+type Process struct {
+	User       string
+	WorkingDir string
+	Entrypoint Entrypoint
+	Command    Command
+}
+
+func MergeProcess(first, second Process) Process {
+	result := first
+
+	if len(second.User) > 0 {
+		result.User = second.User
+	}
+
+	if len(second.WorkingDir) > 0 {
+		result.WorkingDir = second.WorkingDir
+	}
+
+	if len(second.Entrypoint) > 0 {
+		result.Entrypoint = second.Entrypoint
+	}
+
+	if len(second.Command) > 0 {
+		result.Command = second.Command
+	}
+
+	return result
+}
+
+func ProcessFromProto(p *api.Process) Process {
+	return Process{
+		User:       p.GetUser(),
+		WorkingDir: p.GetWorkingDir(),
+		Entrypoint: p.GetEntrypoint(),
+		Command:    p.GetCommand(),
+	}
+}
+
+func (p Process) ToProto() *api.Process {
+	return &api.Process{
+		User:       p.User,
+		WorkingDir: p.WorkingDir,
+		Entrypoint: p.Entrypoint,
+		Command:    p.Command,
+	}
+}
+
+type Entrypoint []string
+
+type Command []string
+
+type TerminalConfig struct {
+	StdIO         bool
+	TTY           bool
+	ConsoleHeight int
+	ConsoleWidth  int
+}
+
+func MergeTerminalConfig(first, second TerminalConfig) TerminalConfig {
+	result := first
+
+	if second.StdIO {
+		result.StdIO = true
+	}
+
+	if second.TTY {
+		result.TTY = true
+	}
+
+	if second.ConsoleHeight > 0 {
+		result.ConsoleHeight = second.ConsoleHeight
+	}
+
+	if second.ConsoleWidth > 0 {
+		result.ConsoleWidth = second.ConsoleWidth
+	}
+
+	return result
+}
+
+func TerminalConfigFromProto(t *api.TerminalConfig) TerminalConfig {
+	return TerminalConfig{
+		StdIO:         t.GetStdio(),
+		TTY:           t.GetTty(),
+		ConsoleHeight: int(t.GetConsoleHeight()),
+		ConsoleWidth:  int(t.GetConsoleWidth()),
+	}
+}
+
+func (t TerminalConfig) ToProto() *api.TerminalConfig {
+	return &api.TerminalConfig{
+		Stdio:         t.StdIO,
+		Tty:           t.TTY,
+		ConsoleHeight: int64(t.ConsoleHeight),
+		ConsoleWidth:  int64(t.ConsoleWidth),
+	}
+}
+
+type CapabilityConfig []string
+
+func MergeCapabilityConfig(first, second CapabilityConfig) CapabilityConfig {
+	return append(first, second...)
+}

@@ -2,7 +2,6 @@ package runtime
 
 import (
 	"context"
-	"os"
 
 	"github.com/hashicorp/go-plugin"
 	api "github.com/wabenet/dodo-core/api/runtime/v1alpha2"
@@ -32,25 +31,6 @@ func (t pluginType) GRPCServer(p dodo.Plugin) (plugin.Plugin, error) {
 	}
 
 	return &grpcPlugin{Impl: rt}, nil
-}
-
-type ContainerRuntime interface {
-	dodo.Plugin
-
-	ResolveImage(spec string) (string, error)
-	CreateContainer(containerConfig *api.ContainerConfig) (string, error)
-	StartContainer(id string) error
-	DeleteContainer(id string) error
-	ResizeContainer(id string, height, width uint32) error
-	KillContainer(id string, signal os.Signal) error
-	StreamContainer(id string, streamConfig *dodo.StreamConfig) (*Result, error)
-	CreateVolume(name string) error
-	DeleteVolume(name string) error
-	WriteFile(name, path string, contents []byte) error
-}
-
-type Result struct {
-	ExitCode int
 }
 
 type grpcPlugin struct {

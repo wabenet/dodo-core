@@ -42,7 +42,13 @@ func (s *Server) ListBackdrops(_ context.Context, _ *empty.Empty) (*api.ListBack
 		return nil, fmt.Errorf("could not list backdrops: %w", err)
 	}
 
-	return &api.ListBackdropsResponse{Backdrops: backdrops}, nil
+	result := []*api.Backdrop{}
+
+	for _, b := range backdrops {
+		result = append(result, b.ToProto())
+	}
+
+	return &api.ListBackdropsResponse{Backdrops: result}, nil
 }
 
 func (s *Server) GetBackdrop(_ context.Context, request *api.GetBackdropRequest) (*api.GetBackdropResponse, error) {
@@ -51,5 +57,5 @@ func (s *Server) GetBackdrop(_ context.Context, request *api.GetBackdropRequest)
 		return nil, fmt.Errorf("could not get backdrop: %w", err)
 	}
 
-	return &api.GetBackdropResponse{Backdrop: backdrop}, nil
+	return &api.GetBackdropResponse{Backdrop: backdrop.ToProto()}, nil
 }

@@ -33,13 +33,6 @@ func (t pluginType) GRPCServer(p dodo.Plugin) (plugin.Plugin, error) {
 	return &grpcPlugin{Impl: config}, nil
 }
 
-type Configuration interface {
-	dodo.Plugin
-
-	ListBackdrops() ([]*api.Backdrop, error)
-	GetBackdrop(name string) (*api.Backdrop, error)
-}
-
 type grpcPlugin struct {
 	plugin.NetRPCUnsupportedPlugin
 	Impl Configuration

@@ -33,12 +33,6 @@ func (t pluginType) GRPCServer(p dodo.Plugin) (plugin.Plugin, error) {
 	return &grpcPlugin{Impl: rt}, nil
 }
 
-type ImageBuilder interface {
-	dodo.Plugin
-
-	CreateImage(info *api.BuildConfig, streamConfig *dodo.StreamConfig) (string, error)
-}
-
 type grpcPlugin struct {
 	plugin.NetRPCUnsupportedPlugin
 	Impl ImageBuilder

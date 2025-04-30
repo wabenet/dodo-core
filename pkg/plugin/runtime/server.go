@@ -110,7 +110,7 @@ func (s *Server) CreateContainer(
 	_ context.Context,
 	config *api.CreateContainerRequest,
 ) (*api.CreateContainerResponse, error) {
-	id, err := s.impl.CreateContainer(config.GetConfig())
+	id, err := s.impl.CreateContainer(ContainerConfigFromProto(config.GetConfig()))
 	if err != nil {
 		return nil, fmt.Errorf("could not create container: %w", err)
 	}

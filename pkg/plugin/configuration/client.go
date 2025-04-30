@@ -54,20 +54,26 @@ func (c *Client) Cleanup() {
 	}
 }
 
-func (c *Client) ListBackdrops() ([]*api.Backdrop, error) {
+func (c *Client) ListBackdrops() ([]Backdrop, error) {
 	response, err := c.configClient.ListBackdrops(context.Background(), &empty.Empty{})
 	if err != nil {
-		return []*api.Backdrop{}, fmt.Errorf("could not list backdrops: %w", err)
+		return []Backdrop{}, fmt.Errorf("could not list backdrops: %w", err)
 	}
 
-	return response.GetBackdrops(), nil
+	result := []Backdrop{}
+
+	for _, b := range response.GetBackdrops() {
+		result = append(result, BackdropFromProto(b))
+	}
+
+	return result, nil
 }
 
-func (c *Client) GetBackdrop(alias string) (*api.Backdrop, error) {
+func (c *Client) GetBackdrop(alias string) (Backdrop, error) {
 	response, err := c.configClient.GetBackdrop(context.Background(), &api.GetBackdropRequest{Alias: alias})
 	if err != nil {
-		return nil, fmt.Errorf("could not get backdrop: %w", err)
+		return EmptyBackdrop(), fmt.Errorf("could not get backdrop: %w", err)
 	}
 
-	return response.GetBackdrop(), nil
+	return BackdropFromProto(response.GetBackdrop()), nil
 }

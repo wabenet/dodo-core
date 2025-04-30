@@ -94,8 +94,11 @@ func (c *Client) ResolveImage(spec string) (string, error) {
 	return img.GetImageId(), nil
 }
 
-func (c *Client) CreateContainer(config *api.ContainerConfig) (string, error) {
-	resp, err := c.runtimeClient.CreateContainer(context.Background(), &api.CreateContainerRequest{Config: config})
+func (c *Client) CreateContainer(config ContainerConfig) (string, error) {
+	resp, err := c.runtimeClient.CreateContainer(
+		context.Background(),
+		&api.CreateContainerRequest{Config: config.ToProto()},
+	)
 	if err != nil {
 		return "", fmt.Errorf("could not create container: %w", err)
 	}
