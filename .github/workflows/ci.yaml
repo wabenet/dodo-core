@@ -8,7 +8,7 @@ jobs:
   coverage:
     runs-on: ubuntu-latest
     steps:
-      - uses: wabenet/project-template/actions/coverage@v0.3.3
+      - uses: wabenet/project-template/actions/coverage@v0.3.4
         with:
           go-version: "1.24"
           cc-reporter-id: ${{ secrets.CC_TEST_REPORTER_ID }}
