@@ -50,27 +50,29 @@ func BuildArgumentFromProto(b *api.BuildArgument) BuildArgument {
 }
 
 func (b BuildArgument) ToProto() *api.BuildArgument {
-	return &api.BuildArgument{
-		Key:   b.Key,
-		Value: b.Value,
-	}
+	out := &api.BuildArgument{}
+
+	out.SetKey(b.Key)
+	out.SetValue(b.Value)
+
+	return out
 }
 
 func BuildArgumentFromSpec(spec string) (BuildArgument, error) {
-	arg := BuildArgument{}
+	out := BuildArgument{}
 
 	switch values := strings.SplitN(spec, "=", 2); len(values) {
 	case 0:
-		return arg, fmt.Errorf("%s: %w", spec, ErrArgumentFormat)
+		return out, fmt.Errorf("%s: %w", spec, ErrArgumentFormat)
 	case 1:
-		arg.Key = values[0]
-		arg.Value = os.Getenv(values[0])
+		out.Key = values[0]
+		out.Value = os.Getenv(values[0])
 	case 2:
-		arg.Key = values[0]
-		arg.Value = values[1]
+		out.Key = values[0]
+		out.Value = values[1]
 	default:
-		return arg, fmt.Errorf("%s: %w", spec, ErrArgumentFormat)
+		return out, fmt.Errorf("%s: %w", spec, ErrArgumentFormat)
 	}
 
-	return arg, nil
+	return out, nil
 }

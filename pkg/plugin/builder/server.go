@@ -18,6 +18,8 @@ import (
 var ErrUnexpectedMapType = errors.New("unexpected map type for stdio streaming server")
 
 type Server struct {
+	api.UnsafePluginServer
+
 	impl   ImageBuilder
 	stdout sync.Map
 }
@@ -53,7 +55,11 @@ func (s *Server) InitPlugin(_ context.Context, _ *empty.Empty) (*pluginapi.InitP
 		return nil, fmt.Errorf("could not initialize plugin: %w", err)
 	}
 
-	return &pluginapi.InitPluginResponse{Config: config}, nil
+	resp := &pluginapi.InitPluginResponse{}
+
+	resp.SetConfig(config)
+
+	return resp, nil
 }
 
 func (s *Server) ResetPlugin(_ context.Context, _ *empty.Empty) (*empty.Empty, error) {
@@ -87,7 +93,7 @@ func (s *Server) CreateImage(_ context.Context, request *api.CreateImageRequest)
 			return nil, fmt.Errorf("could not build image: %w", err)
 		}
 
-		resp.ImageId = id
+		resp.SetImageId(id)
 
 		return resp, nil
 	}
@@ -118,7 +124,7 @@ func (s *Server) CreateImage(_ context.Context, request *api.CreateImageRequest)
 			return fmt.Errorf("could not build image: %w", err)
 		}
 
-		resp.ImageId = imageID
+		resp.SetImageId(imageID)
 
 		return nil
 	})

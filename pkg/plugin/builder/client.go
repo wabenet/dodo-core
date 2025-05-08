@@ -64,11 +64,11 @@ func (c *Client) Cleanup() {
 
 func (c *Client) CreateImage(config BuildConfig, stream *plugin.StreamConfig) (string, error) {
 	if stream == nil {
-		result, err := c.builderClient.CreateImage(context.Background(), &api.CreateImageRequest{
-			Config: config.ToProto(),
-			Height: 0,
-			Width:  0,
-		})
+		req := &api.CreateImageRequest{}
+
+		req.SetConfig(config.ToProto())
+
+		result, err := c.builderClient.CreateImage(context.Background(), req)
 		if err != nil {
 			return "", fmt.Errorf("could not build image: %w", err)
 		}
@@ -83,18 +83,19 @@ func (c *Client) CreateImage(config BuildConfig, stream *plugin.StreamConfig) (s
 
 	streamID := hex.EncodeToString(b)
 	imageID := ""
+	req := &api.CreateImageRequest{}
+
+	req.SetStreamId(streamID)
+	req.SetConfig(config.ToProto())
+	req.SetHeight(stream.TerminalHeight)
+	req.SetWidth(stream.TerminalWidth)
 
 	eg, _ := errgroup.WithContext(context.Background())
 
 	eg.Go(func() error { return c.copyOutputClientToStdout(streamID, stream.Stdout, stream.Stderr) })
 
 	eg.Go(func() error {
-		result, err := c.builderClient.CreateImage(context.Background(), &api.CreateImageRequest{
-			StreamId: streamID,
-			Config:   config.ToProto(),
-			Height:   stream.TerminalHeight,
-			Width:    stream.TerminalWidth,
-		})
+		result, err := c.builderClient.CreateImage(context.Background(), req)
 		if err != nil {
 			return fmt.Errorf("could not build image: %w", err)
 		}
@@ -112,10 +113,11 @@ func (c *Client) CreateImage(config BuildConfig, stream *plugin.StreamConfig) (s
 }
 
 func (c *Client) copyOutputClientToStdout(streamID string, stdout, stderr io.Writer) error {
-	outputClient, err := c.builderClient.StreamOutput(
-		context.Background(),
-		&pluginapi.StreamOutputRequest{Id: streamID},
-	)
+	req := &pluginapi.StreamOutputRequest{}
+
+	req.SetId(streamID)
+
+	outputClient, err := c.builderClient.StreamOutput(context.Background(), req)
 	if err != nil {
 		return fmt.Errorf("could not stream runtime output: %w", err)
 	}

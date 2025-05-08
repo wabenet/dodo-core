@@ -54,27 +54,29 @@ func (e EnvironmentConfig) ToProto() []*api.EnvironmentVariable {
 }
 
 func (e EnvironmentVariable) ToProto() *api.EnvironmentVariable {
-	return &api.EnvironmentVariable{
-		Key:   e.Key,
-		Value: e.Value,
-	}
+	out := &api.EnvironmentVariable{}
+
+	out.SetKey(e.Key)
+	out.SetValue(e.Value)
+
+	return out
 }
 
 func EnvironmentVariableFromSpec(spec string) (EnvironmentVariable, error) {
-	env := EnvironmentVariable{}
+	out := EnvironmentVariable{}
 
 	switch values := strings.SplitN(spec, "=", 2); len(values) {
 	case 0:
-		return env, fmt.Errorf("%s: %w", spec, ErrEnvironmentFormat)
+		return out, fmt.Errorf("%s: %w", spec, ErrEnvironmentFormat)
 	case 1:
-		env.Key = values[0]
-		env.Value = os.Getenv(values[0])
+		out.Key = values[0]
+		out.Value = os.Getenv(values[0])
 	case 2:
-		env.Key = values[0]
-		env.Value = values[1]
+		out.Key = values[0]
+		out.Value = values[1]
 	default:
-		return env, fmt.Errorf("%s: %w", spec, ErrEnvironmentFormat)
+		return out, fmt.Errorf("%s: %w", spec, ErrEnvironmentFormat)
 	}
 
-	return env, nil
+	return out, nil
 }

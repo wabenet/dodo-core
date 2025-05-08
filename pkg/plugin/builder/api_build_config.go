@@ -86,17 +86,19 @@ func BuildConfigFromProto(b *api.BuildConfig) BuildConfig {
 }
 
 func (b BuildConfig) ToProto() *api.BuildConfig {
-	return &api.BuildConfig{
-		ImageName:        b.ImageName,
-		Context:          b.Context,
-		Dockerfile:       b.Dockerfile,
-		InlineDockerfile: b.InlineDockerfile,
-		Arguments:        b.Arguments.ToProto(),
-		Secrets:          b.Secrets.ToProto(),
-		SshAgents:        b.SSHAgents.ToProto(),
-		NoCache:          b.NoCache,
-		ForceRebuild:     b.ForceRebuild,
-		ForcePull:        b.ForcePull,
-		Dependencies:     b.Dependencies,
-	}
+	out := &api.BuildConfig{}
+
+	out.SetImageName(b.ImageName)
+	out.SetContext(b.Context)
+	out.SetDockerfile(b.Dockerfile)
+	out.SetInlineDockerfile(b.InlineDockerfile)
+	out.SetArguments(b.Arguments.ToProto())
+	out.SetSecrets(b.Secrets.ToProto())
+	out.SetSshAgents(b.SSHAgents.ToProto())
+	out.SetNoCache(b.NoCache)
+	out.SetForceRebuild(b.ForceRebuild)
+	out.SetForcePull(b.ForcePull)
+	out.SetDependencies(b.Dependencies)
+
+	return out
 }

@@ -50,11 +50,20 @@ type Manager struct {
 }
 
 func MkName(t Type, name string) *api.PluginName {
-	return &api.PluginName{Type: t.String(), Name: name}
+	pn := &api.PluginName{}
+
+	pn.SetType(t.String())
+	pn.SetName(name)
+
+	return pn
 }
 
 func MkInfo(t Type, name string) *api.PluginInfo {
-	return &api.PluginInfo{Name: MkName(t, name)}
+	pi := &api.PluginInfo{}
+
+	pi.SetName(MkName(t, name))
+
+	return pi
 }
 
 func Init() Manager {
@@ -234,8 +243,13 @@ func loadGRPCPlugin(path, pluginType string, grpcPlugin plugin.Plugin) (Plugin, 
 
 	client.Kill()
 
+	invalid := &api.PluginName{}
+
+	invalid.SetType(pluginType)
+	invalid.SetName(path) // TODO: name?
+
 	return nil, InvalidError{
-		Plugin:  &api.PluginName{Type: pluginType, Name: path}, // TODO: name?
+		Plugin:  invalid,
 		Message: "does not implement Plugin interface",
 	}
 }

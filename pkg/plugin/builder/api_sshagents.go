@@ -49,22 +49,24 @@ func SSHAgentFromProto(s *api.SshAgent) SSHAgent {
 }
 
 func (s SSHAgent) ToProto() *api.SshAgent {
-	return &api.SshAgent{
-		Id:           s.ID,
-		IdentityFile: s.IdentityFile,
-	}
+	out := &api.SshAgent{}
+
+	out.SetId(s.ID)
+	out.SetIdentityFile(s.IdentityFile)
+
+	return out
 }
 
 func ParseSSHAgent(spec string) (SSHAgent, error) {
-	agent := SSHAgent{}
+	out := SSHAgent{}
 
 	switch values := strings.SplitN(spec, "=", 2); len(values) {
 	case 2:
-		agent.ID = values[0]
-		agent.IdentityFile = values[1]
+		out.ID = values[0]
+		out.IdentityFile = values[1]
 	default:
-		return agent, fmt.Errorf("%s: %w", spec, ErrSSHAgentFormat)
+		return out, fmt.Errorf("%s: %w", spec, ErrSSHAgentFormat)
 	}
 
-	return agent, nil
+	return out, nil
 }

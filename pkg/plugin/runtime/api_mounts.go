@@ -44,23 +44,27 @@ func MergeMountConfig(first, second MountConfig) MountConfig {
 }
 
 func MountFromProto(m *api.Mount) Mount {
-	switch m := m.GetType().(type) {
-	case *api.Mount_Bind:
-		return BindMountFromProto(m.Bind)
-	case *api.Mount_Volume:
-		return VolumeMountFromProto(m.Volume)
-	case *api.Mount_Tmpfs:
-		return TmpfsMountFromProto(m.Tmpfs)
-	case *api.Mount_Image:
-		return ImageMountFromProto(m.Image)
-	case *api.Mount_Device:
-		return DeviceMountFromProto(m.Device)
+	switch m.WhichType() {
+	case api.Mount_Bind_case:
+		return BindMountFromProto(m.GetBind())
+	case api.Mount_Volume_case:
+		return VolumeMountFromProto(m.GetVolume())
+	case api.Mount_Tmpfs_case:
+		return TmpfsMountFromProto(m.GetTmpfs())
+	case api.Mount_Image_case:
+		return ImageMountFromProto(m.GetImage())
+	case api.Mount_Device_case:
+		return DeviceMountFromProto(m.GetDevice())
+	case api.Mount_Type_not_set_case:
+		return nil
 	default:
 		return nil
 	}
 }
 
 const TypeBind MountType = "bind"
+
+var _ Mount = BindMount{}
 
 var ErrVolumeFormat = errors.New("invalid volume format")
 
@@ -83,15 +87,17 @@ func BindMountFromProto(m *api.BindMount) BindMount {
 }
 
 func (m BindMount) ToProto() *api.Mount {
-	return &api.Mount{
-		Type: &api.Mount_Bind{
-			Bind: &api.BindMount{
-				HostPath:      m.HostPath,
-				ContainerPath: m.ContainerPath,
-				Readonly:      m.Readonly,
-			},
-		},
-	}
+	mnt := &api.BindMount{}
+
+	mnt.SetHostPath(m.HostPath)
+	mnt.SetContainerPath(m.ContainerPath)
+	mnt.SetReadonly(m.Readonly)
+
+	out := &api.Mount{}
+
+	out.SetBind(mnt)
+
+	return out
 }
 
 func BindMountFromSpec(spec string) (Mount, error) {
@@ -133,6 +139,8 @@ func BindMountFromSpec(spec string) (Mount, error) {
 
 const TypeVolume MountType = "volume"
 
+var _ Mount = VolumeMount{}
+
 type VolumeMount struct {
 	VolumeName    string
 	ContainerPath string
@@ -144,7 +152,7 @@ func (VolumeMount) Type() MountType {
 	return TypeVolume
 }
 
-func VolumeMountFromProto(m *api.VolumeMount) Mount {
+func VolumeMountFromProto(m *api.VolumeMount) VolumeMount {
 	return VolumeMount{
 		VolumeName:    m.GetVolumeName(),
 		ContainerPath: m.GetContainerPath(),
@@ -154,19 +162,23 @@ func VolumeMountFromProto(m *api.VolumeMount) Mount {
 }
 
 func (m VolumeMount) ToProto() *api.Mount {
-	return &api.Mount{
-		Type: &api.Mount_Volume{
-			Volume: &api.VolumeMount{
-				VolumeName:    m.VolumeName,
-				ContainerPath: m.ContainerPath,
-				Subpath:       m.Subpath,
-				Readonly:      m.Readonly,
-			},
-		},
-	}
+	mnt := &api.VolumeMount{}
+
+	mnt.SetVolumeName(m.VolumeName)
+	mnt.SetContainerPath(m.ContainerPath)
+	mnt.SetSubpath(m.Subpath)
+	mnt.SetReadonly(m.Readonly)
+
+	out := &api.Mount{}
+
+	out.SetVolume(mnt)
+
+	return out
 }
 
 const TypeTmpfs MountType = "tmpfs"
+
+var _ Mount = TmpfsMount{}
 
 type TmpfsMount struct {
 	ContainerPath string
@@ -190,18 +202,22 @@ func TmpfsMountFromProto(m *api.TmpfsMount) TmpfsMount {
 }
 
 func (m TmpfsMount) ToProto() *api.Mount {
-	return &api.Mount{
-		Type: &api.Mount_Tmpfs{
-			Tmpfs: &api.TmpfsMount{
-				ContainerPath: m.ContainerPath,
-				Size:          int64(m.Size),
-				Mode:          m.Mode.String(),
-			},
-		},
-	}
+	mnt := &api.TmpfsMount{}
+
+	mnt.SetContainerPath(m.ContainerPath)
+	mnt.SetSize(int64(m.Size))
+	mnt.SetMode(m.Mode.String())
+
+	out := &api.Mount{}
+
+	out.SetTmpfs(mnt)
+
+	return out
 }
 
 const TypeImage MountType = "image"
+
+var _ Mount = ImageMount{}
 
 type ImageMount struct {
 	Image         string
@@ -224,19 +240,23 @@ func ImageMountFromProto(m *api.ImageMount) ImageMount {
 }
 
 func (m ImageMount) ToProto() *api.Mount {
-	return &api.Mount{
-		Type: &api.Mount_Image{
-			Image: &api.ImageMount{
-				Image:         m.Image,
-				ContainerPath: m.ContainerPath,
-				Subpath:       m.Subpath,
-				Readonly:      m.Readonly,
-			},
-		},
-	}
+	mnt := &api.ImageMount{}
+
+	mnt.SetImage(m.Image)
+	mnt.SetContainerPath(m.ContainerPath)
+	mnt.SetSubpath(m.Subpath)
+	mnt.SetReadonly(m.Readonly)
+
+	out := &api.Mount{}
+
+	out.SetImage(mnt)
+
+	return out
 }
 
 const TypeDevice MountType = "device"
+
+var _ Mount = DeviceMount{}
 
 var ErrDeviceFormat = errors.New("invalid device format")
 
@@ -261,36 +281,38 @@ func DeviceMountFromProto(m *api.DeviceMount) DeviceMount {
 }
 
 func (m DeviceMount) ToProto() *api.Mount {
-	return &api.Mount{
-		Type: &api.Mount_Device{
-			Device: &api.DeviceMount{
-				CgroupRule:    m.CGroupRule,
-				HostPath:      m.HostPath,
-				ContainerPath: m.ContainerPath,
-				Permissions:   m.Permissions,
-			},
-		},
-	}
+	mnt := &api.DeviceMount{}
+
+	mnt.SetCgroupRule(m.CGroupRule)
+	mnt.SetHostPath(m.HostPath)
+	mnt.SetContainerPath(m.ContainerPath)
+	mnt.SetPermissions(m.Permissions)
+
+	out := &api.Mount{}
+
+	out.SetDevice(mnt)
+
+	return out
 }
 
 func DeviceMountFromSpec(spec string) (Mount, error) {
-	dev := DeviceMount{}
+	out := DeviceMount{}
 
 	switch values := strings.SplitN(spec, ":", 3); len(values) {
 	case 0:
-		return dev, fmt.Errorf("%s: %w", spec, ErrDeviceFormat)
+		return out, fmt.Errorf("%s: %w", spec, ErrDeviceFormat)
 	case 1:
-		dev.HostPath = values[0]
+		out.HostPath = values[0]
 	case 2:
-		dev.HostPath = values[0]
-		dev.ContainerPath = values[1]
+		out.HostPath = values[0]
+		out.ContainerPath = values[1]
 	case 3:
-		dev.HostPath = values[0]
-		dev.ContainerPath = values[1]
-		dev.Permissions = values[2]
+		out.HostPath = values[0]
+		out.ContainerPath = values[1]
+		out.Permissions = values[2]
 	default:
-		return dev, fmt.Errorf("%s: %w", spec, ErrDeviceFormat)
+		return out, fmt.Errorf("%s: %w", spec, ErrDeviceFormat)
 	}
 
-	return dev, nil
+	return out, nil
 }

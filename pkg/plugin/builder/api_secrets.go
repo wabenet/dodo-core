@@ -43,8 +43,10 @@ func BuildSecretFromProto(b *api.BuildSecret) BuildSecret {
 }
 
 func (b BuildSecret) ToProto() *api.BuildSecret {
-	return &api.BuildSecret{
-		Id:   b.ID,
-		Path: b.Path,
-	}
+	out := &api.BuildSecret{}
+
+	out.SetId(b.ID)
+	out.SetPath(b.Path)
+
+	return out
 }

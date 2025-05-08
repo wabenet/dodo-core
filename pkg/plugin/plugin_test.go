@@ -45,12 +45,7 @@ func (typeB) GRPCServer(p dodo.Plugin) (plugin.Plugin, error) {
 }
 
 func (p pluginA) PluginInfo() *api.PluginInfo {
-	return &api.PluginInfo{
-		Name: &api.PluginName{
-			Name: string(p),
-			Type: p.Type().String(),
-		},
-	}
+	return dodo.MkInfo(p.Type(), "")
 }
 
 func (pluginA) Init() (dodo.Config, error) {
@@ -64,15 +59,13 @@ func (pluginA) Type() dodo.Type {
 }
 
 func (p pluginB) PluginInfo() *api.PluginInfo {
-	return &api.PluginInfo{
-		Name: &api.PluginName{
-			Name: string(p),
-			Type: p.Type().String(),
-		},
-		Dependencies: []*api.PluginName{
-			pluginAImpl.PluginInfo().GetName(),
-		},
-	}
+	info := dodo.MkInfo(p.Type(), "")
+
+	info.SetDependencies([]*api.PluginName{
+		pluginAImpl.PluginInfo().GetName(),
+	})
+
+	return info
 }
 
 func (pluginB) Init() (dodo.Config, error) {

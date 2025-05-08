@@ -29,10 +29,12 @@ func (c *Client) Type() plugin.Type { //nolint:ireturn
 func (c *Client) PluginInfo() *pluginapi.PluginInfo {
 	info, err := c.configClient.GetPluginInfo(context.Background(), &empty.Empty{})
 	if err != nil {
-		return &pluginapi.PluginInfo{
-			Name:   plugin.MkName(Type, plugin.FailedPlugin),
-			Fields: map[string]string{"error": err.Error()},
-		}
+		pi := &pluginapi.PluginInfo{}
+
+		pi.SetName(plugin.MkName(Type, plugin.FailedPlugin))
+		pi.SetFields(map[string]string{"error": err.Error()})
+
+		return pi
 	}
 
 	return info
@@ -70,7 +72,11 @@ func (c *Client) ListBackdrops() ([]Backdrop, error) {
 }
 
 func (c *Client) GetBackdrop(alias string) (Backdrop, error) {
-	response, err := c.configClient.GetBackdrop(context.Background(), &api.GetBackdropRequest{Alias: alias})
+	req := &api.GetBackdropRequest{}
+
+	req.SetAlias(alias)
+
+	response, err := c.configClient.GetBackdrop(context.Background(), req)
 	if err != nil {
 		return EmptyBackdrop(), fmt.Errorf("could not get backdrop: %w", err)
 	}

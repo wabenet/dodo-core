@@ -71,8 +71,8 @@ func (s *StreamOutputServer) SendTo(srv grpcOutputServer) error {
 				continue
 			}
 
-			data.Data = d
-			data.Channel = api.OutputData_STDOUT
+			data.SetData(d)
+			data.SetChannel(api.OutputData_STDOUT)
 
 		case d, ok := <-s.stderrCh:
 			if !ok {
@@ -81,8 +81,8 @@ func (s *StreamOutputServer) SendTo(srv grpcOutputServer) error {
 				continue
 			}
 
-			data.Data = d
-			data.Channel = api.OutputData_STDERR
+			data.SetData(d)
+			data.SetChannel(api.OutputData_STDERR)
 
 		case <-srv.Context().Done():
 			return nil

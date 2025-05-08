@@ -63,16 +63,18 @@ func ContainerConfigFromProto(c *api.ContainerConfig) ContainerConfig {
 }
 
 func (c ContainerConfig) ToProto() *api.ContainerConfig {
-	return &api.ContainerConfig{
-		Name:         c.Name,
-		Image:        c.Image,
-		Process:      c.Process.ToProto(),
-		Terminal:     c.Terminal.ToProto(),
-		Environment:  c.Environment.ToProto(),
-		Ports:        c.Ports.ToProto(),
-		Mounts:       c.Mounts.ToProto(),
-		Capabilities: c.Capabilities,
-	}
+	out := &api.ContainerConfig{}
+
+	out.SetName(c.Name)
+	out.SetImage(c.Image)
+	out.SetProcess(c.Process.ToProto())
+	out.SetTerminal(c.Terminal.ToProto())
+	out.SetEnvironment(c.Environment.ToProto())
+	out.SetPorts(c.Ports.ToProto())
+	out.SetMounts(c.Mounts.ToProto())
+	out.SetCapabilities(c.Capabilities)
+
+	return out
 }
 
 type Process struct {
@@ -114,12 +116,14 @@ func ProcessFromProto(p *api.Process) Process {
 }
 
 func (p Process) ToProto() *api.Process {
-	return &api.Process{
-		User:       p.User,
-		WorkingDir: p.WorkingDir,
-		Entrypoint: p.Entrypoint,
-		Command:    p.Command,
-	}
+	out := &api.Process{}
+
+	out.SetUser(p.User)
+	out.SetWorkingDir(p.WorkingDir)
+	out.SetEntrypoint(p.Entrypoint)
+	out.SetCommand(p.Command)
+
+	return out
 }
 
 type Entrypoint []string
@@ -165,12 +169,14 @@ func TerminalConfigFromProto(t *api.TerminalConfig) TerminalConfig {
 }
 
 func (t TerminalConfig) ToProto() *api.TerminalConfig {
-	return &api.TerminalConfig{
-		Stdio:         t.StdIO,
-		Tty:           t.TTY,
-		ConsoleHeight: int64(t.ConsoleHeight),
-		ConsoleWidth:  int64(t.ConsoleWidth),
-	}
+	out := &api.TerminalConfig{}
+
+	out.SetStdio(t.StdIO)
+	out.SetTty(t.TTY)
+	out.SetConsoleHeight(int64(t.ConsoleHeight))
+	out.SetConsoleWidth(int64(t.ConsoleWidth))
+
+	return out
 }
 
 type CapabilityConfig []string

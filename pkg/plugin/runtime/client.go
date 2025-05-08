@@ -38,9 +38,11 @@ type streamInputClient struct {
 }
 
 func (s *streamInputClient) Send(data *pluginapi.InputData) error {
-	if err := s.client.Send(&pluginapi.StreamInputRequest{
-		InputRequestType: &pluginapi.StreamInputRequest_InputData{InputData: data},
-	}); err != nil {
+	req := &pluginapi.StreamInputRequest{}
+
+	req.SetInputData(data)
+
+	if err := s.client.Send(req); err != nil {
 		return fmt.Errorf("error wrapping Send call: %w", err)
 	}
 
@@ -86,7 +88,11 @@ func (c *Client) Cleanup() {
 }
 
 func (c *Client) ResolveImage(spec string) (string, error) {
-	img, err := c.runtimeClient.GetImage(context.Background(), &api.GetImageRequest{ImageSpec: spec})
+	req := &api.GetImageRequest{}
+
+	req.SetImageSpec(spec)
+
+	img, err := c.runtimeClient.GetImage(context.Background(), req)
 	if err != nil {
 		return "", fmt.Errorf("could not resolve image: %w", err)
 	}
@@ -95,10 +101,11 @@ func (c *Client) ResolveImage(spec string) (string, error) {
 }
 
 func (c *Client) CreateContainer(config ContainerConfig) (string, error) {
-	resp, err := c.runtimeClient.CreateContainer(
-		context.Background(),
-		&api.CreateContainerRequest{Config: config.ToProto()},
-	)
+	req := &api.CreateContainerRequest{}
+
+	req.SetConfig(config.ToProto())
+
+	resp, err := c.runtimeClient.CreateContainer(context.Background(), req)
 	if err != nil {
 		return "", fmt.Errorf("could not create container: %w", err)
 	}
@@ -107,10 +114,11 @@ func (c *Client) CreateContainer(config ContainerConfig) (string, error) {
 }
 
 func (c *Client) StartContainer(id string) error {
-	if _, err := c.runtimeClient.StartContainer(
-		context.Background(),
-		&api.StartContainerRequest{ContainerId: id},
-	); err != nil {
+	req := &api.StartContainerRequest{}
+
+	req.SetContainerId(id)
+
+	if _, err := c.runtimeClient.StartContainer(context.Background(), req); err != nil {
 		return fmt.Errorf("could not start container: %w", err)
 	}
 
@@ -118,10 +126,11 @@ func (c *Client) StartContainer(id string) error {
 }
 
 func (c *Client) DeleteContainer(id string) error {
-	if _, err := c.runtimeClient.DeleteContainer(
-		context.Background(),
-		&api.DeleteContainerRequest{ContainerId: id},
-	); err != nil {
+	req := &api.DeleteContainerRequest{}
+
+	req.SetContainerId(id)
+
+	if _, err := c.runtimeClient.DeleteContainer(context.Background(), req); err != nil {
 		return fmt.Errorf("could not delete container: %w", err)
 	}
 
@@ -129,10 +138,13 @@ func (c *Client) DeleteContainer(id string) error {
 }
 
 func (c *Client) ResizeContainer(id string, height, width uint32) error {
-	if _, err := c.runtimeClient.ResizeContainer(
-		context.Background(),
-		&api.ResizeContainerRequest{ContainerId: id, Height: height, Width: width},
-	); err != nil {
+	req := &api.ResizeContainerRequest{}
+
+	req.SetContainerId(id)
+	req.SetHeight(height)
+	req.SetWidth(width)
+
+	if _, err := c.runtimeClient.ResizeContainer(context.Background(), req); err != nil {
 		return fmt.Errorf("could not resize container: %w", err)
 	}
 
@@ -140,10 +152,12 @@ func (c *Client) ResizeContainer(id string, height, width uint32) error {
 }
 
 func (c *Client) KillContainer(id string, signal os.Signal) error {
-	if _, err := c.runtimeClient.KillContainer(
-		context.Background(),
-		&api.KillContainerRequest{ContainerId: id, Signal: signalToString(signal)},
-	); err != nil {
+	req := &api.KillContainerRequest{}
+
+	req.SetContainerId(id)
+	req.SetSignal(signalToString(signal))
+
+	if _, err := c.runtimeClient.KillContainer(context.Background(), req); err != nil {
 		return fmt.Errorf("could not kill container: %w", err)
 	}
 
@@ -163,11 +177,13 @@ func (c *Client) StreamContainer(id string, stream *plugin.StreamConfig) (*Resul
 	eg.Go(func() error {
 		defer inCancel()
 
-		resp, err := c.runtimeClient.StreamContainer(context.Background(), &api.StreamContainerRequest{
-			ContainerId: id,
-			Height:      stream.TerminalHeight,
-			Width:       stream.TerminalWidth,
-		})
+		req := &api.StreamContainerRequest{}
+
+		req.SetContainerId(id)
+		req.SetHeight(stream.TerminalHeight)
+		req.SetWidth(stream.TerminalWidth)
+
+		resp, err := c.runtimeClient.StreamContainer(context.Background(), req)
 		if err != nil {
 			return fmt.Errorf("could not stream container: %w", err)
 		}
@@ -190,11 +206,13 @@ func (c *Client) copyInputClientToStdin(containerID string, stdin io.Reader) err
 		return fmt.Errorf("could not stream runtime input: %w", err)
 	}
 
-	if err := inputClient.Send(&pluginapi.StreamInputRequest{
-		InputRequestType: &pluginapi.StreamInputRequest_InitialRequest{
-			InitialRequest: &pluginapi.InitialStreamInputRequest{Id: containerID},
-		},
-	}); err != nil {
+	req := &pluginapi.StreamInputRequest{}
+	ir := &pluginapi.InitialStreamInputRequest{}
+
+	ir.SetId(containerID)
+	req.SetInitialRequest(ir)
+
+	if err := inputClient.Send(req); err != nil {
 		return fmt.Errorf("could not stream runtime input: %w", err)
 	}
 
@@ -206,10 +224,11 @@ func (c *Client) copyInputClientToStdin(containerID string, stdin io.Reader) err
 }
 
 func (c *Client) copyOutputClientToStdout(containerID string, stdout, stderr io.Writer) error {
-	outputClient, err := c.runtimeClient.StreamOutput(
-		context.Background(),
-		&pluginapi.StreamOutputRequest{Id: containerID},
-	)
+	req := &pluginapi.StreamOutputRequest{}
+
+	req.SetId(containerID)
+
+	outputClient, err := c.runtimeClient.StreamOutput(context.Background(), req)
 	if err != nil {
 		return fmt.Errorf("could not stream runtime output: %w", err)
 	}
@@ -222,10 +241,11 @@ func (c *Client) copyOutputClientToStdout(containerID string, stdout, stderr io.
 }
 
 func (c *Client) CreateVolume(name string) error {
-	if _, err := c.runtimeClient.CreateVolume(
-		context.Background(),
-		&api.CreateVolumeRequest{Name: name},
-	); err != nil {
+	req := &api.CreateVolumeRequest{}
+
+	req.SetName(name)
+
+	if _, err := c.runtimeClient.CreateVolume(context.Background(), req); err != nil {
 		return fmt.Errorf("could not create volume: %w", err)
 	}
 
@@ -233,10 +253,11 @@ func (c *Client) CreateVolume(name string) error {
 }
 
 func (c *Client) DeleteVolume(name string) error {
-	if _, err := c.runtimeClient.DeleteVolume(
-		context.Background(),
-		&api.DeleteVolumeRequest{Name: name},
-	); err != nil {
+	req := &api.DeleteVolumeRequest{}
+
+	req.SetName(name)
+
+	if _, err := c.runtimeClient.DeleteVolume(context.Background(), req); err != nil {
 		return fmt.Errorf("could not delete volume: %w", err)
 	}
 
@@ -244,14 +265,13 @@ func (c *Client) DeleteVolume(name string) error {
 }
 
 func (c *Client) WriteFile(containerID, path string, contents []byte) error {
-	if _, err := c.runtimeClient.WriteFile(
-		context.Background(),
-		&api.WriteFileRequest{
-			ContainerId: containerID,
-			FilePath:    path,
-			Contents:    string(contents),
-		},
-	); err != nil {
+	req := &api.WriteFileRequest{}
+
+	req.SetContainerId(containerID)
+	req.SetFilePath(path)
+	req.SetContents(string(contents))
+
+	if _, err := c.runtimeClient.WriteFile(context.Background(), req); err != nil {
 		return fmt.Errorf("could not write file: %w", err)
 	}
 

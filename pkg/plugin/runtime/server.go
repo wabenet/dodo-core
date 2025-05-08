@@ -18,6 +18,8 @@ import (
 var ErrUnexpectedMapType = errors.New("unexpected map type for stdio streaming server")
 
 type Server struct {
+	api.UnsafePluginServer
+
 	impl   ContainerRuntime
 	stdin  sync.Map
 	stdout sync.Map
@@ -87,7 +89,11 @@ func (s *Server) InitPlugin(_ context.Context, _ *empty.Empty) (*pluginapi.InitP
 		return nil, fmt.Errorf("could not initialize plugin: %w", err)
 	}
 
-	return &pluginapi.InitPluginResponse{Config: config}, nil
+	resp := &pluginapi.InitPluginResponse{}
+
+	resp.SetConfig(config)
+
+	return resp, nil
 }
 
 func (s *Server) ResetPlugin(_ context.Context, _ *empty.Empty) (*empty.Empty, error) {
@@ -103,7 +109,11 @@ func (s *Server) GetImage(_ context.Context, request *api.GetImageRequest) (*api
 		return nil, fmt.Errorf("could not resolve image: %w", err)
 	}
 
-	return &api.GetImageResponse{ImageId: id}, nil
+	resp := &api.GetImageResponse{}
+
+	resp.SetImageId(id)
+
+	return resp, nil
 }
 
 func (s *Server) CreateContainer(
@@ -115,7 +125,11 @@ func (s *Server) CreateContainer(
 		return nil, fmt.Errorf("could not create container: %w", err)
 	}
 
-	return &api.CreateContainerResponse{ContainerId: id}, nil
+	resp := &api.CreateContainerResponse{}
+
+	resp.SetContainerId(id)
+
+	return resp, nil
 }
 
 func (s *Server) StartContainer(_ context.Context, request *api.StartContainerRequest) (*empty.Empty, error) {
@@ -226,7 +240,7 @@ func (s *Server) StreamContainer(
 			return fmt.Errorf("could not stream container: %w", err)
 		}
 
-		resp.ExitCode = int64(streamResp.ExitCode)
+		resp.SetExitCode(int64(streamResp.ExitCode))
 
 		return nil
 	})

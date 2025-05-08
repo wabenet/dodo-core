@@ -11,10 +11,12 @@ const (
 )
 
 func NewFailedPluginInfo(t Type, err error) *api.PluginInfo {
-	return &api.PluginInfo{
-		Name:   MkName(t, FailedPlugin),
-		Fields: map[string]string{"error": err.Error()},
-	}
+	pi := &api.PluginInfo{}
+
+	pi.SetName(MkName(t, FailedPlugin))
+	pi.SetFields(map[string]string{"error": err.Error()})
+
+	return pi
 }
 
 type NotFoundError struct {

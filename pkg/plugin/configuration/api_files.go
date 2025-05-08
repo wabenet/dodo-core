@@ -43,8 +43,10 @@ func FileFromProto(f *api.File) File {
 }
 
 func (f File) ToProto() *api.File {
-	return &api.File{
-		FilePath: f.FilePath,
-		Contents: string(f.Contents),
-	}
+	out := &api.File{}
+
+	out.SetFilePath(f.FilePath)
+	out.SetContents(string(f.Contents))
+
+	return out
 }

@@ -1,8 +1,11 @@
-syntax = "proto3";
+edition = "2023";
 
 package com.wabenet.dodo.build.v1alpha2;
 
 option go_package = "github.com/wabenet/dodo-core/api/build/v1alpha2;build";
+
+import "google/protobuf/go_features.proto";
+option features.(pb.go).api_level = API_OPAQUE;
 
 import "google/protobuf/empty.proto";
 import "plugin/v1alpha1/plugin.proto";

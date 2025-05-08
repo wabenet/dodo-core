@@ -10,6 +10,8 @@ import (
 )
 
 type Server struct {
+	api.UnsafePluginServer
+
 	impl Configuration
 }
 
@@ -27,7 +29,11 @@ func (s *Server) InitPlugin(_ context.Context, _ *empty.Empty) (*pluginapi.InitP
 		return nil, fmt.Errorf("could not initialize plugin: %w", err)
 	}
 
-	return &pluginapi.InitPluginResponse{Config: config}, nil
+	resp := &pluginapi.InitPluginResponse{}
+
+	resp.SetConfig(config)
+
+	return resp, nil
 }
 
 func (s *Server) ResetPlugin(_ context.Context, _ *empty.Empty) (*empty.Empty, error) {
@@ -48,7 +54,11 @@ func (s *Server) ListBackdrops(_ context.Context, _ *empty.Empty) (*api.ListBack
 		result = append(result, b.ToProto())
 	}
 
-	return &api.ListBackdropsResponse{Backdrops: result}, nil
+	resp := &api.ListBackdropsResponse{}
+
+	resp.SetBackdrops(result)
+
+	return resp, nil
 }
 
 func (s *Server) GetBackdrop(_ context.Context, request *api.GetBackdropRequest) (*api.GetBackdropResponse, error) {
@@ -57,5 +67,9 @@ func (s *Server) GetBackdrop(_ context.Context, request *api.GetBackdropRequest)
 		return nil, fmt.Errorf("could not get backdrop: %w", err)
 	}
 
-	return &api.GetBackdropResponse{Backdrop: backdrop.ToProto()}, nil
+	resp := &api.GetBackdropResponse{}
+
+	resp.SetBackdrop(backdrop.ToProto())
+
+	return resp, nil
 }

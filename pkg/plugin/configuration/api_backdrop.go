@@ -85,13 +85,15 @@ func BackdropFromProto(b *api.Backdrop) Backdrop {
 }
 
 func (b Backdrop) ToProto() *api.Backdrop {
-	return &api.Backdrop{
-		Name:            b.Name,
-		Aliases:         b.Aliases,
-		Runtime:         b.Runtime,
-		Builder:         b.Builder,
-		ContainerConfig: b.ContainerConfig.ToProto(),
-		BuildConfig:     b.BuildConfig.ToProto(),
-		RequiredFiles:   b.RequiredFiles.ToProto(),
-	}
+	out := &api.Backdrop{}
+
+	out.SetName(b.Name)
+	out.SetAliases(b.Aliases)
+	out.SetRuntime(b.Runtime)
+	out.SetBuilder(b.Builder)
+	out.SetContainerConfig(b.ContainerConfig.ToProto())
+	out.SetBuildConfig(b.BuildConfig.ToProto())
+	out.SetRequiredFiles(b.RequiredFiles.ToProto())
+
+	return out
 }

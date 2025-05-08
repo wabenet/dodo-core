@@ -31,7 +31,7 @@ func (*StreamInputClient) StreamInput(cl grpcInputClient, stdin io.Reader) error
 		n, err := stdin.Read(b[:])
 
 		if n > 0 {
-			data.Data = b[:n]
+			data.SetData(b[:n])
 			if serr := cl.Send(&data); err != nil {
 				return fmt.Errorf("could not send input to server: %w", serr)
 			}

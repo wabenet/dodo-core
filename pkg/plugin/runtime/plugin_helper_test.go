@@ -78,9 +78,7 @@ func (r *ErrorRuntime) Type() plugin.Type {
 }
 
 func (r *ErrorRuntime) PluginInfo() *pluginapi.PluginInfo {
-	return &pluginapi.PluginInfo{
-		Name: &pluginapi.PluginName{Type: runtime.Type.String(), Name: "error"},
-	}
+	return plugin.MkInfo(runtime.Type, "error")
 }
 
 func (r *ErrorRuntime) Init() (plugin.Config, error) {
@@ -141,9 +139,7 @@ func (r *EchoRuntime) Type() plugin.Type {
 }
 
 func (r *EchoRuntime) PluginInfo() *pluginapi.PluginInfo {
-	return &pluginapi.PluginInfo{
-		Name: &pluginapi.PluginName{Type: runtime.Type.String(), Name: "echo"},
-	}
+	return plugin.MkInfo(runtime.Type, "echo")
 }
 
 func (r *EchoRuntime) Init() (plugin.Config, error) {

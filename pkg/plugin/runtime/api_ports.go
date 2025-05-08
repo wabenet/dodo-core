@@ -53,42 +53,44 @@ func PortBindingFromProto(p *api.PortBinding) PortBinding {
 }
 
 func (p PortBinding) ToProto() *api.PortBinding {
-	return &api.PortBinding{
-		HostPort:      p.HostPort,
-		ContainerPort: p.ContainerPort,
-		Protocol:      p.Protocol,
-		HostIp:        p.HostIP,
-	}
+	out := &api.PortBinding{}
+
+	out.SetHostPort(p.HostPort)
+	out.SetContainerPort(p.ContainerPort)
+	out.SetProtocol(p.Protocol)
+	out.SetHostIp(p.HostIP)
+
+	return out
 }
 
 func PortBindingFromSpec(spec string) (PortBinding, error) {
-	port := PortBinding{}
+	out := PortBinding{}
 
 	switch values := strings.SplitN(spec, ":", 3); len(values) {
 	case 0:
-		return port, fmt.Errorf("%s: %w", spec, ErrPortFormat)
+		return out, fmt.Errorf("%s: %w", spec, ErrPortFormat)
 	case 1:
-		port.ContainerPort = values[0]
+		out.ContainerPort = values[0]
 	case 2:
-		port.HostPort = values[0]
-		port.ContainerPort = values[1]
+		out.HostPort = values[0]
+		out.ContainerPort = values[1]
 	case 3:
-		port.HostIP = values[0]
-		port.HostPort = values[1]
-		port.ContainerPort = values[2]
+		out.HostIP = values[0]
+		out.HostPort = values[1]
+		out.ContainerPort = values[2]
 	default:
-		return port, fmt.Errorf("%s: %w", spec, ErrPortFormat)
+		return out, fmt.Errorf("%s: %w", spec, ErrPortFormat)
 	}
 
-	switch values := strings.SplitN(port.HostPort, "/", 2); len(values) {
+	switch values := strings.SplitN(out.HostPort, "/", 2); len(values) {
 	case 1:
-		port.HostPort = values[0]
+		out.HostPort = values[0]
 	case 2:
-		port.HostPort = values[0]
-		port.Protocol = values[1]
+		out.HostPort = values[0]
+		out.Protocol = values[1]
 	default:
-		return port, fmt.Errorf("%s: %w", spec, ErrPortFormat)
+		return out, fmt.Errorf("%s: %w", spec, ErrPortFormat)
 	}
 
-	return port, nil
+	return out, nil
 }
