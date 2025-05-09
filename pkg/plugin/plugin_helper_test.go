@@ -2,7 +2,6 @@ package plugin_test
 
 import (
 	"github.com/hashicorp/go-plugin"
-	api "github.com/wabenet/dodo-core/api/plugin/v1alpha1"
 	dodo "github.com/wabenet/dodo-core/pkg/plugin"
 )
 
@@ -24,11 +23,11 @@ func (t typeA) String() string {
 	return string(t)
 }
 
-func (typeA) GRPCClient() (plugin.Plugin, error) {
+func (typeA) GRPCClient() (plugin.Plugin, error) { //nolint:ireturn
 	return nil, dodo.InvalidError{}
 }
 
-func (typeA) GRPCServer(p dodo.Plugin) (plugin.Plugin, error) {
+func (typeA) GRPCServer(_ dodo.Plugin) (plugin.Plugin, error) { //nolint:ireturn
 	return nil, dodo.InvalidError{}
 }
 
@@ -36,16 +35,16 @@ func (t typeB) String() string {
 	return string(t)
 }
 
-func (typeB) GRPCClient() (plugin.Plugin, error) {
+func (typeB) GRPCClient() (plugin.Plugin, error) { //nolint:ireturn
 	return nil, dodo.InvalidError{}
 }
 
-func (typeB) GRPCServer(p dodo.Plugin) (plugin.Plugin, error) {
+func (typeB) GRPCServer(_ dodo.Plugin) (plugin.Plugin, error) { //nolint:ireturn
 	return nil, dodo.InvalidError{}
 }
 
-func (p pluginA) PluginInfo() *api.PluginInfo {
-	return dodo.MkInfo(p.Type(), "")
+func (p pluginA) Metadata() dodo.Metadata {
+	return dodo.NewMetadata(p.Type(), "")
 }
 
 func (pluginA) Init() (dodo.Config, error) {
@@ -54,18 +53,12 @@ func (pluginA) Init() (dodo.Config, error) {
 
 func (pluginA) Cleanup() {}
 
-func (pluginA) Type() dodo.Type {
+func (pluginA) Type() dodo.Type { //nolint:ireturn
 	return typeAImpl
 }
 
-func (p pluginB) PluginInfo() *api.PluginInfo {
-	info := dodo.MkInfo(p.Type(), "")
-
-	info.SetDependencies([]*api.PluginName{
-		pluginAImpl.PluginInfo().GetName(),
-	})
-
-	return info
+func (p pluginB) Metadata() dodo.Metadata {
+	return dodo.NewMetadata(p.Type(), "").WithDependencies(pluginAImpl)
 }
 
 func (pluginB) Init() (dodo.Config, error) {
@@ -74,7 +67,7 @@ func (pluginB) Init() (dodo.Config, error) {
 
 func (pluginB) Cleanup() {}
 
-func (pluginB) Type() dodo.Type {
+func (pluginB) Type() dodo.Type { //nolint:ireturn
 	return typeBImpl
 }
 
@@ -82,8 +75,8 @@ func populatePluginMap() map[string]map[string]dodo.Plugin {
 	pluginMap := map[string]map[string]dodo.Plugin{}
 	pluginMap[typeAImpl.String()] = map[string]dodo.Plugin{}
 	pluginMap[typeBImpl.String()] = map[string]dodo.Plugin{}
-	pluginMap[typeAImpl.String()][pluginAImpl.PluginInfo().GetName().GetName()] = pluginAImpl
-	pluginMap[typeBImpl.String()][pluginBImpl.PluginInfo().GetName().GetName()] = pluginBImpl
+	pluginMap[typeAImpl.String()][pluginAImpl.Metadata().ID.Name] = pluginAImpl
+	pluginMap[typeBImpl.String()][pluginBImpl.Metadata().ID.Name] = pluginBImpl
 
 	return pluginMap
 }

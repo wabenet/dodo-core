@@ -8,7 +8,7 @@ import (
 	"sync"
 
 	"github.com/golang/protobuf/ptypes/empty"
-	pluginapi "github.com/wabenet/dodo-core/api/plugin/v1alpha1"
+	pluginapi "github.com/wabenet/dodo-core/api/plugin/v1alpha2"
 	api "github.com/wabenet/dodo-core/api/runtime/v1alpha2"
 	"github.com/wabenet/dodo-core/pkg/grpcutil"
 	"github.com/wabenet/dodo-core/pkg/plugin"
@@ -77,8 +77,8 @@ func (s *streamInputServer) SendAndClose(e *empty.Empty) error {
 	return nil
 }
 
-func (s *Server) GetPluginInfo(_ context.Context, _ *empty.Empty) (*pluginapi.PluginInfo, error) {
-	return s.impl.PluginInfo(), nil
+func (s *Server) GetPluginMetadata(_ context.Context, _ *empty.Empty) (*pluginapi.PluginMetadata, error) {
+	return s.impl.Metadata().ToProto(), nil
 }
 
 func (s *Server) InitPlugin(_ context.Context, _ *empty.Empty) (*pluginapi.InitPluginResponse, error) {

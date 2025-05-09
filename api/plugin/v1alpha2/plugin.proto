@@ -1,21 +1,21 @@
 edition = "2023";
 
-package com.wabenet.dodo.plugin.v1alpha1;
+package com.wabenet.dodo.plugin.v1alpha2;
 
-option go_package = "github.com/wabenet/dodo-core/api/plugin/v1alpha1;plugin";
+option go_package = "github.com/wabenet/dodo-core/api/plugin/v1alpha2;plugin";
 
 import "google/protobuf/go_features.proto";
 option features.(pb.go).api_level = API_OPAQUE;
 
-message PluginName {
+message PluginID {
   string type = 1;
   string name = 2;
 }
 
-message PluginInfo {
-  PluginName name = 1;
-  repeated PluginName dependencies = 2;
-  map<string, string> fields = 3;
+message PluginMetadata {
+  PluginID id= 1;
+  repeated PluginID dependencies = 2;
+  map<string, string> labels = 3;
 }
 
 message InitPluginResponse {

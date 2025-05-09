@@ -25,8 +25,8 @@ func (t pluginType) GRPCServer(p dodo.Plugin) (plugin.Plugin, error) {
 	rt, ok := p.(ImageBuilder)
 	if !ok {
 		return nil, dodo.InvalidError{
-			Plugin:  p.PluginInfo().GetName(),
-			Message: "plugin does not implement ImageBuilder API",
+			PluginID: p.Metadata().ID,
+			Message:  "plugin does not implement ImageBuilder API",
 		}
 	}
 

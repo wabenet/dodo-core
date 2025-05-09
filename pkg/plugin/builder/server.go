@@ -9,7 +9,7 @@ import (
 
 	"github.com/golang/protobuf/ptypes/empty"
 	api "github.com/wabenet/dodo-core/api/build/v1alpha2"
-	pluginapi "github.com/wabenet/dodo-core/api/plugin/v1alpha1"
+	pluginapi "github.com/wabenet/dodo-core/api/plugin/v1alpha2"
 	"github.com/wabenet/dodo-core/pkg/grpcutil"
 	"github.com/wabenet/dodo-core/pkg/plugin"
 	"golang.org/x/sync/errgroup"
@@ -43,8 +43,8 @@ func (s *Server) stdoutServer(streamID string) (*grpcutil.StreamOutputServer, er
 	return result, nil
 }
 
-func (s *Server) GetPluginInfo(_ context.Context, _ *empty.Empty) (*pluginapi.PluginInfo, error) {
-	return s.impl.PluginInfo(), nil
+func (s *Server) GetPluginMetadata(_ context.Context, _ *empty.Empty) (*pluginapi.PluginMetadata, error) {
+	return s.impl.Metadata().ToProto(), nil
 }
 
 func (s *Server) InitPlugin(_ context.Context, _ *empty.Empty) (*pluginapi.InitPluginResponse, error) {

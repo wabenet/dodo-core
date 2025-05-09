@@ -2,57 +2,49 @@ package plugin
 
 import (
 	"fmt"
-
-	api "github.com/wabenet/dodo-core/api/plugin/v1alpha1"
 )
 
 const (
 	FailedPlugin = "error"
 )
 
-func NewFailedPluginInfo(t Type, err error) *api.PluginInfo {
-	pi := &api.PluginInfo{}
-
-	pi.SetName(MkName(t, FailedPlugin))
-	pi.SetFields(map[string]string{"error": err.Error()})
-
-	return pi
+func NewFailedPluginInfo(t Type, err error) Metadata {
+	return Metadata{
+		ID:     ID{Type: t.String(), Name: FailedPlugin},
+		Labels: Labels{"error": err.Error()},
+	}
 }
 
 type NotFoundError struct {
-	Plugin *api.PluginName
+	PluginID ID
 }
 
 func NewNotFoundError(t Type, name string) NotFoundError {
-	return NotFoundError{Plugin: MkName(t, name)}
+	return NotFoundError{PluginID: ID{Type: t.String(), Name: name}}
 }
 
 func (e NotFoundError) Error() string {
 	return fmt.Sprintf(
 		"could not find plugin '%s' of type %s",
-		e.Plugin.GetName(),
-		e.Plugin.GetType(),
+		e.PluginID.Name,
+		e.PluginID.Type,
 	)
 }
 
 type InvalidError struct {
-	Plugin  *api.PluginName
-	Message string
+	PluginID ID
+	Message  string
 }
 
 func NewInvalidError(t Type, name, msg string) InvalidError {
-	return InvalidError{Plugin: MkName(t, name), Message: msg}
+	return InvalidError{PluginID: ID{Type: t.String(), Name: name}, Message: msg}
 }
 
 func (e InvalidError) Error() string {
-	if e.Plugin == nil {
-		return "invalid unknown plugin encountered: " + e.Message
-	}
-
 	return fmt.Sprintf(
 		"invalid plugin '%s' of type %s: %s",
-		e.Plugin.GetName(),
-		e.Plugin.GetType(),
+		e.PluginID.Name,
+		e.PluginID.Type,
 		e.Message,
 	)
 }

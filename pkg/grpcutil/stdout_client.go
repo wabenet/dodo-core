@@ -8,7 +8,7 @@ import (
 	"io"
 
 	log "github.com/hashicorp/go-hclog"
-	api "github.com/wabenet/dodo-core/api/plugin/v1alpha1"
+	api "github.com/wabenet/dodo-core/api/plugin/v1alpha2"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

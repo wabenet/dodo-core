@@ -6,7 +6,6 @@ import (
 
 	mapset "github.com/deckarep/golang-set"
 	log "github.com/hashicorp/go-hclog"
-	api "github.com/wabenet/dodo-core/api/plugin/v1alpha1"
 )
 
 type CircularDependencyError struct {
@@ -28,8 +27,8 @@ type dependency struct {
 	t string
 }
 
-func asDependency(name *api.PluginName) dependency {
-	return dependency{n: name.GetName(), t: name.GetType()}
+func asDependency(id ID) dependency {
+	return dependency{n: id.Name, t: id.Type}
 }
 
 func ResolveDependencies(pluginMap map[string]map[string]Plugin) []Plugin {
@@ -37,19 +36,16 @@ func ResolveDependencies(pluginMap map[string]map[string]Plugin) []Plugin {
 	names := make(map[dependency]Plugin)
 	dependencies := make(map[dependency]mapset.Set)
 
-	for _, ps := range pluginMap {
-		for _, p := range ps {
-			info := p.PluginInfo()
-			if info == nil {
-				continue
-			}
+	for _, plugins := range pluginMap {
+		for _, plugin := range plugins {
+			metadata := plugin.Metadata()
 
 			deps := mapset.NewSet()
-			key := asDependency(info.GetName())
+			key := asDependency(metadata.ID)
 
-			names[key] = p
+			names[key] = plugin
 
-			for _, dep := range info.GetDependencies() {
+			for _, dep := range metadata.Dependencies {
 				deps.Add(asDependency(dep))
 			}
 

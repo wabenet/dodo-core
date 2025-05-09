@@ -8,13 +8,13 @@ import "google/protobuf/go_features.proto";
 option features.(pb.go).api_level = API_OPAQUE;
 
 import "google/protobuf/empty.proto";
-import "plugin/v1alpha1/plugin.proto";
+import "plugin/v1alpha2/plugin.proto";
 import "build/v1alpha2/build.proto";
 import "runtime/v1alpha2/runtime.proto";
 
 service Plugin {
-  rpc GetPluginInfo(google.protobuf.Empty) returns (com.wabenet.dodo.plugin.v1alpha1.PluginInfo);
-  rpc InitPlugin(google.protobuf.Empty) returns (com.wabenet.dodo.plugin.v1alpha1.InitPluginResponse);
+  rpc GetPluginMetadata(google.protobuf.Empty) returns (com.wabenet.dodo.plugin.v1alpha2.PluginMetadata);
+  rpc InitPlugin(google.protobuf.Empty) returns (com.wabenet.dodo.plugin.v1alpha2.InitPluginResponse);
   rpc ResetPlugin(google.protobuf.Empty) returns (google.protobuf.Empty);
 
   rpc ListBackdrops(google.protobuf.Empty) returns (ListBackdropsResponse);

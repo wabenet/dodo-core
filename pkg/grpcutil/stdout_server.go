@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"io"
 
-	api "github.com/wabenet/dodo-core/api/plugin/v1alpha1"
+	api "github.com/wabenet/dodo-core/api/plugin/v1alpha2"
 	"golang.org/x/sync/errgroup"
 )
 

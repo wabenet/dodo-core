@@ -8,7 +8,7 @@ import (
 
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/hashicorp/go-hclog"
-	pluginapi "github.com/wabenet/dodo-core/api/plugin/v1alpha1"
+	pluginapi "github.com/wabenet/dodo-core/api/plugin/v1alpha2"
 	api "github.com/wabenet/dodo-core/api/runtime/v1alpha2"
 	"github.com/wabenet/dodo-core/pkg/grpcutil"
 	"github.com/wabenet/dodo-core/pkg/ioutil"
@@ -62,13 +62,13 @@ func (c *Client) Type() plugin.Type { //nolint:ireturn
 	return Type
 }
 
-func (c *Client) PluginInfo() *pluginapi.PluginInfo {
-	info, err := c.runtimeClient.GetPluginInfo(context.Background(), &empty.Empty{})
+func (c *Client) Metadata() plugin.Metadata {
+	metadata, err := c.runtimeClient.GetPluginMetadata(context.Background(), &empty.Empty{})
 	if err != nil {
 		return plugin.NewFailedPluginInfo(Type, err)
 	}
 
-	return info
+	return plugin.MetadataFromProto(metadata)
 }
 
 func (c *Client) Init() (plugin.Config, error) {

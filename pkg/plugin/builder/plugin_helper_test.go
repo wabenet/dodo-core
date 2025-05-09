@@ -1,7 +1,6 @@
 package builder_test
 
 import (
-	pluginapi "github.com/wabenet/dodo-core/api/plugin/v1alpha1"
 	"github.com/wabenet/dodo-core/pkg/plugin"
 	"github.com/wabenet/dodo-core/pkg/plugin/builder"
 )
@@ -14,8 +13,8 @@ func (b *DummyBuilder) Type() plugin.Type {
 	return builder.Type
 }
 
-func (b *DummyBuilder) PluginInfo() *pluginapi.PluginInfo {
-	return plugin.MkInfo(builder.Type, "dummy")
+func (b *DummyBuilder) Metadata() plugin.Metadata {
+	return plugin.NewMetadata(builder.Type, "dummy")
 }
 
 func (b *DummyBuilder) Init() (plugin.Config, error) {

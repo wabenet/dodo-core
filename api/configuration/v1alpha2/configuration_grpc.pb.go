@@ -8,7 +8,7 @@ package configuration
 
 import (
 	context "context"
-	v1alpha1 "github.com/wabenet/dodo-core/api/plugin/v1alpha1"
+	v1alpha2 "github.com/wabenet/dodo-core/api/plugin/v1alpha2"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -21,19 +21,19 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Plugin_GetPluginInfo_FullMethodName = "/com.wabenet.dodo.configuration.v1alpha2.Plugin/GetPluginInfo"
-	Plugin_InitPlugin_FullMethodName    = "/com.wabenet.dodo.configuration.v1alpha2.Plugin/InitPlugin"
-	Plugin_ResetPlugin_FullMethodName   = "/com.wabenet.dodo.configuration.v1alpha2.Plugin/ResetPlugin"
-	Plugin_ListBackdrops_FullMethodName = "/com.wabenet.dodo.configuration.v1alpha2.Plugin/ListBackdrops"
-	Plugin_GetBackdrop_FullMethodName   = "/com.wabenet.dodo.configuration.v1alpha2.Plugin/GetBackdrop"
+	Plugin_GetPluginMetadata_FullMethodName = "/com.wabenet.dodo.configuration.v1alpha2.Plugin/GetPluginMetadata"
+	Plugin_InitPlugin_FullMethodName        = "/com.wabenet.dodo.configuration.v1alpha2.Plugin/InitPlugin"
+	Plugin_ResetPlugin_FullMethodName       = "/com.wabenet.dodo.configuration.v1alpha2.Plugin/ResetPlugin"
+	Plugin_ListBackdrops_FullMethodName     = "/com.wabenet.dodo.configuration.v1alpha2.Plugin/ListBackdrops"
+	Plugin_GetBackdrop_FullMethodName       = "/com.wabenet.dodo.configuration.v1alpha2.Plugin/GetBackdrop"
 )
 
 // PluginClient is the client API for Plugin service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PluginClient interface {
-	GetPluginInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*v1alpha1.PluginInfo, error)
-	InitPlugin(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*v1alpha1.InitPluginResponse, error)
+	GetPluginMetadata(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*v1alpha2.PluginMetadata, error)
+	InitPlugin(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*v1alpha2.InitPluginResponse, error)
 	ResetPlugin(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	ListBackdrops(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListBackdropsResponse, error)
 	GetBackdrop(ctx context.Context, in *GetBackdropRequest, opts ...grpc.CallOption) (*GetBackdropResponse, error)
@@ -47,19 +47,19 @@ func NewPluginClient(cc grpc.ClientConnInterface) PluginClient {
 	return &pluginClient{cc}
 }
 
-func (c *pluginClient) GetPluginInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*v1alpha1.PluginInfo, error) {
+func (c *pluginClient) GetPluginMetadata(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*v1alpha2.PluginMetadata, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(v1alpha1.PluginInfo)
-	err := c.cc.Invoke(ctx, Plugin_GetPluginInfo_FullMethodName, in, out, cOpts...)
+	out := new(v1alpha2.PluginMetadata)
+	err := c.cc.Invoke(ctx, Plugin_GetPluginMetadata_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *pluginClient) InitPlugin(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*v1alpha1.InitPluginResponse, error) {
+func (c *pluginClient) InitPlugin(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*v1alpha2.InitPluginResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(v1alpha1.InitPluginResponse)
+	out := new(v1alpha2.InitPluginResponse)
 	err := c.cc.Invoke(ctx, Plugin_InitPlugin_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -101,8 +101,8 @@ func (c *pluginClient) GetBackdrop(ctx context.Context, in *GetBackdropRequest, 
 // All implementations must embed UnimplementedPluginServer
 // for forward compatibility.
 type PluginServer interface {
-	GetPluginInfo(context.Context, *emptypb.Empty) (*v1alpha1.PluginInfo, error)
-	InitPlugin(context.Context, *emptypb.Empty) (*v1alpha1.InitPluginResponse, error)
+	GetPluginMetadata(context.Context, *emptypb.Empty) (*v1alpha2.PluginMetadata, error)
+	InitPlugin(context.Context, *emptypb.Empty) (*v1alpha2.InitPluginResponse, error)
 	ResetPlugin(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	ListBackdrops(context.Context, *emptypb.Empty) (*ListBackdropsResponse, error)
 	GetBackdrop(context.Context, *GetBackdropRequest) (*GetBackdropResponse, error)
@@ -116,10 +116,10 @@ type PluginServer interface {
 // pointer dereference when methods are called.
 type UnimplementedPluginServer struct{}
 
-func (UnimplementedPluginServer) GetPluginInfo(context.Context, *emptypb.Empty) (*v1alpha1.PluginInfo, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetPluginInfo not implemented")
+func (UnimplementedPluginServer) GetPluginMetadata(context.Context, *emptypb.Empty) (*v1alpha2.PluginMetadata, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPluginMetadata not implemented")
 }
-func (UnimplementedPluginServer) InitPlugin(context.Context, *emptypb.Empty) (*v1alpha1.InitPluginResponse, error) {
+func (UnimplementedPluginServer) InitPlugin(context.Context, *emptypb.Empty) (*v1alpha2.InitPluginResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InitPlugin not implemented")
 }
 func (UnimplementedPluginServer) ResetPlugin(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
@@ -152,20 +152,20 @@ func RegisterPluginServer(s grpc.ServiceRegistrar, srv PluginServer) {
 	s.RegisterService(&Plugin_ServiceDesc, srv)
 }
 
-func _Plugin_GetPluginInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Plugin_GetPluginMetadata_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PluginServer).GetPluginInfo(ctx, in)
+		return srv.(PluginServer).GetPluginMetadata(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Plugin_GetPluginInfo_FullMethodName,
+		FullMethod: Plugin_GetPluginMetadata_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PluginServer).GetPluginInfo(ctx, req.(*emptypb.Empty))
+		return srv.(PluginServer).GetPluginMetadata(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -250,8 +250,8 @@ var Plugin_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*PluginServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetPluginInfo",
-			Handler:    _Plugin_GetPluginInfo_Handler,
+			MethodName: "GetPluginMetadata",
+			Handler:    _Plugin_GetPluginMetadata_Handler,
 		},
 		{
 			MethodName: "InitPlugin",

@@ -7,7 +7,7 @@
 package build
 
 import (
-	v1alpha1 "github.com/wabenet/dodo-core/api/plugin/v1alpha1"
+	v1alpha2 "github.com/wabenet/dodo-core/api/plugin/v1alpha2"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	_ "google.golang.org/protobuf/types/gofeaturespb"
@@ -911,7 +911,7 @@ var File_build_v1alpha2_build_proto protoreflect.FileDescriptor
 
 const file_build_v1alpha2_build_proto_rawDesc = "" +
 	"\n" +
-	"\x1abuild/v1alpha2/build.proto\x12\x1fcom.wabenet.dodo.build.v1alpha2\x1a!google/protobuf/go_features.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1cplugin/v1alpha1/plugin.proto\"\xa5\x01\n" +
+	"\x1abuild/v1alpha2/build.proto\x12\x1fcom.wabenet.dodo.build.v1alpha2\x1a!google/protobuf/go_features.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1cplugin/v1alpha2/plugin.proto\"\xa5\x01\n" +
 	"\x12CreateImageRequest\x12\x1b\n" +
 	"\tstream_id\x18\x01 \x01(\tR\bstreamId\x12D\n" +
 	"\x06config\x18\x02 \x01(\v2,.com.wabenet.dodo.build.v1alpha2.BuildConfigR\x06config\x12\x16\n" +
@@ -945,13 +945,13 @@ const file_build_v1alpha2_build_proto_rawDesc = "" +
 	"\x04path\x18\x02 \x01(\tR\x04path\"?\n" +
 	"\bSshAgent\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12#\n" +
-	"\ridentity_file\x18\x02 \x01(\tR\fidentityFile2\xeb\x03\n" +
-	"\x06Plugin\x12U\n" +
-	"\rGetPluginInfo\x12\x16.google.protobuf.Empty\x1a,.com.wabenet.dodo.plugin.v1alpha1.PluginInfo\x12Z\n" +
+	"\ridentity_file\x18\x02 \x01(\tR\fidentityFile2\xf3\x03\n" +
+	"\x06Plugin\x12]\n" +
+	"\x11GetPluginMetadata\x12\x16.google.protobuf.Empty\x1a0.com.wabenet.dodo.plugin.v1alpha2.PluginMetadata\x12Z\n" +
 	"\n" +
-	"InitPlugin\x12\x16.google.protobuf.Empty\x1a4.com.wabenet.dodo.plugin.v1alpha1.InitPluginResponse\x12=\n" +
+	"InitPlugin\x12\x16.google.protobuf.Empty\x1a4.com.wabenet.dodo.plugin.v1alpha2.InitPluginResponse\x12=\n" +
 	"\vResetPlugin\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\x12u\n" +
-	"\fStreamOutput\x125.com.wabenet.dodo.plugin.v1alpha1.StreamOutputRequest\x1a,.com.wabenet.dodo.plugin.v1alpha1.OutputData0\x01\x12x\n" +
+	"\fStreamOutput\x125.com.wabenet.dodo.plugin.v1alpha2.StreamOutputRequest\x1a,.com.wabenet.dodo.plugin.v1alpha2.OutputData0\x01\x12x\n" +
 	"\vCreateImage\x123.com.wabenet.dodo.build.v1alpha2.CreateImageRequest\x1a4.com.wabenet.dodo.build.v1alpha2.CreateImageResponseB?Z5github.com/wabenet/dodo-core/api/build/v1alpha2;build\x92\x03\x05\xd2>\x02\x10\x03b\beditionsp\xe8\a"
 
 var file_build_v1alpha2_build_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
@@ -963,25 +963,25 @@ var file_build_v1alpha2_build_proto_goTypes = []any{
 	(*BuildSecret)(nil),                  // 4: com.wabenet.dodo.build.v1alpha2.BuildSecret
 	(*SshAgent)(nil),                     // 5: com.wabenet.dodo.build.v1alpha2.SshAgent
 	(*emptypb.Empty)(nil),                // 6: google.protobuf.Empty
-	(*v1alpha1.StreamOutputRequest)(nil), // 7: com.wabenet.dodo.plugin.v1alpha1.StreamOutputRequest
-	(*v1alpha1.PluginInfo)(nil),          // 8: com.wabenet.dodo.plugin.v1alpha1.PluginInfo
-	(*v1alpha1.InitPluginResponse)(nil),  // 9: com.wabenet.dodo.plugin.v1alpha1.InitPluginResponse
-	(*v1alpha1.OutputData)(nil),          // 10: com.wabenet.dodo.plugin.v1alpha1.OutputData
+	(*v1alpha2.StreamOutputRequest)(nil), // 7: com.wabenet.dodo.plugin.v1alpha2.StreamOutputRequest
+	(*v1alpha2.PluginMetadata)(nil),      // 8: com.wabenet.dodo.plugin.v1alpha2.PluginMetadata
+	(*v1alpha2.InitPluginResponse)(nil),  // 9: com.wabenet.dodo.plugin.v1alpha2.InitPluginResponse
+	(*v1alpha2.OutputData)(nil),          // 10: com.wabenet.dodo.plugin.v1alpha2.OutputData
 }
 var file_build_v1alpha2_build_proto_depIdxs = []int32{
 	2,  // 0: com.wabenet.dodo.build.v1alpha2.CreateImageRequest.config:type_name -> com.wabenet.dodo.build.v1alpha2.BuildConfig
 	3,  // 1: com.wabenet.dodo.build.v1alpha2.BuildConfig.arguments:type_name -> com.wabenet.dodo.build.v1alpha2.BuildArgument
 	4,  // 2: com.wabenet.dodo.build.v1alpha2.BuildConfig.secrets:type_name -> com.wabenet.dodo.build.v1alpha2.BuildSecret
 	5,  // 3: com.wabenet.dodo.build.v1alpha2.BuildConfig.ssh_agents:type_name -> com.wabenet.dodo.build.v1alpha2.SshAgent
-	6,  // 4: com.wabenet.dodo.build.v1alpha2.Plugin.GetPluginInfo:input_type -> google.protobuf.Empty
+	6,  // 4: com.wabenet.dodo.build.v1alpha2.Plugin.GetPluginMetadata:input_type -> google.protobuf.Empty
 	6,  // 5: com.wabenet.dodo.build.v1alpha2.Plugin.InitPlugin:input_type -> google.protobuf.Empty
 	6,  // 6: com.wabenet.dodo.build.v1alpha2.Plugin.ResetPlugin:input_type -> google.protobuf.Empty
-	7,  // 7: com.wabenet.dodo.build.v1alpha2.Plugin.StreamOutput:input_type -> com.wabenet.dodo.plugin.v1alpha1.StreamOutputRequest
+	7,  // 7: com.wabenet.dodo.build.v1alpha2.Plugin.StreamOutput:input_type -> com.wabenet.dodo.plugin.v1alpha2.StreamOutputRequest
 	0,  // 8: com.wabenet.dodo.build.v1alpha2.Plugin.CreateImage:input_type -> com.wabenet.dodo.build.v1alpha2.CreateImageRequest
-	8,  // 9: com.wabenet.dodo.build.v1alpha2.Plugin.GetPluginInfo:output_type -> com.wabenet.dodo.plugin.v1alpha1.PluginInfo
-	9,  // 10: com.wabenet.dodo.build.v1alpha2.Plugin.InitPlugin:output_type -> com.wabenet.dodo.plugin.v1alpha1.InitPluginResponse
+	8,  // 9: com.wabenet.dodo.build.v1alpha2.Plugin.GetPluginMetadata:output_type -> com.wabenet.dodo.plugin.v1alpha2.PluginMetadata
+	9,  // 10: com.wabenet.dodo.build.v1alpha2.Plugin.InitPlugin:output_type -> com.wabenet.dodo.plugin.v1alpha2.InitPluginResponse
 	6,  // 11: com.wabenet.dodo.build.v1alpha2.Plugin.ResetPlugin:output_type -> google.protobuf.Empty
-	10, // 12: com.wabenet.dodo.build.v1alpha2.Plugin.StreamOutput:output_type -> com.wabenet.dodo.plugin.v1alpha1.OutputData
+	10, // 12: com.wabenet.dodo.build.v1alpha2.Plugin.StreamOutput:output_type -> com.wabenet.dodo.plugin.v1alpha2.OutputData
 	1,  // 13: com.wabenet.dodo.build.v1alpha2.Plugin.CreateImage:output_type -> com.wabenet.dodo.build.v1alpha2.CreateImageResponse
 	9,  // [9:14] is the sub-list for method output_type
 	4,  // [4:9] is the sub-list for method input_type

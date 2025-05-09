@@ -8,7 +8,7 @@ package configuration
 
 import (
 	v1alpha21 "github.com/wabenet/dodo-core/api/build/v1alpha2"
-	v1alpha1 "github.com/wabenet/dodo-core/api/plugin/v1alpha1"
+	v1alpha22 "github.com/wabenet/dodo-core/api/plugin/v1alpha2"
 	v1alpha2 "github.com/wabenet/dodo-core/api/runtime/v1alpha2"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -569,7 +569,7 @@ var File_configuration_v1alpha2_configuration_proto protoreflect.FileDescriptor
 
 const file_configuration_v1alpha2_configuration_proto_rawDesc = "" +
 	"\n" +
-	"*configuration/v1alpha2/configuration.proto\x12'com.wabenet.dodo.configuration.v1alpha2\x1a!google/protobuf/go_features.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1cplugin/v1alpha1/plugin.proto\x1a\x1abuild/v1alpha2/build.proto\x1a\x1eruntime/v1alpha2/runtime.proto\"h\n" +
+	"*configuration/v1alpha2/configuration.proto\x12'com.wabenet.dodo.configuration.v1alpha2\x1a!google/protobuf/go_features.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1cplugin/v1alpha2/plugin.proto\x1a\x1abuild/v1alpha2/build.proto\x1a\x1eruntime/v1alpha2/runtime.proto\"h\n" +
 	"\x15ListBackdropsResponse\x12O\n" +
 	"\tbackdrops\x18\x01 \x03(\v21.com.wabenet.dodo.configuration.v1alpha2.BackdropR\tbackdrops\"*\n" +
 	"\x12GetBackdropRequest\x12\x14\n" +
@@ -586,27 +586,27 @@ const file_configuration_v1alpha2_configuration_proto_rawDesc = "" +
 	"\rrequiredFiles\x18\a \x03(\v2-.com.wabenet.dodo.configuration.v1alpha2.FileR\rrequiredFiles\"?\n" +
 	"\x04File\x12\x1b\n" +
 	"\tfile_path\x18\x01 \x01(\tR\bfilePath\x12\x1a\n" +
-	"\bcontents\x18\x02 \x01(\tR\bcontents2\xee\x03\n" +
-	"\x06Plugin\x12U\n" +
-	"\rGetPluginInfo\x12\x16.google.protobuf.Empty\x1a,.com.wabenet.dodo.plugin.v1alpha1.PluginInfo\x12Z\n" +
+	"\bcontents\x18\x02 \x01(\tR\bcontents2\xf6\x03\n" +
+	"\x06Plugin\x12]\n" +
+	"\x11GetPluginMetadata\x12\x16.google.protobuf.Empty\x1a0.com.wabenet.dodo.plugin.v1alpha2.PluginMetadata\x12Z\n" +
 	"\n" +
-	"InitPlugin\x12\x16.google.protobuf.Empty\x1a4.com.wabenet.dodo.plugin.v1alpha1.InitPluginResponse\x12=\n" +
+	"InitPlugin\x12\x16.google.protobuf.Empty\x1a4.com.wabenet.dodo.plugin.v1alpha2.InitPluginResponse\x12=\n" +
 	"\vResetPlugin\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\x12g\n" +
 	"\rListBackdrops\x12\x16.google.protobuf.Empty\x1a>.com.wabenet.dodo.configuration.v1alpha2.ListBackdropsResponse\x12\x88\x01\n" +
 	"\vGetBackdrop\x12;.com.wabenet.dodo.configuration.v1alpha2.GetBackdropRequest\x1a<.com.wabenet.dodo.configuration.v1alpha2.GetBackdropResponseBOZEgithub.com/wabenet/dodo-core/api/configuration/v1alpha2;configuration\x92\x03\x05\xd2>\x02\x10\x03b\beditionsp\xe8\a"
 
 var file_configuration_v1alpha2_configuration_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_configuration_v1alpha2_configuration_proto_goTypes = []any{
-	(*ListBackdropsResponse)(nil),       // 0: com.wabenet.dodo.configuration.v1alpha2.ListBackdropsResponse
-	(*GetBackdropRequest)(nil),          // 1: com.wabenet.dodo.configuration.v1alpha2.GetBackdropRequest
-	(*GetBackdropResponse)(nil),         // 2: com.wabenet.dodo.configuration.v1alpha2.GetBackdropResponse
-	(*Backdrop)(nil),                    // 3: com.wabenet.dodo.configuration.v1alpha2.Backdrop
-	(*File)(nil),                        // 4: com.wabenet.dodo.configuration.v1alpha2.File
-	(*v1alpha2.ContainerConfig)(nil),    // 5: com.wabenet.dodo.runtime.v1alpha2.ContainerConfig
-	(*v1alpha21.BuildConfig)(nil),       // 6: com.wabenet.dodo.build.v1alpha2.BuildConfig
-	(*emptypb.Empty)(nil),               // 7: google.protobuf.Empty
-	(*v1alpha1.PluginInfo)(nil),         // 8: com.wabenet.dodo.plugin.v1alpha1.PluginInfo
-	(*v1alpha1.InitPluginResponse)(nil), // 9: com.wabenet.dodo.plugin.v1alpha1.InitPluginResponse
+	(*ListBackdropsResponse)(nil),        // 0: com.wabenet.dodo.configuration.v1alpha2.ListBackdropsResponse
+	(*GetBackdropRequest)(nil),           // 1: com.wabenet.dodo.configuration.v1alpha2.GetBackdropRequest
+	(*GetBackdropResponse)(nil),          // 2: com.wabenet.dodo.configuration.v1alpha2.GetBackdropResponse
+	(*Backdrop)(nil),                     // 3: com.wabenet.dodo.configuration.v1alpha2.Backdrop
+	(*File)(nil),                         // 4: com.wabenet.dodo.configuration.v1alpha2.File
+	(*v1alpha2.ContainerConfig)(nil),     // 5: com.wabenet.dodo.runtime.v1alpha2.ContainerConfig
+	(*v1alpha21.BuildConfig)(nil),        // 6: com.wabenet.dodo.build.v1alpha2.BuildConfig
+	(*emptypb.Empty)(nil),                // 7: google.protobuf.Empty
+	(*v1alpha22.PluginMetadata)(nil),     // 8: com.wabenet.dodo.plugin.v1alpha2.PluginMetadata
+	(*v1alpha22.InitPluginResponse)(nil), // 9: com.wabenet.dodo.plugin.v1alpha2.InitPluginResponse
 }
 var file_configuration_v1alpha2_configuration_proto_depIdxs = []int32{
 	3,  // 0: com.wabenet.dodo.configuration.v1alpha2.ListBackdropsResponse.backdrops:type_name -> com.wabenet.dodo.configuration.v1alpha2.Backdrop
@@ -614,13 +614,13 @@ var file_configuration_v1alpha2_configuration_proto_depIdxs = []int32{
 	5,  // 2: com.wabenet.dodo.configuration.v1alpha2.Backdrop.container_config:type_name -> com.wabenet.dodo.runtime.v1alpha2.ContainerConfig
 	6,  // 3: com.wabenet.dodo.configuration.v1alpha2.Backdrop.build_config:type_name -> com.wabenet.dodo.build.v1alpha2.BuildConfig
 	4,  // 4: com.wabenet.dodo.configuration.v1alpha2.Backdrop.requiredFiles:type_name -> com.wabenet.dodo.configuration.v1alpha2.File
-	7,  // 5: com.wabenet.dodo.configuration.v1alpha2.Plugin.GetPluginInfo:input_type -> google.protobuf.Empty
+	7,  // 5: com.wabenet.dodo.configuration.v1alpha2.Plugin.GetPluginMetadata:input_type -> google.protobuf.Empty
 	7,  // 6: com.wabenet.dodo.configuration.v1alpha2.Plugin.InitPlugin:input_type -> google.protobuf.Empty
 	7,  // 7: com.wabenet.dodo.configuration.v1alpha2.Plugin.ResetPlugin:input_type -> google.protobuf.Empty
 	7,  // 8: com.wabenet.dodo.configuration.v1alpha2.Plugin.ListBackdrops:input_type -> google.protobuf.Empty
 	1,  // 9: com.wabenet.dodo.configuration.v1alpha2.Plugin.GetBackdrop:input_type -> com.wabenet.dodo.configuration.v1alpha2.GetBackdropRequest
-	8,  // 10: com.wabenet.dodo.configuration.v1alpha2.Plugin.GetPluginInfo:output_type -> com.wabenet.dodo.plugin.v1alpha1.PluginInfo
-	9,  // 11: com.wabenet.dodo.configuration.v1alpha2.Plugin.InitPlugin:output_type -> com.wabenet.dodo.plugin.v1alpha1.InitPluginResponse
+	8,  // 10: com.wabenet.dodo.configuration.v1alpha2.Plugin.GetPluginMetadata:output_type -> com.wabenet.dodo.plugin.v1alpha2.PluginMetadata
+	9,  // 11: com.wabenet.dodo.configuration.v1alpha2.Plugin.InitPlugin:output_type -> com.wabenet.dodo.plugin.v1alpha2.InitPluginResponse
 	7,  // 12: com.wabenet.dodo.configuration.v1alpha2.Plugin.ResetPlugin:output_type -> google.protobuf.Empty
 	0,  // 13: com.wabenet.dodo.configuration.v1alpha2.Plugin.ListBackdrops:output_type -> com.wabenet.dodo.configuration.v1alpha2.ListBackdropsResponse
 	2,  // 14: com.wabenet.dodo.configuration.v1alpha2.Plugin.GetBackdrop:output_type -> com.wabenet.dodo.configuration.v1alpha2.GetBackdropResponse

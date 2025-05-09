@@ -4,7 +4,6 @@ import (
 	"io"
 	"os"
 
-	pluginapi "github.com/wabenet/dodo-core/api/plugin/v1alpha1"
 	"github.com/wabenet/dodo-core/pkg/plugin"
 	"github.com/wabenet/dodo-core/pkg/plugin/runtime"
 )
@@ -17,8 +16,8 @@ func (r *DummyRuntime) Type() plugin.Type {
 	return runtime.Type
 }
 
-func (r *DummyRuntime) PluginInfo() *pluginapi.PluginInfo {
-	return plugin.MkInfo(runtime.Type, "dummy")
+func (r *DummyRuntime) Metadata() plugin.Metadata {
+	return plugin.NewMetadata(runtime.Type, "dummy")
 }
 
 func (r *DummyRuntime) Init() (plugin.Config, error) {
@@ -77,8 +76,8 @@ func (r *ErrorRuntime) Type() plugin.Type {
 	return runtime.Type
 }
 
-func (r *ErrorRuntime) PluginInfo() *pluginapi.PluginInfo {
-	return plugin.MkInfo(runtime.Type, "error")
+func (r *ErrorRuntime) Metadata() plugin.Metadata {
+	return plugin.NewMetadata(runtime.Type, "error")
 }
 
 func (r *ErrorRuntime) Init() (plugin.Config, error) {
@@ -138,8 +137,8 @@ func (r *EchoRuntime) Type() plugin.Type {
 	return runtime.Type
 }
 
-func (r *EchoRuntime) PluginInfo() *pluginapi.PluginInfo {
-	return plugin.MkInfo(runtime.Type, "echo")
+func (r *EchoRuntime) Metadata() plugin.Metadata {
+	return plugin.NewMetadata(runtime.Type, "echo")
 }
 
 func (r *EchoRuntime) Init() (plugin.Config, error) {

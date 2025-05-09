@@ -2,7 +2,6 @@ package plugin
 
 import (
 	"fmt"
-	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -10,7 +9,6 @@ import (
 
 	log "github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
-	api "github.com/wabenet/dodo-core/api/plugin/v1alpha1"
 	"github.com/wabenet/dodo-core/pkg/config"
 )
 
@@ -20,50 +18,9 @@ const (
 	MagicCookieValue = "69318785-d741-4150-ac91-8f03fa703530"
 )
 
-type Plugin interface {
-	PluginInfo() *api.PluginInfo
-	Init() (Config, error)
-	Cleanup()
-
-	Type() Type
-}
-
-type Config map[string]string
-
-type Type interface {
-	String() string
-	GRPCClient() (plugin.Plugin, error)
-	GRPCServer(p Plugin) (plugin.Plugin, error)
-}
-
-type StreamConfig struct {
-	Stdin          io.Reader
-	Stdout         io.Writer
-	Stderr         io.Writer
-	TerminalHeight uint32
-	TerminalWidth  uint32
-}
-
 type Manager struct {
 	pluginTypes map[string]Type
 	plugins     map[string]map[string]Plugin
-}
-
-func MkName(t Type, name string) *api.PluginName {
-	pn := &api.PluginName{}
-
-	pn.SetType(t.String())
-	pn.SetName(name)
-
-	return pn
-}
-
-func MkInfo(t Type, name string) *api.PluginInfo {
-	pi := &api.PluginInfo{}
-
-	pi.SetName(MkName(t, name))
-
-	return pi
 }
 
 func Init() Manager {
@@ -87,28 +44,28 @@ func (m Manager) RegisterPluginTypes(ts ...Type) {
 	}
 }
 
-func (m Manager) IncludePlugins(ps ...Plugin) {
-	for _, p := range ps {
-		name := p.PluginInfo().GetName()
+func (m Manager) IncludePlugins(plugins ...Plugin) {
+	for _, plugin := range plugins {
+		id := plugin.Metadata().ID
 
-		if m.plugins[name.GetType()] == nil {
-			m.plugins[name.GetType()] = map[string]Plugin{}
+		if m.plugins[id.Type] == nil {
+			m.plugins[id.Type] = map[string]Plugin{}
 		}
 
-		m.plugins[name.GetType()][name.GetName()] = p
+		m.plugins[id.Type][id.Name] = plugin
 	}
 }
 
 func (m Manager) ServePlugins(plugins ...Plugin) error {
 	pluginMap := map[string]plugin.Plugin{}
 
-	for _, p := range plugins {
-		s, err := p.Type().GRPCServer(p)
+	for _, plugin := range plugins {
+		server, err := plugin.Type().GRPCServer(plugin)
 		if err != nil {
 			return fmt.Errorf("could not instantiate GRPC Server: %w", err)
 		}
 
-		pluginMap[p.PluginInfo().GetName().GetType()] = s
+		pluginMap[plugin.Metadata().ID.Type] = server
 	}
 
 	plugin.Serve(&plugin.ServeConfig{
@@ -168,48 +125,48 @@ func (m Manager) findPlugins() {
 			continue
 		}
 
-		for n, t := range m.pluginTypes {
-			logger.Debug("attempt loading plugin", "type", n)
+		for name, pluginType := range m.pluginTypes {
+			logger.Debug("attempt loading plugin", "type", pluginType)
 
-			grpcClient, err := t.GRPCClient()
+			grpcClient, err := pluginType.GRPCClient()
 			if err != nil {
 				logger.Debug("error loading plugin", "error", err)
 
 				continue
 			}
 
-			p, err := loadGRPCPlugin(path, n, grpcClient)
+			plugin, err := loadGRPCPlugin(path, name, grpcClient)
 			if err != nil {
 				logger.Debug("could not load plugin over grpc", "error", err)
 
 				continue
 			}
 
-			name := p.PluginInfo().GetName()
+			id := plugin.Metadata().ID
 
-			if m.plugins[name.GetType()] == nil {
-				m.plugins[name.GetType()] = map[string]Plugin{}
+			if m.plugins[id.Type] == nil {
+				m.plugins[id.Type] = map[string]Plugin{}
 			}
 
-			m.plugins[name.GetType()][name.GetName()] = p
+			m.plugins[id.Type][id.Name] = plugin
 		}
 	}
 }
 
 func (m Manager) initPlugin(p Plugin) {
-	info := p.PluginInfo()
-	logger := log.L().With("name", info.GetName().GetName(), "type", info.GetName().GetType())
-	logger = augmentLogger(logger, info.GetFields())
+	metadata := p.Metadata()
+	logger := log.L().With("name", metadata.ID.Name, "type", metadata.ID.Type)
+	logger = augmentLogger(logger, metadata.Labels)
 
 	if config, err := p.Init(); err != nil {
 		logger.Warn("could not load plugin", "error", err)
-		delete(m.plugins[info.GetName().GetType()], info.GetName().GetName())
+		delete(m.plugins[metadata.ID.Type], metadata.ID.Name)
 	} else {
 		augmentLogger(logger, config).Info("loaded plugin")
 	}
 }
 
-func loadGRPCPlugin(path, pluginType string, grpcPlugin plugin.Plugin) (Plugin, error) {
+func loadGRPCPlugin(path, pluginType string, grpcPlugin plugin.Plugin) (Plugin, error) { //nolint:ireturn
 	client := plugin.NewClient(&plugin.ClientConfig{
 		Managed:          true,
 		Plugins:          map[string]plugin.Plugin{pluginType: grpcPlugin},
@@ -243,23 +200,18 @@ func loadGRPCPlugin(path, pluginType string, grpcPlugin plugin.Plugin) (Plugin, 
 
 	client.Kill()
 
-	invalid := &api.PluginName{}
-
-	invalid.SetType(pluginType)
-	invalid.SetName(path) // TODO: name?
-
 	return nil, InvalidError{
-		Plugin:  invalid,
-		Message: "does not implement Plugin interface",
+		PluginID: ID{Type: pluginType, Name: path}, // TODO: name?
+		Message:  "does not implement Plugin interface",
 	}
 }
 
-func augmentLogger(logger log.Logger, fields map[string]string) log.Logger {
-	fs := []interface{}{}
+func augmentLogger(logger log.Logger, fields map[string]string) log.Logger { //nolint:ireturn
+	all := []interface{}{}
 
 	for k, v := range fields {
-		fs = append(fs, k, v)
+		all = append(all, k, v)
 	}
 
-	return logger.With(fs...)
+	return logger.With(all...)
 }

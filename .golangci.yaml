@@ -81,3 +81,4 @@ linters:
             - $gostd
             - github.com/wabenet
             - github.com/stretchr/testify
+            - github.com/hashicorp/go-plugin

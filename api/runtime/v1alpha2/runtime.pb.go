@@ -7,7 +7,7 @@
 package runtime
 
 import (
-	v1alpha1 "github.com/wabenet/dodo-core/api/plugin/v1alpha1"
+	v1alpha2 "github.com/wabenet/dodo-core/api/plugin/v1alpha2"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	_ "google.golang.org/protobuf/types/gofeaturespb"
@@ -3205,7 +3205,7 @@ var File_runtime_v1alpha2_runtime_proto protoreflect.FileDescriptor
 
 const file_runtime_v1alpha2_runtime_proto_rawDesc = "" +
 	"\n" +
-	"\x1eruntime/v1alpha2/runtime.proto\x12!com.wabenet.dodo.runtime.v1alpha2\x1a!google/protobuf/go_features.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1cplugin/v1alpha1/plugin.proto\"<\n" +
+	"\x1eruntime/v1alpha2/runtime.proto\x12!com.wabenet.dodo.runtime.v1alpha2\x1a!google/protobuf/go_features.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1cplugin/v1alpha2/plugin.proto\"<\n" +
 	"\x17CreateContainerResponse\x12!\n" +
 	"\fcontainer_id\x18\x01 \x01(\tR\vcontainerId\"0\n" +
 	"\x0fGetImageRequest\x12\x1d\n" +
@@ -3304,14 +3304,14 @@ const file_runtime_v1alpha2_runtime_proto_rawDesc = "" +
 	"cgroupRule\x12\x1b\n" +
 	"\thost_path\x18\x02 \x01(\tR\bhostPath\x12%\n" +
 	"\x0econtainer_path\x18\x03 \x01(\tR\rcontainerPath\x12 \n" +
-	"\vpermissions\x18\x04 \x01(\tR\vpermissions2\x87\f\n" +
-	"\x06Plugin\x12U\n" +
-	"\rGetPluginInfo\x12\x16.google.protobuf.Empty\x1a,.com.wabenet.dodo.plugin.v1alpha1.PluginInfo\x12Z\n" +
+	"\vpermissions\x18\x04 \x01(\tR\vpermissions2\x8f\f\n" +
+	"\x06Plugin\x12]\n" +
+	"\x11GetPluginMetadata\x12\x16.google.protobuf.Empty\x1a0.com.wabenet.dodo.plugin.v1alpha2.PluginMetadata\x12Z\n" +
 	"\n" +
-	"InitPlugin\x12\x16.google.protobuf.Empty\x1a4.com.wabenet.dodo.plugin.v1alpha1.InitPluginResponse\x12=\n" +
+	"InitPlugin\x12\x16.google.protobuf.Empty\x1a4.com.wabenet.dodo.plugin.v1alpha2.InitPluginResponse\x12=\n" +
 	"\vResetPlugin\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\x12]\n" +
-	"\vStreamInput\x124.com.wabenet.dodo.plugin.v1alpha1.StreamInputRequest\x1a\x16.google.protobuf.Empty(\x01\x12u\n" +
-	"\fStreamOutput\x125.com.wabenet.dodo.plugin.v1alpha1.StreamOutputRequest\x1a,.com.wabenet.dodo.plugin.v1alpha1.OutputData0\x01\x12\x88\x01\n" +
+	"\vStreamInput\x124.com.wabenet.dodo.plugin.v1alpha2.StreamInputRequest\x1a\x16.google.protobuf.Empty(\x01\x12u\n" +
+	"\fStreamOutput\x125.com.wabenet.dodo.plugin.v1alpha2.StreamOutputRequest\x1a,.com.wabenet.dodo.plugin.v1alpha2.OutputData0\x01\x12\x88\x01\n" +
 	"\x0fCreateContainer\x129.com.wabenet.dodo.runtime.v1alpha2.CreateContainerRequest\x1a:.com.wabenet.dodo.runtime.v1alpha2.CreateContainerResponse\x12d\n" +
 	"\x0fDeleteContainer\x129.com.wabenet.dodo.runtime.v1alpha2.DeleteContainerRequest\x1a\x16.google.protobuf.Empty\x12b\n" +
 	"\x0eStartContainer\x128.com.wabenet.dodo.runtime.v1alpha2.StartContainerRequest\x1a\x16.google.protobuf.Empty\x12\x88\x01\n" +
@@ -3350,11 +3350,11 @@ var file_runtime_v1alpha2_runtime_proto_goTypes = []any{
 	(*ImageMount)(nil),                   // 22: com.wabenet.dodo.runtime.v1alpha2.ImageMount
 	(*DeviceMount)(nil),                  // 23: com.wabenet.dodo.runtime.v1alpha2.DeviceMount
 	(*emptypb.Empty)(nil),                // 24: google.protobuf.Empty
-	(*v1alpha1.StreamInputRequest)(nil),  // 25: com.wabenet.dodo.plugin.v1alpha1.StreamInputRequest
-	(*v1alpha1.StreamOutputRequest)(nil), // 26: com.wabenet.dodo.plugin.v1alpha1.StreamOutputRequest
-	(*v1alpha1.PluginInfo)(nil),          // 27: com.wabenet.dodo.plugin.v1alpha1.PluginInfo
-	(*v1alpha1.InitPluginResponse)(nil),  // 28: com.wabenet.dodo.plugin.v1alpha1.InitPluginResponse
-	(*v1alpha1.OutputData)(nil),          // 29: com.wabenet.dodo.plugin.v1alpha1.OutputData
+	(*v1alpha2.StreamInputRequest)(nil),  // 25: com.wabenet.dodo.plugin.v1alpha2.StreamInputRequest
+	(*v1alpha2.StreamOutputRequest)(nil), // 26: com.wabenet.dodo.plugin.v1alpha2.StreamOutputRequest
+	(*v1alpha2.PluginMetadata)(nil),      // 27: com.wabenet.dodo.plugin.v1alpha2.PluginMetadata
+	(*v1alpha2.InitPluginResponse)(nil),  // 28: com.wabenet.dodo.plugin.v1alpha2.InitPluginResponse
+	(*v1alpha2.OutputData)(nil),          // 29: com.wabenet.dodo.plugin.v1alpha2.OutputData
 }
 var file_runtime_v1alpha2_runtime_proto_depIdxs = []int32{
 	13, // 0: com.wabenet.dodo.runtime.v1alpha2.CreateContainerRequest.config:type_name -> com.wabenet.dodo.runtime.v1alpha2.ContainerConfig
@@ -3368,11 +3368,11 @@ var file_runtime_v1alpha2_runtime_proto_depIdxs = []int32{
 	21, // 8: com.wabenet.dodo.runtime.v1alpha2.Mount.tmpfs:type_name -> com.wabenet.dodo.runtime.v1alpha2.TmpfsMount
 	22, // 9: com.wabenet.dodo.runtime.v1alpha2.Mount.image:type_name -> com.wabenet.dodo.runtime.v1alpha2.ImageMount
 	23, // 10: com.wabenet.dodo.runtime.v1alpha2.Mount.device:type_name -> com.wabenet.dodo.runtime.v1alpha2.DeviceMount
-	24, // 11: com.wabenet.dodo.runtime.v1alpha2.Plugin.GetPluginInfo:input_type -> google.protobuf.Empty
+	24, // 11: com.wabenet.dodo.runtime.v1alpha2.Plugin.GetPluginMetadata:input_type -> google.protobuf.Empty
 	24, // 12: com.wabenet.dodo.runtime.v1alpha2.Plugin.InitPlugin:input_type -> google.protobuf.Empty
 	24, // 13: com.wabenet.dodo.runtime.v1alpha2.Plugin.ResetPlugin:input_type -> google.protobuf.Empty
-	25, // 14: com.wabenet.dodo.runtime.v1alpha2.Plugin.StreamInput:input_type -> com.wabenet.dodo.plugin.v1alpha1.StreamInputRequest
-	26, // 15: com.wabenet.dodo.runtime.v1alpha2.Plugin.StreamOutput:input_type -> com.wabenet.dodo.plugin.v1alpha1.StreamOutputRequest
+	25, // 14: com.wabenet.dodo.runtime.v1alpha2.Plugin.StreamInput:input_type -> com.wabenet.dodo.plugin.v1alpha2.StreamInputRequest
+	26, // 15: com.wabenet.dodo.runtime.v1alpha2.Plugin.StreamOutput:input_type -> com.wabenet.dodo.plugin.v1alpha2.StreamOutputRequest
 	2,  // 16: com.wabenet.dodo.runtime.v1alpha2.Plugin.CreateContainer:input_type -> com.wabenet.dodo.runtime.v1alpha2.CreateContainerRequest
 	3,  // 17: com.wabenet.dodo.runtime.v1alpha2.Plugin.DeleteContainer:input_type -> com.wabenet.dodo.runtime.v1alpha2.DeleteContainerRequest
 	4,  // 18: com.wabenet.dodo.runtime.v1alpha2.Plugin.StartContainer:input_type -> com.wabenet.dodo.runtime.v1alpha2.StartContainerRequest
@@ -3383,11 +3383,11 @@ var file_runtime_v1alpha2_runtime_proto_depIdxs = []int32{
 	10, // 23: com.wabenet.dodo.runtime.v1alpha2.Plugin.DeleteVolume:input_type -> com.wabenet.dodo.runtime.v1alpha2.DeleteVolumeRequest
 	11, // 24: com.wabenet.dodo.runtime.v1alpha2.Plugin.WriteFile:input_type -> com.wabenet.dodo.runtime.v1alpha2.WriteFileRequest
 	1,  // 25: com.wabenet.dodo.runtime.v1alpha2.Plugin.GetImage:input_type -> com.wabenet.dodo.runtime.v1alpha2.GetImageRequest
-	27, // 26: com.wabenet.dodo.runtime.v1alpha2.Plugin.GetPluginInfo:output_type -> com.wabenet.dodo.plugin.v1alpha1.PluginInfo
-	28, // 27: com.wabenet.dodo.runtime.v1alpha2.Plugin.InitPlugin:output_type -> com.wabenet.dodo.plugin.v1alpha1.InitPluginResponse
+	27, // 26: com.wabenet.dodo.runtime.v1alpha2.Plugin.GetPluginMetadata:output_type -> com.wabenet.dodo.plugin.v1alpha2.PluginMetadata
+	28, // 27: com.wabenet.dodo.runtime.v1alpha2.Plugin.InitPlugin:output_type -> com.wabenet.dodo.plugin.v1alpha2.InitPluginResponse
 	24, // 28: com.wabenet.dodo.runtime.v1alpha2.Plugin.ResetPlugin:output_type -> google.protobuf.Empty
 	24, // 29: com.wabenet.dodo.runtime.v1alpha2.Plugin.StreamInput:output_type -> google.protobuf.Empty
-	29, // 30: com.wabenet.dodo.runtime.v1alpha2.Plugin.StreamOutput:output_type -> com.wabenet.dodo.plugin.v1alpha1.OutputData
+	29, // 30: com.wabenet.dodo.runtime.v1alpha2.Plugin.StreamOutput:output_type -> com.wabenet.dodo.plugin.v1alpha2.OutputData
 	0,  // 31: com.wabenet.dodo.runtime.v1alpha2.Plugin.CreateContainer:output_type -> com.wabenet.dodo.runtime.v1alpha2.CreateContainerResponse
 	24, // 32: com.wabenet.dodo.runtime.v1alpha2.Plugin.DeleteContainer:output_type -> google.protobuf.Empty
 	24, // 33: com.wabenet.dodo.runtime.v1alpha2.Plugin.StartContainer:output_type -> google.protobuf.Empty
