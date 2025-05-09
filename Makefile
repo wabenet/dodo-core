@@ -29,5 +29,5 @@ build: api
 api: $(shell find api -name *.proto | sed 's|\.proto|.pb.go|g' | xargs)
 
 %.pb.go: %.proto
-	protoc -I ./api --go_out=plugins=grpc:. --go_opt=module=github.com/wabenet/dodo-core $<
-	protoc -I ./api --go-grpc_out=plugins=grpc:. --go-grpc_opt=module=github.com/wabenet/dodo-core $<
+	protoc -I ./api --go_out=. --go_opt=module=github.com/wabenet/dodo-core $<
+	protoc -I ./api --go-grpc_out=. --go-grpc_opt=module=github.com/wabenet/dodo-core $<

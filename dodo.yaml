@@ -1,14 +1,6 @@
 backdrops:
   make:
-    image:
-      steps: |
-        FROM golang:1.24
-        RUN apt-get update && apt-get install -y git bash curl tree make unzip
-        RUN curl -Lo /tmp/protoc.zip https://github.com/protocolbuffers/protobuf/releases/download/v30.2/protoc-30.2-linux-$(uname -o).zip && unzip /tmp/protoc.zip -d /usr/local
-        RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-        RUN go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
-        RUN go install github.com/goreleaser/goreleaser@latest
-        RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v2.1.2
+    image: wabenet/wabe-project-build:v0.3.7
     volumes:
       - "{{ projectRoot }}:/build"
       - "{{ projectRoot }}/.cache:/go/pkg/mod"
