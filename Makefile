@@ -3,31 +3,52 @@ all: clean test build lint
 
 .PHONY: clean
 clean:
-	rm -rf ./dist
+	rm -rf ./dist c.out coverage.txt
 
 .PHONY: fmt
 fmt:
 	go fmt ./...
+
+.PHONY: copier-update
+copier-update:
+	copier update --trust --skip-answered
 
 .PHONY: update
 update:
 	go list -f '{{if not (or .Main .Indirect)}}{{.Path}}{{end}}' -m all | xargs --no-run-if-empty go get
 	go mod tidy
 
-.PHONY: lint
-lint:
-	golangci-lint run
+.PHONY: build
+build: build-proto
+
+.PHONY: release
+release:
 
 .PHONY: test
-test: api
-	go test -cover -race ./...
+test: test-go
 
-.PHONY: build
-build: api
+.PHONY: lint
+lint: lint-proto lint-go
 
-.PHONY: api
-api: $(shell find api -name *.proto | sed 's|\.proto|.pb.go|g' | xargs)
+.PHONY: coverage-report
+coverage-report:
+	cc-test-reporter before-build
+	go test -race -coverprofile=coverage.txt -covermode=atomic -coverpkg=./... ./...
+	cp coverage.txt c.out
+	cc-test-reporter after-build -t gocov -p $$(go list -m)
 
-%.pb.go: %.proto
-	protoc -I ./api --go_out=. --go_opt=module=github.com/wabenet/dodo-core $<
-	protoc -I ./api --go-grpc_out=. --go-grpc_opt=module=github.com/wabenet/dodo-core $<
+.PHONY: test-go
+test-go: build-proto
+	go test -race -cover ./...
+
+.PHONY: lint-go
+lint-go:
+	golangci-lint run
+
+.PHONY: lint-proto
+lint-proto:
+	buf lint
+
+.PHONY: build-proto
+build-proto:
+	buf generate
