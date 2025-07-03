@@ -1,0 +1,47 @@
+edition = "2023";
+
+package wabenet.dodo.configuration.v1alpha2;
+
+import "google/protobuf/empty.proto";
+import "wabenet/dodo/plugin/v1alpha2/plugin.proto";
+import "wabenet/dodo/build/v1alpha2/build.proto";
+import "wabenet/dodo/runtime/v1alpha2/runtime.proto";
+
+service Plugin {
+  rpc GetPluginMetadata(google.protobuf.Empty) returns (wabenet.dodo.plugin.v1alpha2.PluginMetadata);
+  rpc InitPlugin(google.protobuf.Empty) returns (wabenet.dodo.plugin.v1alpha2.InitPluginResponse);
+  rpc ResetPlugin(google.protobuf.Empty) returns (google.protobuf.Empty);
+
+  rpc ListBackdrops(google.protobuf.Empty) returns (ListBackdropsResponse);
+  rpc GetBackdrop(GetBackdropRequest) returns (GetBackdropResponse);
+}
+
+message ListBackdropsResponse {
+  repeated Backdrop backdrops = 1;
+}
+
+message GetBackdropRequest {
+  string alias = 1;
+}
+
+message GetBackdropResponse {
+  Backdrop backdrop = 1;
+}
+
+message Backdrop {
+  string name = 1;
+  repeated string aliases = 2;
+  string runtime = 3;
+  string builder = 4;
+
+  wabenet.dodo.runtime.v1alpha2.ContainerConfig container_config = 5;
+  wabenet.dodo.build.v1alpha2.BuildConfig build_config = 6;
+
+  repeated File requiredFiles = 7;
+}
+
+message File {
+  string file_path = 1;
+  string contents = 2;
+}
+

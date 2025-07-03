@@ -3,7 +3,7 @@ package configuration
 import (
 	"fmt"
 
-	api "github.com/wabenet/dodo-core/api/configuration/v1alpha2"
+	api "github.com/wabenet/dodo-core/internal/gen-proto/wabenet/dodo/configuration/v1alpha2"
 	"github.com/wabenet/dodo-core/pkg/plugin/builder"
 	"github.com/wabenet/dodo-core/pkg/plugin/runtime"
 )

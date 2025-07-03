@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	api "github.com/wabenet/dodo-core/api/build/v1alpha2"
+	api "github.com/wabenet/dodo-core/internal/gen-proto/wabenet/dodo/build/v1alpha2"
 )
 
 var ErrArgumentFormat = errors.New("invalid argument format")

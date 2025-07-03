@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	api "github.com/wabenet/dodo-core/api/runtime/v1alpha2"
+	api "github.com/wabenet/dodo-core/internal/gen-proto/wabenet/dodo/runtime/v1alpha2"
 )
 
 var ErrPortFormat = errors.New("invalid publish format")

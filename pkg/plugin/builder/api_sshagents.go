@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	api "github.com/wabenet/dodo-core/api/build/v1alpha2"
+	api "github.com/wabenet/dodo-core/internal/gen-proto/wabenet/dodo/build/v1alpha2"
 )
 
 var ErrSSHAgentFormat = errors.New("invalid ssh agent format")

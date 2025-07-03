@@ -1,21 +1,16 @@
 edition = "2023";
 
-package com.wabenet.dodo.build.v1alpha2;
-
-option go_package = "github.com/wabenet/dodo-core/api/build/v1alpha2;build";
-
-import "google/protobuf/go_features.proto";
-option features.(pb.go).api_level = API_OPAQUE;
+package wabenet.dodo.build.v1alpha2;
 
 import "google/protobuf/empty.proto";
-import "plugin/v1alpha2/plugin.proto";
+import "wabenet/dodo/plugin/v1alpha2/plugin.proto";
 
 service Plugin {
-  rpc GetPluginMetadata(google.protobuf.Empty) returns (com.wabenet.dodo.plugin.v1alpha2.PluginMetadata);
-  rpc InitPlugin(google.protobuf.Empty) returns (com.wabenet.dodo.plugin.v1alpha2.InitPluginResponse);
+  rpc GetPluginMetadata(google.protobuf.Empty) returns (wabenet.dodo.plugin.v1alpha2.PluginMetadata);
+  rpc InitPlugin(google.protobuf.Empty) returns (wabenet.dodo.plugin.v1alpha2.InitPluginResponse);
   rpc ResetPlugin(google.protobuf.Empty) returns (google.protobuf.Empty);
 
-  rpc StreamOutput(com.wabenet.dodo.plugin.v1alpha2.StreamOutputRequest) returns (stream com.wabenet.dodo.plugin.v1alpha2.OutputData);
+  rpc StreamOutput(wabenet.dodo.plugin.v1alpha2.StreamOutputRequest) returns (stream wabenet.dodo.plugin.v1alpha2.OutputData);
 
   rpc CreateImage(CreateImageRequest) returns (CreateImageResponse);
 }
