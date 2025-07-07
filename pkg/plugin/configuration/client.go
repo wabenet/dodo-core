@@ -26,12 +26,12 @@ func (c *Client) Type() plugin.Type { //nolint:ireturn
 }
 
 func (c *Client) Metadata() plugin.Metadata {
-	info, err := c.configClient.GetPluginMetadata(context.Background(), &empty.Empty{})
+	resp, err := c.configClient.GetPluginMetadata(context.Background(), &empty.Empty{})
 	if err != nil {
 		return plugin.NewMetadata(Type, plugin.FailedPlugin).WithLabels(plugin.Labels{"error": err.Error()})
 	}
 
-	return plugin.MetadataFromProto(info)
+	return plugin.MetadataFromProto(resp.GetMetadata())
 }
 
 func (c *Client) Init() (plugin.Config, error) {
@@ -40,7 +40,7 @@ func (c *Client) Init() (plugin.Config, error) {
 		return nil, fmt.Errorf("could not initialize plugin: %w", err)
 	}
 
-	return resp.GetConfig(), nil
+	return resp.GetConfig().GetConfig(), nil
 }
 
 func (c *Client) Cleanup() {

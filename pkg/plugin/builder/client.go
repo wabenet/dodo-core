@@ -10,7 +10,6 @@ import (
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/hashicorp/go-hclog"
 	api "github.com/wabenet/dodo-core/internal/gen-proto/wabenet/dodo/build/v1alpha2"
-	pluginapi "github.com/wabenet/dodo-core/internal/gen-proto/wabenet/dodo/plugin/v1alpha2"
 	"github.com/wabenet/dodo-core/pkg/grpcutil"
 	"github.com/wabenet/dodo-core/pkg/plugin"
 	"golang.org/x/sync/errgroup"
@@ -23,13 +22,13 @@ var _ ImageBuilder = &Client{}
 
 type Client struct {
 	builderClient api.PluginClient
-	stdout        *grpcutil.StreamOutputClient
+	stdout        *grpcutil.StreamOutputClient[*api.StreamOutputResponse]
 }
 
 func NewGRPCClient(conn grpc.ClientConnInterface) *Client {
 	return &Client{
 		builderClient: api.NewPluginClient(conn),
-		stdout:        grpcutil.NewStreamOutputClient(),
+		stdout:        grpcutil.NewStreamOutputClient[*api.StreamOutputResponse](),
 	}
 }
 
@@ -38,12 +37,12 @@ func (c *Client) Type() plugin.Type { //nolint:ireturn
 }
 
 func (c *Client) Metadata() plugin.Metadata {
-	info, err := c.builderClient.GetPluginMetadata(context.Background(), &empty.Empty{})
+	resp, err := c.builderClient.GetPluginMetadata(context.Background(), &empty.Empty{})
 	if err != nil {
 		return plugin.NewFailedPluginInfo(Type, err)
 	}
 
-	return plugin.MetadataFromProto(info)
+	return plugin.MetadataFromProto(resp.GetMetadata())
 }
 
 func (c *Client) Init() (plugin.Config, error) {
@@ -52,7 +51,7 @@ func (c *Client) Init() (plugin.Config, error) {
 		return nil, fmt.Errorf("could not initialize plugin: %w", err)
 	}
 
-	return resp.GetConfig(), nil
+	return resp.GetConfig().GetConfig(), nil
 }
 
 func (c *Client) Cleanup() {
@@ -113,7 +112,7 @@ func (c *Client) CreateImage(config BuildConfig, stream *plugin.StreamConfig) (s
 }
 
 func (c *Client) copyOutputClientToStdout(streamID string, stdout, stderr io.Writer) error {
-	req := &pluginapi.StreamOutputRequest{}
+	req := &api.StreamOutputRequest{}
 
 	req.SetId(streamID)
 

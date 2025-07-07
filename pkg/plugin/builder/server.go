@@ -43,11 +43,15 @@ func (s *Server) stdoutServer(streamID string) (*grpcutil.StreamOutputServer, er
 	return result, nil
 }
 
-func (s *Server) GetPluginMetadata(_ context.Context, _ *empty.Empty) (*pluginapi.PluginMetadata, error) {
-	return s.impl.Metadata().ToProto(), nil
+func (s *Server) GetPluginMetadata(_ context.Context, _ *empty.Empty) (*api.GetPluginMetadataResponse, error) {
+	resp := &api.GetPluginMetadataResponse{}
+
+	resp.SetMetadata(s.impl.Metadata().ToProto())
+
+	return resp, nil
 }
 
-func (s *Server) InitPlugin(_ context.Context, _ *empty.Empty) (*pluginapi.InitPluginResponse, error) {
+func (s *Server) InitPlugin(_ context.Context, _ *empty.Empty) (*api.InitPluginResponse, error) {
 	s.reset()
 
 	config, err := s.impl.Init()
@@ -55,9 +59,11 @@ func (s *Server) InitPlugin(_ context.Context, _ *empty.Empty) (*pluginapi.InitP
 		return nil, fmt.Errorf("could not initialize plugin: %w", err)
 	}
 
-	resp := &pluginapi.InitPluginResponse{}
+	pluginConfig := &pluginapi.PluginConfig{}
+	resp := &api.InitPluginResponse{}
 
-	resp.SetConfig(config)
+	pluginConfig.SetConfig(config)
+	resp.SetConfig(pluginConfig)
 
 	return resp, nil
 }
@@ -69,7 +75,7 @@ func (s *Server) ResetPlugin(_ context.Context, _ *empty.Empty) (*empty.Empty, e
 	return &empty.Empty{}, nil
 }
 
-func (s *Server) StreamOutput(request *pluginapi.StreamOutputRequest, srv api.Plugin_StreamOutputServer) error {
+func (s *Server) StreamOutput(request *api.StreamOutputRequest, srv api.Plugin_StreamOutputServer) error {
 	id := request.GetId()
 
 	outputServer, err := s.stdoutServer(id)

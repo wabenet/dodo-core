@@ -8,7 +8,6 @@ package runtimev1alpha2
 
 import (
 	context "context"
-	v1alpha2 "github.com/wabenet/dodo-core/internal/gen-proto/wabenet/dodo/plugin/v1alpha2"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -42,11 +41,11 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PluginClient interface {
-	GetPluginMetadata(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*v1alpha2.PluginMetadata, error)
-	InitPlugin(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*v1alpha2.InitPluginResponse, error)
+	GetPluginMetadata(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetPluginMetadataResponse, error)
+	InitPlugin(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*InitPluginResponse, error)
 	ResetPlugin(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	StreamInput(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[v1alpha2.StreamInputRequest, emptypb.Empty], error)
-	StreamOutput(ctx context.Context, in *v1alpha2.StreamOutputRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[v1alpha2.OutputData], error)
+	StreamInput(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[StreamInputRequest, emptypb.Empty], error)
+	StreamOutput(ctx context.Context, in *StreamOutputRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[StreamOutputResponse], error)
 	CreateContainer(ctx context.Context, in *CreateContainerRequest, opts ...grpc.CallOption) (*CreateContainerResponse, error)
 	DeleteContainer(ctx context.Context, in *DeleteContainerRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	StartContainer(ctx context.Context, in *StartContainerRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -67,9 +66,9 @@ func NewPluginClient(cc grpc.ClientConnInterface) PluginClient {
 	return &pluginClient{cc}
 }
 
-func (c *pluginClient) GetPluginMetadata(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*v1alpha2.PluginMetadata, error) {
+func (c *pluginClient) GetPluginMetadata(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetPluginMetadataResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(v1alpha2.PluginMetadata)
+	out := new(GetPluginMetadataResponse)
 	err := c.cc.Invoke(ctx, Plugin_GetPluginMetadata_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -77,9 +76,9 @@ func (c *pluginClient) GetPluginMetadata(ctx context.Context, in *emptypb.Empty,
 	return out, nil
 }
 
-func (c *pluginClient) InitPlugin(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*v1alpha2.InitPluginResponse, error) {
+func (c *pluginClient) InitPlugin(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*InitPluginResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(v1alpha2.InitPluginResponse)
+	out := new(InitPluginResponse)
 	err := c.cc.Invoke(ctx, Plugin_InitPlugin_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -97,26 +96,26 @@ func (c *pluginClient) ResetPlugin(ctx context.Context, in *emptypb.Empty, opts 
 	return out, nil
 }
 
-func (c *pluginClient) StreamInput(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[v1alpha2.StreamInputRequest, emptypb.Empty], error) {
+func (c *pluginClient) StreamInput(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[StreamInputRequest, emptypb.Empty], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	stream, err := c.cc.NewStream(ctx, &Plugin_ServiceDesc.Streams[0], Plugin_StreamInput_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &grpc.GenericClientStream[v1alpha2.StreamInputRequest, emptypb.Empty]{ClientStream: stream}
+	x := &grpc.GenericClientStream[StreamInputRequest, emptypb.Empty]{ClientStream: stream}
 	return x, nil
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type Plugin_StreamInputClient = grpc.ClientStreamingClient[v1alpha2.StreamInputRequest, emptypb.Empty]
+type Plugin_StreamInputClient = grpc.ClientStreamingClient[StreamInputRequest, emptypb.Empty]
 
-func (c *pluginClient) StreamOutput(ctx context.Context, in *v1alpha2.StreamOutputRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[v1alpha2.OutputData], error) {
+func (c *pluginClient) StreamOutput(ctx context.Context, in *StreamOutputRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[StreamOutputResponse], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	stream, err := c.cc.NewStream(ctx, &Plugin_ServiceDesc.Streams[1], Plugin_StreamOutput_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &grpc.GenericClientStream[v1alpha2.StreamOutputRequest, v1alpha2.OutputData]{ClientStream: stream}
+	x := &grpc.GenericClientStream[StreamOutputRequest, StreamOutputResponse]{ClientStream: stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -127,7 +126,7 @@ func (c *pluginClient) StreamOutput(ctx context.Context, in *v1alpha2.StreamOutp
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type Plugin_StreamOutputClient = grpc.ServerStreamingClient[v1alpha2.OutputData]
+type Plugin_StreamOutputClient = grpc.ServerStreamingClient[StreamOutputResponse]
 
 func (c *pluginClient) CreateContainer(ctx context.Context, in *CreateContainerRequest, opts ...grpc.CallOption) (*CreateContainerResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
@@ -233,11 +232,11 @@ func (c *pluginClient) GetImage(ctx context.Context, in *GetImageRequest, opts .
 // All implementations must embed UnimplementedPluginServer
 // for forward compatibility.
 type PluginServer interface {
-	GetPluginMetadata(context.Context, *emptypb.Empty) (*v1alpha2.PluginMetadata, error)
-	InitPlugin(context.Context, *emptypb.Empty) (*v1alpha2.InitPluginResponse, error)
+	GetPluginMetadata(context.Context, *emptypb.Empty) (*GetPluginMetadataResponse, error)
+	InitPlugin(context.Context, *emptypb.Empty) (*InitPluginResponse, error)
 	ResetPlugin(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
-	StreamInput(grpc.ClientStreamingServer[v1alpha2.StreamInputRequest, emptypb.Empty]) error
-	StreamOutput(*v1alpha2.StreamOutputRequest, grpc.ServerStreamingServer[v1alpha2.OutputData]) error
+	StreamInput(grpc.ClientStreamingServer[StreamInputRequest, emptypb.Empty]) error
+	StreamOutput(*StreamOutputRequest, grpc.ServerStreamingServer[StreamOutputResponse]) error
 	CreateContainer(context.Context, *CreateContainerRequest) (*CreateContainerResponse, error)
 	DeleteContainer(context.Context, *DeleteContainerRequest) (*emptypb.Empty, error)
 	StartContainer(context.Context, *StartContainerRequest) (*emptypb.Empty, error)
@@ -258,19 +257,19 @@ type PluginServer interface {
 // pointer dereference when methods are called.
 type UnimplementedPluginServer struct{}
 
-func (UnimplementedPluginServer) GetPluginMetadata(context.Context, *emptypb.Empty) (*v1alpha2.PluginMetadata, error) {
+func (UnimplementedPluginServer) GetPluginMetadata(context.Context, *emptypb.Empty) (*GetPluginMetadataResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPluginMetadata not implemented")
 }
-func (UnimplementedPluginServer) InitPlugin(context.Context, *emptypb.Empty) (*v1alpha2.InitPluginResponse, error) {
+func (UnimplementedPluginServer) InitPlugin(context.Context, *emptypb.Empty) (*InitPluginResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InitPlugin not implemented")
 }
 func (UnimplementedPluginServer) ResetPlugin(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ResetPlugin not implemented")
 }
-func (UnimplementedPluginServer) StreamInput(grpc.ClientStreamingServer[v1alpha2.StreamInputRequest, emptypb.Empty]) error {
+func (UnimplementedPluginServer) StreamInput(grpc.ClientStreamingServer[StreamInputRequest, emptypb.Empty]) error {
 	return status.Errorf(codes.Unimplemented, "method StreamInput not implemented")
 }
-func (UnimplementedPluginServer) StreamOutput(*v1alpha2.StreamOutputRequest, grpc.ServerStreamingServer[v1alpha2.OutputData]) error {
+func (UnimplementedPluginServer) StreamOutput(*StreamOutputRequest, grpc.ServerStreamingServer[StreamOutputResponse]) error {
 	return status.Errorf(codes.Unimplemented, "method StreamOutput not implemented")
 }
 func (UnimplementedPluginServer) CreateContainer(context.Context, *CreateContainerRequest) (*CreateContainerResponse, error) {
@@ -379,22 +378,22 @@ func _Plugin_ResetPlugin_Handler(srv interface{}, ctx context.Context, dec func(
 }
 
 func _Plugin_StreamInput_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(PluginServer).StreamInput(&grpc.GenericServerStream[v1alpha2.StreamInputRequest, emptypb.Empty]{ServerStream: stream})
+	return srv.(PluginServer).StreamInput(&grpc.GenericServerStream[StreamInputRequest, emptypb.Empty]{ServerStream: stream})
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type Plugin_StreamInputServer = grpc.ClientStreamingServer[v1alpha2.StreamInputRequest, emptypb.Empty]
+type Plugin_StreamInputServer = grpc.ClientStreamingServer[StreamInputRequest, emptypb.Empty]
 
 func _Plugin_StreamOutput_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(v1alpha2.StreamOutputRequest)
+	m := new(StreamOutputRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(PluginServer).StreamOutput(m, &grpc.GenericServerStream[v1alpha2.StreamOutputRequest, v1alpha2.OutputData]{ServerStream: stream})
+	return srv.(PluginServer).StreamOutput(m, &grpc.GenericServerStream[StreamOutputRequest, StreamOutputResponse]{ServerStream: stream})
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type Plugin_StreamOutputServer = grpc.ServerStreamingServer[v1alpha2.OutputData]
+type Plugin_StreamOutputServer = grpc.ServerStreamingServer[StreamOutputResponse]
 
 func _Plugin_CreateContainer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateContainerRequest)

@@ -6,12 +6,12 @@ import "google/protobuf/empty.proto";
 import "wabenet/dodo/plugin/v1alpha2/plugin.proto";
 
 service Plugin {
-  rpc GetPluginMetadata(google.protobuf.Empty) returns (wabenet.dodo.plugin.v1alpha2.PluginMetadata);
-  rpc InitPlugin(google.protobuf.Empty) returns (wabenet.dodo.plugin.v1alpha2.InitPluginResponse);
+  rpc GetPluginMetadata(google.protobuf.Empty) returns (GetPluginMetadataResponse);
+  rpc InitPlugin(google.protobuf.Empty) returns (InitPluginResponse);
   rpc ResetPlugin(google.protobuf.Empty) returns (google.protobuf.Empty);
 
-  rpc StreamInput(stream wabenet.dodo.plugin.v1alpha2.StreamInputRequest) returns (google.protobuf.Empty);
-  rpc StreamOutput(wabenet.dodo.plugin.v1alpha2.StreamOutputRequest) returns (stream wabenet.dodo.plugin.v1alpha2.OutputData);
+  rpc StreamInput(stream StreamInputRequest) returns (google.protobuf.Empty);
+  rpc StreamOutput(StreamOutputRequest) returns (stream StreamOutputResponse);
 
   rpc CreateContainer(CreateContainerRequest) returns (CreateContainerResponse);
   rpc DeleteContainer(DeleteContainerRequest) returns (google.protobuf.Empty);
@@ -26,6 +26,29 @@ service Plugin {
   rpc WriteFile(WriteFileRequest) returns (google.protobuf.Empty);
 
   rpc GetImage(GetImageRequest) returns (GetImageResponse);
+}
+
+message GetPluginMetadataResponse {
+  wabenet.dodo.plugin.v1alpha2.PluginMetadata metadata = 1;
+}
+
+message InitPluginResponse {
+  wabenet.dodo.plugin.v1alpha2.PluginConfig config = 1;
+}
+
+message StreamInputRequest {
+  oneof input_request_type {
+    wabenet.dodo.plugin.v1alpha2.InitialStreamInput initial_request = 1;
+    wabenet.dodo.plugin.v1alpha2.InputData input_data = 2;
+  }
+}
+
+message StreamOutputRequest {
+  string id = 1;
+}
+
+message StreamOutputResponse {
+  wabenet.dodo.plugin.v1alpha2.OutputData output_data = 1;
 }
 
 message CreateContainerResponse {
@@ -66,7 +89,7 @@ message KillContainerRequest {
 }
 
 message StreamContainerResponse {
-  int64 exitCode = 1;
+  int64 exit_code = 1;
   string message = 2;
 }
 
@@ -111,8 +134,8 @@ message Process {
 message TerminalConfig {
   bool stdio = 1;
   bool tty = 2;
-  int64 consoleHeight = 3;
-  int64 consoleWidth = 4;
+  int64 console_height = 3;
+  int64 console_width = 4;
 }
 
 message EnvironmentVariable {

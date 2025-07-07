@@ -13,19 +13,24 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-type StreamOutputClient struct{}
+type StreamOutputClient[R streamOutputResponse] struct{}
 
-type grpcOutputClient interface {
-	Recv() (*api.OutputData, error)
+type streamOutputResponse interface {
+	GetOutputData() *api.OutputData
+	SetOutputData(data *api.OutputData)
 }
 
-func NewStreamOutputClient() *StreamOutputClient {
-	return &StreamOutputClient{}
+type grpcOutputClient[R streamOutputResponse] interface {
+	Recv() (R, error)
 }
 
-func (*StreamOutputClient) StreamOutput(cl grpcOutputClient, stdout, stderr io.Writer) error {
+func NewStreamOutputClient[R streamOutputResponse]() *StreamOutputClient[R] {
+	return &StreamOutputClient[R]{}
+}
+
+func (*StreamOutputClient[R]) StreamOutput(cl grpcOutputClient[R], stdout, stderr io.Writer) error {
 	for {
-		data, err := cl.Recv()
+		resp, err := cl.Recv()
 		if err != nil {
 			if errors.Is(err, io.EOF) ||
 				errors.Is(err, context.Canceled) ||
@@ -38,18 +43,20 @@ func (*StreamOutputClient) StreamOutput(cl grpcOutputClient, stdout, stderr io.W
 			return fmt.Errorf("error receiving data: %w", err)
 		}
 
+		data := resp.GetOutputData()
+
 		switch data.GetChannel() {
-		case api.OutputData_STDOUT:
+		case api.OutputData_CHANNEL_STDOUT:
 			if _, err := io.Copy(stdout, bytes.NewReader(data.GetData())); err != nil {
 				log.L().Error("failed to copy all bytes", "err", err)
 			}
 
-		case api.OutputData_STDERR:
+		case api.OutputData_CHANNEL_STDERR:
 			if _, err := io.Copy(stderr, bytes.NewReader(data.GetData())); err != nil {
 				log.L().Error("failed to copy all bytes", "err", err)
 			}
 
-		case api.OutputData_INVALID:
+		case api.OutputData_CHANNEL_UNSPECIFIED:
 			log.L().Warn("unknown channel, dropping", "channel", data.GetChannel())
 
 			continue

@@ -22,6 +22,288 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type GetPluginMetadataResponse struct {
+	state               protoimpl.MessageState   `protogen:"opaque.v1"`
+	xxx_hidden_Metadata *v1alpha2.PluginMetadata `protobuf:"bytes,1,opt,name=metadata"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
+}
+
+func (x *GetPluginMetadataResponse) Reset() {
+	*x = GetPluginMetadataResponse{}
+	mi := &file_wabenet_dodo_build_v1alpha2_build_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetPluginMetadataResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetPluginMetadataResponse) ProtoMessage() {}
+
+func (x *GetPluginMetadataResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_wabenet_dodo_build_v1alpha2_build_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *GetPluginMetadataResponse) GetMetadata() *v1alpha2.PluginMetadata {
+	if x != nil {
+		return x.xxx_hidden_Metadata
+	}
+	return nil
+}
+
+func (x *GetPluginMetadataResponse) SetMetadata(v *v1alpha2.PluginMetadata) {
+	x.xxx_hidden_Metadata = v
+}
+
+func (x *GetPluginMetadataResponse) HasMetadata() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Metadata != nil
+}
+
+func (x *GetPluginMetadataResponse) ClearMetadata() {
+	x.xxx_hidden_Metadata = nil
+}
+
+type GetPluginMetadataResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Metadata *v1alpha2.PluginMetadata
+}
+
+func (b0 GetPluginMetadataResponse_builder) Build() *GetPluginMetadataResponse {
+	m0 := &GetPluginMetadataResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Metadata = b.Metadata
+	return m0
+}
+
+type InitPluginResponse struct {
+	state             protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Config *v1alpha2.PluginConfig `protobuf:"bytes,1,opt,name=config"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *InitPluginResponse) Reset() {
+	*x = InitPluginResponse{}
+	mi := &file_wabenet_dodo_build_v1alpha2_build_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *InitPluginResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*InitPluginResponse) ProtoMessage() {}
+
+func (x *InitPluginResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_wabenet_dodo_build_v1alpha2_build_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *InitPluginResponse) GetConfig() *v1alpha2.PluginConfig {
+	if x != nil {
+		return x.xxx_hidden_Config
+	}
+	return nil
+}
+
+func (x *InitPluginResponse) SetConfig(v *v1alpha2.PluginConfig) {
+	x.xxx_hidden_Config = v
+}
+
+func (x *InitPluginResponse) HasConfig() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Config != nil
+}
+
+func (x *InitPluginResponse) ClearConfig() {
+	x.xxx_hidden_Config = nil
+}
+
+type InitPluginResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Config *v1alpha2.PluginConfig
+}
+
+func (b0 InitPluginResponse_builder) Build() *InitPluginResponse {
+	m0 := &InitPluginResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Config = b.Config
+	return m0
+}
+
+type StreamOutputRequest struct {
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Id          *string                `protobuf:"bytes,1,opt,name=id"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
+}
+
+func (x *StreamOutputRequest) Reset() {
+	*x = StreamOutputRequest{}
+	mi := &file_wabenet_dodo_build_v1alpha2_build_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StreamOutputRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StreamOutputRequest) ProtoMessage() {}
+
+func (x *StreamOutputRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_wabenet_dodo_build_v1alpha2_build_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *StreamOutputRequest) GetId() string {
+	if x != nil {
+		if x.xxx_hidden_Id != nil {
+			return *x.xxx_hidden_Id
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *StreamOutputRequest) SetId(v string) {
+	x.xxx_hidden_Id = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 1)
+}
+
+func (x *StreamOutputRequest) HasId() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+}
+
+func (x *StreamOutputRequest) ClearId() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Id = nil
+}
+
+type StreamOutputRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id *string
+}
+
+func (b0 StreamOutputRequest_builder) Build() *StreamOutputRequest {
+	m0 := &StreamOutputRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.Id != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 1)
+		x.xxx_hidden_Id = b.Id
+	}
+	return m0
+}
+
+type StreamOutputResponse struct {
+	state                 protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_OutputData *v1alpha2.OutputData   `protobuf:"bytes,1,opt,name=output_data,json=outputData"`
+	unknownFields         protoimpl.UnknownFields
+	sizeCache             protoimpl.SizeCache
+}
+
+func (x *StreamOutputResponse) Reset() {
+	*x = StreamOutputResponse{}
+	mi := &file_wabenet_dodo_build_v1alpha2_build_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StreamOutputResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StreamOutputResponse) ProtoMessage() {}
+
+func (x *StreamOutputResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_wabenet_dodo_build_v1alpha2_build_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *StreamOutputResponse) GetOutputData() *v1alpha2.OutputData {
+	if x != nil {
+		return x.xxx_hidden_OutputData
+	}
+	return nil
+}
+
+func (x *StreamOutputResponse) SetOutputData(v *v1alpha2.OutputData) {
+	x.xxx_hidden_OutputData = v
+}
+
+func (x *StreamOutputResponse) HasOutputData() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_OutputData != nil
+}
+
+func (x *StreamOutputResponse) ClearOutputData() {
+	x.xxx_hidden_OutputData = nil
+}
+
+type StreamOutputResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	OutputData *v1alpha2.OutputData
+}
+
+func (b0 StreamOutputResponse_builder) Build() *StreamOutputResponse {
+	m0 := &StreamOutputResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_OutputData = b.OutputData
+	return m0
+}
+
 type CreateImageRequest struct {
 	state                  protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_StreamId    *string                `protobuf:"bytes,1,opt,name=stream_id,json=streamId"`
@@ -36,7 +318,7 @@ type CreateImageRequest struct {
 
 func (x *CreateImageRequest) Reset() {
 	*x = CreateImageRequest{}
-	mi := &file_wabenet_dodo_build_v1alpha2_build_proto_msgTypes[0]
+	mi := &file_wabenet_dodo_build_v1alpha2_build_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -48,7 +330,7 @@ func (x *CreateImageRequest) String() string {
 func (*CreateImageRequest) ProtoMessage() {}
 
 func (x *CreateImageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_wabenet_dodo_build_v1alpha2_build_proto_msgTypes[0]
+	mi := &file_wabenet_dodo_build_v1alpha2_build_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -196,7 +478,7 @@ type CreateImageResponse struct {
 
 func (x *CreateImageResponse) Reset() {
 	*x = CreateImageResponse{}
-	mi := &file_wabenet_dodo_build_v1alpha2_build_proto_msgTypes[1]
+	mi := &file_wabenet_dodo_build_v1alpha2_build_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -208,7 +490,7 @@ func (x *CreateImageResponse) String() string {
 func (*CreateImageResponse) ProtoMessage() {}
 
 func (x *CreateImageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_wabenet_dodo_build_v1alpha2_build_proto_msgTypes[1]
+	mi := &file_wabenet_dodo_build_v1alpha2_build_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -284,7 +566,7 @@ type BuildConfig struct {
 
 func (x *BuildConfig) Reset() {
 	*x = BuildConfig{}
-	mi := &file_wabenet_dodo_build_v1alpha2_build_proto_msgTypes[2]
+	mi := &file_wabenet_dodo_build_v1alpha2_build_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -296,7 +578,7 @@ func (x *BuildConfig) String() string {
 func (*BuildConfig) ProtoMessage() {}
 
 func (x *BuildConfig) ProtoReflect() protoreflect.Message {
-	mi := &file_wabenet_dodo_build_v1alpha2_build_proto_msgTypes[2]
+	mi := &file_wabenet_dodo_build_v1alpha2_build_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -585,7 +867,7 @@ type BuildArgument struct {
 
 func (x *BuildArgument) Reset() {
 	*x = BuildArgument{}
-	mi := &file_wabenet_dodo_build_v1alpha2_build_proto_msgTypes[3]
+	mi := &file_wabenet_dodo_build_v1alpha2_build_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -597,7 +879,7 @@ func (x *BuildArgument) String() string {
 func (*BuildArgument) ProtoMessage() {}
 
 func (x *BuildArgument) ProtoReflect() protoreflect.Message {
-	mi := &file_wabenet_dodo_build_v1alpha2_build_proto_msgTypes[3]
+	mi := &file_wabenet_dodo_build_v1alpha2_build_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -696,7 +978,7 @@ type BuildSecret struct {
 
 func (x *BuildSecret) Reset() {
 	*x = BuildSecret{}
-	mi := &file_wabenet_dodo_build_v1alpha2_build_proto_msgTypes[4]
+	mi := &file_wabenet_dodo_build_v1alpha2_build_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -708,7 +990,7 @@ func (x *BuildSecret) String() string {
 func (*BuildSecret) ProtoMessage() {}
 
 func (x *BuildSecret) ProtoReflect() protoreflect.Message {
-	mi := &file_wabenet_dodo_build_v1alpha2_build_proto_msgTypes[4]
+	mi := &file_wabenet_dodo_build_v1alpha2_build_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -807,7 +1089,7 @@ type SshAgent struct {
 
 func (x *SshAgent) Reset() {
 	*x = SshAgent{}
-	mi := &file_wabenet_dodo_build_v1alpha2_build_proto_msgTypes[5]
+	mi := &file_wabenet_dodo_build_v1alpha2_build_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -819,7 +1101,7 @@ func (x *SshAgent) String() string {
 func (*SshAgent) ProtoMessage() {}
 
 func (x *SshAgent) ProtoReflect() protoreflect.Message {
-	mi := &file_wabenet_dodo_build_v1alpha2_build_proto_msgTypes[5]
+	mi := &file_wabenet_dodo_build_v1alpha2_build_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -910,7 +1192,16 @@ var File_wabenet_dodo_build_v1alpha2_build_proto protoreflect.FileDescriptor
 
 const file_wabenet_dodo_build_v1alpha2_build_proto_rawDesc = "" +
 	"\n" +
-	"'wabenet/dodo/build/v1alpha2/build.proto\x12\x1bwabenet.dodo.build.v1alpha2\x1a\x1bgoogle/protobuf/empty.proto\x1a)wabenet/dodo/plugin/v1alpha2/plugin.proto\"\xa1\x01\n" +
+	"'wabenet/dodo/build/v1alpha2/build.proto\x12\x1bwabenet.dodo.build.v1alpha2\x1a\x1bgoogle/protobuf/empty.proto\x1a)wabenet/dodo/plugin/v1alpha2/plugin.proto\"e\n" +
+	"\x19GetPluginMetadataResponse\x12H\n" +
+	"\bmetadata\x18\x01 \x01(\v2,.wabenet.dodo.plugin.v1alpha2.PluginMetadataR\bmetadata\"X\n" +
+	"\x12InitPluginResponse\x12B\n" +
+	"\x06config\x18\x01 \x01(\v2*.wabenet.dodo.plugin.v1alpha2.PluginConfigR\x06config\"%\n" +
+	"\x13StreamOutputRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"a\n" +
+	"\x14StreamOutputResponse\x12I\n" +
+	"\voutput_data\x18\x01 \x01(\v2(.wabenet.dodo.plugin.v1alpha2.OutputDataR\n" +
+	"outputData\"\xa1\x01\n" +
 	"\x12CreateImageRequest\x12\x1b\n" +
 	"\tstream_id\x18\x01 \x01(\tR\bstreamId\x12@\n" +
 	"\x06config\x18\x02 \x01(\v2(.wabenet.dodo.build.v1alpha2.BuildConfigR\x06config\x12\x16\n" +
@@ -944,51 +1235,57 @@ const file_wabenet_dodo_build_v1alpha2_build_proto_rawDesc = "" +
 	"\x04path\x18\x02 \x01(\tR\x04path\"?\n" +
 	"\bSshAgent\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12#\n" +
-	"\ridentity_file\x18\x02 \x01(\tR\fidentityFile2\xdb\x03\n" +
-	"\x06Plugin\x12Y\n" +
-	"\x11GetPluginMetadata\x12\x16.google.protobuf.Empty\x1a,.wabenet.dodo.plugin.v1alpha2.PluginMetadata\x12V\n" +
+	"\ridentity_file\x18\x02 \x01(\tR\fidentityFile2\xec\x03\n" +
+	"\x06Plugin\x12c\n" +
+	"\x11GetPluginMetadata\x12\x16.google.protobuf.Empty\x1a6.wabenet.dodo.build.v1alpha2.GetPluginMetadataResponse\x12U\n" +
 	"\n" +
-	"InitPlugin\x12\x16.google.protobuf.Empty\x1a0.wabenet.dodo.plugin.v1alpha2.InitPluginResponse\x12=\n" +
-	"\vResetPlugin\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\x12m\n" +
-	"\fStreamOutput\x121.wabenet.dodo.plugin.v1alpha2.StreamOutputRequest\x1a(.wabenet.dodo.plugin.v1alpha2.OutputData0\x01\x12p\n" +
+	"InitPlugin\x12\x16.google.protobuf.Empty\x1a/.wabenet.dodo.build.v1alpha2.InitPluginResponse\x12=\n" +
+	"\vResetPlugin\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\x12u\n" +
+	"\fStreamOutput\x120.wabenet.dodo.build.v1alpha2.StreamOutputRequest\x1a1.wabenet.dodo.build.v1alpha2.StreamOutputResponse0\x01\x12p\n" +
 	"\vCreateImage\x12/.wabenet.dodo.build.v1alpha2.CreateImageRequest\x1a0.wabenet.dodo.build.v1alpha2.CreateImageResponseB\x97\x02\n" +
 	"\x1fcom.wabenet.dodo.build.v1alpha2B\n" +
 	"BuildProtoP\x01ZYgithub.com/wabenet/dodo-core/internal/gen-proto/wabenet/dodo/build/v1alpha2;buildv1alpha2\xa2\x02\x03WDB\xaa\x02\x1bWabenet.Dodo.Build.V1alpha2\xca\x02\x1bWabenet\\Dodo\\Build\\V1alpha2\xe2\x02'Wabenet\\Dodo\\Build\\V1alpha2\\GPBMetadata\xea\x02\x1eWabenet::Dodo::Build::V1alpha2b\beditionsp\xe8\a"
 
-var file_wabenet_dodo_build_v1alpha2_build_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_wabenet_dodo_build_v1alpha2_build_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_wabenet_dodo_build_v1alpha2_build_proto_goTypes = []any{
-	(*CreateImageRequest)(nil),           // 0: wabenet.dodo.build.v1alpha2.CreateImageRequest
-	(*CreateImageResponse)(nil),          // 1: wabenet.dodo.build.v1alpha2.CreateImageResponse
-	(*BuildConfig)(nil),                  // 2: wabenet.dodo.build.v1alpha2.BuildConfig
-	(*BuildArgument)(nil),                // 3: wabenet.dodo.build.v1alpha2.BuildArgument
-	(*BuildSecret)(nil),                  // 4: wabenet.dodo.build.v1alpha2.BuildSecret
-	(*SshAgent)(nil),                     // 5: wabenet.dodo.build.v1alpha2.SshAgent
-	(*emptypb.Empty)(nil),                // 6: google.protobuf.Empty
-	(*v1alpha2.StreamOutputRequest)(nil), // 7: wabenet.dodo.plugin.v1alpha2.StreamOutputRequest
-	(*v1alpha2.PluginMetadata)(nil),      // 8: wabenet.dodo.plugin.v1alpha2.PluginMetadata
-	(*v1alpha2.InitPluginResponse)(nil),  // 9: wabenet.dodo.plugin.v1alpha2.InitPluginResponse
-	(*v1alpha2.OutputData)(nil),          // 10: wabenet.dodo.plugin.v1alpha2.OutputData
+	(*GetPluginMetadataResponse)(nil), // 0: wabenet.dodo.build.v1alpha2.GetPluginMetadataResponse
+	(*InitPluginResponse)(nil),        // 1: wabenet.dodo.build.v1alpha2.InitPluginResponse
+	(*StreamOutputRequest)(nil),       // 2: wabenet.dodo.build.v1alpha2.StreamOutputRequest
+	(*StreamOutputResponse)(nil),      // 3: wabenet.dodo.build.v1alpha2.StreamOutputResponse
+	(*CreateImageRequest)(nil),        // 4: wabenet.dodo.build.v1alpha2.CreateImageRequest
+	(*CreateImageResponse)(nil),       // 5: wabenet.dodo.build.v1alpha2.CreateImageResponse
+	(*BuildConfig)(nil),               // 6: wabenet.dodo.build.v1alpha2.BuildConfig
+	(*BuildArgument)(nil),             // 7: wabenet.dodo.build.v1alpha2.BuildArgument
+	(*BuildSecret)(nil),               // 8: wabenet.dodo.build.v1alpha2.BuildSecret
+	(*SshAgent)(nil),                  // 9: wabenet.dodo.build.v1alpha2.SshAgent
+	(*v1alpha2.PluginMetadata)(nil),   // 10: wabenet.dodo.plugin.v1alpha2.PluginMetadata
+	(*v1alpha2.PluginConfig)(nil),     // 11: wabenet.dodo.plugin.v1alpha2.PluginConfig
+	(*v1alpha2.OutputData)(nil),       // 12: wabenet.dodo.plugin.v1alpha2.OutputData
+	(*emptypb.Empty)(nil),             // 13: google.protobuf.Empty
 }
 var file_wabenet_dodo_build_v1alpha2_build_proto_depIdxs = []int32{
-	2,  // 0: wabenet.dodo.build.v1alpha2.CreateImageRequest.config:type_name -> wabenet.dodo.build.v1alpha2.BuildConfig
-	3,  // 1: wabenet.dodo.build.v1alpha2.BuildConfig.arguments:type_name -> wabenet.dodo.build.v1alpha2.BuildArgument
-	4,  // 2: wabenet.dodo.build.v1alpha2.BuildConfig.secrets:type_name -> wabenet.dodo.build.v1alpha2.BuildSecret
-	5,  // 3: wabenet.dodo.build.v1alpha2.BuildConfig.ssh_agents:type_name -> wabenet.dodo.build.v1alpha2.SshAgent
-	6,  // 4: wabenet.dodo.build.v1alpha2.Plugin.GetPluginMetadata:input_type -> google.protobuf.Empty
-	6,  // 5: wabenet.dodo.build.v1alpha2.Plugin.InitPlugin:input_type -> google.protobuf.Empty
-	6,  // 6: wabenet.dodo.build.v1alpha2.Plugin.ResetPlugin:input_type -> google.protobuf.Empty
-	7,  // 7: wabenet.dodo.build.v1alpha2.Plugin.StreamOutput:input_type -> wabenet.dodo.plugin.v1alpha2.StreamOutputRequest
-	0,  // 8: wabenet.dodo.build.v1alpha2.Plugin.CreateImage:input_type -> wabenet.dodo.build.v1alpha2.CreateImageRequest
-	8,  // 9: wabenet.dodo.build.v1alpha2.Plugin.GetPluginMetadata:output_type -> wabenet.dodo.plugin.v1alpha2.PluginMetadata
-	9,  // 10: wabenet.dodo.build.v1alpha2.Plugin.InitPlugin:output_type -> wabenet.dodo.plugin.v1alpha2.InitPluginResponse
-	6,  // 11: wabenet.dodo.build.v1alpha2.Plugin.ResetPlugin:output_type -> google.protobuf.Empty
-	10, // 12: wabenet.dodo.build.v1alpha2.Plugin.StreamOutput:output_type -> wabenet.dodo.plugin.v1alpha2.OutputData
-	1,  // 13: wabenet.dodo.build.v1alpha2.Plugin.CreateImage:output_type -> wabenet.dodo.build.v1alpha2.CreateImageResponse
-	9,  // [9:14] is the sub-list for method output_type
-	4,  // [4:9] is the sub-list for method input_type
-	4,  // [4:4] is the sub-list for extension type_name
-	4,  // [4:4] is the sub-list for extension extendee
-	0,  // [0:4] is the sub-list for field type_name
+	10, // 0: wabenet.dodo.build.v1alpha2.GetPluginMetadataResponse.metadata:type_name -> wabenet.dodo.plugin.v1alpha2.PluginMetadata
+	11, // 1: wabenet.dodo.build.v1alpha2.InitPluginResponse.config:type_name -> wabenet.dodo.plugin.v1alpha2.PluginConfig
+	12, // 2: wabenet.dodo.build.v1alpha2.StreamOutputResponse.output_data:type_name -> wabenet.dodo.plugin.v1alpha2.OutputData
+	6,  // 3: wabenet.dodo.build.v1alpha2.CreateImageRequest.config:type_name -> wabenet.dodo.build.v1alpha2.BuildConfig
+	7,  // 4: wabenet.dodo.build.v1alpha2.BuildConfig.arguments:type_name -> wabenet.dodo.build.v1alpha2.BuildArgument
+	8,  // 5: wabenet.dodo.build.v1alpha2.BuildConfig.secrets:type_name -> wabenet.dodo.build.v1alpha2.BuildSecret
+	9,  // 6: wabenet.dodo.build.v1alpha2.BuildConfig.ssh_agents:type_name -> wabenet.dodo.build.v1alpha2.SshAgent
+	13, // 7: wabenet.dodo.build.v1alpha2.Plugin.GetPluginMetadata:input_type -> google.protobuf.Empty
+	13, // 8: wabenet.dodo.build.v1alpha2.Plugin.InitPlugin:input_type -> google.protobuf.Empty
+	13, // 9: wabenet.dodo.build.v1alpha2.Plugin.ResetPlugin:input_type -> google.protobuf.Empty
+	2,  // 10: wabenet.dodo.build.v1alpha2.Plugin.StreamOutput:input_type -> wabenet.dodo.build.v1alpha2.StreamOutputRequest
+	4,  // 11: wabenet.dodo.build.v1alpha2.Plugin.CreateImage:input_type -> wabenet.dodo.build.v1alpha2.CreateImageRequest
+	0,  // 12: wabenet.dodo.build.v1alpha2.Plugin.GetPluginMetadata:output_type -> wabenet.dodo.build.v1alpha2.GetPluginMetadataResponse
+	1,  // 13: wabenet.dodo.build.v1alpha2.Plugin.InitPlugin:output_type -> wabenet.dodo.build.v1alpha2.InitPluginResponse
+	13, // 14: wabenet.dodo.build.v1alpha2.Plugin.ResetPlugin:output_type -> google.protobuf.Empty
+	3,  // 15: wabenet.dodo.build.v1alpha2.Plugin.StreamOutput:output_type -> wabenet.dodo.build.v1alpha2.StreamOutputResponse
+	5,  // 16: wabenet.dodo.build.v1alpha2.Plugin.CreateImage:output_type -> wabenet.dodo.build.v1alpha2.CreateImageResponse
+	12, // [12:17] is the sub-list for method output_type
+	7,  // [7:12] is the sub-list for method input_type
+	7,  // [7:7] is the sub-list for extension type_name
+	7,  // [7:7] is the sub-list for extension extendee
+	0,  // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_wabenet_dodo_build_v1alpha2_build_proto_init() }
@@ -1002,7 +1299,7 @@ func file_wabenet_dodo_build_v1alpha2_build_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_wabenet_dodo_build_v1alpha2_build_proto_rawDesc), len(file_wabenet_dodo_build_v1alpha2_build_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -19,19 +19,25 @@ func NewGRPCServer(impl Configuration) *Server {
 	return &Server{impl: impl}
 }
 
-func (s *Server) GetPluginMetadata(_ context.Context, _ *empty.Empty) (*pluginapi.PluginMetadata, error) {
-	return s.impl.Metadata().ToProto(), nil
+func (s *Server) GetPluginMetadata(_ context.Context, _ *empty.Empty) (*api.GetPluginMetadataResponse, error) {
+	resp := &api.GetPluginMetadataResponse{}
+
+	resp.SetMetadata(s.impl.Metadata().ToProto())
+
+	return resp, nil
 }
 
-func (s *Server) InitPlugin(_ context.Context, _ *empty.Empty) (*pluginapi.InitPluginResponse, error) {
+func (s *Server) InitPlugin(_ context.Context, _ *empty.Empty) (*api.InitPluginResponse, error) {
 	config, err := s.impl.Init()
 	if err != nil {
 		return nil, fmt.Errorf("could not initialize plugin: %w", err)
 	}
 
-	resp := &pluginapi.InitPluginResponse{}
+	pluginConfig := &pluginapi.PluginConfig{}
+	resp := &api.InitPluginResponse{}
 
-	resp.SetConfig(config)
+	pluginConfig.SetConfig(config)
+	resp.SetConfig(pluginConfig)
 
 	return resp, nil
 }

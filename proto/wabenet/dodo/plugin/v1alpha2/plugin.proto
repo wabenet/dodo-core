@@ -13,8 +13,12 @@ message PluginMetadata {
   map<string, string> labels = 3;
 }
 
-message InitPluginResponse {
+message PluginConfig {
   map<string, string> config = 1;
+}
+
+message InitialStreamInput {
+  string id = 1;
 }
 
 message InputData {
@@ -23,26 +27,12 @@ message InputData {
 
 message OutputData {
   enum Channel {
-    INVALID = 0;
-    STDOUT = 1;
-    STDERR = 2;
+    CHANNEL_UNSPECIFIED = 0;
+    CHANNEL_STDOUT = 1;
+    CHANNEL_STDERR = 2;
   }
 
   Channel channel = 1;
   bytes data = 2;
 }
 
-message StreamInputRequest {
-  oneof input_request_type {
-    InitialStreamInputRequest initial_request = 1;
-    InputData input_data = 2;
-  }
-}
-
-message InitialStreamInputRequest {
-  string id = 1;
-}
-
-message StreamOutputRequest {
-  string id = 1;
-}

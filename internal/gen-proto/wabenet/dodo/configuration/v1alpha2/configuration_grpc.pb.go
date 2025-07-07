@@ -8,7 +8,6 @@ package configurationv1alpha2
 
 import (
 	context "context"
-	v1alpha2 "github.com/wabenet/dodo-core/internal/gen-proto/wabenet/dodo/plugin/v1alpha2"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -32,8 +31,8 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PluginClient interface {
-	GetPluginMetadata(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*v1alpha2.PluginMetadata, error)
-	InitPlugin(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*v1alpha2.InitPluginResponse, error)
+	GetPluginMetadata(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetPluginMetadataResponse, error)
+	InitPlugin(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*InitPluginResponse, error)
 	ResetPlugin(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	ListBackdrops(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListBackdropsResponse, error)
 	GetBackdrop(ctx context.Context, in *GetBackdropRequest, opts ...grpc.CallOption) (*GetBackdropResponse, error)
@@ -47,9 +46,9 @@ func NewPluginClient(cc grpc.ClientConnInterface) PluginClient {
 	return &pluginClient{cc}
 }
 
-func (c *pluginClient) GetPluginMetadata(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*v1alpha2.PluginMetadata, error) {
+func (c *pluginClient) GetPluginMetadata(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetPluginMetadataResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(v1alpha2.PluginMetadata)
+	out := new(GetPluginMetadataResponse)
 	err := c.cc.Invoke(ctx, Plugin_GetPluginMetadata_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -57,9 +56,9 @@ func (c *pluginClient) GetPluginMetadata(ctx context.Context, in *emptypb.Empty,
 	return out, nil
 }
 
-func (c *pluginClient) InitPlugin(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*v1alpha2.InitPluginResponse, error) {
+func (c *pluginClient) InitPlugin(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*InitPluginResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(v1alpha2.InitPluginResponse)
+	out := new(InitPluginResponse)
 	err := c.cc.Invoke(ctx, Plugin_InitPlugin_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -101,8 +100,8 @@ func (c *pluginClient) GetBackdrop(ctx context.Context, in *GetBackdropRequest, 
 // All implementations must embed UnimplementedPluginServer
 // for forward compatibility.
 type PluginServer interface {
-	GetPluginMetadata(context.Context, *emptypb.Empty) (*v1alpha2.PluginMetadata, error)
-	InitPlugin(context.Context, *emptypb.Empty) (*v1alpha2.InitPluginResponse, error)
+	GetPluginMetadata(context.Context, *emptypb.Empty) (*GetPluginMetadataResponse, error)
+	InitPlugin(context.Context, *emptypb.Empty) (*InitPluginResponse, error)
 	ResetPlugin(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	ListBackdrops(context.Context, *emptypb.Empty) (*ListBackdropsResponse, error)
 	GetBackdrop(context.Context, *GetBackdropRequest) (*GetBackdropResponse, error)
@@ -116,10 +115,10 @@ type PluginServer interface {
 // pointer dereference when methods are called.
 type UnimplementedPluginServer struct{}
 
-func (UnimplementedPluginServer) GetPluginMetadata(context.Context, *emptypb.Empty) (*v1alpha2.PluginMetadata, error) {
+func (UnimplementedPluginServer) GetPluginMetadata(context.Context, *emptypb.Empty) (*GetPluginMetadataResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPluginMetadata not implemented")
 }
-func (UnimplementedPluginServer) InitPlugin(context.Context, *emptypb.Empty) (*v1alpha2.InitPluginResponse, error) {
+func (UnimplementedPluginServer) InitPlugin(context.Context, *emptypb.Empty) (*InitPluginResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InitPlugin not implemented")
 }
 func (UnimplementedPluginServer) ResetPlugin(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {

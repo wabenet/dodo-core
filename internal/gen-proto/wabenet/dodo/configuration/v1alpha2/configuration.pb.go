@@ -7,9 +7,9 @@
 package configurationv1alpha2
 
 import (
-	v1alpha21 "github.com/wabenet/dodo-core/internal/gen-proto/wabenet/dodo/build/v1alpha2"
-	v1alpha22 "github.com/wabenet/dodo-core/internal/gen-proto/wabenet/dodo/plugin/v1alpha2"
-	v1alpha2 "github.com/wabenet/dodo-core/internal/gen-proto/wabenet/dodo/runtime/v1alpha2"
+	v1alpha22 "github.com/wabenet/dodo-core/internal/gen-proto/wabenet/dodo/build/v1alpha2"
+	v1alpha2 "github.com/wabenet/dodo-core/internal/gen-proto/wabenet/dodo/plugin/v1alpha2"
+	v1alpha21 "github.com/wabenet/dodo-core/internal/gen-proto/wabenet/dodo/runtime/v1alpha2"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
@@ -24,6 +24,142 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type GetPluginMetadataResponse struct {
+	state               protoimpl.MessageState   `protogen:"opaque.v1"`
+	xxx_hidden_Metadata *v1alpha2.PluginMetadata `protobuf:"bytes,1,opt,name=metadata"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
+}
+
+func (x *GetPluginMetadataResponse) Reset() {
+	*x = GetPluginMetadataResponse{}
+	mi := &file_wabenet_dodo_configuration_v1alpha2_configuration_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetPluginMetadataResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetPluginMetadataResponse) ProtoMessage() {}
+
+func (x *GetPluginMetadataResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_wabenet_dodo_configuration_v1alpha2_configuration_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *GetPluginMetadataResponse) GetMetadata() *v1alpha2.PluginMetadata {
+	if x != nil {
+		return x.xxx_hidden_Metadata
+	}
+	return nil
+}
+
+func (x *GetPluginMetadataResponse) SetMetadata(v *v1alpha2.PluginMetadata) {
+	x.xxx_hidden_Metadata = v
+}
+
+func (x *GetPluginMetadataResponse) HasMetadata() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Metadata != nil
+}
+
+func (x *GetPluginMetadataResponse) ClearMetadata() {
+	x.xxx_hidden_Metadata = nil
+}
+
+type GetPluginMetadataResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Metadata *v1alpha2.PluginMetadata
+}
+
+func (b0 GetPluginMetadataResponse_builder) Build() *GetPluginMetadataResponse {
+	m0 := &GetPluginMetadataResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Metadata = b.Metadata
+	return m0
+}
+
+type InitPluginResponse struct {
+	state             protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Config *v1alpha2.PluginConfig `protobuf:"bytes,1,opt,name=config"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *InitPluginResponse) Reset() {
+	*x = InitPluginResponse{}
+	mi := &file_wabenet_dodo_configuration_v1alpha2_configuration_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *InitPluginResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*InitPluginResponse) ProtoMessage() {}
+
+func (x *InitPluginResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_wabenet_dodo_configuration_v1alpha2_configuration_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *InitPluginResponse) GetConfig() *v1alpha2.PluginConfig {
+	if x != nil {
+		return x.xxx_hidden_Config
+	}
+	return nil
+}
+
+func (x *InitPluginResponse) SetConfig(v *v1alpha2.PluginConfig) {
+	x.xxx_hidden_Config = v
+}
+
+func (x *InitPluginResponse) HasConfig() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Config != nil
+}
+
+func (x *InitPluginResponse) ClearConfig() {
+	x.xxx_hidden_Config = nil
+}
+
+type InitPluginResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Config *v1alpha2.PluginConfig
+}
+
+func (b0 InitPluginResponse_builder) Build() *InitPluginResponse {
+	m0 := &InitPluginResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Config = b.Config
+	return m0
+}
+
 type ListBackdropsResponse struct {
 	state                protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Backdrops *[]*Backdrop           `protobuf:"bytes,1,rep,name=backdrops"`
@@ -33,7 +169,7 @@ type ListBackdropsResponse struct {
 
 func (x *ListBackdropsResponse) Reset() {
 	*x = ListBackdropsResponse{}
-	mi := &file_wabenet_dodo_configuration_v1alpha2_configuration_proto_msgTypes[0]
+	mi := &file_wabenet_dodo_configuration_v1alpha2_configuration_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -45,7 +181,7 @@ func (x *ListBackdropsResponse) String() string {
 func (*ListBackdropsResponse) ProtoMessage() {}
 
 func (x *ListBackdropsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_wabenet_dodo_configuration_v1alpha2_configuration_proto_msgTypes[0]
+	mi := &file_wabenet_dodo_configuration_v1alpha2_configuration_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -94,7 +230,7 @@ type GetBackdropRequest struct {
 
 func (x *GetBackdropRequest) Reset() {
 	*x = GetBackdropRequest{}
-	mi := &file_wabenet_dodo_configuration_v1alpha2_configuration_proto_msgTypes[1]
+	mi := &file_wabenet_dodo_configuration_v1alpha2_configuration_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -106,7 +242,7 @@ func (x *GetBackdropRequest) String() string {
 func (*GetBackdropRequest) ProtoMessage() {}
 
 func (x *GetBackdropRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_wabenet_dodo_configuration_v1alpha2_configuration_proto_msgTypes[1]
+	mi := &file_wabenet_dodo_configuration_v1alpha2_configuration_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -170,7 +306,7 @@ type GetBackdropResponse struct {
 
 func (x *GetBackdropResponse) Reset() {
 	*x = GetBackdropResponse{}
-	mi := &file_wabenet_dodo_configuration_v1alpha2_configuration_proto_msgTypes[2]
+	mi := &file_wabenet_dodo_configuration_v1alpha2_configuration_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -182,7 +318,7 @@ func (x *GetBackdropResponse) String() string {
 func (*GetBackdropResponse) ProtoMessage() {}
 
 func (x *GetBackdropResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_wabenet_dodo_configuration_v1alpha2_configuration_proto_msgTypes[2]
+	mi := &file_wabenet_dodo_configuration_v1alpha2_configuration_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -230,14 +366,14 @@ func (b0 GetBackdropResponse_builder) Build() *GetBackdropResponse {
 }
 
 type Backdrop struct {
-	state                      protoimpl.MessageState    `protogen:"opaque.v1"`
-	xxx_hidden_Name            *string                   `protobuf:"bytes,1,opt,name=name"`
-	xxx_hidden_Aliases         []string                  `protobuf:"bytes,2,rep,name=aliases"`
-	xxx_hidden_Runtime         *string                   `protobuf:"bytes,3,opt,name=runtime"`
-	xxx_hidden_Builder         *string                   `protobuf:"bytes,4,opt,name=builder"`
-	xxx_hidden_ContainerConfig *v1alpha2.ContainerConfig `protobuf:"bytes,5,opt,name=container_config,json=containerConfig"`
-	xxx_hidden_BuildConfig     *v1alpha21.BuildConfig    `protobuf:"bytes,6,opt,name=build_config,json=buildConfig"`
-	xxx_hidden_RequiredFiles   *[]*File                  `protobuf:"bytes,7,rep,name=requiredFiles"`
+	state                      protoimpl.MessageState     `protogen:"opaque.v1"`
+	xxx_hidden_Name            *string                    `protobuf:"bytes,1,opt,name=name"`
+	xxx_hidden_Aliases         []string                   `protobuf:"bytes,2,rep,name=aliases"`
+	xxx_hidden_Runtime         *string                    `protobuf:"bytes,3,opt,name=runtime"`
+	xxx_hidden_Builder         *string                    `protobuf:"bytes,4,opt,name=builder"`
+	xxx_hidden_ContainerConfig *v1alpha21.ContainerConfig `protobuf:"bytes,5,opt,name=container_config,json=containerConfig"`
+	xxx_hidden_BuildConfig     *v1alpha22.BuildConfig     `protobuf:"bytes,6,opt,name=build_config,json=buildConfig"`
+	xxx_hidden_RequiredFiles   *[]*File                   `protobuf:"bytes,7,rep,name=required_files,json=requiredFiles"`
 	XXX_raceDetectHookData     protoimpl.RaceDetectHookData
 	XXX_presence               [1]uint32
 	unknownFields              protoimpl.UnknownFields
@@ -246,7 +382,7 @@ type Backdrop struct {
 
 func (x *Backdrop) Reset() {
 	*x = Backdrop{}
-	mi := &file_wabenet_dodo_configuration_v1alpha2_configuration_proto_msgTypes[3]
+	mi := &file_wabenet_dodo_configuration_v1alpha2_configuration_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -258,7 +394,7 @@ func (x *Backdrop) String() string {
 func (*Backdrop) ProtoMessage() {}
 
 func (x *Backdrop) ProtoReflect() protoreflect.Message {
-	mi := &file_wabenet_dodo_configuration_v1alpha2_configuration_proto_msgTypes[3]
+	mi := &file_wabenet_dodo_configuration_v1alpha2_configuration_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -306,14 +442,14 @@ func (x *Backdrop) GetBuilder() string {
 	return ""
 }
 
-func (x *Backdrop) GetContainerConfig() *v1alpha2.ContainerConfig {
+func (x *Backdrop) GetContainerConfig() *v1alpha21.ContainerConfig {
 	if x != nil {
 		return x.xxx_hidden_ContainerConfig
 	}
 	return nil
 }
 
-func (x *Backdrop) GetBuildConfig() *v1alpha21.BuildConfig {
+func (x *Backdrop) GetBuildConfig() *v1alpha22.BuildConfig {
 	if x != nil {
 		return x.xxx_hidden_BuildConfig
 	}
@@ -348,11 +484,11 @@ func (x *Backdrop) SetBuilder(v string) {
 	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 7)
 }
 
-func (x *Backdrop) SetContainerConfig(v *v1alpha2.ContainerConfig) {
+func (x *Backdrop) SetContainerConfig(v *v1alpha21.ContainerConfig) {
 	x.xxx_hidden_ContainerConfig = v
 }
 
-func (x *Backdrop) SetBuildConfig(v *v1alpha21.BuildConfig) {
+func (x *Backdrop) SetBuildConfig(v *v1alpha22.BuildConfig) {
 	x.xxx_hidden_BuildConfig = v
 }
 
@@ -425,8 +561,8 @@ type Backdrop_builder struct {
 	Aliases         []string
 	Runtime         *string
 	Builder         *string
-	ContainerConfig *v1alpha2.ContainerConfig
-	BuildConfig     *v1alpha21.BuildConfig
+	ContainerConfig *v1alpha21.ContainerConfig
+	BuildConfig     *v1alpha22.BuildConfig
 	RequiredFiles   []*File
 }
 
@@ -465,7 +601,7 @@ type File struct {
 
 func (x *File) Reset() {
 	*x = File{}
-	mi := &file_wabenet_dodo_configuration_v1alpha2_configuration_proto_msgTypes[4]
+	mi := &file_wabenet_dodo_configuration_v1alpha2_configuration_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -477,7 +613,7 @@ func (x *File) String() string {
 func (*File) ProtoMessage() {}
 
 func (x *File) ProtoReflect() protoreflect.Message {
-	mi := &file_wabenet_dodo_configuration_v1alpha2_configuration_proto_msgTypes[4]
+	mi := &file_wabenet_dodo_configuration_v1alpha2_configuration_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -568,67 +704,75 @@ var File_wabenet_dodo_configuration_v1alpha2_configuration_proto protoreflect.Fi
 
 const file_wabenet_dodo_configuration_v1alpha2_configuration_proto_rawDesc = "" +
 	"\n" +
-	"7wabenet/dodo/configuration/v1alpha2/configuration.proto\x12#wabenet.dodo.configuration.v1alpha2\x1a\x1bgoogle/protobuf/empty.proto\x1a)wabenet/dodo/plugin/v1alpha2/plugin.proto\x1a'wabenet/dodo/build/v1alpha2/build.proto\x1a+wabenet/dodo/runtime/v1alpha2/runtime.proto\"d\n" +
+	"7wabenet/dodo/configuration/v1alpha2/configuration.proto\x12#wabenet.dodo.configuration.v1alpha2\x1a\x1bgoogle/protobuf/empty.proto\x1a)wabenet/dodo/plugin/v1alpha2/plugin.proto\x1a'wabenet/dodo/build/v1alpha2/build.proto\x1a+wabenet/dodo/runtime/v1alpha2/runtime.proto\"e\n" +
+	"\x19GetPluginMetadataResponse\x12H\n" +
+	"\bmetadata\x18\x01 \x01(\v2,.wabenet.dodo.plugin.v1alpha2.PluginMetadataR\bmetadata\"X\n" +
+	"\x12InitPluginResponse\x12B\n" +
+	"\x06config\x18\x01 \x01(\v2*.wabenet.dodo.plugin.v1alpha2.PluginConfigR\x06config\"d\n" +
 	"\x15ListBackdropsResponse\x12K\n" +
 	"\tbackdrops\x18\x01 \x03(\v2-.wabenet.dodo.configuration.v1alpha2.BackdropR\tbackdrops\"*\n" +
 	"\x12GetBackdropRequest\x12\x14\n" +
 	"\x05alias\x18\x01 \x01(\tR\x05alias\"`\n" +
 	"\x13GetBackdropResponse\x12I\n" +
-	"\bbackdrop\x18\x01 \x01(\v2-.wabenet.dodo.configuration.v1alpha2.BackdropR\bbackdrop\"\xe5\x02\n" +
+	"\bbackdrop\x18\x01 \x01(\v2-.wabenet.dodo.configuration.v1alpha2.BackdropR\bbackdrop\"\xe6\x02\n" +
 	"\bBackdrop\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x18\n" +
 	"\aaliases\x18\x02 \x03(\tR\aaliases\x12\x18\n" +
 	"\aruntime\x18\x03 \x01(\tR\aruntime\x12\x18\n" +
 	"\abuilder\x18\x04 \x01(\tR\abuilder\x12Y\n" +
 	"\x10container_config\x18\x05 \x01(\v2..wabenet.dodo.runtime.v1alpha2.ContainerConfigR\x0fcontainerConfig\x12K\n" +
-	"\fbuild_config\x18\x06 \x01(\v2(.wabenet.dodo.build.v1alpha2.BuildConfigR\vbuildConfig\x12O\n" +
-	"\rrequiredFiles\x18\a \x03(\v2).wabenet.dodo.configuration.v1alpha2.FileR\rrequiredFiles\"?\n" +
+	"\fbuild_config\x18\x06 \x01(\v2(.wabenet.dodo.build.v1alpha2.BuildConfigR\vbuildConfig\x12P\n" +
+	"\x0erequired_files\x18\a \x03(\v2).wabenet.dodo.configuration.v1alpha2.FileR\rrequiredFiles\"?\n" +
 	"\x04File\x12\x1b\n" +
 	"\tfile_path\x18\x01 \x01(\tR\bfilePath\x12\x1a\n" +
-	"\bcontents\x18\x02 \x01(\tR\bcontents2\xe2\x03\n" +
-	"\x06Plugin\x12Y\n" +
-	"\x11GetPluginMetadata\x12\x16.google.protobuf.Empty\x1a,.wabenet.dodo.plugin.v1alpha2.PluginMetadata\x12V\n" +
+	"\bcontents\x18\x02 \x01(\tR\bcontents2\xfb\x03\n" +
+	"\x06Plugin\x12k\n" +
+	"\x11GetPluginMetadata\x12\x16.google.protobuf.Empty\x1a>.wabenet.dodo.configuration.v1alpha2.GetPluginMetadataResponse\x12]\n" +
 	"\n" +
-	"InitPlugin\x12\x16.google.protobuf.Empty\x1a0.wabenet.dodo.plugin.v1alpha2.InitPluginResponse\x12=\n" +
+	"InitPlugin\x12\x16.google.protobuf.Empty\x1a7.wabenet.dodo.configuration.v1alpha2.InitPluginResponse\x12=\n" +
 	"\vResetPlugin\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\x12c\n" +
 	"\rListBackdrops\x12\x16.google.protobuf.Empty\x1a:.wabenet.dodo.configuration.v1alpha2.ListBackdropsResponse\x12\x80\x01\n" +
 	"\vGetBackdrop\x127.wabenet.dodo.configuration.v1alpha2.GetBackdropRequest\x1a8.wabenet.dodo.configuration.v1alpha2.GetBackdropResponseB\xd7\x02\n" +
 	"'com.wabenet.dodo.configuration.v1alpha2B\x12ConfigurationProtoP\x01Zigithub.com/wabenet/dodo-core/internal/gen-proto/wabenet/dodo/configuration/v1alpha2;configurationv1alpha2\xa2\x02\x03WDC\xaa\x02#Wabenet.Dodo.Configuration.V1alpha2\xca\x02#Wabenet\\Dodo\\Configuration\\V1alpha2\xe2\x02/Wabenet\\Dodo\\Configuration\\V1alpha2\\GPBMetadata\xea\x02&Wabenet::Dodo::Configuration::V1alpha2b\beditionsp\xe8\a"
 
-var file_wabenet_dodo_configuration_v1alpha2_configuration_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_wabenet_dodo_configuration_v1alpha2_configuration_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_wabenet_dodo_configuration_v1alpha2_configuration_proto_goTypes = []any{
-	(*ListBackdropsResponse)(nil),        // 0: wabenet.dodo.configuration.v1alpha2.ListBackdropsResponse
-	(*GetBackdropRequest)(nil),           // 1: wabenet.dodo.configuration.v1alpha2.GetBackdropRequest
-	(*GetBackdropResponse)(nil),          // 2: wabenet.dodo.configuration.v1alpha2.GetBackdropResponse
-	(*Backdrop)(nil),                     // 3: wabenet.dodo.configuration.v1alpha2.Backdrop
-	(*File)(nil),                         // 4: wabenet.dodo.configuration.v1alpha2.File
-	(*v1alpha2.ContainerConfig)(nil),     // 5: wabenet.dodo.runtime.v1alpha2.ContainerConfig
-	(*v1alpha21.BuildConfig)(nil),        // 6: wabenet.dodo.build.v1alpha2.BuildConfig
-	(*emptypb.Empty)(nil),                // 7: google.protobuf.Empty
-	(*v1alpha22.PluginMetadata)(nil),     // 8: wabenet.dodo.plugin.v1alpha2.PluginMetadata
-	(*v1alpha22.InitPluginResponse)(nil), // 9: wabenet.dodo.plugin.v1alpha2.InitPluginResponse
+	(*GetPluginMetadataResponse)(nil), // 0: wabenet.dodo.configuration.v1alpha2.GetPluginMetadataResponse
+	(*InitPluginResponse)(nil),        // 1: wabenet.dodo.configuration.v1alpha2.InitPluginResponse
+	(*ListBackdropsResponse)(nil),     // 2: wabenet.dodo.configuration.v1alpha2.ListBackdropsResponse
+	(*GetBackdropRequest)(nil),        // 3: wabenet.dodo.configuration.v1alpha2.GetBackdropRequest
+	(*GetBackdropResponse)(nil),       // 4: wabenet.dodo.configuration.v1alpha2.GetBackdropResponse
+	(*Backdrop)(nil),                  // 5: wabenet.dodo.configuration.v1alpha2.Backdrop
+	(*File)(nil),                      // 6: wabenet.dodo.configuration.v1alpha2.File
+	(*v1alpha2.PluginMetadata)(nil),   // 7: wabenet.dodo.plugin.v1alpha2.PluginMetadata
+	(*v1alpha2.PluginConfig)(nil),     // 8: wabenet.dodo.plugin.v1alpha2.PluginConfig
+	(*v1alpha21.ContainerConfig)(nil), // 9: wabenet.dodo.runtime.v1alpha2.ContainerConfig
+	(*v1alpha22.BuildConfig)(nil),     // 10: wabenet.dodo.build.v1alpha2.BuildConfig
+	(*emptypb.Empty)(nil),             // 11: google.protobuf.Empty
 }
 var file_wabenet_dodo_configuration_v1alpha2_configuration_proto_depIdxs = []int32{
-	3,  // 0: wabenet.dodo.configuration.v1alpha2.ListBackdropsResponse.backdrops:type_name -> wabenet.dodo.configuration.v1alpha2.Backdrop
-	3,  // 1: wabenet.dodo.configuration.v1alpha2.GetBackdropResponse.backdrop:type_name -> wabenet.dodo.configuration.v1alpha2.Backdrop
-	5,  // 2: wabenet.dodo.configuration.v1alpha2.Backdrop.container_config:type_name -> wabenet.dodo.runtime.v1alpha2.ContainerConfig
-	6,  // 3: wabenet.dodo.configuration.v1alpha2.Backdrop.build_config:type_name -> wabenet.dodo.build.v1alpha2.BuildConfig
-	4,  // 4: wabenet.dodo.configuration.v1alpha2.Backdrop.requiredFiles:type_name -> wabenet.dodo.configuration.v1alpha2.File
-	7,  // 5: wabenet.dodo.configuration.v1alpha2.Plugin.GetPluginMetadata:input_type -> google.protobuf.Empty
-	7,  // 6: wabenet.dodo.configuration.v1alpha2.Plugin.InitPlugin:input_type -> google.protobuf.Empty
-	7,  // 7: wabenet.dodo.configuration.v1alpha2.Plugin.ResetPlugin:input_type -> google.protobuf.Empty
-	7,  // 8: wabenet.dodo.configuration.v1alpha2.Plugin.ListBackdrops:input_type -> google.protobuf.Empty
-	1,  // 9: wabenet.dodo.configuration.v1alpha2.Plugin.GetBackdrop:input_type -> wabenet.dodo.configuration.v1alpha2.GetBackdropRequest
-	8,  // 10: wabenet.dodo.configuration.v1alpha2.Plugin.GetPluginMetadata:output_type -> wabenet.dodo.plugin.v1alpha2.PluginMetadata
-	9,  // 11: wabenet.dodo.configuration.v1alpha2.Plugin.InitPlugin:output_type -> wabenet.dodo.plugin.v1alpha2.InitPluginResponse
-	7,  // 12: wabenet.dodo.configuration.v1alpha2.Plugin.ResetPlugin:output_type -> google.protobuf.Empty
-	0,  // 13: wabenet.dodo.configuration.v1alpha2.Plugin.ListBackdrops:output_type -> wabenet.dodo.configuration.v1alpha2.ListBackdropsResponse
-	2,  // 14: wabenet.dodo.configuration.v1alpha2.Plugin.GetBackdrop:output_type -> wabenet.dodo.configuration.v1alpha2.GetBackdropResponse
-	10, // [10:15] is the sub-list for method output_type
-	5,  // [5:10] is the sub-list for method input_type
-	5,  // [5:5] is the sub-list for extension type_name
-	5,  // [5:5] is the sub-list for extension extendee
-	0,  // [0:5] is the sub-list for field type_name
+	7,  // 0: wabenet.dodo.configuration.v1alpha2.GetPluginMetadataResponse.metadata:type_name -> wabenet.dodo.plugin.v1alpha2.PluginMetadata
+	8,  // 1: wabenet.dodo.configuration.v1alpha2.InitPluginResponse.config:type_name -> wabenet.dodo.plugin.v1alpha2.PluginConfig
+	5,  // 2: wabenet.dodo.configuration.v1alpha2.ListBackdropsResponse.backdrops:type_name -> wabenet.dodo.configuration.v1alpha2.Backdrop
+	5,  // 3: wabenet.dodo.configuration.v1alpha2.GetBackdropResponse.backdrop:type_name -> wabenet.dodo.configuration.v1alpha2.Backdrop
+	9,  // 4: wabenet.dodo.configuration.v1alpha2.Backdrop.container_config:type_name -> wabenet.dodo.runtime.v1alpha2.ContainerConfig
+	10, // 5: wabenet.dodo.configuration.v1alpha2.Backdrop.build_config:type_name -> wabenet.dodo.build.v1alpha2.BuildConfig
+	6,  // 6: wabenet.dodo.configuration.v1alpha2.Backdrop.required_files:type_name -> wabenet.dodo.configuration.v1alpha2.File
+	11, // 7: wabenet.dodo.configuration.v1alpha2.Plugin.GetPluginMetadata:input_type -> google.protobuf.Empty
+	11, // 8: wabenet.dodo.configuration.v1alpha2.Plugin.InitPlugin:input_type -> google.protobuf.Empty
+	11, // 9: wabenet.dodo.configuration.v1alpha2.Plugin.ResetPlugin:input_type -> google.protobuf.Empty
+	11, // 10: wabenet.dodo.configuration.v1alpha2.Plugin.ListBackdrops:input_type -> google.protobuf.Empty
+	3,  // 11: wabenet.dodo.configuration.v1alpha2.Plugin.GetBackdrop:input_type -> wabenet.dodo.configuration.v1alpha2.GetBackdropRequest
+	0,  // 12: wabenet.dodo.configuration.v1alpha2.Plugin.GetPluginMetadata:output_type -> wabenet.dodo.configuration.v1alpha2.GetPluginMetadataResponse
+	1,  // 13: wabenet.dodo.configuration.v1alpha2.Plugin.InitPlugin:output_type -> wabenet.dodo.configuration.v1alpha2.InitPluginResponse
+	11, // 14: wabenet.dodo.configuration.v1alpha2.Plugin.ResetPlugin:output_type -> google.protobuf.Empty
+	2,  // 15: wabenet.dodo.configuration.v1alpha2.Plugin.ListBackdrops:output_type -> wabenet.dodo.configuration.v1alpha2.ListBackdropsResponse
+	4,  // 16: wabenet.dodo.configuration.v1alpha2.Plugin.GetBackdrop:output_type -> wabenet.dodo.configuration.v1alpha2.GetBackdropResponse
+	12, // [12:17] is the sub-list for method output_type
+	7,  // [7:12] is the sub-list for method input_type
+	7,  // [7:7] is the sub-list for extension type_name
+	7,  // [7:7] is the sub-list for extension extendee
+	0,  // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_wabenet_dodo_configuration_v1alpha2_configuration_proto_init() }
@@ -642,7 +786,7 @@ func file_wabenet_dodo_configuration_v1alpha2_configuration_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_wabenet_dodo_configuration_v1alpha2_configuration_proto_rawDesc), len(file_wabenet_dodo_configuration_v1alpha2_configuration_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

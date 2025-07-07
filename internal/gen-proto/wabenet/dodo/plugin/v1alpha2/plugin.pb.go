@@ -23,22 +23,22 @@ const (
 type OutputData_Channel int32
 
 const (
-	OutputData_INVALID OutputData_Channel = 0
-	OutputData_STDOUT  OutputData_Channel = 1
-	OutputData_STDERR  OutputData_Channel = 2
+	OutputData_CHANNEL_UNSPECIFIED OutputData_Channel = 0
+	OutputData_CHANNEL_STDOUT      OutputData_Channel = 1
+	OutputData_CHANNEL_STDERR      OutputData_Channel = 2
 )
 
 // Enum value maps for OutputData_Channel.
 var (
 	OutputData_Channel_name = map[int32]string{
-		0: "INVALID",
-		1: "STDOUT",
-		2: "STDERR",
+		0: "CHANNEL_UNSPECIFIED",
+		1: "CHANNEL_STDOUT",
+		2: "CHANNEL_STDERR",
 	}
 	OutputData_Channel_value = map[string]int32{
-		"INVALID": 0,
-		"STDOUT":  1,
-		"STDERR":  2,
+		"CHANNEL_UNSPECIFIED": 0,
+		"CHANNEL_STDOUT":      1,
+		"CHANNEL_STDERR":      2,
 	}
 )
 
@@ -273,27 +273,27 @@ func (b0 PluginMetadata_builder) Build() *PluginMetadata {
 	return m0
 }
 
-type InitPluginResponse struct {
+type PluginConfig struct {
 	state             protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Config map[string]string      `protobuf:"bytes,1,rep,name=config" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
 }
 
-func (x *InitPluginResponse) Reset() {
-	*x = InitPluginResponse{}
+func (x *PluginConfig) Reset() {
+	*x = PluginConfig{}
 	mi := &file_wabenet_dodo_plugin_v1alpha2_plugin_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *InitPluginResponse) String() string {
+func (x *PluginConfig) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*InitPluginResponse) ProtoMessage() {}
+func (*PluginConfig) ProtoMessage() {}
 
-func (x *InitPluginResponse) ProtoReflect() protoreflect.Message {
+func (x *PluginConfig) ProtoReflect() protoreflect.Message {
 	mi := &file_wabenet_dodo_plugin_v1alpha2_plugin_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -305,28 +305,106 @@ func (x *InitPluginResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-func (x *InitPluginResponse) GetConfig() map[string]string {
+func (x *PluginConfig) GetConfig() map[string]string {
 	if x != nil {
 		return x.xxx_hidden_Config
 	}
 	return nil
 }
 
-func (x *InitPluginResponse) SetConfig(v map[string]string) {
+func (x *PluginConfig) SetConfig(v map[string]string) {
 	x.xxx_hidden_Config = v
 }
 
-type InitPluginResponse_builder struct {
+type PluginConfig_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	Config map[string]string
 }
 
-func (b0 InitPluginResponse_builder) Build() *InitPluginResponse {
-	m0 := &InitPluginResponse{}
+func (b0 PluginConfig_builder) Build() *PluginConfig {
+	m0 := &PluginConfig{}
 	b, x := &b0, m0
 	_, _ = b, x
 	x.xxx_hidden_Config = b.Config
+	return m0
+}
+
+type InitialStreamInput struct {
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Id          *string                `protobuf:"bytes,1,opt,name=id"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
+}
+
+func (x *InitialStreamInput) Reset() {
+	*x = InitialStreamInput{}
+	mi := &file_wabenet_dodo_plugin_v1alpha2_plugin_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *InitialStreamInput) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*InitialStreamInput) ProtoMessage() {}
+
+func (x *InitialStreamInput) ProtoReflect() protoreflect.Message {
+	mi := &file_wabenet_dodo_plugin_v1alpha2_plugin_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *InitialStreamInput) GetId() string {
+	if x != nil {
+		if x.xxx_hidden_Id != nil {
+			return *x.xxx_hidden_Id
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *InitialStreamInput) SetId(v string) {
+	x.xxx_hidden_Id = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 1)
+}
+
+func (x *InitialStreamInput) HasId() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+}
+
+func (x *InitialStreamInput) ClearId() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Id = nil
+}
+
+type InitialStreamInput_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id *string
+}
+
+func (b0 InitialStreamInput_builder) Build() *InitialStreamInput {
+	m0 := &InitialStreamInput{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.Id != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 1)
+		x.xxx_hidden_Id = b.Id
+	}
 	return m0
 }
 
@@ -341,7 +419,7 @@ type InputData struct {
 
 func (x *InputData) Reset() {
 	*x = InputData{}
-	mi := &file_wabenet_dodo_plugin_v1alpha2_plugin_proto_msgTypes[3]
+	mi := &file_wabenet_dodo_plugin_v1alpha2_plugin_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -353,7 +431,7 @@ func (x *InputData) String() string {
 func (*InputData) ProtoMessage() {}
 
 func (x *InputData) ProtoReflect() protoreflect.Message {
-	mi := &file_wabenet_dodo_plugin_v1alpha2_plugin_proto_msgTypes[3]
+	mi := &file_wabenet_dodo_plugin_v1alpha2_plugin_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -420,7 +498,7 @@ type OutputData struct {
 
 func (x *OutputData) Reset() {
 	*x = OutputData{}
-	mi := &file_wabenet_dodo_plugin_v1alpha2_plugin_proto_msgTypes[4]
+	mi := &file_wabenet_dodo_plugin_v1alpha2_plugin_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -432,7 +510,7 @@ func (x *OutputData) String() string {
 func (*OutputData) ProtoMessage() {}
 
 func (x *OutputData) ProtoReflect() protoreflect.Message {
-	mi := &file_wabenet_dodo_plugin_v1alpha2_plugin_proto_msgTypes[4]
+	mi := &file_wabenet_dodo_plugin_v1alpha2_plugin_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -449,7 +527,7 @@ func (x *OutputData) GetChannel() OutputData_Channel {
 			return x.xxx_hidden_Channel
 		}
 	}
-	return OutputData_INVALID
+	return OutputData_CHANNEL_UNSPECIFIED
 }
 
 func (x *OutputData) GetData() []byte {
@@ -488,7 +566,7 @@ func (x *OutputData) HasData() bool {
 
 func (x *OutputData) ClearChannel() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_Channel = OutputData_INVALID
+	x.xxx_hidden_Channel = OutputData_CHANNEL_UNSPECIFIED
 }
 
 func (x *OutputData) ClearData() {
@@ -518,333 +596,6 @@ func (b0 OutputData_builder) Build() *OutputData {
 	return m0
 }
 
-type StreamInputRequest struct {
-	state                       protoimpl.MessageState                `protogen:"opaque.v1"`
-	xxx_hidden_InputRequestType isStreamInputRequest_InputRequestType `protobuf_oneof:"input_request_type"`
-	unknownFields               protoimpl.UnknownFields
-	sizeCache                   protoimpl.SizeCache
-}
-
-func (x *StreamInputRequest) Reset() {
-	*x = StreamInputRequest{}
-	mi := &file_wabenet_dodo_plugin_v1alpha2_plugin_proto_msgTypes[5]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *StreamInputRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*StreamInputRequest) ProtoMessage() {}
-
-func (x *StreamInputRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_wabenet_dodo_plugin_v1alpha2_plugin_proto_msgTypes[5]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *StreamInputRequest) GetInitialRequest() *InitialStreamInputRequest {
-	if x != nil {
-		if x, ok := x.xxx_hidden_InputRequestType.(*streamInputRequest_InitialRequest); ok {
-			return x.InitialRequest
-		}
-	}
-	return nil
-}
-
-func (x *StreamInputRequest) GetInputData() *InputData {
-	if x != nil {
-		if x, ok := x.xxx_hidden_InputRequestType.(*streamInputRequest_InputData); ok {
-			return x.InputData
-		}
-	}
-	return nil
-}
-
-func (x *StreamInputRequest) SetInitialRequest(v *InitialStreamInputRequest) {
-	if v == nil {
-		x.xxx_hidden_InputRequestType = nil
-		return
-	}
-	x.xxx_hidden_InputRequestType = &streamInputRequest_InitialRequest{v}
-}
-
-func (x *StreamInputRequest) SetInputData(v *InputData) {
-	if v == nil {
-		x.xxx_hidden_InputRequestType = nil
-		return
-	}
-	x.xxx_hidden_InputRequestType = &streamInputRequest_InputData{v}
-}
-
-func (x *StreamInputRequest) HasInputRequestType() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_InputRequestType != nil
-}
-
-func (x *StreamInputRequest) HasInitialRequest() bool {
-	if x == nil {
-		return false
-	}
-	_, ok := x.xxx_hidden_InputRequestType.(*streamInputRequest_InitialRequest)
-	return ok
-}
-
-func (x *StreamInputRequest) HasInputData() bool {
-	if x == nil {
-		return false
-	}
-	_, ok := x.xxx_hidden_InputRequestType.(*streamInputRequest_InputData)
-	return ok
-}
-
-func (x *StreamInputRequest) ClearInputRequestType() {
-	x.xxx_hidden_InputRequestType = nil
-}
-
-func (x *StreamInputRequest) ClearInitialRequest() {
-	if _, ok := x.xxx_hidden_InputRequestType.(*streamInputRequest_InitialRequest); ok {
-		x.xxx_hidden_InputRequestType = nil
-	}
-}
-
-func (x *StreamInputRequest) ClearInputData() {
-	if _, ok := x.xxx_hidden_InputRequestType.(*streamInputRequest_InputData); ok {
-		x.xxx_hidden_InputRequestType = nil
-	}
-}
-
-const StreamInputRequest_InputRequestType_not_set_case case_StreamInputRequest_InputRequestType = 0
-const StreamInputRequest_InitialRequest_case case_StreamInputRequest_InputRequestType = 1
-const StreamInputRequest_InputData_case case_StreamInputRequest_InputRequestType = 2
-
-func (x *StreamInputRequest) WhichInputRequestType() case_StreamInputRequest_InputRequestType {
-	if x == nil {
-		return StreamInputRequest_InputRequestType_not_set_case
-	}
-	switch x.xxx_hidden_InputRequestType.(type) {
-	case *streamInputRequest_InitialRequest:
-		return StreamInputRequest_InitialRequest_case
-	case *streamInputRequest_InputData:
-		return StreamInputRequest_InputData_case
-	default:
-		return StreamInputRequest_InputRequestType_not_set_case
-	}
-}
-
-type StreamInputRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	// Fields of oneof xxx_hidden_InputRequestType:
-	InitialRequest *InitialStreamInputRequest
-	InputData      *InputData
-	// -- end of xxx_hidden_InputRequestType
-}
-
-func (b0 StreamInputRequest_builder) Build() *StreamInputRequest {
-	m0 := &StreamInputRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	if b.InitialRequest != nil {
-		x.xxx_hidden_InputRequestType = &streamInputRequest_InitialRequest{b.InitialRequest}
-	}
-	if b.InputData != nil {
-		x.xxx_hidden_InputRequestType = &streamInputRequest_InputData{b.InputData}
-	}
-	return m0
-}
-
-type case_StreamInputRequest_InputRequestType protoreflect.FieldNumber
-
-func (x case_StreamInputRequest_InputRequestType) String() string {
-	md := file_wabenet_dodo_plugin_v1alpha2_plugin_proto_msgTypes[5].Descriptor()
-	if x == 0 {
-		return "not set"
-	}
-	return protoimpl.X.MessageFieldStringOf(md, protoreflect.FieldNumber(x))
-}
-
-type isStreamInputRequest_InputRequestType interface {
-	isStreamInputRequest_InputRequestType()
-}
-
-type streamInputRequest_InitialRequest struct {
-	InitialRequest *InitialStreamInputRequest `protobuf:"bytes,1,opt,name=initial_request,json=initialRequest,oneof"`
-}
-
-type streamInputRequest_InputData struct {
-	InputData *InputData `protobuf:"bytes,2,opt,name=input_data,json=inputData,oneof"`
-}
-
-func (*streamInputRequest_InitialRequest) isStreamInputRequest_InputRequestType() {}
-
-func (*streamInputRequest_InputData) isStreamInputRequest_InputRequestType() {}
-
-type InitialStreamInputRequest struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Id          *string                `protobuf:"bytes,1,opt,name=id"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
-}
-
-func (x *InitialStreamInputRequest) Reset() {
-	*x = InitialStreamInputRequest{}
-	mi := &file_wabenet_dodo_plugin_v1alpha2_plugin_proto_msgTypes[6]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *InitialStreamInputRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*InitialStreamInputRequest) ProtoMessage() {}
-
-func (x *InitialStreamInputRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_wabenet_dodo_plugin_v1alpha2_plugin_proto_msgTypes[6]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *InitialStreamInputRequest) GetId() string {
-	if x != nil {
-		if x.xxx_hidden_Id != nil {
-			return *x.xxx_hidden_Id
-		}
-		return ""
-	}
-	return ""
-}
-
-func (x *InitialStreamInputRequest) SetId(v string) {
-	x.xxx_hidden_Id = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 1)
-}
-
-func (x *InitialStreamInputRequest) HasId() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
-}
-
-func (x *InitialStreamInputRequest) ClearId() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_Id = nil
-}
-
-type InitialStreamInputRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Id *string
-}
-
-func (b0 InitialStreamInputRequest_builder) Build() *InitialStreamInputRequest {
-	m0 := &InitialStreamInputRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	if b.Id != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 1)
-		x.xxx_hidden_Id = b.Id
-	}
-	return m0
-}
-
-type StreamOutputRequest struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Id          *string                `protobuf:"bytes,1,opt,name=id"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
-}
-
-func (x *StreamOutputRequest) Reset() {
-	*x = StreamOutputRequest{}
-	mi := &file_wabenet_dodo_plugin_v1alpha2_plugin_proto_msgTypes[7]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *StreamOutputRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*StreamOutputRequest) ProtoMessage() {}
-
-func (x *StreamOutputRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_wabenet_dodo_plugin_v1alpha2_plugin_proto_msgTypes[7]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *StreamOutputRequest) GetId() string {
-	if x != nil {
-		if x.xxx_hidden_Id != nil {
-			return *x.xxx_hidden_Id
-		}
-		return ""
-	}
-	return ""
-}
-
-func (x *StreamOutputRequest) SetId(v string) {
-	x.xxx_hidden_Id = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 1)
-}
-
-func (x *StreamOutputRequest) HasId() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
-}
-
-func (x *StreamOutputRequest) ClearId() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_Id = nil
-}
-
-type StreamOutputRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Id *string
-}
-
-func (b0 StreamOutputRequest_builder) Build() *StreamOutputRequest {
-	m0 := &StreamOutputRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	if b.Id != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 1)
-		x.xxx_hidden_Id = b.Id
-	}
-	return m0
-}
-
 var File_wabenet_dodo_plugin_v1alpha2_plugin_proto protoreflect.FileDescriptor
 
 const file_wabenet_dodo_plugin_v1alpha2_plugin_proto_rawDesc = "" +
@@ -859,63 +610,50 @@ const file_wabenet_dodo_plugin_v1alpha2_plugin_proto_rawDesc = "" +
 	"\x06labels\x18\x03 \x03(\v28.wabenet.dodo.plugin.v1alpha2.PluginMetadata.LabelsEntryR\x06labels\x1a9\n" +
 	"\vLabelsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xa5\x01\n" +
-	"\x12InitPluginResponse\x12T\n" +
-	"\x06config\x18\x01 \x03(\v2<.wabenet.dodo.plugin.v1alpha2.InitPluginResponse.ConfigEntryR\x06config\x1a9\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x99\x01\n" +
+	"\fPluginConfig\x12N\n" +
+	"\x06config\x18\x01 \x03(\v26.wabenet.dodo.plugin.v1alpha2.PluginConfig.ConfigEntryR\x06config\x1a9\n" +
 	"\vConfigEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x1f\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"$\n" +
+	"\x12InitialStreamInput\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"\x1f\n" +
 	"\tInputData\x12\x12\n" +
-	"\x04data\x18\x01 \x01(\fR\x04data\"\x9c\x01\n" +
+	"\x04data\x18\x01 \x01(\fR\x04data\"\xb8\x01\n" +
 	"\n" +
 	"OutputData\x12J\n" +
 	"\achannel\x18\x01 \x01(\x0e20.wabenet.dodo.plugin.v1alpha2.OutputData.ChannelR\achannel\x12\x12\n" +
-	"\x04data\x18\x02 \x01(\fR\x04data\".\n" +
-	"\aChannel\x12\v\n" +
-	"\aINVALID\x10\x00\x12\n" +
-	"\n" +
-	"\x06STDOUT\x10\x01\x12\n" +
-	"\n" +
-	"\x06STDERR\x10\x02\"\xd8\x01\n" +
-	"\x12StreamInputRequest\x12b\n" +
-	"\x0finitial_request\x18\x01 \x01(\v27.wabenet.dodo.plugin.v1alpha2.InitialStreamInputRequestH\x00R\x0einitialRequest\x12H\n" +
-	"\n" +
-	"input_data\x18\x02 \x01(\v2'.wabenet.dodo.plugin.v1alpha2.InputDataH\x00R\tinputDataB\x14\n" +
-	"\x12input_request_type\"+\n" +
-	"\x19InitialStreamInputRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"%\n" +
-	"\x13StreamOutputRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02idB\x9f\x02\n" +
+	"\x04data\x18\x02 \x01(\fR\x04data\"J\n" +
+	"\aChannel\x12\x17\n" +
+	"\x13CHANNEL_UNSPECIFIED\x10\x00\x12\x12\n" +
+	"\x0eCHANNEL_STDOUT\x10\x01\x12\x12\n" +
+	"\x0eCHANNEL_STDERR\x10\x02B\x9f\x02\n" +
 	" com.wabenet.dodo.plugin.v1alpha2B\vPluginProtoP\x01Z[github.com/wabenet/dodo-core/internal/gen-proto/wabenet/dodo/plugin/v1alpha2;pluginv1alpha2\xa2\x02\x03WDP\xaa\x02\x1cWabenet.Dodo.Plugin.V1alpha2\xca\x02\x1cWabenet\\Dodo\\Plugin\\V1alpha2\xe2\x02(Wabenet\\Dodo\\Plugin\\V1alpha2\\GPBMetadata\xea\x02\x1fWabenet::Dodo::Plugin::V1alpha2b\beditionsp\xe8\a"
 
 var file_wabenet_dodo_plugin_v1alpha2_plugin_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_wabenet_dodo_plugin_v1alpha2_plugin_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_wabenet_dodo_plugin_v1alpha2_plugin_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_wabenet_dodo_plugin_v1alpha2_plugin_proto_goTypes = []any{
-	(OutputData_Channel)(0),           // 0: wabenet.dodo.plugin.v1alpha2.OutputData.Channel
-	(*PluginID)(nil),                  // 1: wabenet.dodo.plugin.v1alpha2.PluginID
-	(*PluginMetadata)(nil),            // 2: wabenet.dodo.plugin.v1alpha2.PluginMetadata
-	(*InitPluginResponse)(nil),        // 3: wabenet.dodo.plugin.v1alpha2.InitPluginResponse
-	(*InputData)(nil),                 // 4: wabenet.dodo.plugin.v1alpha2.InputData
-	(*OutputData)(nil),                // 5: wabenet.dodo.plugin.v1alpha2.OutputData
-	(*StreamInputRequest)(nil),        // 6: wabenet.dodo.plugin.v1alpha2.StreamInputRequest
-	(*InitialStreamInputRequest)(nil), // 7: wabenet.dodo.plugin.v1alpha2.InitialStreamInputRequest
-	(*StreamOutputRequest)(nil),       // 8: wabenet.dodo.plugin.v1alpha2.StreamOutputRequest
-	nil,                               // 9: wabenet.dodo.plugin.v1alpha2.PluginMetadata.LabelsEntry
-	nil,                               // 10: wabenet.dodo.plugin.v1alpha2.InitPluginResponse.ConfigEntry
+	(OutputData_Channel)(0),    // 0: wabenet.dodo.plugin.v1alpha2.OutputData.Channel
+	(*PluginID)(nil),           // 1: wabenet.dodo.plugin.v1alpha2.PluginID
+	(*PluginMetadata)(nil),     // 2: wabenet.dodo.plugin.v1alpha2.PluginMetadata
+	(*PluginConfig)(nil),       // 3: wabenet.dodo.plugin.v1alpha2.PluginConfig
+	(*InitialStreamInput)(nil), // 4: wabenet.dodo.plugin.v1alpha2.InitialStreamInput
+	(*InputData)(nil),          // 5: wabenet.dodo.plugin.v1alpha2.InputData
+	(*OutputData)(nil),         // 6: wabenet.dodo.plugin.v1alpha2.OutputData
+	nil,                        // 7: wabenet.dodo.plugin.v1alpha2.PluginMetadata.LabelsEntry
+	nil,                        // 8: wabenet.dodo.plugin.v1alpha2.PluginConfig.ConfigEntry
 }
 var file_wabenet_dodo_plugin_v1alpha2_plugin_proto_depIdxs = []int32{
-	1,  // 0: wabenet.dodo.plugin.v1alpha2.PluginMetadata.id:type_name -> wabenet.dodo.plugin.v1alpha2.PluginID
-	1,  // 1: wabenet.dodo.plugin.v1alpha2.PluginMetadata.dependencies:type_name -> wabenet.dodo.plugin.v1alpha2.PluginID
-	9,  // 2: wabenet.dodo.plugin.v1alpha2.PluginMetadata.labels:type_name -> wabenet.dodo.plugin.v1alpha2.PluginMetadata.LabelsEntry
-	10, // 3: wabenet.dodo.plugin.v1alpha2.InitPluginResponse.config:type_name -> wabenet.dodo.plugin.v1alpha2.InitPluginResponse.ConfigEntry
-	0,  // 4: wabenet.dodo.plugin.v1alpha2.OutputData.channel:type_name -> wabenet.dodo.plugin.v1alpha2.OutputData.Channel
-	7,  // 5: wabenet.dodo.plugin.v1alpha2.StreamInputRequest.initial_request:type_name -> wabenet.dodo.plugin.v1alpha2.InitialStreamInputRequest
-	4,  // 6: wabenet.dodo.plugin.v1alpha2.StreamInputRequest.input_data:type_name -> wabenet.dodo.plugin.v1alpha2.InputData
-	7,  // [7:7] is the sub-list for method output_type
-	7,  // [7:7] is the sub-list for method input_type
-	7,  // [7:7] is the sub-list for extension type_name
-	7,  // [7:7] is the sub-list for extension extendee
-	0,  // [0:7] is the sub-list for field type_name
+	1, // 0: wabenet.dodo.plugin.v1alpha2.PluginMetadata.id:type_name -> wabenet.dodo.plugin.v1alpha2.PluginID
+	1, // 1: wabenet.dodo.plugin.v1alpha2.PluginMetadata.dependencies:type_name -> wabenet.dodo.plugin.v1alpha2.PluginID
+	7, // 2: wabenet.dodo.plugin.v1alpha2.PluginMetadata.labels:type_name -> wabenet.dodo.plugin.v1alpha2.PluginMetadata.LabelsEntry
+	8, // 3: wabenet.dodo.plugin.v1alpha2.PluginConfig.config:type_name -> wabenet.dodo.plugin.v1alpha2.PluginConfig.ConfigEntry
+	0, // 4: wabenet.dodo.plugin.v1alpha2.OutputData.channel:type_name -> wabenet.dodo.plugin.v1alpha2.OutputData.Channel
+	5, // [5:5] is the sub-list for method output_type
+	5, // [5:5] is the sub-list for method input_type
+	5, // [5:5] is the sub-list for extension type_name
+	5, // [5:5] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_wabenet_dodo_plugin_v1alpha2_plugin_proto_init() }
@@ -923,17 +661,13 @@ func file_wabenet_dodo_plugin_v1alpha2_plugin_proto_init() {
 	if File_wabenet_dodo_plugin_v1alpha2_plugin_proto != nil {
 		return
 	}
-	file_wabenet_dodo_plugin_v1alpha2_plugin_proto_msgTypes[5].OneofWrappers = []any{
-		(*streamInputRequest_InitialRequest)(nil),
-		(*streamInputRequest_InputData)(nil),
-	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_wabenet_dodo_plugin_v1alpha2_plugin_proto_rawDesc), len(file_wabenet_dodo_plugin_v1alpha2_plugin_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   10,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
