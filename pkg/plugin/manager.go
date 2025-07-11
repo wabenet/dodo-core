@@ -144,6 +144,10 @@ func (m Manager) findPlugins() {
 
 			id := plugin.Metadata().ID
 
+			if id.Type != pluginType.String() {
+				continue
+			}
+
 			if m.plugins[id.Type] == nil {
 				m.plugins[id.Type] = map[string]Plugin{}
 			}
@@ -194,16 +198,26 @@ func loadGRPCPlugin(path, pluginType string, grpcPlugin plugin.Plugin) (Plugin, 
 		return nil, fmt.Errorf("error dispensing plugin: %w", err)
 	}
 
-	if p, ok := raw.(Plugin); ok {
-		return p, nil
+	p, ok := raw.(Plugin)
+	if !ok {
+		client.Kill()
+
+		return nil, InvalidError{
+			PluginID: ID{Type: pluginType, Name: path}, // TODO: name?
+			Message:  "plugin does not implement Plugin interface",
+		}
 	}
 
-	client.Kill()
+	if p.Metadata().ID.Type != pluginType {
+		client.Kill()
 
-	return nil, InvalidError{
-		PluginID: ID{Type: pluginType, Name: path}, // TODO: name?
-		Message:  "does not implement Plugin interface",
+		return nil, InvalidError{
+			PluginID: p.Metadata().ID,
+			Message:  "plugin is of the wrong type",
+		}
 	}
+
+	return p, nil
 }
 
 func augmentLogger(logger log.Logger, fields map[string]string) log.Logger { //nolint:ireturn

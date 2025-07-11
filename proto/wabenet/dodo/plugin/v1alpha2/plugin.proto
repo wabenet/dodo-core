@@ -2,37 +2,71 @@ edition = "2023";
 
 package wabenet.dodo.plugin.v1alpha2;
 
-message PluginID {
-  string type = 1;
-  string name = 2;
+import "google/protobuf/empty.proto";
+
+service Plugin {
+  rpc GetPluginMetadata(google.protobuf.Empty) returns (GetPluginMetadataResponse);
+  rpc InitPlugin(google.protobuf.Empty) returns (InitPluginResponse);
+  rpc ResetPlugin(google.protobuf.Empty) returns (google.protobuf.Empty);
+}
+
+service OutputStreamingPlugin {
+  rpc StreamOutput(StreamOutputRequest) returns (stream StreamOutputResponse);
+}
+
+service InputStreamingPlugin {
+  rpc StreamInput(stream StreamInputRequest) returns (google.protobuf.Empty);
+}
+
+message GetPluginMetadataResponse {
+  PluginMetadata metadata = 1;
+}
+
+message InitPluginResponse {
+  PluginConfig config = 1;
 }
 
 message PluginMetadata {
-  PluginID id= 1;
+  PluginID id = 1;
   repeated PluginID dependencies = 2;
   map<string, string> labels = 3;
+}
+
+message PluginID {
+  string type = 1;
+  string name = 2;
 }
 
 message PluginConfig {
   map<string, string> config = 1;
 }
 
-message InitialStreamInput {
+message StreamOutputRequest {
   string id = 1;
 }
 
-message InputData {
-  bytes data = 1;
-}
-
-message OutputData {
-  enum Channel {
-    CHANNEL_UNSPECIFIED = 0;
-    CHANNEL_STDOUT = 1;
-    CHANNEL_STDERR = 2;
-  }
-
-  Channel channel = 1;
+message StreamOutputResponse {
+  OutputChannel channel = 1;
   bytes data = 2;
 }
 
+enum OutputChannel {
+  OUTPUT_CHANNEL_UNSPECIFIED = 0;
+  OUTPUT_CHANNEL_STDOUT = 1;
+  OUTPUT_CHANNEL_STDERR = 2;
+}
+
+message StreamInputRequest {
+  oneof input_request_type {
+    InitialStreamInputRequest initial_request = 1;
+    SubsequentStreamInputRequest input_data = 2;
+  }
+}
+
+message InitialStreamInputRequest {
+  string id = 1;
+}
+
+message SubsequentStreamInputRequest {
+  bytes data = 1;
+}

@@ -20,253 +20,139 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Plugin_GetPluginMetadata_FullMethodName = "/wabenet.dodo.configuration.v1alpha2.Plugin/GetPluginMetadata"
-	Plugin_InitPlugin_FullMethodName        = "/wabenet.dodo.configuration.v1alpha2.Plugin/InitPlugin"
-	Plugin_ResetPlugin_FullMethodName       = "/wabenet.dodo.configuration.v1alpha2.Plugin/ResetPlugin"
-	Plugin_ListBackdrops_FullMethodName     = "/wabenet.dodo.configuration.v1alpha2.Plugin/ListBackdrops"
-	Plugin_GetBackdrop_FullMethodName       = "/wabenet.dodo.configuration.v1alpha2.Plugin/GetBackdrop"
+	ConfigurationPlugin_ListBackdrops_FullMethodName = "/wabenet.dodo.configuration.v1alpha2.ConfigurationPlugin/ListBackdrops"
+	ConfigurationPlugin_GetBackdrop_FullMethodName   = "/wabenet.dodo.configuration.v1alpha2.ConfigurationPlugin/GetBackdrop"
 )
 
-// PluginClient is the client API for Plugin service.
+// ConfigurationPluginClient is the client API for ConfigurationPlugin service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type PluginClient interface {
-	GetPluginMetadata(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetPluginMetadataResponse, error)
-	InitPlugin(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*InitPluginResponse, error)
-	ResetPlugin(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+type ConfigurationPluginClient interface {
 	ListBackdrops(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListBackdropsResponse, error)
 	GetBackdrop(ctx context.Context, in *GetBackdropRequest, opts ...grpc.CallOption) (*GetBackdropResponse, error)
 }
 
-type pluginClient struct {
+type configurationPluginClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewPluginClient(cc grpc.ClientConnInterface) PluginClient {
-	return &pluginClient{cc}
+func NewConfigurationPluginClient(cc grpc.ClientConnInterface) ConfigurationPluginClient {
+	return &configurationPluginClient{cc}
 }
 
-func (c *pluginClient) GetPluginMetadata(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetPluginMetadataResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetPluginMetadataResponse)
-	err := c.cc.Invoke(ctx, Plugin_GetPluginMetadata_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *pluginClient) InitPlugin(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*InitPluginResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(InitPluginResponse)
-	err := c.cc.Invoke(ctx, Plugin_InitPlugin_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *pluginClient) ResetPlugin(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, Plugin_ResetPlugin_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *pluginClient) ListBackdrops(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListBackdropsResponse, error) {
+func (c *configurationPluginClient) ListBackdrops(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListBackdropsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListBackdropsResponse)
-	err := c.cc.Invoke(ctx, Plugin_ListBackdrops_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, ConfigurationPlugin_ListBackdrops_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *pluginClient) GetBackdrop(ctx context.Context, in *GetBackdropRequest, opts ...grpc.CallOption) (*GetBackdropResponse, error) {
+func (c *configurationPluginClient) GetBackdrop(ctx context.Context, in *GetBackdropRequest, opts ...grpc.CallOption) (*GetBackdropResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetBackdropResponse)
-	err := c.cc.Invoke(ctx, Plugin_GetBackdrop_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, ConfigurationPlugin_GetBackdrop_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// PluginServer is the server API for Plugin service.
-// All implementations must embed UnimplementedPluginServer
+// ConfigurationPluginServer is the server API for ConfigurationPlugin service.
+// All implementations must embed UnimplementedConfigurationPluginServer
 // for forward compatibility.
-type PluginServer interface {
-	GetPluginMetadata(context.Context, *emptypb.Empty) (*GetPluginMetadataResponse, error)
-	InitPlugin(context.Context, *emptypb.Empty) (*InitPluginResponse, error)
-	ResetPlugin(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+type ConfigurationPluginServer interface {
 	ListBackdrops(context.Context, *emptypb.Empty) (*ListBackdropsResponse, error)
 	GetBackdrop(context.Context, *GetBackdropRequest) (*GetBackdropResponse, error)
-	mustEmbedUnimplementedPluginServer()
+	mustEmbedUnimplementedConfigurationPluginServer()
 }
 
-// UnimplementedPluginServer must be embedded to have
+// UnimplementedConfigurationPluginServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedPluginServer struct{}
+type UnimplementedConfigurationPluginServer struct{}
 
-func (UnimplementedPluginServer) GetPluginMetadata(context.Context, *emptypb.Empty) (*GetPluginMetadataResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetPluginMetadata not implemented")
-}
-func (UnimplementedPluginServer) InitPlugin(context.Context, *emptypb.Empty) (*InitPluginResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method InitPlugin not implemented")
-}
-func (UnimplementedPluginServer) ResetPlugin(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ResetPlugin not implemented")
-}
-func (UnimplementedPluginServer) ListBackdrops(context.Context, *emptypb.Empty) (*ListBackdropsResponse, error) {
+func (UnimplementedConfigurationPluginServer) ListBackdrops(context.Context, *emptypb.Empty) (*ListBackdropsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListBackdrops not implemented")
 }
-func (UnimplementedPluginServer) GetBackdrop(context.Context, *GetBackdropRequest) (*GetBackdropResponse, error) {
+func (UnimplementedConfigurationPluginServer) GetBackdrop(context.Context, *GetBackdropRequest) (*GetBackdropResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBackdrop not implemented")
 }
-func (UnimplementedPluginServer) mustEmbedUnimplementedPluginServer() {}
-func (UnimplementedPluginServer) testEmbeddedByValue()                {}
+func (UnimplementedConfigurationPluginServer) mustEmbedUnimplementedConfigurationPluginServer() {}
+func (UnimplementedConfigurationPluginServer) testEmbeddedByValue()                             {}
 
-// UnsafePluginServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to PluginServer will
+// UnsafeConfigurationPluginServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ConfigurationPluginServer will
 // result in compilation errors.
-type UnsafePluginServer interface {
-	mustEmbedUnimplementedPluginServer()
+type UnsafeConfigurationPluginServer interface {
+	mustEmbedUnimplementedConfigurationPluginServer()
 }
 
-func RegisterPluginServer(s grpc.ServiceRegistrar, srv PluginServer) {
-	// If the following call pancis, it indicates UnimplementedPluginServer was
+func RegisterConfigurationPluginServer(s grpc.ServiceRegistrar, srv ConfigurationPluginServer) {
+	// If the following call pancis, it indicates UnimplementedConfigurationPluginServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&Plugin_ServiceDesc, srv)
+	s.RegisterService(&ConfigurationPlugin_ServiceDesc, srv)
 }
 
-func _Plugin_GetPluginMetadata_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ConfigurationPlugin_ListBackdrops_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PluginServer).GetPluginMetadata(ctx, in)
+		return srv.(ConfigurationPluginServer).ListBackdrops(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Plugin_GetPluginMetadata_FullMethodName,
+		FullMethod: ConfigurationPlugin_ListBackdrops_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PluginServer).GetPluginMetadata(ctx, req.(*emptypb.Empty))
+		return srv.(ConfigurationPluginServer).ListBackdrops(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Plugin_InitPlugin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PluginServer).InitPlugin(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Plugin_InitPlugin_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PluginServer).InitPlugin(ctx, req.(*emptypb.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Plugin_ResetPlugin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PluginServer).ResetPlugin(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Plugin_ResetPlugin_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PluginServer).ResetPlugin(ctx, req.(*emptypb.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Plugin_ListBackdrops_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PluginServer).ListBackdrops(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Plugin_ListBackdrops_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PluginServer).ListBackdrops(ctx, req.(*emptypb.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Plugin_GetBackdrop_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ConfigurationPlugin_GetBackdrop_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetBackdropRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PluginServer).GetBackdrop(ctx, in)
+		return srv.(ConfigurationPluginServer).GetBackdrop(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Plugin_GetBackdrop_FullMethodName,
+		FullMethod: ConfigurationPlugin_GetBackdrop_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PluginServer).GetBackdrop(ctx, req.(*GetBackdropRequest))
+		return srv.(ConfigurationPluginServer).GetBackdrop(ctx, req.(*GetBackdropRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// Plugin_ServiceDesc is the grpc.ServiceDesc for Plugin service.
+// ConfigurationPlugin_ServiceDesc is the grpc.ServiceDesc for ConfigurationPlugin service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var Plugin_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "wabenet.dodo.configuration.v1alpha2.Plugin",
-	HandlerType: (*PluginServer)(nil),
+var ConfigurationPlugin_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "wabenet.dodo.configuration.v1alpha2.ConfigurationPlugin",
+	HandlerType: (*ConfigurationPluginServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetPluginMetadata",
-			Handler:    _Plugin_GetPluginMetadata_Handler,
-		},
-		{
-			MethodName: "InitPlugin",
-			Handler:    _Plugin_InitPlugin_Handler,
-		},
-		{
-			MethodName: "ResetPlugin",
-			Handler:    _Plugin_ResetPlugin_Handler,
-		},
-		{
 			MethodName: "ListBackdrops",
-			Handler:    _Plugin_ListBackdrops_Handler,
+			Handler:    _ConfigurationPlugin_ListBackdrops_Handler,
 		},
 		{
 			MethodName: "GetBackdrop",
-			Handler:    _Plugin_GetBackdrop_Handler,
+			Handler:    _ConfigurationPlugin_GetBackdrop_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

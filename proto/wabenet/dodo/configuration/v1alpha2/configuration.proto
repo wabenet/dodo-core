@@ -3,25 +3,12 @@ edition = "2023";
 package wabenet.dodo.configuration.v1alpha2;
 
 import "google/protobuf/empty.proto";
-import "wabenet/dodo/plugin/v1alpha2/plugin.proto";
 import "wabenet/dodo/build/v1alpha2/build.proto";
 import "wabenet/dodo/runtime/v1alpha2/runtime.proto";
 
-service Plugin {
-  rpc GetPluginMetadata(google.protobuf.Empty) returns (GetPluginMetadataResponse);
-  rpc InitPlugin(google.protobuf.Empty) returns (InitPluginResponse);
-  rpc ResetPlugin(google.protobuf.Empty) returns (google.protobuf.Empty);
-
+service ConfigurationPlugin {
   rpc ListBackdrops(google.protobuf.Empty) returns (ListBackdropsResponse);
   rpc GetBackdrop(GetBackdropRequest) returns (GetBackdropResponse);
-}
-
-message GetPluginMetadataResponse {
-  wabenet.dodo.plugin.v1alpha2.PluginMetadata metadata = 1;
-}
-
-message InitPluginResponse {
-  wabenet.dodo.plugin.v1alpha2.PluginConfig config = 1;
 }
 
 message ListBackdropsResponse {
@@ -52,4 +39,3 @@ message File {
   string file_path = 1;
   string contents = 2;
 }
-

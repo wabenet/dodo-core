@@ -2,33 +2,8 @@ edition = "2023";
 
 package wabenet.dodo.build.v1alpha2;
 
-import "google/protobuf/empty.proto";
-import "wabenet/dodo/plugin/v1alpha2/plugin.proto";
-
-service Plugin {
-  rpc GetPluginMetadata(google.protobuf.Empty) returns (GetPluginMetadataResponse);
-  rpc InitPlugin(google.protobuf.Empty) returns (InitPluginResponse);
-  rpc ResetPlugin(google.protobuf.Empty) returns (google.protobuf.Empty);
-
-  rpc StreamOutput(StreamOutputRequest) returns (stream StreamOutputResponse);
-
+service BuilderPlugin {
   rpc CreateImage(CreateImageRequest) returns (CreateImageResponse);
-}
-
-message GetPluginMetadataResponse {
-  wabenet.dodo.plugin.v1alpha2.PluginMetadata metadata = 1;
-}
-
-message InitPluginResponse {
-  wabenet.dodo.plugin.v1alpha2.PluginConfig config = 1;
-}
-
-message StreamOutputRequest {
-  string id = 1;
-}
-
-message StreamOutputResponse {
-  wabenet.dodo.plugin.v1alpha2.OutputData output_data = 1;
 }
 
 message CreateImageRequest {

@@ -18,7 +18,9 @@ import (
 var ErrUnexpectedMapType = errors.New("unexpected map type for stdio streaming server")
 
 type Server struct {
-	api.UnsafePluginServer
+	pluginapi.UnsafePluginServer
+	pluginapi.UnsafeOutputStreamingPluginServer
+	api.UnsafeBuilderPluginServer
 
 	impl   ImageBuilder
 	stdout sync.Map
@@ -43,15 +45,15 @@ func (s *Server) stdoutServer(streamID string) (*grpcutil.StreamOutputServer, er
 	return result, nil
 }
 
-func (s *Server) GetPluginMetadata(_ context.Context, _ *empty.Empty) (*api.GetPluginMetadataResponse, error) {
-	resp := &api.GetPluginMetadataResponse{}
+func (s *Server) GetPluginMetadata(_ context.Context, _ *empty.Empty) (*pluginapi.GetPluginMetadataResponse, error) {
+	resp := &pluginapi.GetPluginMetadataResponse{}
 
 	resp.SetMetadata(s.impl.Metadata().ToProto())
 
 	return resp, nil
 }
 
-func (s *Server) InitPlugin(_ context.Context, _ *empty.Empty) (*api.InitPluginResponse, error) {
+func (s *Server) InitPlugin(_ context.Context, _ *empty.Empty) (*pluginapi.InitPluginResponse, error) {
 	s.reset()
 
 	config, err := s.impl.Init()
@@ -60,7 +62,7 @@ func (s *Server) InitPlugin(_ context.Context, _ *empty.Empty) (*api.InitPluginR
 	}
 
 	pluginConfig := &pluginapi.PluginConfig{}
-	resp := &api.InitPluginResponse{}
+	resp := &pluginapi.InitPluginResponse{}
 
 	pluginConfig.SetConfig(config)
 	resp.SetConfig(pluginConfig)
@@ -75,7 +77,7 @@ func (s *Server) ResetPlugin(_ context.Context, _ *empty.Empty) (*empty.Empty, e
 	return &empty.Empty{}, nil
 }
 
-func (s *Server) StreamOutput(request *api.StreamOutputRequest, srv api.Plugin_StreamOutputServer) error {
+func (s *Server) StreamOutput(request *pluginapi.StreamOutputRequest, srv pluginapi.OutputStreamingPlugin_StreamOutputServer) error {
 	id := request.GetId()
 
 	outputServer, err := s.stdoutServer(id)

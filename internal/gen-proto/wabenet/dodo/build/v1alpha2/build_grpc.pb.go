@@ -11,7 +11,6 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
-	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -20,259 +19,103 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Plugin_GetPluginMetadata_FullMethodName = "/wabenet.dodo.build.v1alpha2.Plugin/GetPluginMetadata"
-	Plugin_InitPlugin_FullMethodName        = "/wabenet.dodo.build.v1alpha2.Plugin/InitPlugin"
-	Plugin_ResetPlugin_FullMethodName       = "/wabenet.dodo.build.v1alpha2.Plugin/ResetPlugin"
-	Plugin_StreamOutput_FullMethodName      = "/wabenet.dodo.build.v1alpha2.Plugin/StreamOutput"
-	Plugin_CreateImage_FullMethodName       = "/wabenet.dodo.build.v1alpha2.Plugin/CreateImage"
+	BuilderPlugin_CreateImage_FullMethodName = "/wabenet.dodo.build.v1alpha2.BuilderPlugin/CreateImage"
 )
 
-// PluginClient is the client API for Plugin service.
+// BuilderPluginClient is the client API for BuilderPlugin service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type PluginClient interface {
-	GetPluginMetadata(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetPluginMetadataResponse, error)
-	InitPlugin(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*InitPluginResponse, error)
-	ResetPlugin(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	StreamOutput(ctx context.Context, in *StreamOutputRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[StreamOutputResponse], error)
+type BuilderPluginClient interface {
 	CreateImage(ctx context.Context, in *CreateImageRequest, opts ...grpc.CallOption) (*CreateImageResponse, error)
 }
 
-type pluginClient struct {
+type builderPluginClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewPluginClient(cc grpc.ClientConnInterface) PluginClient {
-	return &pluginClient{cc}
+func NewBuilderPluginClient(cc grpc.ClientConnInterface) BuilderPluginClient {
+	return &builderPluginClient{cc}
 }
 
-func (c *pluginClient) GetPluginMetadata(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetPluginMetadataResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetPluginMetadataResponse)
-	err := c.cc.Invoke(ctx, Plugin_GetPluginMetadata_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *pluginClient) InitPlugin(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*InitPluginResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(InitPluginResponse)
-	err := c.cc.Invoke(ctx, Plugin_InitPlugin_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *pluginClient) ResetPlugin(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, Plugin_ResetPlugin_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *pluginClient) StreamOutput(ctx context.Context, in *StreamOutputRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[StreamOutputResponse], error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	stream, err := c.cc.NewStream(ctx, &Plugin_ServiceDesc.Streams[0], Plugin_StreamOutput_FullMethodName, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &grpc.GenericClientStream[StreamOutputRequest, StreamOutputResponse]{ClientStream: stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	return x, nil
-}
-
-// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type Plugin_StreamOutputClient = grpc.ServerStreamingClient[StreamOutputResponse]
-
-func (c *pluginClient) CreateImage(ctx context.Context, in *CreateImageRequest, opts ...grpc.CallOption) (*CreateImageResponse, error) {
+func (c *builderPluginClient) CreateImage(ctx context.Context, in *CreateImageRequest, opts ...grpc.CallOption) (*CreateImageResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CreateImageResponse)
-	err := c.cc.Invoke(ctx, Plugin_CreateImage_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, BuilderPlugin_CreateImage_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// PluginServer is the server API for Plugin service.
-// All implementations must embed UnimplementedPluginServer
+// BuilderPluginServer is the server API for BuilderPlugin service.
+// All implementations must embed UnimplementedBuilderPluginServer
 // for forward compatibility.
-type PluginServer interface {
-	GetPluginMetadata(context.Context, *emptypb.Empty) (*GetPluginMetadataResponse, error)
-	InitPlugin(context.Context, *emptypb.Empty) (*InitPluginResponse, error)
-	ResetPlugin(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
-	StreamOutput(*StreamOutputRequest, grpc.ServerStreamingServer[StreamOutputResponse]) error
+type BuilderPluginServer interface {
 	CreateImage(context.Context, *CreateImageRequest) (*CreateImageResponse, error)
-	mustEmbedUnimplementedPluginServer()
+	mustEmbedUnimplementedBuilderPluginServer()
 }
 
-// UnimplementedPluginServer must be embedded to have
+// UnimplementedBuilderPluginServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedPluginServer struct{}
+type UnimplementedBuilderPluginServer struct{}
 
-func (UnimplementedPluginServer) GetPluginMetadata(context.Context, *emptypb.Empty) (*GetPluginMetadataResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetPluginMetadata not implemented")
-}
-func (UnimplementedPluginServer) InitPlugin(context.Context, *emptypb.Empty) (*InitPluginResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method InitPlugin not implemented")
-}
-func (UnimplementedPluginServer) ResetPlugin(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ResetPlugin not implemented")
-}
-func (UnimplementedPluginServer) StreamOutput(*StreamOutputRequest, grpc.ServerStreamingServer[StreamOutputResponse]) error {
-	return status.Errorf(codes.Unimplemented, "method StreamOutput not implemented")
-}
-func (UnimplementedPluginServer) CreateImage(context.Context, *CreateImageRequest) (*CreateImageResponse, error) {
+func (UnimplementedBuilderPluginServer) CreateImage(context.Context, *CreateImageRequest) (*CreateImageResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateImage not implemented")
 }
-func (UnimplementedPluginServer) mustEmbedUnimplementedPluginServer() {}
-func (UnimplementedPluginServer) testEmbeddedByValue()                {}
+func (UnimplementedBuilderPluginServer) mustEmbedUnimplementedBuilderPluginServer() {}
+func (UnimplementedBuilderPluginServer) testEmbeddedByValue()                       {}
 
-// UnsafePluginServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to PluginServer will
+// UnsafeBuilderPluginServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to BuilderPluginServer will
 // result in compilation errors.
-type UnsafePluginServer interface {
-	mustEmbedUnimplementedPluginServer()
+type UnsafeBuilderPluginServer interface {
+	mustEmbedUnimplementedBuilderPluginServer()
 }
 
-func RegisterPluginServer(s grpc.ServiceRegistrar, srv PluginServer) {
-	// If the following call pancis, it indicates UnimplementedPluginServer was
+func RegisterBuilderPluginServer(s grpc.ServiceRegistrar, srv BuilderPluginServer) {
+	// If the following call pancis, it indicates UnimplementedBuilderPluginServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&Plugin_ServiceDesc, srv)
+	s.RegisterService(&BuilderPlugin_ServiceDesc, srv)
 }
 
-func _Plugin_GetPluginMetadata_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PluginServer).GetPluginMetadata(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Plugin_GetPluginMetadata_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PluginServer).GetPluginMetadata(ctx, req.(*emptypb.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Plugin_InitPlugin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PluginServer).InitPlugin(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Plugin_InitPlugin_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PluginServer).InitPlugin(ctx, req.(*emptypb.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Plugin_ResetPlugin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PluginServer).ResetPlugin(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Plugin_ResetPlugin_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PluginServer).ResetPlugin(ctx, req.(*emptypb.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Plugin_StreamOutput_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(StreamOutputRequest)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
-	}
-	return srv.(PluginServer).StreamOutput(m, &grpc.GenericServerStream[StreamOutputRequest, StreamOutputResponse]{ServerStream: stream})
-}
-
-// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type Plugin_StreamOutputServer = grpc.ServerStreamingServer[StreamOutputResponse]
-
-func _Plugin_CreateImage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _BuilderPlugin_CreateImage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateImageRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PluginServer).CreateImage(ctx, in)
+		return srv.(BuilderPluginServer).CreateImage(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Plugin_CreateImage_FullMethodName,
+		FullMethod: BuilderPlugin_CreateImage_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PluginServer).CreateImage(ctx, req.(*CreateImageRequest))
+		return srv.(BuilderPluginServer).CreateImage(ctx, req.(*CreateImageRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// Plugin_ServiceDesc is the grpc.ServiceDesc for Plugin service.
+// BuilderPlugin_ServiceDesc is the grpc.ServiceDesc for BuilderPlugin service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var Plugin_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "wabenet.dodo.build.v1alpha2.Plugin",
-	HandlerType: (*PluginServer)(nil),
+var BuilderPlugin_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "wabenet.dodo.build.v1alpha2.BuilderPlugin",
+	HandlerType: (*BuilderPluginServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetPluginMetadata",
-			Handler:    _Plugin_GetPluginMetadata_Handler,
-		},
-		{
-			MethodName: "InitPlugin",
-			Handler:    _Plugin_InitPlugin_Handler,
-		},
-		{
-			MethodName: "ResetPlugin",
-			Handler:    _Plugin_ResetPlugin_Handler,
-		},
-		{
 			MethodName: "CreateImage",
-			Handler:    _Plugin_CreateImage_Handler,
+			Handler:    _BuilderPlugin_CreateImage_Handler,
 		},
 	},
-	Streams: []grpc.StreamDesc{
-		{
-			StreamName:    "StreamOutput",
-			Handler:       _Plugin_StreamOutput_Handler,
-			ServerStreams: true,
-		},
-	},
+	Streams:  []grpc.StreamDesc{},
 	Metadata: "wabenet/dodo/build/v1alpha2/build.proto",
 }

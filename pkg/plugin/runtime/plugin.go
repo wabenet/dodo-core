@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/hashicorp/go-plugin"
+	pluginapi "github.com/wabenet/dodo-core/internal/gen-proto/wabenet/dodo/plugin/v1alpha2"
 	api "github.com/wabenet/dodo-core/internal/gen-proto/wabenet/dodo/runtime/v1alpha2"
 	dodo "github.com/wabenet/dodo-core/pkg/plugin"
 	"google.golang.org/grpc"
@@ -39,11 +40,16 @@ type grpcPlugin struct {
 }
 
 func (p *grpcPlugin) GRPCClient(_ context.Context, _ *plugin.GRPCBroker, conn *grpc.ClientConn) (interface{}, error) {
-	return &Client{runtimeClient: api.NewPluginClient(conn)}, nil
+	return NewGRPCClient(conn), nil
 }
 
 func (p *grpcPlugin) GRPCServer(_ *plugin.GRPCBroker, s *grpc.Server) error {
-	api.RegisterPluginServer(s, NewGRPCServer(p.Impl))
+	impl := NewGRPCServer(p.Impl)
+
+	pluginapi.RegisterPluginServer(s, impl)
+	pluginapi.RegisterOutputStreamingPluginServer(s, impl)
+	pluginapi.RegisterInputStreamingPluginServer(s, impl)
+	api.RegisterRuntimePluginServer(s, NewGRPCServer(p.Impl))
 
 	return nil
 }

@@ -20,25 +20,31 @@ import (
 var _ ContainerRuntime = &Client{}
 
 type Client struct {
-	runtimeClient api.PluginClient
-	stdin         *grpcutil.StreamInputClient
-	stdout        *grpcutil.StreamOutputClient[*api.StreamOutputResponse]
+	pluginClient       pluginapi.PluginClient
+	streamInputClient  pluginapi.InputStreamingPluginClient
+	streamOutputClient pluginapi.OutputStreamingPluginClient
+	runtimeClient      api.RuntimePluginClient
+	stdin              *grpcutil.StreamInputClient
+	stdout             *grpcutil.StreamOutputClient
 }
 
 func NewGRPCClient(conn grpc.ClientConnInterface) *Client {
 	return &Client{
-		runtimeClient: api.NewPluginClient(conn),
-		stdin:         grpcutil.NewStreamInputClient(),
-		stdout:        grpcutil.NewStreamOutputClient[*api.StreamOutputResponse](),
+		pluginClient:       pluginapi.NewPluginClient(conn),
+		streamInputClient:  pluginapi.NewInputStreamingPluginClient(conn),
+		streamOutputClient: pluginapi.NewOutputStreamingPluginClient(conn),
+		runtimeClient:      api.NewRuntimePluginClient(conn),
+		stdin:              grpcutil.NewStreamInputClient(),
+		stdout:             grpcutil.NewStreamOutputClient(),
 	}
 }
 
 type streamInputClient struct {
-	client api.Plugin_StreamInputClient
+	client pluginapi.InputStreamingPlugin_StreamInputClient
 }
 
-func (s *streamInputClient) Send(data *pluginapi.InputData) error {
-	req := &api.StreamInputRequest{}
+func (s *streamInputClient) Send(data *pluginapi.SubsequentStreamInputRequest) error {
+	req := &pluginapi.StreamInputRequest{}
 
 	req.SetInputData(data)
 
@@ -63,7 +69,7 @@ func (c *Client) Type() plugin.Type { //nolint:ireturn
 }
 
 func (c *Client) Metadata() plugin.Metadata {
-	resp, err := c.runtimeClient.GetPluginMetadata(context.Background(), &empty.Empty{})
+	resp, err := c.pluginClient.GetPluginMetadata(context.Background(), &empty.Empty{})
 	if err != nil {
 		return plugin.NewFailedPluginInfo(Type, err)
 	}
@@ -72,7 +78,7 @@ func (c *Client) Metadata() plugin.Metadata {
 }
 
 func (c *Client) Init() (plugin.Config, error) {
-	resp, err := c.runtimeClient.InitPlugin(context.Background(), &empty.Empty{})
+	resp, err := c.pluginClient.InitPlugin(context.Background(), &empty.Empty{})
 	if err != nil {
 		return nil, fmt.Errorf("could not initialize plugin: %w", err)
 	}
@@ -81,7 +87,7 @@ func (c *Client) Init() (plugin.Config, error) {
 }
 
 func (c *Client) Cleanup() {
-	_, err := c.runtimeClient.ResetPlugin(context.Background(), &empty.Empty{})
+	_, err := c.pluginClient.ResetPlugin(context.Background(), &empty.Empty{})
 	if err != nil {
 		log.L().Error("plugin reset error", "error", err)
 	}
@@ -201,13 +207,13 @@ func (c *Client) StreamContainer(id string, stream *plugin.StreamConfig) (*Resul
 }
 
 func (c *Client) copyInputClientToStdin(containerID string, stdin io.Reader) error {
-	inputClient, err := c.runtimeClient.StreamInput(context.Background())
+	inputClient, err := c.streamInputClient.StreamInput(context.Background())
 	if err != nil {
 		return fmt.Errorf("could not stream runtime input: %w", err)
 	}
 
-	req := &api.StreamInputRequest{}
-	initial := &pluginapi.InitialStreamInput{}
+	req := &pluginapi.StreamInputRequest{}
+	initial := &pluginapi.InitialStreamInputRequest{}
 
 	initial.SetId(containerID)
 	req.SetInitialRequest(initial)
@@ -224,11 +230,11 @@ func (c *Client) copyInputClientToStdin(containerID string, stdin io.Reader) err
 }
 
 func (c *Client) copyOutputClientToStdout(containerID string, stdout, stderr io.Writer) error {
-	req := &api.StreamOutputRequest{}
+	req := &pluginapi.StreamOutputRequest{}
 
 	req.SetId(containerID)
 
-	outputClient, err := c.runtimeClient.StreamOutput(context.Background(), req)
+	outputClient, err := c.streamOutputClient.StreamOutput(context.Background(), req)
 	if err != nil {
 		return fmt.Errorf("could not stream runtime output: %w", err)
 	}

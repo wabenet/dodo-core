@@ -10,7 +10,8 @@ import (
 )
 
 type Server struct {
-	api.UnsafePluginServer
+	pluginapi.UnsafePluginServer
+	api.UnsafeConfigurationPluginServer
 
 	impl Configuration
 }
@@ -19,22 +20,22 @@ func NewGRPCServer(impl Configuration) *Server {
 	return &Server{impl: impl}
 }
 
-func (s *Server) GetPluginMetadata(_ context.Context, _ *empty.Empty) (*api.GetPluginMetadataResponse, error) {
-	resp := &api.GetPluginMetadataResponse{}
+func (s *Server) GetPluginMetadata(_ context.Context, _ *empty.Empty) (*pluginapi.GetPluginMetadataResponse, error) {
+	resp := &pluginapi.GetPluginMetadataResponse{}
 
 	resp.SetMetadata(s.impl.Metadata().ToProto())
 
 	return resp, nil
 }
 
-func (s *Server) InitPlugin(_ context.Context, _ *empty.Empty) (*api.InitPluginResponse, error) {
+func (s *Server) InitPlugin(_ context.Context, _ *empty.Empty) (*pluginapi.InitPluginResponse, error) {
 	config, err := s.impl.Init()
 	if err != nil {
 		return nil, fmt.Errorf("could not initialize plugin: %w", err)
 	}
 
 	pluginConfig := &pluginapi.PluginConfig{}
-	resp := &api.InitPluginResponse{}
+	resp := &pluginapi.InitPluginResponse{}
 
 	pluginConfig.SetConfig(config)
 	resp.SetConfig(pluginConfig)

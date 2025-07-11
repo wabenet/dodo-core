@@ -10,26 +10,26 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-type StreamOutputServer[R streamOutputResponse] struct {
+type StreamOutputServer struct {
 	stdoutCh   chan []byte
 	stderrCh   chan []byte
 	outputDone chan error
 }
 
-type grpcOutputServer[R streamOutputResponse] interface {
-	Send(resp R) error
+type grpcOutputServer interface {
+	Send(data *api.StreamOutputResponse) error
 	Context() context.Context
 }
 
-func NewStreamOutputServer[R streamOutputResponse]() *StreamOutputServer[R] {
-	return &StreamOutputServer[R]{
+func NewStreamOutputServer() *StreamOutputServer {
+	return &StreamOutputServer{
 		stdoutCh:   make(chan []byte),
 		stderrCh:   make(chan []byte),
 		outputDone: make(chan error, 1),
 	}
 }
 
-func (s *StreamOutputServer[R]) ReadFrom(stdout, stderr io.Reader) error {
+func (s *StreamOutputServer) ReadFrom(stdout, stderr io.Reader) error {
 	eg, _ := errgroup.WithContext(context.Background())
 
 	eg.Go(func() error {
@@ -51,8 +51,8 @@ func (s *StreamOutputServer[R]) ReadFrom(stdout, stderr io.Reader) error {
 	return nil
 }
 
-func (s *StreamOutputServer[R]) SendTo(srv grpcOutputServer[R]) error {
-	var data api.OutputData
+func (s *StreamOutputServer) SendTo(srv grpcOutputServer) error {
+	var data api.StreamOutputResponse
 
 	defer func() {
 		s.outputDone <- nil
@@ -72,7 +72,7 @@ func (s *StreamOutputServer[R]) SendTo(srv grpcOutputServer[R]) error {
 			}
 
 			data.SetData(d)
-			data.SetChannel(api.OutputData_CHANNEL_STDOUT)
+			data.SetChannel(api.OutputChannel_OUTPUT_CHANNEL_STDOUT)
 
 		case d, ok := <-s.stderrCh:
 			if !ok {
@@ -82,7 +82,7 @@ func (s *StreamOutputServer[R]) SendTo(srv grpcOutputServer[R]) error {
 			}
 
 			data.SetData(d)
-			data.SetChannel(api.OutputData_CHANNEL_STDERR)
+			data.SetChannel(api.OutputChannel_OUTPUT_CHANNEL_STDERR)
 
 		case <-srv.Context().Done():
 			return nil
@@ -92,11 +92,7 @@ func (s *StreamOutputServer[R]) SendTo(srv grpcOutputServer[R]) error {
 			continue
 		}
 
-		var resp R
-
-		resp.SetOutputData(&data)
-
-		if err := srv.Send(resp); err != nil {
+		if err := srv.Send(&data); err != nil {
 			return fmt.Errorf("error sending build output to client: %w", err)
 		}
 	}

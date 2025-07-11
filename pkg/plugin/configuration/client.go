@@ -7,6 +7,7 @@ import (
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/hashicorp/go-hclog"
 	api "github.com/wabenet/dodo-core/internal/gen-proto/wabenet/dodo/configuration/v1alpha2"
+	pluginapi "github.com/wabenet/dodo-core/internal/gen-proto/wabenet/dodo/plugin/v1alpha2"
 	"github.com/wabenet/dodo-core/pkg/plugin"
 	"google.golang.org/grpc"
 )
@@ -14,11 +15,15 @@ import (
 var _ Configuration = &Client{}
 
 type Client struct {
-	configClient api.PluginClient
+	pluginClient pluginapi.PluginClient
+	configClient api.ConfigurationPluginClient
 }
 
 func NewGRPCClient(conn grpc.ClientConnInterface) Configuration {
-	return &Client{configClient: api.NewPluginClient(conn)}
+	return &Client{
+		pluginClient: pluginapi.NewPluginClient(conn),
+		configClient: api.NewConfigurationPluginClient(conn),
+	}
 }
 
 func (c *Client) Type() plugin.Type { //nolint:ireturn
@@ -26,7 +31,7 @@ func (c *Client) Type() plugin.Type { //nolint:ireturn
 }
 
 func (c *Client) Metadata() plugin.Metadata {
-	resp, err := c.configClient.GetPluginMetadata(context.Background(), &empty.Empty{})
+	resp, err := c.pluginClient.GetPluginMetadata(context.Background(), &empty.Empty{})
 	if err != nil {
 		return plugin.NewMetadata(Type, plugin.FailedPlugin).WithLabels(plugin.Labels{"error": err.Error()})
 	}
@@ -35,7 +40,7 @@ func (c *Client) Metadata() plugin.Metadata {
 }
 
 func (c *Client) Init() (plugin.Config, error) {
-	resp, err := c.configClient.InitPlugin(context.Background(), &empty.Empty{})
+	resp, err := c.pluginClient.InitPlugin(context.Background(), &empty.Empty{})
 	if err != nil {
 		return nil, fmt.Errorf("could not initialize plugin: %w", err)
 	}
@@ -44,7 +49,7 @@ func (c *Client) Init() (plugin.Config, error) {
 }
 
 func (c *Client) Cleanup() {
-	_, err := c.configClient.ResetPlugin(context.Background(), &empty.Empty{})
+	_, err := c.pluginClient.ResetPlugin(context.Background(), &empty.Empty{})
 	if err != nil {
 		log.L().Error("plugin reset error", "error", err)
 	}

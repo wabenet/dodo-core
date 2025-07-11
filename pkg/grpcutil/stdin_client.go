@@ -14,7 +14,7 @@ import (
 type StreamInputClient struct{}
 
 type grpcInputClient interface {
-	Send(data *api.InputData) error
+	Send(data *api.SubsequentStreamInputRequest) error
 	CloseAndRecv() (*empty.Empty, error)
 }
 
@@ -23,7 +23,7 @@ func NewStreamInputClient() *StreamInputClient {
 }
 
 func (*StreamInputClient) StreamInput(cl grpcInputClient, stdin io.Reader) error {
-	data := api.InputData{}
+	data := api.SubsequentStreamInputRequest{}
 
 	for {
 		var b [1024]byte

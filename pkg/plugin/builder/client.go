@@ -10,6 +10,7 @@ import (
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/hashicorp/go-hclog"
 	api "github.com/wabenet/dodo-core/internal/gen-proto/wabenet/dodo/build/v1alpha2"
+	pluginapi "github.com/wabenet/dodo-core/internal/gen-proto/wabenet/dodo/plugin/v1alpha2"
 	"github.com/wabenet/dodo-core/pkg/grpcutil"
 	"github.com/wabenet/dodo-core/pkg/plugin"
 	"golang.org/x/sync/errgroup"
@@ -21,14 +22,18 @@ const lenStreamID = 32
 var _ ImageBuilder = &Client{}
 
 type Client struct {
-	builderClient api.PluginClient
-	stdout        *grpcutil.StreamOutputClient[*api.StreamOutputResponse]
+	pluginClient       pluginapi.PluginClient
+	streamOutputClient pluginapi.OutputStreamingPluginClient
+	builderClient      api.BuilderPluginClient
+	stdout             *grpcutil.StreamOutputClient
 }
 
 func NewGRPCClient(conn grpc.ClientConnInterface) *Client {
 	return &Client{
-		builderClient: api.NewPluginClient(conn),
-		stdout:        grpcutil.NewStreamOutputClient[*api.StreamOutputResponse](),
+		pluginClient:       pluginapi.NewPluginClient(conn),
+		streamOutputClient: pluginapi.NewOutputStreamingPluginClient(conn),
+		builderClient:      api.NewBuilderPluginClient(conn),
+		stdout:             grpcutil.NewStreamOutputClient(),
 	}
 }
 
@@ -37,7 +42,7 @@ func (c *Client) Type() plugin.Type { //nolint:ireturn
 }
 
 func (c *Client) Metadata() plugin.Metadata {
-	resp, err := c.builderClient.GetPluginMetadata(context.Background(), &empty.Empty{})
+	resp, err := c.pluginClient.GetPluginMetadata(context.Background(), &empty.Empty{})
 	if err != nil {
 		return plugin.NewFailedPluginInfo(Type, err)
 	}
@@ -46,7 +51,7 @@ func (c *Client) Metadata() plugin.Metadata {
 }
 
 func (c *Client) Init() (plugin.Config, error) {
-	resp, err := c.builderClient.InitPlugin(context.Background(), &empty.Empty{})
+	resp, err := c.pluginClient.InitPlugin(context.Background(), &empty.Empty{})
 	if err != nil {
 		return nil, fmt.Errorf("could not initialize plugin: %w", err)
 	}
@@ -55,7 +60,7 @@ func (c *Client) Init() (plugin.Config, error) {
 }
 
 func (c *Client) Cleanup() {
-	_, err := c.builderClient.ResetPlugin(context.Background(), &empty.Empty{})
+	_, err := c.pluginClient.ResetPlugin(context.Background(), &empty.Empty{})
 	if err != nil {
 		log.L().Error("plugin reset error", "error", err)
 	}
@@ -112,11 +117,11 @@ func (c *Client) CreateImage(config BuildConfig, stream *plugin.StreamConfig) (s
 }
 
 func (c *Client) copyOutputClientToStdout(streamID string, stdout, stderr io.Writer) error {
-	req := &api.StreamOutputRequest{}
+	req := &pluginapi.StreamOutputRequest{}
 
 	req.SetId(streamID)
 
-	outputClient, err := c.builderClient.StreamOutput(context.Background(), req)
+	outputClient, err := c.streamOutputClient.StreamOutput(context.Background(), req)
 	if err != nil {
 		return fmt.Errorf("could not stream runtime output: %w", err)
 	}

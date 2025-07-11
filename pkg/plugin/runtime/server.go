@@ -18,7 +18,10 @@ import (
 var ErrUnexpectedMapType = errors.New("unexpected map type for stdio streaming server")
 
 type Server struct {
-	api.UnsafePluginServer
+	pluginapi.UnsafePluginServer
+	pluginapi.UnsafeOutputStreamingPluginServer
+	pluginapi.UnsafeInputStreamingPluginServer
+	api.UnsafeRuntimePluginServer
 
 	impl   ContainerRuntime
 	stdin  sync.Map
@@ -57,10 +60,10 @@ func (s *Server) stdoutServer(containerID string) (*grpcutil.StreamOutputServer,
 }
 
 type streamInputServer struct {
-	server api.Plugin_StreamInputServer
+	server pluginapi.InputStreamingPlugin_StreamInputServer
 }
 
-func (s *streamInputServer) Recv() (*pluginapi.InputData, error) {
+func (s *streamInputServer) Recv() (*pluginapi.SubsequentStreamInputRequest, error) {
 	d, err := s.server.Recv()
 	if err != nil {
 		return nil, fmt.Errorf("error wrapping Recv call: %w", err)
@@ -77,15 +80,15 @@ func (s *streamInputServer) SendAndClose(e *empty.Empty) error {
 	return nil
 }
 
-func (s *Server) GetPluginMetadata(_ context.Context, _ *empty.Empty) (*api.GetPluginMetadataResponse, error) {
-	resp := &api.GetPluginMetadataResponse{}
+func (s *Server) GetPluginMetadata(_ context.Context, _ *empty.Empty) (*pluginapi.GetPluginMetadataResponse, error) {
+	resp := &pluginapi.GetPluginMetadataResponse{}
 
 	resp.SetMetadata(s.impl.Metadata().ToProto())
 
 	return resp, nil
 }
 
-func (s *Server) InitPlugin(_ context.Context, _ *empty.Empty) (*api.InitPluginResponse, error) {
+func (s *Server) InitPlugin(_ context.Context, _ *empty.Empty) (*pluginapi.InitPluginResponse, error) {
 	s.reset()
 
 	config, err := s.impl.Init()
@@ -94,7 +97,7 @@ func (s *Server) InitPlugin(_ context.Context, _ *empty.Empty) (*api.InitPluginR
 	}
 
 	pluginConfig := &pluginapi.PluginConfig{}
-	resp := &api.InitPluginResponse{}
+	resp := &pluginapi.InitPluginResponse{}
 
 	pluginConfig.SetConfig(config)
 	resp.SetConfig(pluginConfig)
@@ -170,7 +173,7 @@ func (s *Server) KillContainer(_ context.Context, request *api.KillContainerRequ
 	return &empty.Empty{}, nil
 }
 
-func (s *Server) StreamInput(srv api.Plugin_StreamInputServer) error {
+func (s *Server) StreamInput(srv pluginapi.InputStreamingPlugin_StreamInputServer) error {
 	req, err := srv.Recv()
 	if err != nil {
 		return fmt.Errorf("error during input stream: %w", err)
@@ -190,7 +193,7 @@ func (s *Server) StreamInput(srv api.Plugin_StreamInputServer) error {
 	return nil
 }
 
-func (s *Server) StreamOutput(request *api.StreamOutputRequest, srv api.Plugin_StreamOutputServer) error {
+func (s *Server) StreamOutput(request *pluginapi.StreamOutputRequest, srv pluginapi.OutputStreamingPlugin_StreamOutputServer) error {
 	id := request.GetId()
 
 	outputServer, err := s.stdoutServer(id)

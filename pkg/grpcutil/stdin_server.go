@@ -22,7 +22,7 @@ type StreamInputServer struct {
 }
 
 type grpcInputServer interface {
-	Recv() (*api.InputData, error)
+	Recv() (*api.SubsequentStreamInputRequest, error)
 	SendAndClose(_ *empty.Empty) error
 }
 

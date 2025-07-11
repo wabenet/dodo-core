@@ -20,32 +20,22 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Plugin_GetPluginMetadata_FullMethodName = "/wabenet.dodo.runtime.v1alpha2.Plugin/GetPluginMetadata"
-	Plugin_InitPlugin_FullMethodName        = "/wabenet.dodo.runtime.v1alpha2.Plugin/InitPlugin"
-	Plugin_ResetPlugin_FullMethodName       = "/wabenet.dodo.runtime.v1alpha2.Plugin/ResetPlugin"
-	Plugin_StreamInput_FullMethodName       = "/wabenet.dodo.runtime.v1alpha2.Plugin/StreamInput"
-	Plugin_StreamOutput_FullMethodName      = "/wabenet.dodo.runtime.v1alpha2.Plugin/StreamOutput"
-	Plugin_CreateContainer_FullMethodName   = "/wabenet.dodo.runtime.v1alpha2.Plugin/CreateContainer"
-	Plugin_DeleteContainer_FullMethodName   = "/wabenet.dodo.runtime.v1alpha2.Plugin/DeleteContainer"
-	Plugin_StartContainer_FullMethodName    = "/wabenet.dodo.runtime.v1alpha2.Plugin/StartContainer"
-	Plugin_StreamContainer_FullMethodName   = "/wabenet.dodo.runtime.v1alpha2.Plugin/StreamContainer"
-	Plugin_ResizeContainer_FullMethodName   = "/wabenet.dodo.runtime.v1alpha2.Plugin/ResizeContainer"
-	Plugin_KillContainer_FullMethodName     = "/wabenet.dodo.runtime.v1alpha2.Plugin/KillContainer"
-	Plugin_CreateVolume_FullMethodName      = "/wabenet.dodo.runtime.v1alpha2.Plugin/CreateVolume"
-	Plugin_DeleteVolume_FullMethodName      = "/wabenet.dodo.runtime.v1alpha2.Plugin/DeleteVolume"
-	Plugin_WriteFile_FullMethodName         = "/wabenet.dodo.runtime.v1alpha2.Plugin/WriteFile"
-	Plugin_GetImage_FullMethodName          = "/wabenet.dodo.runtime.v1alpha2.Plugin/GetImage"
+	RuntimePlugin_CreateContainer_FullMethodName = "/wabenet.dodo.runtime.v1alpha2.RuntimePlugin/CreateContainer"
+	RuntimePlugin_DeleteContainer_FullMethodName = "/wabenet.dodo.runtime.v1alpha2.RuntimePlugin/DeleteContainer"
+	RuntimePlugin_StartContainer_FullMethodName  = "/wabenet.dodo.runtime.v1alpha2.RuntimePlugin/StartContainer"
+	RuntimePlugin_StreamContainer_FullMethodName = "/wabenet.dodo.runtime.v1alpha2.RuntimePlugin/StreamContainer"
+	RuntimePlugin_ResizeContainer_FullMethodName = "/wabenet.dodo.runtime.v1alpha2.RuntimePlugin/ResizeContainer"
+	RuntimePlugin_KillContainer_FullMethodName   = "/wabenet.dodo.runtime.v1alpha2.RuntimePlugin/KillContainer"
+	RuntimePlugin_CreateVolume_FullMethodName    = "/wabenet.dodo.runtime.v1alpha2.RuntimePlugin/CreateVolume"
+	RuntimePlugin_DeleteVolume_FullMethodName    = "/wabenet.dodo.runtime.v1alpha2.RuntimePlugin/DeleteVolume"
+	RuntimePlugin_WriteFile_FullMethodName       = "/wabenet.dodo.runtime.v1alpha2.RuntimePlugin/WriteFile"
+	RuntimePlugin_GetImage_FullMethodName        = "/wabenet.dodo.runtime.v1alpha2.RuntimePlugin/GetImage"
 )
 
-// PluginClient is the client API for Plugin service.
+// RuntimePluginClient is the client API for RuntimePlugin service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type PluginClient interface {
-	GetPluginMetadata(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetPluginMetadataResponse, error)
-	InitPlugin(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*InitPluginResponse, error)
-	ResetPlugin(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	StreamInput(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[StreamInputRequest, emptypb.Empty], error)
-	StreamOutput(ctx context.Context, in *StreamOutputRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[StreamOutputResponse], error)
+type RuntimePluginClient interface {
 	CreateContainer(ctx context.Context, in *CreateContainerRequest, opts ...grpc.CallOption) (*CreateContainerResponse, error)
 	DeleteContainer(ctx context.Context, in *DeleteContainerRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	StartContainer(ctx context.Context, in *StartContainerRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -58,185 +48,118 @@ type PluginClient interface {
 	GetImage(ctx context.Context, in *GetImageRequest, opts ...grpc.CallOption) (*GetImageResponse, error)
 }
 
-type pluginClient struct {
+type runtimePluginClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewPluginClient(cc grpc.ClientConnInterface) PluginClient {
-	return &pluginClient{cc}
+func NewRuntimePluginClient(cc grpc.ClientConnInterface) RuntimePluginClient {
+	return &runtimePluginClient{cc}
 }
 
-func (c *pluginClient) GetPluginMetadata(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetPluginMetadataResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetPluginMetadataResponse)
-	err := c.cc.Invoke(ctx, Plugin_GetPluginMetadata_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *pluginClient) InitPlugin(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*InitPluginResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(InitPluginResponse)
-	err := c.cc.Invoke(ctx, Plugin_InitPlugin_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *pluginClient) ResetPlugin(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, Plugin_ResetPlugin_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *pluginClient) StreamInput(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[StreamInputRequest, emptypb.Empty], error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	stream, err := c.cc.NewStream(ctx, &Plugin_ServiceDesc.Streams[0], Plugin_StreamInput_FullMethodName, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &grpc.GenericClientStream[StreamInputRequest, emptypb.Empty]{ClientStream: stream}
-	return x, nil
-}
-
-// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type Plugin_StreamInputClient = grpc.ClientStreamingClient[StreamInputRequest, emptypb.Empty]
-
-func (c *pluginClient) StreamOutput(ctx context.Context, in *StreamOutputRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[StreamOutputResponse], error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	stream, err := c.cc.NewStream(ctx, &Plugin_ServiceDesc.Streams[1], Plugin_StreamOutput_FullMethodName, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &grpc.GenericClientStream[StreamOutputRequest, StreamOutputResponse]{ClientStream: stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	return x, nil
-}
-
-// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type Plugin_StreamOutputClient = grpc.ServerStreamingClient[StreamOutputResponse]
-
-func (c *pluginClient) CreateContainer(ctx context.Context, in *CreateContainerRequest, opts ...grpc.CallOption) (*CreateContainerResponse, error) {
+func (c *runtimePluginClient) CreateContainer(ctx context.Context, in *CreateContainerRequest, opts ...grpc.CallOption) (*CreateContainerResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CreateContainerResponse)
-	err := c.cc.Invoke(ctx, Plugin_CreateContainer_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, RuntimePlugin_CreateContainer_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *pluginClient) DeleteContainer(ctx context.Context, in *DeleteContainerRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *runtimePluginClient) DeleteContainer(ctx context.Context, in *DeleteContainerRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, Plugin_DeleteContainer_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, RuntimePlugin_DeleteContainer_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *pluginClient) StartContainer(ctx context.Context, in *StartContainerRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *runtimePluginClient) StartContainer(ctx context.Context, in *StartContainerRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, Plugin_StartContainer_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, RuntimePlugin_StartContainer_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *pluginClient) StreamContainer(ctx context.Context, in *StreamContainerRequest, opts ...grpc.CallOption) (*StreamContainerResponse, error) {
+func (c *runtimePluginClient) StreamContainer(ctx context.Context, in *StreamContainerRequest, opts ...grpc.CallOption) (*StreamContainerResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(StreamContainerResponse)
-	err := c.cc.Invoke(ctx, Plugin_StreamContainer_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, RuntimePlugin_StreamContainer_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *pluginClient) ResizeContainer(ctx context.Context, in *ResizeContainerRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *runtimePluginClient) ResizeContainer(ctx context.Context, in *ResizeContainerRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, Plugin_ResizeContainer_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, RuntimePlugin_ResizeContainer_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *pluginClient) KillContainer(ctx context.Context, in *KillContainerRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *runtimePluginClient) KillContainer(ctx context.Context, in *KillContainerRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, Plugin_KillContainer_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, RuntimePlugin_KillContainer_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *pluginClient) CreateVolume(ctx context.Context, in *CreateVolumeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *runtimePluginClient) CreateVolume(ctx context.Context, in *CreateVolumeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, Plugin_CreateVolume_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, RuntimePlugin_CreateVolume_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *pluginClient) DeleteVolume(ctx context.Context, in *DeleteVolumeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *runtimePluginClient) DeleteVolume(ctx context.Context, in *DeleteVolumeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, Plugin_DeleteVolume_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, RuntimePlugin_DeleteVolume_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *pluginClient) WriteFile(ctx context.Context, in *WriteFileRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *runtimePluginClient) WriteFile(ctx context.Context, in *WriteFileRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, Plugin_WriteFile_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, RuntimePlugin_WriteFile_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *pluginClient) GetImage(ctx context.Context, in *GetImageRequest, opts ...grpc.CallOption) (*GetImageResponse, error) {
+func (c *runtimePluginClient) GetImage(ctx context.Context, in *GetImageRequest, opts ...grpc.CallOption) (*GetImageResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetImageResponse)
-	err := c.cc.Invoke(ctx, Plugin_GetImage_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, RuntimePlugin_GetImage_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// PluginServer is the server API for Plugin service.
-// All implementations must embed UnimplementedPluginServer
+// RuntimePluginServer is the server API for RuntimePlugin service.
+// All implementations must embed UnimplementedRuntimePluginServer
 // for forward compatibility.
-type PluginServer interface {
-	GetPluginMetadata(context.Context, *emptypb.Empty) (*GetPluginMetadataResponse, error)
-	InitPlugin(context.Context, *emptypb.Empty) (*InitPluginResponse, error)
-	ResetPlugin(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
-	StreamInput(grpc.ClientStreamingServer[StreamInputRequest, emptypb.Empty]) error
-	StreamOutput(*StreamOutputRequest, grpc.ServerStreamingServer[StreamOutputResponse]) error
+type RuntimePluginServer interface {
 	CreateContainer(context.Context, *CreateContainerRequest) (*CreateContainerResponse, error)
 	DeleteContainer(context.Context, *DeleteContainerRequest) (*emptypb.Empty, error)
 	StartContainer(context.Context, *StartContainerRequest) (*emptypb.Empty, error)
@@ -247,405 +170,295 @@ type PluginServer interface {
 	DeleteVolume(context.Context, *DeleteVolumeRequest) (*emptypb.Empty, error)
 	WriteFile(context.Context, *WriteFileRequest) (*emptypb.Empty, error)
 	GetImage(context.Context, *GetImageRequest) (*GetImageResponse, error)
-	mustEmbedUnimplementedPluginServer()
+	mustEmbedUnimplementedRuntimePluginServer()
 }
 
-// UnimplementedPluginServer must be embedded to have
+// UnimplementedRuntimePluginServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedPluginServer struct{}
+type UnimplementedRuntimePluginServer struct{}
 
-func (UnimplementedPluginServer) GetPluginMetadata(context.Context, *emptypb.Empty) (*GetPluginMetadataResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetPluginMetadata not implemented")
-}
-func (UnimplementedPluginServer) InitPlugin(context.Context, *emptypb.Empty) (*InitPluginResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method InitPlugin not implemented")
-}
-func (UnimplementedPluginServer) ResetPlugin(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ResetPlugin not implemented")
-}
-func (UnimplementedPluginServer) StreamInput(grpc.ClientStreamingServer[StreamInputRequest, emptypb.Empty]) error {
-	return status.Errorf(codes.Unimplemented, "method StreamInput not implemented")
-}
-func (UnimplementedPluginServer) StreamOutput(*StreamOutputRequest, grpc.ServerStreamingServer[StreamOutputResponse]) error {
-	return status.Errorf(codes.Unimplemented, "method StreamOutput not implemented")
-}
-func (UnimplementedPluginServer) CreateContainer(context.Context, *CreateContainerRequest) (*CreateContainerResponse, error) {
+func (UnimplementedRuntimePluginServer) CreateContainer(context.Context, *CreateContainerRequest) (*CreateContainerResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateContainer not implemented")
 }
-func (UnimplementedPluginServer) DeleteContainer(context.Context, *DeleteContainerRequest) (*emptypb.Empty, error) {
+func (UnimplementedRuntimePluginServer) DeleteContainer(context.Context, *DeleteContainerRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteContainer not implemented")
 }
-func (UnimplementedPluginServer) StartContainer(context.Context, *StartContainerRequest) (*emptypb.Empty, error) {
+func (UnimplementedRuntimePluginServer) StartContainer(context.Context, *StartContainerRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method StartContainer not implemented")
 }
-func (UnimplementedPluginServer) StreamContainer(context.Context, *StreamContainerRequest) (*StreamContainerResponse, error) {
+func (UnimplementedRuntimePluginServer) StreamContainer(context.Context, *StreamContainerRequest) (*StreamContainerResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method StreamContainer not implemented")
 }
-func (UnimplementedPluginServer) ResizeContainer(context.Context, *ResizeContainerRequest) (*emptypb.Empty, error) {
+func (UnimplementedRuntimePluginServer) ResizeContainer(context.Context, *ResizeContainerRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ResizeContainer not implemented")
 }
-func (UnimplementedPluginServer) KillContainer(context.Context, *KillContainerRequest) (*emptypb.Empty, error) {
+func (UnimplementedRuntimePluginServer) KillContainer(context.Context, *KillContainerRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method KillContainer not implemented")
 }
-func (UnimplementedPluginServer) CreateVolume(context.Context, *CreateVolumeRequest) (*emptypb.Empty, error) {
+func (UnimplementedRuntimePluginServer) CreateVolume(context.Context, *CreateVolumeRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateVolume not implemented")
 }
-func (UnimplementedPluginServer) DeleteVolume(context.Context, *DeleteVolumeRequest) (*emptypb.Empty, error) {
+func (UnimplementedRuntimePluginServer) DeleteVolume(context.Context, *DeleteVolumeRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteVolume not implemented")
 }
-func (UnimplementedPluginServer) WriteFile(context.Context, *WriteFileRequest) (*emptypb.Empty, error) {
+func (UnimplementedRuntimePluginServer) WriteFile(context.Context, *WriteFileRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method WriteFile not implemented")
 }
-func (UnimplementedPluginServer) GetImage(context.Context, *GetImageRequest) (*GetImageResponse, error) {
+func (UnimplementedRuntimePluginServer) GetImage(context.Context, *GetImageRequest) (*GetImageResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetImage not implemented")
 }
-func (UnimplementedPluginServer) mustEmbedUnimplementedPluginServer() {}
-func (UnimplementedPluginServer) testEmbeddedByValue()                {}
+func (UnimplementedRuntimePluginServer) mustEmbedUnimplementedRuntimePluginServer() {}
+func (UnimplementedRuntimePluginServer) testEmbeddedByValue()                       {}
 
-// UnsafePluginServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to PluginServer will
+// UnsafeRuntimePluginServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to RuntimePluginServer will
 // result in compilation errors.
-type UnsafePluginServer interface {
-	mustEmbedUnimplementedPluginServer()
+type UnsafeRuntimePluginServer interface {
+	mustEmbedUnimplementedRuntimePluginServer()
 }
 
-func RegisterPluginServer(s grpc.ServiceRegistrar, srv PluginServer) {
-	// If the following call pancis, it indicates UnimplementedPluginServer was
+func RegisterRuntimePluginServer(s grpc.ServiceRegistrar, srv RuntimePluginServer) {
+	// If the following call pancis, it indicates UnimplementedRuntimePluginServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&Plugin_ServiceDesc, srv)
+	s.RegisterService(&RuntimePlugin_ServiceDesc, srv)
 }
 
-func _Plugin_GetPluginMetadata_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PluginServer).GetPluginMetadata(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Plugin_GetPluginMetadata_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PluginServer).GetPluginMetadata(ctx, req.(*emptypb.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Plugin_InitPlugin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PluginServer).InitPlugin(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Plugin_InitPlugin_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PluginServer).InitPlugin(ctx, req.(*emptypb.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Plugin_ResetPlugin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PluginServer).ResetPlugin(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Plugin_ResetPlugin_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PluginServer).ResetPlugin(ctx, req.(*emptypb.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Plugin_StreamInput_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(PluginServer).StreamInput(&grpc.GenericServerStream[StreamInputRequest, emptypb.Empty]{ServerStream: stream})
-}
-
-// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type Plugin_StreamInputServer = grpc.ClientStreamingServer[StreamInputRequest, emptypb.Empty]
-
-func _Plugin_StreamOutput_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(StreamOutputRequest)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
-	}
-	return srv.(PluginServer).StreamOutput(m, &grpc.GenericServerStream[StreamOutputRequest, StreamOutputResponse]{ServerStream: stream})
-}
-
-// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type Plugin_StreamOutputServer = grpc.ServerStreamingServer[StreamOutputResponse]
-
-func _Plugin_CreateContainer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RuntimePlugin_CreateContainer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateContainerRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PluginServer).CreateContainer(ctx, in)
+		return srv.(RuntimePluginServer).CreateContainer(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Plugin_CreateContainer_FullMethodName,
+		FullMethod: RuntimePlugin_CreateContainer_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PluginServer).CreateContainer(ctx, req.(*CreateContainerRequest))
+		return srv.(RuntimePluginServer).CreateContainer(ctx, req.(*CreateContainerRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Plugin_DeleteContainer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RuntimePlugin_DeleteContainer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteContainerRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PluginServer).DeleteContainer(ctx, in)
+		return srv.(RuntimePluginServer).DeleteContainer(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Plugin_DeleteContainer_FullMethodName,
+		FullMethod: RuntimePlugin_DeleteContainer_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PluginServer).DeleteContainer(ctx, req.(*DeleteContainerRequest))
+		return srv.(RuntimePluginServer).DeleteContainer(ctx, req.(*DeleteContainerRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Plugin_StartContainer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RuntimePlugin_StartContainer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(StartContainerRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PluginServer).StartContainer(ctx, in)
+		return srv.(RuntimePluginServer).StartContainer(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Plugin_StartContainer_FullMethodName,
+		FullMethod: RuntimePlugin_StartContainer_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PluginServer).StartContainer(ctx, req.(*StartContainerRequest))
+		return srv.(RuntimePluginServer).StartContainer(ctx, req.(*StartContainerRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Plugin_StreamContainer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RuntimePlugin_StreamContainer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(StreamContainerRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PluginServer).StreamContainer(ctx, in)
+		return srv.(RuntimePluginServer).StreamContainer(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Plugin_StreamContainer_FullMethodName,
+		FullMethod: RuntimePlugin_StreamContainer_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PluginServer).StreamContainer(ctx, req.(*StreamContainerRequest))
+		return srv.(RuntimePluginServer).StreamContainer(ctx, req.(*StreamContainerRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Plugin_ResizeContainer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RuntimePlugin_ResizeContainer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ResizeContainerRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PluginServer).ResizeContainer(ctx, in)
+		return srv.(RuntimePluginServer).ResizeContainer(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Plugin_ResizeContainer_FullMethodName,
+		FullMethod: RuntimePlugin_ResizeContainer_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PluginServer).ResizeContainer(ctx, req.(*ResizeContainerRequest))
+		return srv.(RuntimePluginServer).ResizeContainer(ctx, req.(*ResizeContainerRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Plugin_KillContainer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RuntimePlugin_KillContainer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(KillContainerRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PluginServer).KillContainer(ctx, in)
+		return srv.(RuntimePluginServer).KillContainer(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Plugin_KillContainer_FullMethodName,
+		FullMethod: RuntimePlugin_KillContainer_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PluginServer).KillContainer(ctx, req.(*KillContainerRequest))
+		return srv.(RuntimePluginServer).KillContainer(ctx, req.(*KillContainerRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Plugin_CreateVolume_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RuntimePlugin_CreateVolume_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateVolumeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PluginServer).CreateVolume(ctx, in)
+		return srv.(RuntimePluginServer).CreateVolume(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Plugin_CreateVolume_FullMethodName,
+		FullMethod: RuntimePlugin_CreateVolume_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PluginServer).CreateVolume(ctx, req.(*CreateVolumeRequest))
+		return srv.(RuntimePluginServer).CreateVolume(ctx, req.(*CreateVolumeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Plugin_DeleteVolume_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RuntimePlugin_DeleteVolume_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteVolumeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PluginServer).DeleteVolume(ctx, in)
+		return srv.(RuntimePluginServer).DeleteVolume(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Plugin_DeleteVolume_FullMethodName,
+		FullMethod: RuntimePlugin_DeleteVolume_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PluginServer).DeleteVolume(ctx, req.(*DeleteVolumeRequest))
+		return srv.(RuntimePluginServer).DeleteVolume(ctx, req.(*DeleteVolumeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Plugin_WriteFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RuntimePlugin_WriteFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(WriteFileRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PluginServer).WriteFile(ctx, in)
+		return srv.(RuntimePluginServer).WriteFile(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Plugin_WriteFile_FullMethodName,
+		FullMethod: RuntimePlugin_WriteFile_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PluginServer).WriteFile(ctx, req.(*WriteFileRequest))
+		return srv.(RuntimePluginServer).WriteFile(ctx, req.(*WriteFileRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Plugin_GetImage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RuntimePlugin_GetImage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetImageRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PluginServer).GetImage(ctx, in)
+		return srv.(RuntimePluginServer).GetImage(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Plugin_GetImage_FullMethodName,
+		FullMethod: RuntimePlugin_GetImage_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PluginServer).GetImage(ctx, req.(*GetImageRequest))
+		return srv.(RuntimePluginServer).GetImage(ctx, req.(*GetImageRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// Plugin_ServiceDesc is the grpc.ServiceDesc for Plugin service.
+// RuntimePlugin_ServiceDesc is the grpc.ServiceDesc for RuntimePlugin service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var Plugin_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "wabenet.dodo.runtime.v1alpha2.Plugin",
-	HandlerType: (*PluginServer)(nil),
+var RuntimePlugin_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "wabenet.dodo.runtime.v1alpha2.RuntimePlugin",
+	HandlerType: (*RuntimePluginServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetPluginMetadata",
-			Handler:    _Plugin_GetPluginMetadata_Handler,
-		},
-		{
-			MethodName: "InitPlugin",
-			Handler:    _Plugin_InitPlugin_Handler,
-		},
-		{
-			MethodName: "ResetPlugin",
-			Handler:    _Plugin_ResetPlugin_Handler,
-		},
-		{
 			MethodName: "CreateContainer",
-			Handler:    _Plugin_CreateContainer_Handler,
+			Handler:    _RuntimePlugin_CreateContainer_Handler,
 		},
 		{
 			MethodName: "DeleteContainer",
-			Handler:    _Plugin_DeleteContainer_Handler,
+			Handler:    _RuntimePlugin_DeleteContainer_Handler,
 		},
 		{
 			MethodName: "StartContainer",
-			Handler:    _Plugin_StartContainer_Handler,
+			Handler:    _RuntimePlugin_StartContainer_Handler,
 		},
 		{
 			MethodName: "StreamContainer",
-			Handler:    _Plugin_StreamContainer_Handler,
+			Handler:    _RuntimePlugin_StreamContainer_Handler,
 		},
 		{
 			MethodName: "ResizeContainer",
-			Handler:    _Plugin_ResizeContainer_Handler,
+			Handler:    _RuntimePlugin_ResizeContainer_Handler,
 		},
 		{
 			MethodName: "KillContainer",
-			Handler:    _Plugin_KillContainer_Handler,
+			Handler:    _RuntimePlugin_KillContainer_Handler,
 		},
 		{
 			MethodName: "CreateVolume",
-			Handler:    _Plugin_CreateVolume_Handler,
+			Handler:    _RuntimePlugin_CreateVolume_Handler,
 		},
 		{
 			MethodName: "DeleteVolume",
-			Handler:    _Plugin_DeleteVolume_Handler,
+			Handler:    _RuntimePlugin_DeleteVolume_Handler,
 		},
 		{
 			MethodName: "WriteFile",
-			Handler:    _Plugin_WriteFile_Handler,
+			Handler:    _RuntimePlugin_WriteFile_Handler,
 		},
 		{
 			MethodName: "GetImage",
-			Handler:    _Plugin_GetImage_Handler,
+			Handler:    _RuntimePlugin_GetImage_Handler,
 		},
 	},
-	Streams: []grpc.StreamDesc{
-		{
-			StreamName:    "StreamInput",
-			Handler:       _Plugin_StreamInput_Handler,
-			ClientStreams: true,
-		},
-		{
-			StreamName:    "StreamOutput",
-			Handler:       _Plugin_StreamOutput_Handler,
-			ServerStreams: true,
-		},
-	},
+	Streams:  []grpc.StreamDesc{},
 	Metadata: "wabenet/dodo/runtime/v1alpha2/runtime.proto",
 }
