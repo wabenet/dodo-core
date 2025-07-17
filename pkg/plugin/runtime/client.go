@@ -3,15 +3,12 @@ package runtime
 import (
 	"context"
 	"fmt"
-	"io"
 	"os"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/hashicorp/go-hclog"
 	pluginapi "github.com/wabenet/dodo-core/internal/gen-proto/wabenet/dodo/plugin/v1alpha2"
 	api "github.com/wabenet/dodo-core/internal/gen-proto/wabenet/dodo/runtime/v1alpha2"
-	"github.com/wabenet/dodo-core/pkg/grpcutil"
-	"github.com/wabenet/dodo-core/pkg/ioutil"
 	"github.com/wabenet/dodo-core/pkg/plugin"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
@@ -20,48 +17,21 @@ import (
 var _ ContainerRuntime = &Client{}
 
 type Client struct {
-	pluginClient       pluginapi.PluginClient
-	streamInputClient  pluginapi.InputStreamingPluginClient
-	streamOutputClient pluginapi.OutputStreamingPluginClient
-	runtimeClient      api.RuntimePluginClient
-	stdin              *grpcutil.StreamInputClient
-	stdout             *grpcutil.StreamOutputClient
+	pluginClient  pluginapi.PluginClient
+	runtimeClient api.RuntimePluginClient
+
+	streamOutputClient *plugin.OutputStreamingClient
+	streamInputClient  *plugin.InputStreamingClient
 }
 
 func NewGRPCClient(conn grpc.ClientConnInterface) *Client {
 	return &Client{
-		pluginClient:       pluginapi.NewPluginClient(conn),
-		streamInputClient:  pluginapi.NewInputStreamingPluginClient(conn),
-		streamOutputClient: pluginapi.NewOutputStreamingPluginClient(conn),
-		runtimeClient:      api.NewRuntimePluginClient(conn),
-		stdin:              grpcutil.NewStreamInputClient(),
-		stdout:             grpcutil.NewStreamOutputClient(),
+		pluginClient:  pluginapi.NewPluginClient(conn),
+		runtimeClient: api.NewRuntimePluginClient(conn),
+
+		streamOutputClient: plugin.NewOutputStreamingClient(conn),
+		streamInputClient:  plugin.NewInputStreamingClient(conn),
 	}
-}
-
-type streamInputClient struct {
-	client pluginapi.InputStreamingPlugin_StreamInputClient
-}
-
-func (s *streamInputClient) Send(data *pluginapi.SubsequentStreamInputRequest) error {
-	req := &pluginapi.StreamInputRequest{}
-
-	req.SetInputData(data)
-
-	if err := s.client.Send(req); err != nil {
-		return fmt.Errorf("error wrapping Send call: %w", err)
-	}
-
-	return nil
-}
-
-func (s *streamInputClient) CloseAndRecv() (*empty.Empty, error) {
-	e, err := s.client.CloseAndRecv()
-	if err != nil {
-		return nil, fmt.Errorf("error wrapping CloseAndRecv call: %w", err)
-	}
-
-	return e, nil
 }
 
 func (c *Client) Type() plugin.Type { //nolint:ireturn
@@ -174,14 +144,21 @@ func (c *Client) StreamContainer(id string, stream *plugin.StreamConfig) (*Resul
 	result := &Result{}
 	eg, _ := errgroup.WithContext(context.Background())
 
-	inContext, inCancel := context.WithCancel(context.Background())
-	inReader := ioutil.NewCancelableReader(inContext, stream.Stdin)
+	outputStream, err := c.streamOutputClient.PrepareStream(id, stream.Stdout, stream.Stderr)
+	if err != nil {
+		return nil, err
+	}
 
-	eg.Go(func() error { return c.copyInputClientToStdin(id, inReader) })
-	eg.Go(func() error { return c.copyOutputClientToStdout(id, stream.Stdout, stream.Stderr) })
+	inputStream, err := c.streamInputClient.PrepareStream(id, stream.Stdin)
+	if err != nil {
+		return nil, err
+	}
+
+	eg.Go(inputStream.Copy)
+	eg.Go(outputStream.Copy)
 
 	eg.Go(func() error {
-		defer inCancel()
+		defer inputStream.Close()
 
 		req := &api.StreamContainerRequest{}
 
@@ -204,46 +181,6 @@ func (c *Client) StreamContainer(id string, stream *plugin.StreamConfig) (*Resul
 	}
 
 	return result, nil
-}
-
-func (c *Client) copyInputClientToStdin(containerID string, stdin io.Reader) error {
-	inputClient, err := c.streamInputClient.StreamInput(context.Background())
-	if err != nil {
-		return fmt.Errorf("could not stream runtime input: %w", err)
-	}
-
-	req := &pluginapi.StreamInputRequest{}
-	initial := &pluginapi.InitialStreamInputRequest{}
-
-	initial.SetId(containerID)
-	req.SetInitialRequest(initial)
-
-	if err := inputClient.Send(req); err != nil {
-		return fmt.Errorf("could not stream runtime input: %w", err)
-	}
-
-	if err := c.stdin.StreamInput(&streamInputClient{client: inputClient}, stdin); err != nil {
-		return fmt.Errorf("could not stream runtime input: %w", err)
-	}
-
-	return nil
-}
-
-func (c *Client) copyOutputClientToStdout(containerID string, stdout, stderr io.Writer) error {
-	req := &pluginapi.StreamOutputRequest{}
-
-	req.SetId(containerID)
-
-	outputClient, err := c.streamOutputClient.StreamOutput(context.Background(), req)
-	if err != nil {
-		return fmt.Errorf("could not stream runtime output: %w", err)
-	}
-
-	if err := c.stdout.StreamOutput(outputClient, stdout, stderr); err != nil {
-		return fmt.Errorf("could not stream runtime output: %w", err)
-	}
-
-	return nil
 }
 
 func (c *Client) CreateVolume(name string) error {

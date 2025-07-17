@@ -49,7 +49,7 @@ func (p *grpcPlugin) GRPCServer(_ *plugin.GRPCBroker, s *grpc.Server) error {
 	pluginapi.RegisterPluginServer(s, impl)
 	pluginapi.RegisterOutputStreamingPluginServer(s, impl)
 	pluginapi.RegisterInputStreamingPluginServer(s, impl)
-	api.RegisterRuntimePluginServer(s, NewGRPCServer(p.Impl))
+	api.RegisterRuntimePluginServer(s, impl)
 
 	return nil
 }

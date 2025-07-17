@@ -4,13 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io"
-	"sync"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	api "github.com/wabenet/dodo-core/internal/gen-proto/wabenet/dodo/build/v1alpha2"
 	pluginapi "github.com/wabenet/dodo-core/internal/gen-proto/wabenet/dodo/plugin/v1alpha2"
-	"github.com/wabenet/dodo-core/pkg/grpcutil"
 	"github.com/wabenet/dodo-core/pkg/plugin"
 	"golang.org/x/sync/errgroup"
 )
@@ -22,8 +19,9 @@ type Server struct {
 	pluginapi.UnsafeOutputStreamingPluginServer
 	api.UnsafeBuilderPluginServer
 
-	impl   ImageBuilder
-	stdout sync.Map
+	plugin.OutputStreamingServer
+
+	impl ImageBuilder
 }
 
 func NewGRPCServer(impl ImageBuilder) *Server {
@@ -31,18 +29,7 @@ func NewGRPCServer(impl ImageBuilder) *Server {
 }
 
 func (s *Server) reset() {
-	s.stdout = sync.Map{}
-}
-
-func (s *Server) stdoutServer(streamID string) (*grpcutil.StreamOutputServer, error) {
-	outputServer, _ := s.stdout.LoadOrStore(streamID, grpcutil.NewStreamOutputServer())
-
-	result, ok := outputServer.(*grpcutil.StreamOutputServer)
-	if !ok {
-		return nil, ErrUnexpectedMapType
-	}
-
-	return result, nil
+	s.OutputStreamingServer.Reset()
 }
 
 func (s *Server) GetPluginMetadata(_ context.Context, _ *empty.Empty) (*pluginapi.GetPluginMetadataResponse, error) {
@@ -77,21 +64,6 @@ func (s *Server) ResetPlugin(_ context.Context, _ *empty.Empty) (*empty.Empty, e
 	return &empty.Empty{}, nil
 }
 
-func (s *Server) StreamOutput(request *pluginapi.StreamOutputRequest, srv pluginapi.OutputStreamingPlugin_StreamOutputServer) error {
-	id := request.GetId()
-
-	outputServer, err := s.stdoutServer(id)
-	if err != nil {
-		return fmt.Errorf("could not find stream output server: %w", err)
-	}
-
-	if err := outputServer.SendTo(srv); err != nil {
-		return fmt.Errorf("error during output stream: %w", err)
-	}
-
-	return nil
-}
-
 func (s *Server) CreateImage(_ context.Context, request *api.CreateImageRequest) (*api.CreateImageResponse, error) {
 	resp := &api.CreateImageResponse{}
 
@@ -106,25 +78,21 @@ func (s *Server) CreateImage(_ context.Context, request *api.CreateImageRequest)
 		return resp, nil
 	}
 
-	outReader, outWriter := io.Pipe()
-	errReader, errWriter := io.Pipe()
-
-	outputServer, err := s.stdoutServer(request.GetStreamId())
+	outputStream, err := s.OutputStreamingServer.PrepareStream(request.GetStreamId())
 	if err != nil {
-		return nil, fmt.Errorf("could not find stream output server: %w", err)
+		return nil, err
 	}
 
 	eg, _ := errgroup.WithContext(context.Background())
 
-	eg.Go(func() error { return copyOutputServerToStdout(outputServer, outReader, errReader) })
+	eg.Go(outputStream.Copy)
 
 	eg.Go(func() error {
-		defer outWriter.Close()
-		defer errWriter.Close()
+		defer outputStream.Close()
 
 		imageID, err := s.impl.CreateImage(BuildConfigFromProto(request.GetConfig()), &plugin.StreamConfig{
-			Stdout:         outWriter,
-			Stderr:         errWriter,
+			Stdout:         outputStream.Stdout,
+			Stderr:         outputStream.Stderr,
 			TerminalHeight: request.GetHeight(),
 			TerminalWidth:  request.GetWidth(),
 		})
@@ -142,12 +110,4 @@ func (s *Server) CreateImage(_ context.Context, request *api.CreateImageRequest)
 	}
 
 	return resp, nil
-}
-
-func copyOutputServerToStdout(outputServer *grpcutil.StreamOutputServer, stdout, stderr io.Reader) error {
-	if err := outputServer.ReadFrom(stdout, stderr); err != nil {
-		return fmt.Errorf("error reading output stream: %w", err)
-	}
-
-	return nil
 }

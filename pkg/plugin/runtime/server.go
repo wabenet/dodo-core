@@ -4,13 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io"
-	"sync"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	pluginapi "github.com/wabenet/dodo-core/internal/gen-proto/wabenet/dodo/plugin/v1alpha2"
 	api "github.com/wabenet/dodo-core/internal/gen-proto/wabenet/dodo/runtime/v1alpha2"
-	"github.com/wabenet/dodo-core/pkg/grpcutil"
 	"github.com/wabenet/dodo-core/pkg/plugin"
 	"golang.org/x/sync/errgroup"
 )
@@ -23,9 +20,10 @@ type Server struct {
 	pluginapi.UnsafeInputStreamingPluginServer
 	api.UnsafeRuntimePluginServer
 
-	impl   ContainerRuntime
-	stdin  sync.Map
-	stdout sync.Map
+	plugin.OutputStreamingServer
+	plugin.InputStreamingServer
+
+	impl ContainerRuntime
 }
 
 func NewGRPCServer(impl ContainerRuntime) *Server {
@@ -33,51 +31,8 @@ func NewGRPCServer(impl ContainerRuntime) *Server {
 }
 
 func (s *Server) reset() {
-	s.stdin = sync.Map{}
-	s.stdout = sync.Map{}
-}
-
-func (s *Server) stdinServer(containerID string) (*grpcutil.StreamInputServer, error) {
-	inputServer, _ := s.stdin.LoadOrStore(containerID, grpcutil.NewStreamInputServer())
-
-	result, ok := inputServer.(*grpcutil.StreamInputServer)
-	if !ok {
-		return nil, ErrUnexpectedMapType
-	}
-
-	return result, nil
-}
-
-func (s *Server) stdoutServer(containerID string) (*grpcutil.StreamOutputServer, error) {
-	outputServer, _ := s.stdout.LoadOrStore(containerID, grpcutil.NewStreamOutputServer())
-
-	result, ok := outputServer.(*grpcutil.StreamOutputServer)
-	if !ok {
-		return nil, ErrUnexpectedMapType
-	}
-
-	return result, nil
-}
-
-type streamInputServer struct {
-	server pluginapi.InputStreamingPlugin_StreamInputServer
-}
-
-func (s *streamInputServer) Recv() (*pluginapi.SubsequentStreamInputRequest, error) {
-	d, err := s.server.Recv()
-	if err != nil {
-		return nil, fmt.Errorf("error wrapping Recv call: %w", err)
-	}
-
-	return d.GetInputData(), nil
-}
-
-func (s *streamInputServer) SendAndClose(e *empty.Empty) error {
-	if err := s.server.SendAndClose(e); err != nil {
-		return fmt.Errorf("error wrapping SendAndClose call: %w", err)
-	}
-
-	return nil
+	s.OutputStreamingServer.Reset()
+	s.InputStreamingServer.Reset()
 }
 
 func (s *Server) GetPluginMetadata(_ context.Context, _ *empty.Empty) (*pluginapi.GetPluginMetadataResponse, error) {
@@ -173,75 +128,35 @@ func (s *Server) KillContainer(_ context.Context, request *api.KillContainerRequ
 	return &empty.Empty{}, nil
 }
 
-func (s *Server) StreamInput(srv pluginapi.InputStreamingPlugin_StreamInputServer) error {
-	req, err := srv.Recv()
-	if err != nil {
-		return fmt.Errorf("error during input stream: %w", err)
-	}
-
-	id := req.GetInitialRequest().GetId()
-
-	inputServer, err := s.stdinServer(id)
-	if err != nil {
-		return fmt.Errorf("could not find stream input server: %w", err)
-	}
-
-	if err := inputServer.ReceiveFrom(&streamInputServer{server: srv}); err != nil {
-		return fmt.Errorf("error during input stream: %w", err)
-	}
-
-	return nil
-}
-
-func (s *Server) StreamOutput(request *pluginapi.StreamOutputRequest, srv pluginapi.OutputStreamingPlugin_StreamOutputServer) error {
-	id := request.GetId()
-
-	outputServer, err := s.stdoutServer(id)
-	if err != nil {
-		return fmt.Errorf("could not find stream output server: %w", err)
-	}
-
-	if err := outputServer.SendTo(srv); err != nil {
-		return fmt.Errorf("error during output stream: %w", err)
-	}
-
-	return nil
-}
-
 func (s *Server) StreamContainer(
 	_ context.Context,
 	request *api.StreamContainerRequest,
 ) (*api.StreamContainerResponse, error) {
 	resp := &api.StreamContainerResponse{}
 
-	inReader, inWriter := io.Pipe()
-	outReader, outWriter := io.Pipe()
-	errReader, errWriter := io.Pipe()
-
-	inputServer, err := s.stdinServer(request.GetContainerId())
+	inputStream, err := s.InputStreamingServer.PrepareStream(request.GetContainerId())
 	if err != nil {
-		return nil, fmt.Errorf("could not find stream input server: %w", err)
+		return nil, err
 	}
 
-	outputServer, err := s.stdoutServer(request.GetContainerId())
+	outputStream, err := s.OutputStreamingServer.PrepareStream(request.GetContainerId())
 	if err != nil {
-		return nil, fmt.Errorf("could not find stream output server: %w", err)
+		return nil, err
 	}
 
 	eg, _ := errgroup.WithContext(context.Background())
 
-	eg.Go(func() error { return copyInputServerToStdin(inputServer, inWriter) })
-	eg.Go(func() error { return copyOutputServerToStdout(outputServer, outReader, errReader) })
+	eg.Go(inputStream.Copy)
+	eg.Go(outputStream.Copy)
 
 	eg.Go(func() error {
-		defer outWriter.Close()
-		defer errWriter.Close()
-		defer inputServer.Close()
+		defer outputStream.Close()
+		defer inputStream.Close()
 
 		streamResp, err := s.impl.StreamContainer(request.GetContainerId(), &plugin.StreamConfig{
-			Stdin:          inReader,
-			Stdout:         outWriter,
-			Stderr:         errWriter,
+			Stdin:          inputStream.Stdin,
+			Stdout:         outputStream.Stdout,
+			Stderr:         outputStream.Stderr,
 			TerminalHeight: request.GetHeight(),
 			TerminalWidth:  request.GetWidth(),
 		})
@@ -259,22 +174,6 @@ func (s *Server) StreamContainer(
 	}
 
 	return resp, nil
-}
-
-func copyInputServerToStdin(inputServer *grpcutil.StreamInputServer, stdin io.WriteCloser) error {
-	if err := inputServer.WriteTo(stdin); err != nil {
-		return fmt.Errorf("error writing input stream: %w", err)
-	}
-
-	return nil
-}
-
-func copyOutputServerToStdout(outputServer *grpcutil.StreamOutputServer, stdout, stderr io.Reader) error {
-	if err := outputServer.ReadFrom(stdout, stderr); err != nil {
-		return fmt.Errorf("error reading output stream: %w", err)
-	}
-
-	return nil
 }
 
 func (s *Server) CreateVolume(_ context.Context, request *api.CreateVolumeRequest) (*empty.Empty, error) {

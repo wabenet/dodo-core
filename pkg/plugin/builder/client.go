@@ -5,13 +5,11 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"fmt"
-	"io"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/hashicorp/go-hclog"
 	api "github.com/wabenet/dodo-core/internal/gen-proto/wabenet/dodo/build/v1alpha2"
 	pluginapi "github.com/wabenet/dodo-core/internal/gen-proto/wabenet/dodo/plugin/v1alpha2"
-	"github.com/wabenet/dodo-core/pkg/grpcutil"
 	"github.com/wabenet/dodo-core/pkg/plugin"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
@@ -22,18 +20,18 @@ const lenStreamID = 32
 var _ ImageBuilder = &Client{}
 
 type Client struct {
-	pluginClient       pluginapi.PluginClient
-	streamOutputClient pluginapi.OutputStreamingPluginClient
-	builderClient      api.BuilderPluginClient
-	stdout             *grpcutil.StreamOutputClient
+	pluginClient  pluginapi.PluginClient
+	builderClient api.BuilderPluginClient
+
+	streamOutputClient *plugin.OutputStreamingClient
 }
 
 func NewGRPCClient(conn grpc.ClientConnInterface) *Client {
 	return &Client{
-		pluginClient:       pluginapi.NewPluginClient(conn),
-		streamOutputClient: pluginapi.NewOutputStreamingPluginClient(conn),
-		builderClient:      api.NewBuilderPluginClient(conn),
-		stdout:             grpcutil.NewStreamOutputClient(),
+		pluginClient:  pluginapi.NewPluginClient(conn),
+		builderClient: api.NewBuilderPluginClient(conn),
+
+		streamOutputClient: plugin.NewOutputStreamingClient(conn),
 	}
 }
 
@@ -94,9 +92,14 @@ func (c *Client) CreateImage(config BuildConfig, stream *plugin.StreamConfig) (s
 	req.SetHeight(stream.TerminalHeight)
 	req.SetWidth(stream.TerminalWidth)
 
+	outputStream, err := c.streamOutputClient.PrepareStream(streamID, stream.Stdout, stream.Stderr)
+	if err != nil {
+		return "", err
+	}
+
 	eg, _ := errgroup.WithContext(context.Background())
 
-	eg.Go(func() error { return c.copyOutputClientToStdout(streamID, stream.Stdout, stream.Stderr) })
+	eg.Go(outputStream.Copy)
 
 	eg.Go(func() error {
 		result, err := c.builderClient.CreateImage(context.Background(), req)
@@ -114,21 +117,4 @@ func (c *Client) CreateImage(config BuildConfig, stream *plugin.StreamConfig) (s
 	}
 
 	return imageID, nil
-}
-
-func (c *Client) copyOutputClientToStdout(streamID string, stdout, stderr io.Writer) error {
-	req := &pluginapi.StreamOutputRequest{}
-
-	req.SetId(streamID)
-
-	outputClient, err := c.streamOutputClient.StreamOutput(context.Background(), req)
-	if err != nil {
-		return fmt.Errorf("could not stream runtime output: %w", err)
-	}
-
-	if err := c.stdout.StreamOutput(outputClient, stdout, stderr); err != nil {
-		return fmt.Errorf("could not stream runtime output: %w", err)
-	}
-
-	return nil
 }
