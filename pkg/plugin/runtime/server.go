@@ -9,6 +9,7 @@ import (
 	pluginapi "github.com/wabenet/dodo-core/internal/gen-proto/wabenet/dodo/plugin/v1alpha2"
 	api "github.com/wabenet/dodo-core/internal/gen-proto/wabenet/dodo/runtime/v1alpha2"
 	"github.com/wabenet/dodo-core/pkg/plugin"
+	"github.com/wabenet/dodo-core/pkg/plugin/stdio"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -20,8 +21,8 @@ type Server struct {
 	pluginapi.UnsafeInputStreamingPluginServer
 	api.UnsafeRuntimePluginServer
 
-	plugin.OutputStreamingServer
-	plugin.InputStreamingServer
+	stdio.OutputStreamingServer
+	stdio.InputStreamingServer
 
 	impl ContainerRuntime
 }

@@ -9,6 +9,7 @@ import (
 	api "github.com/wabenet/dodo-core/internal/gen-proto/wabenet/dodo/build/v1alpha2"
 	pluginapi "github.com/wabenet/dodo-core/internal/gen-proto/wabenet/dodo/plugin/v1alpha2"
 	"github.com/wabenet/dodo-core/pkg/plugin"
+	"github.com/wabenet/dodo-core/pkg/plugin/stdio"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -19,7 +20,7 @@ type Server struct {
 	pluginapi.UnsafeOutputStreamingPluginServer
 	api.UnsafeBuilderPluginServer
 
-	plugin.OutputStreamingServer
+	stdio.OutputStreamingServer
 
 	impl ImageBuilder
 }

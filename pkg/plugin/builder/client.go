@@ -11,6 +11,7 @@ import (
 	api "github.com/wabenet/dodo-core/internal/gen-proto/wabenet/dodo/build/v1alpha2"
 	pluginapi "github.com/wabenet/dodo-core/internal/gen-proto/wabenet/dodo/plugin/v1alpha2"
 	"github.com/wabenet/dodo-core/pkg/plugin"
+	"github.com/wabenet/dodo-core/pkg/plugin/stdio"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
 )
@@ -23,7 +24,7 @@ type Client struct {
 	pluginClient  pluginapi.PluginClient
 	builderClient api.BuilderPluginClient
 
-	streamOutputClient *plugin.OutputStreamingClient
+	streamOutputClient *stdio.OutputStreamingClient
 }
 
 func NewGRPCClient(conn grpc.ClientConnInterface) *Client {
@@ -31,7 +32,7 @@ func NewGRPCClient(conn grpc.ClientConnInterface) *Client {
 		pluginClient:  pluginapi.NewPluginClient(conn),
 		builderClient: api.NewBuilderPluginClient(conn),
 
-		streamOutputClient: plugin.NewOutputStreamingClient(conn),
+		streamOutputClient: stdio.NewOutputStreamingClient(conn),
 	}
 }
 
