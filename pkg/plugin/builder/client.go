@@ -22,17 +22,15 @@ var _ ImageBuilder = &Client{}
 
 type Client struct {
 	pluginClient  pluginapi.PluginClient
+	outputClient  pluginapi.OutputStreamingPluginClient
 	builderClient api.BuilderPluginClient
-
-	streamOutputClient *stdio.OutputStreamingClient
 }
 
 func NewGRPCClient(conn grpc.ClientConnInterface) *Client {
 	return &Client{
 		pluginClient:  pluginapi.NewPluginClient(conn),
+		outputClient:  pluginapi.NewOutputStreamingPluginClient(conn),
 		builderClient: api.NewBuilderPluginClient(conn),
-
-		streamOutputClient: stdio.NewOutputStreamingClient(conn),
 	}
 }
 
@@ -93,7 +91,7 @@ func (c *Client) CreateImage(config BuildConfig, stream *plugin.StreamConfig) (s
 	req.SetHeight(stream.TerminalHeight)
 	req.SetWidth(stream.TerminalWidth)
 
-	outputStream, err := c.streamOutputClient.PrepareStream(streamID, stream.Stdout, stream.Stderr)
+	outputStream, err := stdio.NewClientOutputStream(c.outputClient, streamID, stream.Stdout, stream.Stderr)
 	if err != nil {
 		return "", err
 	}

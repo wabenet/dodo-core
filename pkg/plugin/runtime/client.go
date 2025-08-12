@@ -19,19 +19,17 @@ var _ ContainerRuntime = &Client{}
 
 type Client struct {
 	pluginClient  pluginapi.PluginClient
+	inputClient   pluginapi.InputStreamingPluginClient
+	outputClient  pluginapi.OutputStreamingPluginClient
 	runtimeClient api.RuntimePluginClient
-
-	streamOutputClient *stdio.OutputStreamingClient
-	streamInputClient  *stdio.InputStreamingClient
 }
 
 func NewGRPCClient(conn grpc.ClientConnInterface) *Client {
 	return &Client{
 		pluginClient:  pluginapi.NewPluginClient(conn),
+		inputClient:   pluginapi.NewInputStreamingPluginClient(conn),
+		outputClient:  pluginapi.NewOutputStreamingPluginClient(conn),
 		runtimeClient: api.NewRuntimePluginClient(conn),
-
-		streamOutputClient: stdio.NewOutputStreamingClient(conn),
-		streamInputClient:  stdio.NewInputStreamingClient(conn),
 	}
 }
 
@@ -145,12 +143,12 @@ func (c *Client) StreamContainer(id string, stream *plugin.StreamConfig) (*Resul
 	result := &Result{}
 	eg, _ := errgroup.WithContext(context.Background())
 
-	outputStream, err := c.streamOutputClient.PrepareStream(id, stream.Stdout, stream.Stderr)
+	outputStream, err := stdio.NewClientOutputStream(c.outputClient, id, stream.Stdout, stream.Stderr)
 	if err != nil {
 		return nil, err
 	}
 
-	inputStream, err := c.streamInputClient.PrepareStream(id, stream.Stdin)
+	inputStream, err := stdio.NewClientInputStream(c.inputClient, id, stream.Stdin)
 	if err != nil {
 		return nil, err
 	}
