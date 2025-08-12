@@ -17,12 +17,11 @@ var ErrUnexpectedMapType = errors.New("unexpected map type for stdio streaming s
 
 type Server struct {
 	pluginapi.UnsafePluginServer
-	pluginapi.UnsafeOutputStreamingPluginServer
 	pluginapi.UnsafeInputStreamingPluginServer
 	api.UnsafeRuntimePluginServer
 
-	stdio.OutputStreamingServer
-	stdio.InputStreamingServer
+	stdio.OutputStreamingPluginServer
+	stdio.InputStreamingPluginServer
 
 	impl ContainerRuntime
 }
@@ -32,8 +31,8 @@ func NewGRPCServer(impl ContainerRuntime) *Server {
 }
 
 func (s *Server) reset() {
-	s.OutputStreamingServer.Reset()
-	s.InputStreamingServer.Reset()
+	s.OutputStreamingPluginServer.Reset()
+	s.InputStreamingPluginServer.Reset()
 }
 
 func (s *Server) GetPluginMetadata(_ context.Context, _ *empty.Empty) (*pluginapi.GetPluginMetadataResponse, error) {
@@ -135,12 +134,12 @@ func (s *Server) StreamContainer(
 ) (*api.StreamContainerResponse, error) {
 	resp := &api.StreamContainerResponse{}
 
-	inputStream, err := s.InputStreamingServer.PrepareStream(request.GetContainerId())
+	inputStream, err := s.InputStreamingPluginServer.NewServerInputStream(request.GetContainerId())
 	if err != nil {
 		return nil, err
 	}
 
-	outputStream, err := s.OutputStreamingServer.PrepareStream(request.GetContainerId())
+	outputStream, err := s.OutputStreamingPluginServer.NewServerOutputStream(request.GetContainerId())
 	if err != nil {
 		return nil, err
 	}
