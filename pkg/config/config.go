@@ -20,6 +20,7 @@ const (
 	ConfKeyLogLevel    = "log-level"
 	ConfKeyLogFile     = "log-file"
 	ConfKeyAppDir      = "app-dir"
+	ConfKeyProfile     = "profile"
 
 	DefaultLogLevel = "INFO"
 	DefaultAppDir   = "/var/lib/dodo"
@@ -67,6 +68,10 @@ func GetAppDir() string {
 
 func GetPluginDir() string {
 	return filepath.Join(GetAppDir(), "plugins")
+}
+
+func GetProfile() string {
+	return viper.GetString(ConfKeyProfile)
 }
 
 func LogLevel() log.Level {
