@@ -26,6 +26,7 @@ const (
 	RuntimePlugin_StreamContainer_FullMethodName = "/wabenet.dodo.runtime.v1alpha2.RuntimePlugin/StreamContainer"
 	RuntimePlugin_ResizeContainer_FullMethodName = "/wabenet.dodo.runtime.v1alpha2.RuntimePlugin/ResizeContainer"
 	RuntimePlugin_KillContainer_FullMethodName   = "/wabenet.dodo.runtime.v1alpha2.RuntimePlugin/KillContainer"
+	RuntimePlugin_ListVolumes_FullMethodName     = "/wabenet.dodo.runtime.v1alpha2.RuntimePlugin/ListVolumes"
 	RuntimePlugin_CreateVolume_FullMethodName    = "/wabenet.dodo.runtime.v1alpha2.RuntimePlugin/CreateVolume"
 	RuntimePlugin_DeleteVolume_FullMethodName    = "/wabenet.dodo.runtime.v1alpha2.RuntimePlugin/DeleteVolume"
 	RuntimePlugin_WriteFile_FullMethodName       = "/wabenet.dodo.runtime.v1alpha2.RuntimePlugin/WriteFile"
@@ -42,6 +43,7 @@ type RuntimePluginClient interface {
 	StreamContainer(ctx context.Context, in *StreamContainerRequest, opts ...grpc.CallOption) (*StreamContainerResponse, error)
 	ResizeContainer(ctx context.Context, in *ResizeContainerRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	KillContainer(ctx context.Context, in *KillContainerRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	ListVolumes(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListVolumesResponse, error)
 	CreateVolume(ctx context.Context, in *CreateVolumeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	DeleteVolume(ctx context.Context, in *DeleteVolumeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	WriteFile(ctx context.Context, in *WriteFileRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -116,6 +118,16 @@ func (c *runtimePluginClient) KillContainer(ctx context.Context, in *KillContain
 	return out, nil
 }
 
+func (c *runtimePluginClient) ListVolumes(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListVolumesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListVolumesResponse)
+	err := c.cc.Invoke(ctx, RuntimePlugin_ListVolumes_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *runtimePluginClient) CreateVolume(ctx context.Context, in *CreateVolumeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(emptypb.Empty)
@@ -166,6 +178,7 @@ type RuntimePluginServer interface {
 	StreamContainer(context.Context, *StreamContainerRequest) (*StreamContainerResponse, error)
 	ResizeContainer(context.Context, *ResizeContainerRequest) (*emptypb.Empty, error)
 	KillContainer(context.Context, *KillContainerRequest) (*emptypb.Empty, error)
+	ListVolumes(context.Context, *emptypb.Empty) (*ListVolumesResponse, error)
 	CreateVolume(context.Context, *CreateVolumeRequest) (*emptypb.Empty, error)
 	DeleteVolume(context.Context, *DeleteVolumeRequest) (*emptypb.Empty, error)
 	WriteFile(context.Context, *WriteFileRequest) (*emptypb.Empty, error)
@@ -197,6 +210,9 @@ func (UnimplementedRuntimePluginServer) ResizeContainer(context.Context, *Resize
 }
 func (UnimplementedRuntimePluginServer) KillContainer(context.Context, *KillContainerRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method KillContainer not implemented")
+}
+func (UnimplementedRuntimePluginServer) ListVolumes(context.Context, *emptypb.Empty) (*ListVolumesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListVolumes not implemented")
 }
 func (UnimplementedRuntimePluginServer) CreateVolume(context.Context, *CreateVolumeRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateVolume not implemented")
@@ -339,6 +355,24 @@ func _RuntimePlugin_KillContainer_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RuntimePlugin_ListVolumes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimePluginServer).ListVolumes(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimePlugin_ListVolumes_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimePluginServer).ListVolumes(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _RuntimePlugin_CreateVolume_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateVolumeRequest)
 	if err := dec(in); err != nil {
@@ -441,6 +475,10 @@ var RuntimePlugin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "KillContainer",
 			Handler:    _RuntimePlugin_KillContainer_Handler,
+		},
+		{
+			MethodName: "ListVolumes",
+			Handler:    _RuntimePlugin_ListVolumes_Handler,
 		},
 		{
 			MethodName: "CreateVolume",

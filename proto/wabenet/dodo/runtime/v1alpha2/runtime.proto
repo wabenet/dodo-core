@@ -12,6 +12,7 @@ service RuntimePlugin {
   rpc ResizeContainer(ResizeContainerRequest) returns (google.protobuf.Empty);
   rpc KillContainer(KillContainerRequest) returns (google.protobuf.Empty);
 
+  rpc ListVolumes(google.protobuf.Empty) returns (ListVolumesResponse);
   rpc CreateVolume(CreateVolumeRequest) returns (google.protobuf.Empty);
   rpc DeleteVolume(DeleteVolumeRequest) returns (google.protobuf.Empty);
 
@@ -60,6 +61,10 @@ message KillContainerRequest {
 message StreamContainerResponse {
   int64 exit_code = 1;
   string message = 2;
+}
+
+message ListVolumesResponse {
+  repeated string names = 1;
 }
 
 message CreateVolumeRequest {

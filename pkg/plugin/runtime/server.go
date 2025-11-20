@@ -176,6 +176,19 @@ func (s *Server) StreamContainer(
 	return resp, nil
 }
 
+func (s *Server) ListVolumes(_ context.Context, _ *empty.Empty) (*api.ListVolumesResponse, error) {
+	names, err := s.impl.ListVolumes()
+	if err != nil {
+		return nil, fmt.Errorf("could not list volumes: %w", err)
+	}
+
+	resp := &api.ListVolumesResponse{}
+
+	resp.SetNames(names)
+
+	return resp, nil
+}
+
 func (s *Server) CreateVolume(_ context.Context, request *api.CreateVolumeRequest) (*empty.Empty, error) {
 	if err := s.impl.CreateVolume(request.GetName()); err != nil {
 		return nil, fmt.Errorf("could create volume: %w", err)

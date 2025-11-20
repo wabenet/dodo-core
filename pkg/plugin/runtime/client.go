@@ -182,6 +182,15 @@ func (c *Client) StreamContainer(id string, stream *plugin.StreamConfig) (*Resul
 	return result, nil
 }
 
+func (c *Client) ListVolumes() ([]string, error) {
+	resp, err := c.runtimeClient.ListVolumes(context.Background(), &empty.Empty{})
+	if err != nil {
+		return []string{}, fmt.Errorf("could not list volumes: %w", err)
+	}
+
+	return resp.GetNames(), nil
+}
+
 func (c *Client) CreateVolume(name string) error {
 	req := &api.CreateVolumeRequest{}
 

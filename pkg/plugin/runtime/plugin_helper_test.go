@@ -56,6 +56,10 @@ func (r *DummyRuntime) StreamContainer(_ string, stream *plugin.StreamConfig) (*
 	return &runtime.Result{ExitCode: 0}, nil
 }
 
+func (r *DummyRuntime) ListVolumes() ([]string, error) {
+	return []string{}, nil
+}
+
 func (r *DummyRuntime) CreateVolume(_ string) error {
 	return nil
 }
@@ -117,6 +121,10 @@ func (r *ErrorRuntime) StreamContainer(_ string, stream *plugin.StreamConfig) (*
 	return &runtime.Result{ExitCode: 1}, nil
 }
 
+func (r *ErrorRuntime) ListVolumes() ([]string, error) {
+	return []string{}, nil
+}
+
 func (r *ErrorRuntime) CreateVolume(_ string) error {
 	return nil
 }
@@ -175,6 +183,10 @@ func (r *EchoRuntime) StreamContainer(_ string, stream *plugin.StreamConfig) (*r
 	io.Copy(stream.Stdout, stream.Stdin)
 
 	return &runtime.Result{ExitCode: 0}, nil
+}
+
+func (r *EchoRuntime) ListVolumes() ([]string, error) {
+	return []string{}, nil
 }
 
 func (r *EchoRuntime) CreateVolume(_ string) error {
