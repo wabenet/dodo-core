@@ -21,6 +21,50 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type Protocol int32
+
+const (
+	Protocol_PROTOCOL_UNSPECIFIED Protocol = 0
+	Protocol_PROTOCOL_TCP         Protocol = 1
+	Protocol_PROTOCOL_UDP         Protocol = 2
+)
+
+// Enum value maps for Protocol.
+var (
+	Protocol_name = map[int32]string{
+		0: "PROTOCOL_UNSPECIFIED",
+		1: "PROTOCOL_TCP",
+		2: "PROTOCOL_UDP",
+	}
+	Protocol_value = map[string]int32{
+		"PROTOCOL_UNSPECIFIED": 0,
+		"PROTOCOL_TCP":         1,
+		"PROTOCOL_UDP":         2,
+	}
+)
+
+func (x Protocol) Enum() *Protocol {
+	p := new(Protocol)
+	*p = x
+	return p
+}
+
+func (x Protocol) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Protocol) Descriptor() protoreflect.EnumDescriptor {
+	return file_wabenet_dodo_runtime_v1alpha2_runtime_proto_enumTypes[0].Descriptor()
+}
+
+func (Protocol) Type() protoreflect.EnumType {
+	return &file_wabenet_dodo_runtime_v1alpha2_runtime_proto_enumTypes[0]
+}
+
+func (x Protocol) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
 type CreateContainerResponse struct {
 	state                  protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_ContainerId *string                `protobuf:"bytes,1,opt,name=container_id,json=containerId"`
@@ -1971,9 +2015,9 @@ func (b0 EnvironmentVariable_builder) Build() *EnvironmentVariable {
 
 type PortBinding struct {
 	state                    protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_HostPort      *string                `protobuf:"bytes,1,opt,name=host_port,json=hostPort"`
-	xxx_hidden_ContainerPort *string                `protobuf:"bytes,2,opt,name=container_port,json=containerPort"`
-	xxx_hidden_Protocol      *string                `protobuf:"bytes,3,opt,name=protocol"`
+	xxx_hidden_HostPort      uint32                 `protobuf:"varint,1,opt,name=host_port,json=hostPort"`
+	xxx_hidden_ContainerPort uint32                 `protobuf:"varint,2,opt,name=container_port,json=containerPort"`
+	xxx_hidden_Protocol      Protocol               `protobuf:"varint,3,opt,name=protocol,enum=wabenet.dodo.runtime.v1alpha2.Protocol"`
 	xxx_hidden_HostIp        *string                `protobuf:"bytes,4,opt,name=host_ip,json=hostIp"`
 	XXX_raceDetectHookData   protoimpl.RaceDetectHookData
 	XXX_presence             [1]uint32
@@ -2006,34 +2050,27 @@ func (x *PortBinding) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-func (x *PortBinding) GetHostPort() string {
+func (x *PortBinding) GetHostPort() uint32 {
 	if x != nil {
-		if x.xxx_hidden_HostPort != nil {
-			return *x.xxx_hidden_HostPort
-		}
-		return ""
+		return x.xxx_hidden_HostPort
 	}
-	return ""
+	return 0
 }
 
-func (x *PortBinding) GetContainerPort() string {
+func (x *PortBinding) GetContainerPort() uint32 {
 	if x != nil {
-		if x.xxx_hidden_ContainerPort != nil {
-			return *x.xxx_hidden_ContainerPort
-		}
-		return ""
+		return x.xxx_hidden_ContainerPort
 	}
-	return ""
+	return 0
 }
 
-func (x *PortBinding) GetProtocol() string {
+func (x *PortBinding) GetProtocol() Protocol {
 	if x != nil {
-		if x.xxx_hidden_Protocol != nil {
-			return *x.xxx_hidden_Protocol
+		if protoimpl.X.Present(&(x.XXX_presence[0]), 2) {
+			return x.xxx_hidden_Protocol
 		}
-		return ""
 	}
-	return ""
+	return Protocol_PROTOCOL_UNSPECIFIED
 }
 
 func (x *PortBinding) GetHostIp() string {
@@ -2046,18 +2083,18 @@ func (x *PortBinding) GetHostIp() string {
 	return ""
 }
 
-func (x *PortBinding) SetHostPort(v string) {
-	x.xxx_hidden_HostPort = &v
+func (x *PortBinding) SetHostPort(v uint32) {
+	x.xxx_hidden_HostPort = v
 	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 4)
 }
 
-func (x *PortBinding) SetContainerPort(v string) {
-	x.xxx_hidden_ContainerPort = &v
+func (x *PortBinding) SetContainerPort(v uint32) {
+	x.xxx_hidden_ContainerPort = v
 	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 4)
 }
 
-func (x *PortBinding) SetProtocol(v string) {
-	x.xxx_hidden_Protocol = &v
+func (x *PortBinding) SetProtocol(v Protocol) {
+	x.xxx_hidden_Protocol = v
 	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 4)
 }
 
@@ -2096,17 +2133,17 @@ func (x *PortBinding) HasHostIp() bool {
 
 func (x *PortBinding) ClearHostPort() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_HostPort = nil
+	x.xxx_hidden_HostPort = 0
 }
 
 func (x *PortBinding) ClearContainerPort() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
-	x.xxx_hidden_ContainerPort = nil
+	x.xxx_hidden_ContainerPort = 0
 }
 
 func (x *PortBinding) ClearProtocol() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
-	x.xxx_hidden_Protocol = nil
+	x.xxx_hidden_Protocol = Protocol_PROTOCOL_UNSPECIFIED
 }
 
 func (x *PortBinding) ClearHostIp() {
@@ -2117,9 +2154,9 @@ func (x *PortBinding) ClearHostIp() {
 type PortBinding_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	HostPort      *string
-	ContainerPort *string
-	Protocol      *string
+	HostPort      *uint32
+	ContainerPort *uint32
+	Protocol      *Protocol
 	HostIp        *string
 }
 
@@ -2129,15 +2166,15 @@ func (b0 PortBinding_builder) Build() *PortBinding {
 	_, _ = b, x
 	if b.HostPort != nil {
 		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 4)
-		x.xxx_hidden_HostPort = b.HostPort
+		x.xxx_hidden_HostPort = *b.HostPort
 	}
 	if b.ContainerPort != nil {
 		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 4)
-		x.xxx_hidden_ContainerPort = b.ContainerPort
+		x.xxx_hidden_ContainerPort = *b.ContainerPort
 	}
 	if b.Protocol != nil {
 		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 4)
-		x.xxx_hidden_Protocol = b.Protocol
+		x.xxx_hidden_Protocol = *b.Protocol
 	}
 	if b.HostIp != nil {
 		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 4)
@@ -3322,11 +3359,11 @@ const file_wabenet_dodo_runtime_v1alpha2_runtime_proto_rawDesc = "" +
 	"\rconsole_width\x18\x04 \x01(\x03R\fconsoleWidth\"=\n" +
 	"\x13EnvironmentVariable\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value\"\x86\x01\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value\"\xaf\x01\n" +
 	"\vPortBinding\x12\x1b\n" +
-	"\thost_port\x18\x01 \x01(\tR\bhostPort\x12%\n" +
-	"\x0econtainer_port\x18\x02 \x01(\tR\rcontainerPort\x12\x1a\n" +
-	"\bprotocol\x18\x03 \x01(\tR\bprotocol\x12\x17\n" +
+	"\thost_port\x18\x01 \x01(\rR\bhostPort\x12%\n" +
+	"\x0econtainer_port\x18\x02 \x01(\rR\rcontainerPort\x12C\n" +
+	"\bprotocol\x18\x03 \x01(\x0e2'.wabenet.dodo.runtime.v1alpha2.ProtocolR\bprotocol\x12\x17\n" +
 	"\ahost_ip\x18\x04 \x01(\tR\x06hostIp\"\xe1\x02\n" +
 	"\x05Mount\x12>\n" +
 	"\x04bind\x18\x01 \x01(\v2(.wabenet.dodo.runtime.v1alpha2.BindMountH\x00R\x04bind\x12D\n" +
@@ -3361,7 +3398,11 @@ const file_wabenet_dodo_runtime_v1alpha2_runtime_proto_rawDesc = "" +
 	"cgroupRule\x12\x1b\n" +
 	"\thost_path\x18\x02 \x01(\tR\bhostPath\x12%\n" +
 	"\x0econtainer_path\x18\x03 \x01(\tR\rcontainerPath\x12 \n" +
-	"\vpermissions\x18\x04 \x01(\tR\vpermissions2\xed\b\n" +
+	"\vpermissions\x18\x04 \x01(\tR\vpermissions*H\n" +
+	"\bProtocol\x12\x18\n" +
+	"\x14PROTOCOL_UNSPECIFIED\x10\x00\x12\x10\n" +
+	"\fPROTOCOL_TCP\x10\x01\x12\x10\n" +
+	"\fPROTOCOL_UDP\x10\x022\xed\b\n" +
 	"\rRuntimePlugin\x12\x80\x01\n" +
 	"\x0fCreateContainer\x125.wabenet.dodo.runtime.v1alpha2.CreateContainerRequest\x1a6.wabenet.dodo.runtime.v1alpha2.CreateContainerResponse\x12`\n" +
 	"\x0fDeleteContainer\x125.wabenet.dodo.runtime.v1alpha2.DeleteContainerRequest\x1a\x16.google.protobuf.Empty\x12^\n" +
@@ -3376,74 +3417,77 @@ const file_wabenet_dodo_runtime_v1alpha2_runtime_proto_rawDesc = "" +
 	"\bGetImage\x12..wabenet.dodo.runtime.v1alpha2.GetImageRequest\x1a/.wabenet.dodo.runtime.v1alpha2.GetImageResponseB\xa7\x02\n" +
 	"!com.wabenet.dodo.runtime.v1alpha2B\fRuntimeProtoP\x01Z]github.com/wabenet/dodo-core/internal/gen-proto/wabenet/dodo/runtime/v1alpha2;runtimev1alpha2\xa2\x02\x03WDR\xaa\x02\x1dWabenet.Dodo.Runtime.V1alpha2\xca\x02\x1dWabenet\\Dodo\\Runtime\\V1alpha2\xe2\x02)Wabenet\\Dodo\\Runtime\\V1alpha2\\GPBMetadata\xea\x02 Wabenet::Dodo::Runtime::V1alpha2b\beditionsp\xe8\a"
 
+var file_wabenet_dodo_runtime_v1alpha2_runtime_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_wabenet_dodo_runtime_v1alpha2_runtime_proto_msgTypes = make([]protoimpl.MessageInfo, 25)
 var file_wabenet_dodo_runtime_v1alpha2_runtime_proto_goTypes = []any{
-	(*CreateContainerResponse)(nil), // 0: wabenet.dodo.runtime.v1alpha2.CreateContainerResponse
-	(*GetImageRequest)(nil),         // 1: wabenet.dodo.runtime.v1alpha2.GetImageRequest
-	(*CreateContainerRequest)(nil),  // 2: wabenet.dodo.runtime.v1alpha2.CreateContainerRequest
-	(*DeleteContainerRequest)(nil),  // 3: wabenet.dodo.runtime.v1alpha2.DeleteContainerRequest
-	(*StartContainerRequest)(nil),   // 4: wabenet.dodo.runtime.v1alpha2.StartContainerRequest
-	(*ResizeContainerRequest)(nil),  // 5: wabenet.dodo.runtime.v1alpha2.ResizeContainerRequest
-	(*StreamContainerRequest)(nil),  // 6: wabenet.dodo.runtime.v1alpha2.StreamContainerRequest
-	(*KillContainerRequest)(nil),    // 7: wabenet.dodo.runtime.v1alpha2.KillContainerRequest
-	(*StreamContainerResponse)(nil), // 8: wabenet.dodo.runtime.v1alpha2.StreamContainerResponse
-	(*ListVolumesResponse)(nil),     // 9: wabenet.dodo.runtime.v1alpha2.ListVolumesResponse
-	(*CreateVolumeRequest)(nil),     // 10: wabenet.dodo.runtime.v1alpha2.CreateVolumeRequest
-	(*DeleteVolumeRequest)(nil),     // 11: wabenet.dodo.runtime.v1alpha2.DeleteVolumeRequest
-	(*WriteFileRequest)(nil),        // 12: wabenet.dodo.runtime.v1alpha2.WriteFileRequest
-	(*GetImageResponse)(nil),        // 13: wabenet.dodo.runtime.v1alpha2.GetImageResponse
-	(*ContainerConfig)(nil),         // 14: wabenet.dodo.runtime.v1alpha2.ContainerConfig
-	(*Process)(nil),                 // 15: wabenet.dodo.runtime.v1alpha2.Process
-	(*TerminalConfig)(nil),          // 16: wabenet.dodo.runtime.v1alpha2.TerminalConfig
-	(*EnvironmentVariable)(nil),     // 17: wabenet.dodo.runtime.v1alpha2.EnvironmentVariable
-	(*PortBinding)(nil),             // 18: wabenet.dodo.runtime.v1alpha2.PortBinding
-	(*Mount)(nil),                   // 19: wabenet.dodo.runtime.v1alpha2.Mount
-	(*BindMount)(nil),               // 20: wabenet.dodo.runtime.v1alpha2.BindMount
-	(*VolumeMount)(nil),             // 21: wabenet.dodo.runtime.v1alpha2.VolumeMount
-	(*TmpfsMount)(nil),              // 22: wabenet.dodo.runtime.v1alpha2.TmpfsMount
-	(*ImageMount)(nil),              // 23: wabenet.dodo.runtime.v1alpha2.ImageMount
-	(*DeviceMount)(nil),             // 24: wabenet.dodo.runtime.v1alpha2.DeviceMount
-	(*emptypb.Empty)(nil),           // 25: google.protobuf.Empty
+	(Protocol)(0),                   // 0: wabenet.dodo.runtime.v1alpha2.Protocol
+	(*CreateContainerResponse)(nil), // 1: wabenet.dodo.runtime.v1alpha2.CreateContainerResponse
+	(*GetImageRequest)(nil),         // 2: wabenet.dodo.runtime.v1alpha2.GetImageRequest
+	(*CreateContainerRequest)(nil),  // 3: wabenet.dodo.runtime.v1alpha2.CreateContainerRequest
+	(*DeleteContainerRequest)(nil),  // 4: wabenet.dodo.runtime.v1alpha2.DeleteContainerRequest
+	(*StartContainerRequest)(nil),   // 5: wabenet.dodo.runtime.v1alpha2.StartContainerRequest
+	(*ResizeContainerRequest)(nil),  // 6: wabenet.dodo.runtime.v1alpha2.ResizeContainerRequest
+	(*StreamContainerRequest)(nil),  // 7: wabenet.dodo.runtime.v1alpha2.StreamContainerRequest
+	(*KillContainerRequest)(nil),    // 8: wabenet.dodo.runtime.v1alpha2.KillContainerRequest
+	(*StreamContainerResponse)(nil), // 9: wabenet.dodo.runtime.v1alpha2.StreamContainerResponse
+	(*ListVolumesResponse)(nil),     // 10: wabenet.dodo.runtime.v1alpha2.ListVolumesResponse
+	(*CreateVolumeRequest)(nil),     // 11: wabenet.dodo.runtime.v1alpha2.CreateVolumeRequest
+	(*DeleteVolumeRequest)(nil),     // 12: wabenet.dodo.runtime.v1alpha2.DeleteVolumeRequest
+	(*WriteFileRequest)(nil),        // 13: wabenet.dodo.runtime.v1alpha2.WriteFileRequest
+	(*GetImageResponse)(nil),        // 14: wabenet.dodo.runtime.v1alpha2.GetImageResponse
+	(*ContainerConfig)(nil),         // 15: wabenet.dodo.runtime.v1alpha2.ContainerConfig
+	(*Process)(nil),                 // 16: wabenet.dodo.runtime.v1alpha2.Process
+	(*TerminalConfig)(nil),          // 17: wabenet.dodo.runtime.v1alpha2.TerminalConfig
+	(*EnvironmentVariable)(nil),     // 18: wabenet.dodo.runtime.v1alpha2.EnvironmentVariable
+	(*PortBinding)(nil),             // 19: wabenet.dodo.runtime.v1alpha2.PortBinding
+	(*Mount)(nil),                   // 20: wabenet.dodo.runtime.v1alpha2.Mount
+	(*BindMount)(nil),               // 21: wabenet.dodo.runtime.v1alpha2.BindMount
+	(*VolumeMount)(nil),             // 22: wabenet.dodo.runtime.v1alpha2.VolumeMount
+	(*TmpfsMount)(nil),              // 23: wabenet.dodo.runtime.v1alpha2.TmpfsMount
+	(*ImageMount)(nil),              // 24: wabenet.dodo.runtime.v1alpha2.ImageMount
+	(*DeviceMount)(nil),             // 25: wabenet.dodo.runtime.v1alpha2.DeviceMount
+	(*emptypb.Empty)(nil),           // 26: google.protobuf.Empty
 }
 var file_wabenet_dodo_runtime_v1alpha2_runtime_proto_depIdxs = []int32{
-	14, // 0: wabenet.dodo.runtime.v1alpha2.CreateContainerRequest.config:type_name -> wabenet.dodo.runtime.v1alpha2.ContainerConfig
-	15, // 1: wabenet.dodo.runtime.v1alpha2.ContainerConfig.process:type_name -> wabenet.dodo.runtime.v1alpha2.Process
-	16, // 2: wabenet.dodo.runtime.v1alpha2.ContainerConfig.terminal:type_name -> wabenet.dodo.runtime.v1alpha2.TerminalConfig
-	17, // 3: wabenet.dodo.runtime.v1alpha2.ContainerConfig.environment:type_name -> wabenet.dodo.runtime.v1alpha2.EnvironmentVariable
-	18, // 4: wabenet.dodo.runtime.v1alpha2.ContainerConfig.ports:type_name -> wabenet.dodo.runtime.v1alpha2.PortBinding
-	19, // 5: wabenet.dodo.runtime.v1alpha2.ContainerConfig.mounts:type_name -> wabenet.dodo.runtime.v1alpha2.Mount
-	20, // 6: wabenet.dodo.runtime.v1alpha2.Mount.bind:type_name -> wabenet.dodo.runtime.v1alpha2.BindMount
-	21, // 7: wabenet.dodo.runtime.v1alpha2.Mount.volume:type_name -> wabenet.dodo.runtime.v1alpha2.VolumeMount
-	22, // 8: wabenet.dodo.runtime.v1alpha2.Mount.tmpfs:type_name -> wabenet.dodo.runtime.v1alpha2.TmpfsMount
-	23, // 9: wabenet.dodo.runtime.v1alpha2.Mount.image:type_name -> wabenet.dodo.runtime.v1alpha2.ImageMount
-	24, // 10: wabenet.dodo.runtime.v1alpha2.Mount.device:type_name -> wabenet.dodo.runtime.v1alpha2.DeviceMount
-	2,  // 11: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.CreateContainer:input_type -> wabenet.dodo.runtime.v1alpha2.CreateContainerRequest
-	3,  // 12: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.DeleteContainer:input_type -> wabenet.dodo.runtime.v1alpha2.DeleteContainerRequest
-	4,  // 13: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.StartContainer:input_type -> wabenet.dodo.runtime.v1alpha2.StartContainerRequest
-	6,  // 14: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.StreamContainer:input_type -> wabenet.dodo.runtime.v1alpha2.StreamContainerRequest
-	5,  // 15: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.ResizeContainer:input_type -> wabenet.dodo.runtime.v1alpha2.ResizeContainerRequest
-	7,  // 16: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.KillContainer:input_type -> wabenet.dodo.runtime.v1alpha2.KillContainerRequest
-	25, // 17: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.ListVolumes:input_type -> google.protobuf.Empty
-	10, // 18: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.CreateVolume:input_type -> wabenet.dodo.runtime.v1alpha2.CreateVolumeRequest
-	11, // 19: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.DeleteVolume:input_type -> wabenet.dodo.runtime.v1alpha2.DeleteVolumeRequest
-	12, // 20: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.WriteFile:input_type -> wabenet.dodo.runtime.v1alpha2.WriteFileRequest
-	1,  // 21: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.GetImage:input_type -> wabenet.dodo.runtime.v1alpha2.GetImageRequest
-	0,  // 22: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.CreateContainer:output_type -> wabenet.dodo.runtime.v1alpha2.CreateContainerResponse
-	25, // 23: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.DeleteContainer:output_type -> google.protobuf.Empty
-	25, // 24: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.StartContainer:output_type -> google.protobuf.Empty
-	8,  // 25: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.StreamContainer:output_type -> wabenet.dodo.runtime.v1alpha2.StreamContainerResponse
-	25, // 26: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.ResizeContainer:output_type -> google.protobuf.Empty
-	25, // 27: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.KillContainer:output_type -> google.protobuf.Empty
-	9,  // 28: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.ListVolumes:output_type -> wabenet.dodo.runtime.v1alpha2.ListVolumesResponse
-	25, // 29: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.CreateVolume:output_type -> google.protobuf.Empty
-	25, // 30: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.DeleteVolume:output_type -> google.protobuf.Empty
-	25, // 31: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.WriteFile:output_type -> google.protobuf.Empty
-	13, // 32: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.GetImage:output_type -> wabenet.dodo.runtime.v1alpha2.GetImageResponse
-	22, // [22:33] is the sub-list for method output_type
-	11, // [11:22] is the sub-list for method input_type
-	11, // [11:11] is the sub-list for extension type_name
-	11, // [11:11] is the sub-list for extension extendee
-	0,  // [0:11] is the sub-list for field type_name
+	15, // 0: wabenet.dodo.runtime.v1alpha2.CreateContainerRequest.config:type_name -> wabenet.dodo.runtime.v1alpha2.ContainerConfig
+	16, // 1: wabenet.dodo.runtime.v1alpha2.ContainerConfig.process:type_name -> wabenet.dodo.runtime.v1alpha2.Process
+	17, // 2: wabenet.dodo.runtime.v1alpha2.ContainerConfig.terminal:type_name -> wabenet.dodo.runtime.v1alpha2.TerminalConfig
+	18, // 3: wabenet.dodo.runtime.v1alpha2.ContainerConfig.environment:type_name -> wabenet.dodo.runtime.v1alpha2.EnvironmentVariable
+	19, // 4: wabenet.dodo.runtime.v1alpha2.ContainerConfig.ports:type_name -> wabenet.dodo.runtime.v1alpha2.PortBinding
+	20, // 5: wabenet.dodo.runtime.v1alpha2.ContainerConfig.mounts:type_name -> wabenet.dodo.runtime.v1alpha2.Mount
+	0,  // 6: wabenet.dodo.runtime.v1alpha2.PortBinding.protocol:type_name -> wabenet.dodo.runtime.v1alpha2.Protocol
+	21, // 7: wabenet.dodo.runtime.v1alpha2.Mount.bind:type_name -> wabenet.dodo.runtime.v1alpha2.BindMount
+	22, // 8: wabenet.dodo.runtime.v1alpha2.Mount.volume:type_name -> wabenet.dodo.runtime.v1alpha2.VolumeMount
+	23, // 9: wabenet.dodo.runtime.v1alpha2.Mount.tmpfs:type_name -> wabenet.dodo.runtime.v1alpha2.TmpfsMount
+	24, // 10: wabenet.dodo.runtime.v1alpha2.Mount.image:type_name -> wabenet.dodo.runtime.v1alpha2.ImageMount
+	25, // 11: wabenet.dodo.runtime.v1alpha2.Mount.device:type_name -> wabenet.dodo.runtime.v1alpha2.DeviceMount
+	3,  // 12: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.CreateContainer:input_type -> wabenet.dodo.runtime.v1alpha2.CreateContainerRequest
+	4,  // 13: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.DeleteContainer:input_type -> wabenet.dodo.runtime.v1alpha2.DeleteContainerRequest
+	5,  // 14: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.StartContainer:input_type -> wabenet.dodo.runtime.v1alpha2.StartContainerRequest
+	7,  // 15: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.StreamContainer:input_type -> wabenet.dodo.runtime.v1alpha2.StreamContainerRequest
+	6,  // 16: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.ResizeContainer:input_type -> wabenet.dodo.runtime.v1alpha2.ResizeContainerRequest
+	8,  // 17: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.KillContainer:input_type -> wabenet.dodo.runtime.v1alpha2.KillContainerRequest
+	26, // 18: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.ListVolumes:input_type -> google.protobuf.Empty
+	11, // 19: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.CreateVolume:input_type -> wabenet.dodo.runtime.v1alpha2.CreateVolumeRequest
+	12, // 20: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.DeleteVolume:input_type -> wabenet.dodo.runtime.v1alpha2.DeleteVolumeRequest
+	13, // 21: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.WriteFile:input_type -> wabenet.dodo.runtime.v1alpha2.WriteFileRequest
+	2,  // 22: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.GetImage:input_type -> wabenet.dodo.runtime.v1alpha2.GetImageRequest
+	1,  // 23: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.CreateContainer:output_type -> wabenet.dodo.runtime.v1alpha2.CreateContainerResponse
+	26, // 24: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.DeleteContainer:output_type -> google.protobuf.Empty
+	26, // 25: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.StartContainer:output_type -> google.protobuf.Empty
+	9,  // 26: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.StreamContainer:output_type -> wabenet.dodo.runtime.v1alpha2.StreamContainerResponse
+	26, // 27: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.ResizeContainer:output_type -> google.protobuf.Empty
+	26, // 28: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.KillContainer:output_type -> google.protobuf.Empty
+	10, // 29: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.ListVolumes:output_type -> wabenet.dodo.runtime.v1alpha2.ListVolumesResponse
+	26, // 30: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.CreateVolume:output_type -> google.protobuf.Empty
+	26, // 31: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.DeleteVolume:output_type -> google.protobuf.Empty
+	26, // 32: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.WriteFile:output_type -> google.protobuf.Empty
+	14, // 33: wabenet.dodo.runtime.v1alpha2.RuntimePlugin.GetImage:output_type -> wabenet.dodo.runtime.v1alpha2.GetImageResponse
+	23, // [23:34] is the sub-list for method output_type
+	12, // [12:23] is the sub-list for method input_type
+	12, // [12:12] is the sub-list for extension type_name
+	12, // [12:12] is the sub-list for extension extendee
+	0,  // [0:12] is the sub-list for field type_name
 }
 
 func init() { file_wabenet_dodo_runtime_v1alpha2_runtime_proto_init() }
@@ -3463,13 +3507,14 @@ func file_wabenet_dodo_runtime_v1alpha2_runtime_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_wabenet_dodo_runtime_v1alpha2_runtime_proto_rawDesc), len(file_wabenet_dodo_runtime_v1alpha2_runtime_proto_rawDesc)),
-			NumEnums:      0,
+			NumEnums:      1,
 			NumMessages:   25,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_wabenet_dodo_runtime_v1alpha2_runtime_proto_goTypes,
 		DependencyIndexes: file_wabenet_dodo_runtime_v1alpha2_runtime_proto_depIdxs,
+		EnumInfos:         file_wabenet_dodo_runtime_v1alpha2_runtime_proto_enumTypes,
 		MessageInfos:      file_wabenet_dodo_runtime_v1alpha2_runtime_proto_msgTypes,
 	}.Build()
 	File_wabenet_dodo_runtime_v1alpha2_runtime_proto = out.File
